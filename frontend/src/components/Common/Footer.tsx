@@ -38,7 +38,7 @@ import {
         color={textColor}
         fontSize="sm"
       >
-        The Data Proxy
+        Roaming Proxy
       </Text>
     </Link>
             <Text color={textColor} fontSize="xs" maxW="200px">
@@ -178,7 +178,7 @@ import {
           color={textColor}
           _hover={{ color: accentColor }}
         >
-          The Data Proxy
+          Roaming Proxy
         </Link>
         ,{" "}
         <Link
