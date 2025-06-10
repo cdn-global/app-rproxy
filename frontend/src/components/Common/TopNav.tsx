@@ -307,7 +307,7 @@ const TopNav = () => {
  <Logo 
       src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
-      boxSize="220px"
+      boxSize="120px"
       href="/"
     />
 
