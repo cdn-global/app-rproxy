@@ -108,7 +108,7 @@ function Login() {
             mb={{ base: 4, md: 6 }} 
             color="gray.800"
           >
-          Web Data, Effortlessly
+          Web Scraping, Made Easy
           </Heading>
           <Text 
             fontSize={{ base: "md", md: "lg" }} 
