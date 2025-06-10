@@ -126,32 +126,33 @@ const UserMenu = () => {
 
   return (
     <>
-      {/* Desktop */}
-      <Box
-        display={{ base: "none", md: "block" }}
-        position="fixed"
-        top={4}
-        right={4}
-      >
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="User menu"
-            icon={<FaUserSecret color="gray.800" fontSize="18px" />}
-            bg="gray.50"
-            border="1px solid"
-            borderColor="red."
-            _hover={{ bg: "red.borderColor: "red.400" }}
-            _active={{ bg: "red.200", borderColor: "red.500" }}
-            isRound
-            data-testid="user-menu-button"
-          />
-          <MenuList
-            bg="gray.50"
-            borderColor="gray.200"
-            color="gray.800"
-            boxShadow="md"
-          >
+    {/* Desktop */}
+<Box
+  display={{ base: "none", md: "block" }}
+  position="fixed"
+  top={4}
+  right={4}
+>
+  <Menu>
+    <MenuButton
+      as={IconButton}
+      aria-label="User menu"
+      icon={<FaUserSecret color="gray.800" fontSize="18px" />}
+      bg="gray.50"
+      border="1px solid"
+      borderColor="red.300" /* <-- FIX 1 */
+      _hover={{ bg: "red.100", borderColor: "red.400" }} /* <-- FIX 2 */
+      _active={{ bg: "red.200", borderColor: "red.500" }}
+      isRound
+      data-testid="user-menu-button"
+    />
+    <MenuList
+      bg="gray.50"
+      borderColor="gray.200"
+      color="gray.800"
+      boxShadow="md"
+    >
+      {/* ... rest of the component is fine */}
             <MenuItem
               as={Link}
               to="/settings"
