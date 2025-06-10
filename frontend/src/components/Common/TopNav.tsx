@@ -291,7 +291,7 @@ const TopNav = () => {
   };
 
   return (
-    <Box
+<Box
       bg="gray.50"
       px={4}
       py={2}
@@ -303,10 +303,11 @@ const TopNav = () => {
       borderBottomWidth="1px"
       borderBottomColor="gray.300"
     >
-      <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
+      <Flex align="center" justify="center" maxW="1200px" mx="auto">
  <Logo 
       src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
+      boxSize="120px"
       href="/"
     />
 
