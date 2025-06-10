@@ -144,7 +144,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({ isOpen, onClose, data }) =>
                     <Flex justify="space-between" align="center" mb={2}>
                       <Heading size="sm">JSON Response</Heading>
                       <Flex gap={2}>
-                        <Tooltip label="Copy JSON"><IconButton aria-label="Copy JSON" icon={<CopyIcon />} size="sm" colorScheme="orange" onClick={() => handleCopy(jsonResponse, 'JSON Response')} /></Tooltip>
+                        <Tooltip label="Copy JSON"><IconButton aria-label="Copy JSON" icon={<CopyIcon />} size="sm" colorScheme="red" onClick={() => handleCopy(jsonResponse, 'JSON Response')} /></Tooltip>
                         <Tooltip label="Download JSON"><IconButton aria-label="Download JSON" icon={<DownloadIcon />} size="sm" onClick={() => handleDownload(jsonResponse, "response.json", "application/json")} /></Tooltip>
                       </Flex>
                     </Flex>
@@ -155,7 +155,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({ isOpen, onClose, data }) =>
                     <Flex justify="space-between" align="center" mb={2}>
                       <Heading size="sm">HTML Preview</Heading>
                       <Flex gap={2}>
-                        <Tooltip label="Copy HTML"><IconButton aria-label="Copy HTML" icon={<CopyIcon />} size="sm" colorScheme="orange" onClick={() => handleCopy(htmlPreview, 'HTML')} /></Tooltip>
+                        <Tooltip label="Copy HTML"><IconButton aria-label="Copy HTML" icon={<CopyIcon />} size="sm" colorScheme="red" onClick={() => handleCopy(htmlPreview, 'HTML')} /></Tooltip>
                         <Tooltip label="Download HTML"><IconButton aria-label="Download HTML" icon={<DownloadIcon />} size="sm" onClick={() => handleDownload(htmlPreview, "preview.html", "text/html")} /></Tooltip>
                       </Flex>
                     </Flex>
@@ -182,7 +182,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({ isOpen, onClose, data }) =>
                     <Box>
                       <Flex justify="space-between" align="center" mb={2}>
                         <Heading size="sm">Response Headers</Heading>
-                        <Tooltip label="Copy Headers"><IconButton aria-label="Copy Headers" icon={<CopyIcon />} size="sm" colorScheme="orange" onClick={() => handleCopy(headers, 'Headers')} /></Tooltip>
+                        <Tooltip label="Copy Headers"><IconButton aria-label="Copy Headers" icon={<CopyIcon />} size="sm" colorScheme="red" onClick={() => handleCopy(headers, 'Headers')} /></Tooltip>
                       </Flex>
                       <CodeBlock code={headers} language="json" />
                     </Box>
@@ -326,7 +326,7 @@ const PlaygroundGSerp: React.FC = () => {
                       <Button size="sm" variant="solid" colorScheme="teal" leftIcon={<FaTrash />} onClick={() => setResultsData(null)}>
                         Dismiss
                       </Button>
-                      <Button size="sm" variant="solid" colorScheme="orange" leftIcon={<ViewIcon />} onClick={onModalOpen}>
+                      <Button size="sm" variant="solid" colorScheme="red" leftIcon={<ViewIcon />} onClick={onModalOpen}>
                         Response
                       </Button>
                     </HStack>
@@ -356,7 +356,7 @@ const PlaygroundGSerp: React.FC = () => {
               onClick={() => handleCopy(codeTabs[activeTabIndex].code, `${codeTabs[activeTabIndex].label} Code`)}
             />
           </Tooltip>
-          <Tabs variant="enclosed" colorScheme="orange" onChange={(index) => setActiveTabIndex(index)}>
+          <Tabs variant="enclosed" colorScheme="red" onChange={(index) => setActiveTabIndex(index)}>
             <TabList>
               {codeTabs.map((tab) => (<Tab key={tab.id} fontWeight="semibold" fontSize="md" color="gray.400" _selected={{ bg: "gray.800", color: "red.400" }}>{tab.label}</Tab>))}
             </TabList>

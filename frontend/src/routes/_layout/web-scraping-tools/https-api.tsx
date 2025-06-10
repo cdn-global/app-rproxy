@@ -201,7 +201,7 @@ const GetStartedTab = () => {
         To get started, create an API key in the API Keys tab and use it in your requests. Remember to replace <Code fontSize="sm">YOUR_API_KEY</Code> with your actual key.
       </Text>
     <Divider mb={4}></Divider>
-      <Tabs variant="enclosed" colorScheme="orange">
+      <Tabs variant="enclosed" colorScheme="red">
         <TabList>
           {codeTabs.map((tab) => (
             <Tab
@@ -307,7 +307,7 @@ const HttpsProxyApiPage = () => {
                 </Text>
               </Alert>
             )}
-            <Tabs isLazy variant="enclosed-colored" colorScheme="orange">
+            <Tabs isLazy variant="enclosed-colored" colorScheme="red">
               <TabList>
                 {pageTabsData.map((tab) => (
                   <Tab

@@ -153,7 +153,7 @@ const HomePage = () => {
                                     onClick={handleBillingClick}
                                     isLoading={isPortalLoading}
                                     leftIcon={<Icon as={FaCreditCard} />}
-                                    colorScheme="orange"
+                                    colorScheme="red"
                                     fontWeight="medium"
                                     justifyContent="flex-start"
                                 >

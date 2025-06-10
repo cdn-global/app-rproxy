@@ -420,12 +420,12 @@ function UserAgentsPage() {
             <Text fontSize="lg" color="gray.600">A dynamic list of user agents for web scraping</Text>
         </Flex>
 
-        <Tabs isLazy variant="enclosed-colored" colorScheme="orange" onChange={(index) => setTabIndex(index)}>
+        <Tabs isLazy variant="enclosed-colored" colorScheme="red" onChange={(index) => setTabIndex(index)}>
             <TabList>
                 {[
-                  { label: "All", count: allAgents.length, color: "orange" },
-                  { label: "Desktop", count: desktopAgents.length, color: "orange" },
-                  { label: "Mobile", count: mobileAgents.length, color: "orange" },
+                  { label: "All", count: allAgents.length, color: "red" },
+                  { label: "Desktop", count: desktopAgents.length, color: "red" },
+                  { label: "Mobile", count: mobileAgents.length, color: "red" },
                   { label: "Other", count: otherAgents.length, color: "gray" },
                 ].map((tab, idx) => (
                     <Tab
