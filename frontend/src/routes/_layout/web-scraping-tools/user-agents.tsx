@@ -54,7 +54,7 @@ import { CopyIcon, ChevronDownIcon, EditIcon, DeleteIcon, AddIcon, RepeatIcon } 
 import type { UserPublic } from "../../../client";
 
 // --- API Configuration & Types (No changes) ---
-const API_BASE_URL = "https://api.thedataproxy.com/v2";
+const API_BASE_URL = "https://api.roamingproxy.com/v2";
 
 interface UserAgentPublic {
   id: string;
@@ -436,11 +436,11 @@ function UserAgentsPage() {
                       color="gray.400"
                       _selected={{
                         bg: "gray.50",
-                        color: "orange.600",
+                        color: "red.600",
                         borderColor: "inherit",
                         borderBottomColor: "gray.50",
                         borderTopWidth: "2px",
-                        borderTopColor: "orange.400",
+                        borderTopColor: "red.400",
                         marginTop: "-1px",
                       }}
                     >

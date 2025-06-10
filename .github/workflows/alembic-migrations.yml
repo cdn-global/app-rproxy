@@ -42,13 +42,13 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://${{ inputs.postgres_user || 'postgres' }}:${{ inputs.postgres_password || 'password' }}@postgres:5432/${{ inputs.postgres_db || 'app_db' }}
-      PROJECT_NAME: dev-thedataproxy
+      PROJECT_NAME: dev-roamingproxy
       POSTGRES_SERVER: postgres
       POSTGRES_USER: ${{ inputs.postgres_user || 'postgres' }}
       POSTGRES_DB: ${{ inputs.postgres_db || 'app_db' }}
       FIRST_SUPERUSER: admin
       FIRST_SUPERUSER_PASSWORD: adminpassword
-      PROJECT_NAME_ENV: thedataproxy
+      PROJECT_NAME_ENV: roamingproxy
 
     steps:
       - name: Checkout code

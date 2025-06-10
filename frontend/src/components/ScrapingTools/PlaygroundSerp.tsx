@@ -55,7 +55,7 @@ interface SerpResult {
 }
 
 // CORRECTED: Changed endpoint to match the backend router prefix
-const API_URL = "https://api.thedataproxy.com/v2/proxy/serp";
+const API_URL = "https://api.roamingproxy.com/v2/proxy/serp";
 
 const PlaygroundSerpApi: React.FC = () => {
   const [query, setQuery] = useState<string>("best pizza in new york");
@@ -325,14 +325,14 @@ fetch(url, {
           </Flex>
           {isLoading ? (
             <Flex justify="center" align="center" h="360px">
-              <Spinner size="xl" color="orange.500" />
+              <Spinner size="xl" color="red.500" />
             </Flex>
           ) : (
             <Textarea
               value={response}
               readOnly
               height="360px"
-              bg="orange.50"
+              bg="red.50"
               color="black"
               placeholder="Response will appear here after testing"
               size="sm"

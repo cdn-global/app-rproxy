@@ -38,7 +38,7 @@ export const Route = createFileRoute('/activate')({
 })
 
 async function activateAccount(data: { new_password: string; token: string }) {
-  const baseUrl = 'https://api.thedataproxy.com'
+  const baseUrl = 'https://api.roamingproxy.com'
   if (!baseUrl) {
     console.error("base url is not defined")
     throw new Error("API URL is not configured")
@@ -185,8 +185,12 @@ function ActivateAccount() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-        <Logo />
-
+      <Logo 
+      src="/logo.png" // Path to your logo in the public folder
+      alt="DataProxy Logo"
+      boxSize="45px" // Control the size of the logo easily
+      href="/dashboard" // Link to a different page
+    />
 
           <FormControl id="new_password" isInvalid={!!errors.new_password} width="100%">
             <FormLabel htmlFor="new_password" fontSize={{ base: "sm", md: "md" }}>

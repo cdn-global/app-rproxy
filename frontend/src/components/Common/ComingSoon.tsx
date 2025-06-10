@@ -26,7 +26,7 @@ const ComingSoon: React.FC = () => {
         </Text>
         <Button
           as="a"
-          href="https://thedataproxy.com/pricing"
+          href="https://roamingproxy.com/pricing"
           target="_blank"
           rel="noopener noreferrer"
           colorScheme="blue"
@@ -42,10 +42,10 @@ const ComingSoon: React.FC = () => {
         >
           If you have purchased a subscription, please{' '}
           <Link 
-            href="mailto:support@thedataproxy.com" 
-            color="orange.500" 
+            href="mailto:support@roamingproxy.com" 
+            color="red.500" 
             textDecoration="underline"
-            _hover={{ color: "orange.700" }}
+            _hover={{ color: "red.700" }}
           >
             contact support
           </Link>{' '}

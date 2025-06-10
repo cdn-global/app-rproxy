@@ -109,13 +109,13 @@ jobs:
             echo 'POSTGRES_PORT=5432' >> .env &&
             echo 'POSTGRES_DB=${{ env.POSTGRES_DB }}' >> .env &&
             echo 'POSTGRES_SERVER=db' >> .env &&
-            echo 'PROJECT_NAME=dev-thedataproxy' >> .env &&
+            echo 'PROJECT_NAME=dev-roamingproxy' >> .env &&
             echo 'SECRET_KEY=${{ secrets.SECRET_KEY }}' >> .env &&
             echo 'FIRST_SUPERUSER=${{ secrets.FIRST_SUPERUSER }}' >> .env &&
             echo 'FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }}' >> .env &&
             echo 'STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}' >> .env &&
             echo 'DOMAIN=${{ secrets.DOMAIN }}' >> .env &&
-            echo 'STACK_NAME=dev-thedataproxy' >> .env &&
+            echo 'STACK_NAME=dev-roamingproxy' >> .env &&
             echo 'DOCKER_IMAGE_BACKEND=${{ secrets.DOCKER_IMAGE_BACKEND }}' >> .env &&
             echo 'DOCKER_IMAGE_FRONTEND=${{ secrets.DOCKER_IMAGE_FRONTEND }}' >> .env &&
             echo 'FRONTEND_HOST=${{ secrets.FRONTEND_HOST }}' >> .env &&

@@ -111,14 +111,14 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }) => {
               onClick={onClose}
               borderRadius="md"
               p={3}
-              _hover={{ bg: "orange.50" }}
+              _hover={{ bg: "red.50" }}
                // MODIFIED: Removed background from activeProps style
                activeProps={{
                  style: { color: activeTextColor },
                }}
             >
               <Flex align="flex-start" w="100%">
-                <Icon as={subItem.icon} boxSize={6} color="orange.500" mt={1} mr={4} />
+                <Icon as={subItem.icon} boxSize={6} color="red.500" mt={1} mr={4} />
                 <VStack align="flex-start" spacing={0}>
                   <Text fontWeight="600" color="gray.800">{subItem.title}</Text>
                   <Text fontSize="sm" color="gray.500" whiteSpace="normal">{subItem.description}</Text>
@@ -137,10 +137,10 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const queryClient = useQueryClient();
   const textColor = "gray.800";
   const disabledColor = "gray.300";
-  const hoverColor = "orange.600";
+  const hoverColor = "red.600";
   // MODIFIED: bgActive is no longer needed as we only change text color
-  // const bgActive = "orange.100";
-  const activeTextColor = "orange.800";
+  // const bgActive = "red.100";
+  const activeTextColor = "red.800";
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
 
   const finalNavStructure = [...navStructure];
@@ -280,10 +280,10 @@ const TopNav = () => {
   const { logout } = useAuth();
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
   const textColor = "gray.800";
-  const hoverColor = "orange.600";
+  const hoverColor = "red.600";
   // MODIFIED: bgActive is no longer needed
-  // const bgActive = "orange.100";
-  const activeTextColor = "orange.800";
+  // const bgActive = "red.100";
+  const activeTextColor = "red.800";
 
   const handleLogout = async () => {
     logout();
@@ -304,14 +304,19 @@ const TopNav = () => {
       borderBottomColor="gray.300"
     >
       <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-        <Logo />
+ <Logo 
+      src="/logo.png" // Path to your logo in the public folder
+      alt="DataProxy Logo"
+      boxSize="45px" // Control the size of the logo easily
+      href="/dashboard" // Link to a different page
+    />
 
         <IconButton
           onClick={isOpen ? onClose : onOpen}
           display={{ base: "flex", md: "none" }}
           aria-label="Open Menu"
           fontSize="20px"
-          color="orange.600"
+          color="red.600"
           icon={<FiMenu />}
           variant="ghost"
         />

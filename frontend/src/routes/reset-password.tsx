@@ -149,8 +149,12 @@ function ResetPassword() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-                 <Logo />
-
+             <Logo 
+      src="/logo.png" // Path to your logo in the public folder
+      alt="DataProxy Logo"
+      boxSize="45px" // Control the size of the logo easily
+      href="/dashboard" // Link to a different page
+    />
 
 
           <FormControl id="new_password" isInvalid={!!errors.new_password} width="100%">

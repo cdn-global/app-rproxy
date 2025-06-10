@@ -10,8 +10,8 @@ import {
   
   const Footer = () => {
     const textColor = "gray.800";
-    const accentColor = "orange.400"
-    const hoverColor = "orange.600";
+    const accentColor = "red.400"
+    const hoverColor = "red.600";
   
     return (
       <Box bg="white" py={3} px={4} boxShadow="sm" w="100%">
@@ -28,7 +28,7 @@ import {
           {/* Company Info */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
           <Link
-      href="https://thedataproxy.com" 
+      href="https://roamingproxy.com" 
       isExternal
       color={textColor}
       _hover={{ color: accentColor }}
@@ -57,12 +57,12 @@ import {
             <Flex align="center" gap={1}>
               <Icon as={FiMail} color={textColor} boxSize="0.9em" />
               <Link
-                href="mailto:info@thedataproxy.com"
+                href="mailto:info@roamingproxy.com"
                 color={textColor}
                 fontSize="xs"
                 _hover={{ color: hoverColor }}
               >
-                info@thedataproxy.com
+                info@roamingproxy.com
               </Link>
             </Flex>
           </VStack>
@@ -99,7 +99,7 @@ import {
           {/* Support Links */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Link
-              href="https://thedataproxy.com/resources/faq"
+              href="https://roamingproxy.com/resources/faq"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -108,7 +108,7 @@ import {
               FAQ
             </Link>
             <Link
-              href="https://thedataproxy.com/contact"
+              href="https://roamingproxy.com/contact"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -122,7 +122,7 @@ import {
           {/* Legal Links */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Link
-              href="https://thedataproxy.com/privacy"
+              href="https://roamingproxy.com/privacy"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -131,7 +131,7 @@ import {
               Privacy Policy
             </Link>
             <Link
-              href="https://thedataproxy.com/terms"
+              href="https://roamingproxy.com/terms"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -144,7 +144,7 @@ import {
           {/* Additional Legal Links */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Link
-              href="https://thedataproxy.com/cookie"
+              href="https://roamingproxy.com/cookie"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -153,7 +153,7 @@ import {
               Cookie Policy
             </Link>
             <Link
-              href=" https://thedataproxy.com/compliance"
+              href=" https://roamingproxy.com/compliance"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -173,7 +173,7 @@ import {
       >
         © 2025{" "}
         <Link
-          href="https://thedataproxy.com"
+          href="https://roamingproxy.com"
           isExternal
           color={textColor}
           _hover={{ color: accentColor }}

@@ -123,9 +123,12 @@ function SignUp() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-           <Logo />
-
-
+         <Logo 
+      src="/logo.png" // Path to your logo in the public folder
+      alt="DataProxy Logo"
+      boxSize="45px" // Control the size of the logo easily
+      href="/dashboard" // Link to a different page
+    />
 
           <FormControl id="full_name" isInvalid={!!errors.full_name} width="100%">
             <FormLabel htmlFor="full_name" srOnly>
@@ -210,7 +213,7 @@ function SignUp() {
             <Link 
               as={RouterLink} 
               to="/login" 
-              color="orange.500"
+              color="red.500"
             >
               Log In
             </Link>

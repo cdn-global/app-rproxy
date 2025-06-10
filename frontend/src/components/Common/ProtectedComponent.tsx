@@ -15,7 +15,7 @@ async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {
   try {
     const token = localStorage.getItem("access_token");
     const response = await fetch(
-      "https://api.thedataproxy.com/v2/subscription-status",
+      "https://api.roamingproxy.com/v2/subscription-status",
       {
         method: "GET",
         headers: {

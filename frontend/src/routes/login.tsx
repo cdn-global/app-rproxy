@@ -137,7 +137,12 @@ function Login() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-          <Logo />
+         <Logo 
+      src="/logo.png" // Path to your logo in the public folder
+      alt="DataProxy Logo"
+      boxSize="45px" // Control the size of the logo easily
+      href="/dashboard" // Link to a different page
+    />
 
           <FormControl id="username" isInvalid={!!errors.username || !!error} width="100%">
             <Input
@@ -184,7 +189,7 @@ function Login() {
           <Link 
             as={RouterLink} 
             to="/recover-password" 
-            color="orange.500"
+            color="red.500"
             fontSize={{ base: "sm", md: "md" }}
           >
             Forgot password?
@@ -205,7 +210,7 @@ function Login() {
             <Link 
               as={RouterLink} 
               to="/signup" 
-              color="orange.500"
+              color="red.500"
             >
               Sign up
             </Link>

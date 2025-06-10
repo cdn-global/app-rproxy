@@ -43,7 +43,7 @@ def generate_activation_email(email_to: str, token: str, username: str = None) -
     logger.debug(f"Generating activation email for: {email_to}")
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Activate Your Account"
-    link = f"https://cloud.thedataproxy.com/activate?token={token}"
+    link = f"https://cloud.roamingproxy.com/activate?token={token}"
     valid_hours = settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS
 
     # Set up Jinja2 environment

@@ -201,7 +201,7 @@ const REGIONS = [
   "us-east", "us-west", "us-central", "northamerica-northeast",
   "southamerica", "asia", "australia", "europe", "middle-east",
 ];
-const API_URL = "https://api.thedataproxy.com/v2/proxy";
+const API_URL = "https://api.roamingproxy.com/v2/proxy";
 
 const PlaygroundGSerp: React.FC = () => {
   // --- State ---
@@ -347,18 +347,18 @@ const PlaygroundGSerp: React.FC = () => {
               icon={<CopyIcon />}
               size="sm"
               variant="ghost"
-              color="orange.400"
+              color="red.400"
               position="absolute"
               top="0.6rem" 
               right="0.5rem"
               zIndex={1}
-              _hover={{ bg: "whiteAlpha.200", color: "orange.300" }}
+              _hover={{ bg: "whiteAlpha.200", color: "red.300" }}
               onClick={() => handleCopy(codeTabs[activeTabIndex].code, `${codeTabs[activeTabIndex].label} Code`)}
             />
           </Tooltip>
           <Tabs variant="enclosed" colorScheme="orange" onChange={(index) => setActiveTabIndex(index)}>
             <TabList>
-              {codeTabs.map((tab) => (<Tab key={tab.id} fontWeight="semibold" fontSize="md" color="gray.400" _selected={{ bg: "gray.800", color: "orange.400" }}>{tab.label}</Tab>))}
+              {codeTabs.map((tab) => (<Tab key={tab.id} fontWeight="semibold" fontSize="md" color="gray.400" _selected={{ bg: "gray.800", color: "red.400" }}>{tab.label}</Tab>))}
             </TabList>
             <TabPanels bg="gray.800" borderRadius="0 0 md md">
               {codeTabs.map((tab) => (<TabPanel key={tab.id} p={0}><CodeBlock code={tab.code} language={tab.language} maxHeight="none" /></TabPanel>))}
@@ -369,9 +369,9 @@ const PlaygroundGSerp: React.FC = () => {
         
       {/* Need Help Section */}
       <Box pt={8} mt={8} borderTopWidth="1px" borderColor="gray.200">
-        <Box p={4} borderWidth="1px" borderRadius="md" bg="orange.50" borderColor="orange.200">
+        <Box p={4} borderWidth="1px" borderRadius="md" bg="red.50" borderColor="red.200">
           <Heading size="md" mb={2} color="gray.800">Need Help?</Heading>
-          <Text fontSize="md" color="gray.700">Check our detailed{" "}<Link color="orange.600" fontWeight="bold" href="/documentation/serp-api" isExternal>API Documentation</Link>{" "}for more examples. For further assistance, contact our{" "}<Link color="orange.600" fontWeight="bold" href="/support" isExternal>Support Center</Link>.</Text>
+          <Text fontSize="md" color="gray.700">Check our detailed{" "}<Link color="red.600" fontWeight="bold" href="/documentation/serp-api" isExternal>API Documentation</Link>{" "}for more examples. For further assistance, contact our{" "}<Link color="red.600" fontWeight="bold" href="/support" isExternal>Support Center</Link>.</Text>
         </Box>
       </Box>
       

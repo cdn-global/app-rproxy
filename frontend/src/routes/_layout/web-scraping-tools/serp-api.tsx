@@ -83,7 +83,7 @@ interface ApiKey {
   request_count: number;
 }
 
-const API_URL = "https://api.thedataproxy.com/v2";
+const API_URL = "https://api.roamingproxy.com/v2";
 
 // --- API Fetching Functions ---
 
@@ -177,7 +177,7 @@ const CodeBlock = ({ code, language, bg = "gray.800", ...rest }: { code: string;
 };
 
 // --- Constants ---
-const API_ENDPOINT = "https://api.thedataproxy.com/v2/serp?q=best%20pizza%20in%20new%20york&engine=google®ion=us-east";
+const API_ENDPOINT = "https://api.roamingproxy.com/v2/serp?q=best%20pizza%20in%20new%20york&engine=google®ion=us-east";
 
 const CODE_EXAMPLES = {
   curl: `curl -X GET "${API_ENDPOINT}" \\
@@ -185,7 +185,7 @@ const CODE_EXAMPLES = {
   python: `import requests
 
 api_key = "YOUR_API_KEY"
-url = "https://api.thedataproxy.com/v2/serp"
+url = "https://api.roamingproxy.com/v2/serp"
 
 params = {
     "q": "best pizza in new york",
@@ -207,7 +207,7 @@ else:
 import fetch from 'node-fetch';
 
 const apiKey = 'YOUR_API_KEY';
-const url = new URL('https://api.thedataproxy.com/v2/serp');
+const url = new URL('https://api.roamingproxy.com/v2/serp');
 
 const params = {
     q: 'best pizza in new york',
@@ -261,7 +261,7 @@ const GetStartedTab = () => {
               fontWeight="semibold"
               fontSize="lg"
               color="gray.400"
-              _selected={{ bg: "gray.800", color: "orange.400", borderColor: "inherit", borderBottomColor: "gray.800" }}
+              _selected={{ bg: "gray.800", color: "red.400", borderColor: "inherit", borderBottomColor: "gray.800" }}
             >
               {tab.label}
             </Tab>
@@ -277,15 +277,15 @@ const GetStartedTab = () => {
       </Tabs>
 
       <Box pt={8}>
-        <Box p={4} borderWidth="1px" borderRadius="md" bg="orange.50" borderColor="orange.200">
+        <Box p={4} borderWidth="1px" borderRadius="md" bg="red.50" borderColor="red.200">
             <Heading size="md" mb={2} color="gray.800">Need Help?</Heading>
             <Text fontSize="md" color="gray.700">
               Check our detailed{" "}
-              <Link color="orange.600" fontWeight="bold" href="/documentation/serp-api" isExternal>
+              <Link color="red.600" fontWeight="bold" href="/documentation/serp-api" isExternal>
                 API Documentation
               </Link>{" "}
               for more examples. For further assistance, contact our{" "}
-              <Link color="orange.600" fontWeight="bold" href="/support" isExternal>
+              <Link color="red.600" fontWeight="bold" href="/support" isExternal>
                 Support Center
               </Link>.
             </Text>
@@ -369,11 +369,11 @@ const SerpApiPage = () => {
                     color="gray.400"
                     _selected={{
                       bg: "gray.50",
-                      color: "orange.600",
+                      color: "red.600",
                       borderColor: "inherit",
                       borderBottomColor: "gray.50", 
                       borderTopWidth: "2px", 
-                      borderTopColor: "orange.400", 
+                      borderTopColor: "red.400", 
                       marginTop: "-1px", 
                     }}
                   >

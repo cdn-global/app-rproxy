@@ -1,37 +1,44 @@
 import React from 'react';
-import { Link, LinkProps, HStack } from '@chakra-ui/react';
-import { Layers } from 'react-feather';
+// Import the Image component from Chakra UI
+import { Link, LinkProps, Image } from '@chakra-ui/react';
 
-// Props interface remains the same, which is great.
-interface LogoProps extends LinkProps {}
+// The props interface is updated to include `src` for the image
+// and an optional `alt` tag for accessibility.
+interface LogoProps extends LinkProps {
+  src: string;
+  alt?: string;
+}
 
-// By destructuring, we make it explicit that `href` is a prop we are aware of.
-// We provide a default value of "/" for it.
-// All other props are collected into the `...rest` object.
-const Logo: React.FC<LogoProps> = ({ href = "/", ...rest }) => {
+// We destructure the new props `src` and `alt` along with the existing ones.
+// `alt` has a default value for good practice.
+const Logo: React.FC<LogoProps> = ({ 
+  href = "/", 
+  src, 
+  alt = "Company Logo", 
+  ...rest 
+}) => {
   return (
     <Link
-      // We now explicitly use the `href` variable.
+      // The href prop works the same as before.
       href={href}
       // --- Style Props ---
-      color="orange.400"
-      fontWeight="bold"
-      fontSize="2xl"
-      transition="color 0.2s ease-in-out"
+      // A subtle opacity change on hover is a nice effect for image links.
+      transition="opacity 0.2s ease-in-out"
       _hover={{
-        textDecoration: 'none',
-        color: 'orange.200',
+        opacity: 0.8,
       }}
-      // Spread the rest of the props. This is cleaner because we know
-      // `href` is not in this object, avoiding any potential confusion.
+      // Spread the rest of the props onto the Link wrapper.
+      // This is powerful, as you can now pass props like `boxSize`, `m`, etc.
+      // e.g., <Logo src="..." boxSize="40px" />
       {...rest}
     >
-      <HStack spacing={1} align="center">
-        <Layers size={28} strokeWidth={2.5} />
-        <span>
-          DATAPROXY
-        </span>
-      </HStack>
+      <Image
+        src={src}
+        alt={alt}
+        // 'contain' ensures the logo image scales correctly without being
+        // stretched or cropped, preserving its aspect ratio.
+        objectFit="contain"
+      />
     </Link>
   );
 };

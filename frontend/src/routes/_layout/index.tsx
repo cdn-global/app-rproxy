@@ -24,21 +24,21 @@ interface ApiKey {
 async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No access token found. Please log in again.");
-  const response = await fetch("https://api.thedataproxy.com/v2/customer/subscriptions", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } });
+  const response = await fetch("https://api.roamingproxy.com/v2/customer/subscriptions", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } });
   if (!response.ok) { const errorData = await response.json().catch(() => ({})); throw new Error(errorData.detail || `Failed to fetch subscriptions: ${response.status}`); }
   const data = await response.json();
   // FIX: Ensure the API response is actually an array before returning
   return Array.isArray(data) ? data : [];
 }
 async function fetchBillingPortal(token: string): Promise<string> {
-  const response = await fetch("https://api.thedataproxy.com/v2/customer-portal", { headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` } });
+  const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", { headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` } });
   if (!response.ok) throw new Error(`Failed to fetch portal: ${response.status}`);
   const data = await response.json();
   if (!data.portal_url) throw new Error("No portal URL received from server.");
   return data.portal_url;
 }
 async function fetchApiKeys(token: string): Promise<ApiKey[]> {
-  const response = await fetch("https://api.thedataproxy.com/v2/proxy/api-keys", { headers: { Accept: "application/json", Authorization: `Bearer ${token}` } });
+  const response = await fetch("https://api.roamingproxy.com/v2/proxy/api-keys", { headers: { Accept: "application/json", Authorization: `Bearer ${token}` } });
   if (!response.ok) { if (response.status === 403 || response.status === 404) return []; throw new Error(`Failed to fetch API keys: ${response.status}`); }
   const data = await response.json();
   // FIX: Ensure the API response is actually an array before returning
@@ -134,7 +134,7 @@ const HomePage = () => {
                     const details = featureDetails[featureSlug];
                     if (!details) return null;
                     return (
-                      <GridItem key={featureSlug}><Link as={RouterLink} to={details.path} _hover={{ textDecoration: 'none' }}><Box p={5} shadow="md" borderWidth="1px" borderRadius="lg" height="100%" display="flex" flexDirection="column" transition="all 0.2s ease-in-out" _hover={{ shadow: 'xl', transform: 'translateY(-4px)' }}><Box flex="1"><Flex justifyContent="space-between" alignItems="flex-start" mb={3}><Heading size="sm" pr={4}>{details.name}</Heading><Icon as={details.icon} boxSize={8} color="orange.400" /></Flex><Text fontSize="sm" color="gray.600" minHeight={{ base: "auto", md: "60px" }}>{details.description}</Text></Box><Text mt={4} color="orange.500" fontWeight="bold" fontSize="sm" alignSelf="flex-start">Go to Service →</Text></Box></Link></GridItem>
+                      <GridItem key={featureSlug}><Link as={RouterLink} to={details.path} _hover={{ textDecoration: 'none' }}><Box p={5} shadow="md" borderWidth="1px" borderRadius="lg" height="100%" display="flex" flexDirection="column" transition="all 0.2s ease-in-out" _hover={{ shadow: 'xl', transform: 'translateY(-4px)' }}><Box flex="1"><Flex justifyContent="space-between" alignItems="flex-start" mb={3}><Heading size="sm" pr={4}>{details.name}</Heading><Icon as={details.icon} boxSize={8} color="red.400" /></Flex><Text fontSize="sm" color="gray.600" minHeight={{ base: "auto", md: "60px" }}>{details.description}</Text></Box><Text mt={4} color="red.500" fontWeight="bold" fontSize="sm" alignSelf="flex-start">Go to Service →</Text></Box></Link></GridItem>
                     );
                   })}
                   <GridItem>
@@ -145,7 +145,7 @@ const HomePage = () => {
                                 <Icon as={FaTools} boxSize={8} color="gray.400" />
                             </Flex>
                             <VStack align="start" spacing={3} mt={5}>
-                                <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="orange.500" fontWeight="medium">
+                                <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
                                     <Icon as={FaKey} mr={2} /> Manage API Keys
                                 </Link>
                                 <Button 
@@ -159,7 +159,7 @@ const HomePage = () => {
                                 >
                                   Billing Portal
                                 </Button>
-                                <Link href="https://docs.thedataproxy.com" isExternal display="flex" alignItems="center" color="orange.500" fontWeight="medium">
+                                <Link href="https://docs.roamingproxy.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
                                     <Icon as={FaBook} mr={2} /> Documentation
                                 </Link>
                             </VStack>

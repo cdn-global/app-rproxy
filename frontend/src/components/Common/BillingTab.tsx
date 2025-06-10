@@ -13,7 +13,7 @@ import {
 
 // --- Helper function for Billing ---
 const fetchBillingPortal = async (token: string) => {
-  const response = await fetch("https://api.thedataproxy.com/v2/customer-portal", {
+  const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

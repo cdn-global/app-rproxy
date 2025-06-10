@@ -85,11 +85,11 @@ function UserSettings() {
               color="gray.400"
               _selected={{
                 bg: "gray.50",
-                color: "orange.600",
+                color: "red.600",
                 borderColor: "inherit",
                 borderBottomColor: "gray.50",
                 borderTopWidth: "2px",
-                borderTopColor: "orange.400",
+                borderTopColor: "red.400",
                 marginTop: "-1px",
               }}
             >

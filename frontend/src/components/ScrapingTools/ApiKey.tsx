@@ -42,7 +42,7 @@ interface ApiKeyProps {
   token: string | null;
 }
 
-const API_URL = "https://api.thedataproxy.com/v2/proxy";
+const API_URL = "https://api.roamingproxy.com/v2/proxy";
 
 // --- START: New helper function to truncate the key display ---
 /**
@@ -122,7 +122,7 @@ const ApiKeyModule: React.FC<ApiKeyProps> = ({ token }) => {
   const fetchProxyApiAccess = async () => {
     if (!token) return;
     try {
-      const response = await fetch("https://api.thedataproxy.com/v2/proxy-api/access", {
+      const response = await fetch("https://api.roamingproxy.com/v2/proxy-api/access", {
         headers: { "Authorization": `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Failed to fetch subscription status.");
