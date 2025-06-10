@@ -124,7 +124,7 @@ function SignUp() {
           width={{ base: "100%", md: "auto" }}
         >
          <Logo 
-      src="public/assets/images/roaming-proxy-network-logo.png"
+      src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
       boxSize="220px"
       href="/"
