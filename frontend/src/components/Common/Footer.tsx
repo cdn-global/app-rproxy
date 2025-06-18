@@ -51,7 +51,7 @@ import {
             <Flex align="center" gap={1}>
               <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
               <Text color={textColor} fontSize="xs">
-                +1 (855) 440-2242
+                +1 (917) 275-7922‬
               </Text>
             </Flex>
             <Flex align="center" gap={1}>
