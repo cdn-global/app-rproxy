@@ -51,6 +51,7 @@ const navStructure: NavItem[] = [ {
         title: 'Roaming IP',
         path: '/web-scraping-tools/https-api',
         description: 'Access any webpage with our powerful rotating proxy network.',
+        icon:FaGlobe,
       },
       {
         title: 'Managed VPS',
