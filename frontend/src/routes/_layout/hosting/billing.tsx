@@ -305,7 +305,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
       paymentDate: "August 15, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Plus Plan",
+      description: "HTTPs Request API - Plus Tier",
     },
     {
       month: months[7], // July 2025
@@ -313,7 +313,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
       paymentDate: "July 15, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Plus Plan",
+      description: "HTTPs Request API - Plus Tier",
     },
     {
       month: months[6], // June 2025
@@ -321,7 +321,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
       paymentDate: "June 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Plus Plan",
+      description: "HTTPs Request API - Plus Tier",
     },
     {
       month: months[5], // May 2025
@@ -329,7 +329,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
       paymentDate: "May 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Plus Plan",
+      description: "HTTPs Request API - Plus Tier",
     },
     {
       month: months[4], // April 2025
@@ -337,7 +337,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
       paymentDate: "April 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Plus Plan",
+      description: "HTTPs Request API - Plus Tier",
     },
     {
       month: months[3], // March 2025
@@ -433,7 +433,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZq",
       paymentDate: "December 3, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "Extended Support RoamingProxy",
+      description: "Extended Support Proxy Cloud",
     },
     {
       month: months[0], // December 2024
