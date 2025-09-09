@@ -154,7 +154,7 @@ const HomePage = () => {
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
-                    <Heading size="sm">Web Scraping API Usage</Heading>
+                    <Heading size="sm">HTTPs API Usage</Heading>
                     <Text fontSize="xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
                     <Text fontSize="xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
                   </VStack>
