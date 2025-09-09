@@ -54,6 +54,164 @@ interface ApiKey {
   request_count?: number;
 }
 
+interface Server {
+  name: string;
+  email: string;
+  ip: string;
+  version: string;
+  kernel: string;
+  status: string;
+  type: string;
+  os: string;
+  username: string;
+  password: string;
+  monthlyComputePrice: number;
+  storageSizeGB: number;
+  activeSince: string;
+  hasRotatingIP: boolean;
+  hasBackup: boolean;
+  hasMonitoring: boolean;
+  hasManagedSupport?: boolean;
+  vCPUs?: number;
+  ramGB: number;
+  refIndex?: number;
+}
+
+const servers: Server[] = [
+  {
+    name: 'e-coast-nyc-lower-4core-ssd',
+    email: 'apis.popov@gmail.com',
+    ip: '100.100.95.59',
+    version: '1.82.0',
+    kernel: 'Linux 6.8.0-57-generic',
+    status: 'Connected',
+    type: 'VPS',
+    os: 'ubuntu',
+    username: 'user',
+    password: '5660',
+    monthlyComputePrice: 43.6,
+    storageSizeGB: 120,
+    activeSince: '2025-07-01',
+    hasRotatingIP: false,
+    hasBackup: true,
+    hasMonitoring: true,
+    ramGB: 4,
+    vCPUs: 4,
+    hasManagedSupport: false,
+    refIndex: 1,
+  },
+  {
+    name: 'e-coast-nyc-midtown-8core-ssd',
+    email: 'apis.popov@gmail.com',
+    ip: '100.114.242.51',
+    version: '1.86.2',
+    kernel: 'Linux 6.8.0-57-generic',
+    status: 'Connected',
+    type: 'VPS',
+    os: 'ubuntu',
+    username: 'user',
+    password: '5660',
+    monthlyComputePrice: 87.6,
+    storageSizeGB: 240,
+    activeSince: '2025-07-01',
+    hasRotatingIP: true,
+    hasBackup: false,
+    hasMonitoring: false,
+    ramGB: 16,
+    vCPUs: 8,
+    hasManagedSupport: false,
+    refIndex: 2,
+  },
+  {
+    name: 'e-coast-nyc-bk-8core-ssd',
+    email: 'apis.popov@gmail.com',
+    ip: '100.91.158.116',
+    version: '1.82.5',
+    kernel: 'Linux 6.8.0-59-generic',
+    status: 'Connected',
+    type: 'VPS',
+    os: 'ubuntu',
+    username: 'user',
+    password: '5660',
+    monthlyComputePrice: 100.6,
+    storageSizeGB: 240,
+    activeSince: '2025-08-01',
+    hasRotatingIP: true,
+    hasBackup: true,
+    hasMonitoring: true,
+    ramGB: 16,
+    vCPUs: 8,
+    hasManagedSupport: false,
+    refIndex: 3,
+  },
+  {
+    name: 'e-coast-nyc-lower-4core-hdd',
+    email: 'apis.popov@gmail.com',
+    ip: '100.100.106.3',
+    version: '1.80.2',
+    kernel: 'Linux 6.8.0-55-generic',
+    status: 'Connected',
+    type: 'VPS',
+    os: 'ubuntu',
+    username: 'user',
+    password: '5660',
+    monthlyComputePrice: 60.6,
+    storageSizeGB: 120,
+    activeSince: '2025-09-01',
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    ramGB: 4,
+    vCPUs: 4,
+    hasManagedSupport: false,
+    refIndex: 4,
+  },
+  {
+    name: 'e-coast-nyc-midtown-16core-ssd',
+    email: 'apis.popov@gmail.com',
+    ip: '100.120.30.40',
+    version: '1.85.0',
+    kernel: 'Linux 6.8.0-60-generic',
+    status: 'Connected',
+    type: 'VPS',
+    os: 'ubuntu',
+    username: 'user',
+    password: '5660',
+    monthlyComputePrice: 136.6,
+    storageSizeGB: 500,
+    activeSince: '2025-08-01',
+    hasRotatingIP: true,
+    hasBackup: true,
+    hasMonitoring: true,
+    ramGB: 64,
+    vCPUs: 16,
+    hasManagedSupport: false,
+    refIndex: 5,
+  },
+  {
+    name: 'e-coast-nyc-bk-2core-ssd',
+    email: 'apis.popov@gmail.com',
+    ip: '100.130.40.50',
+    version: '1.87.0',
+    kernel: 'Linux 6.8.0-61-generic',
+    status: 'Connected',
+    type: 'VPS',
+    os: 'ubuntu',
+    username: 'user',
+    password: '5660',
+    monthlyComputePrice: 63.6,
+    storageSizeGB: 200,
+    activeSince: '2025-09-01',
+    hasRotatingIP: true,
+    hasBackup: false,
+    hasMonitoring: false,
+    ramGB: 8,
+    vCPUs: 2,
+    hasManagedSupport: false,
+    refIndex: 6,
+  },
+];
+
 async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No access token found. Please log in again.");
@@ -111,6 +269,10 @@ const HomePage = () => {
     [apiKeys]
   );
   const totalDataGB = (totalRequests * 0.0005).toFixed(2);
+  
+  const totalVCPUs = useMemo(() => servers.reduce((sum, s) => sum + (s.vCPUs || 0), 0), []);
+  const totalRAM = useMemo(() => servers.reduce((sum, s) => sum + s.ramGB, 0), []);
+  const totalStorage = useMemo(() => servers.reduce((sum, s) => sum + s.storageSizeGB, 0), []);
   
   const displayedFeatures = useMemo(() => {
     const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
