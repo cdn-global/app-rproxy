@@ -172,14 +172,6 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
     finalNavStructure.push({ title: 'Admin', icon: FiUsers, path: '/admin' });
   }
 
-  if (currentUser) {
-    finalNavStructure.push({
-      title: 'Settings',
-      icon: FiSettings,
-      path: '/settings',
-    });
-  }
-
   finalNavStructure.push({
     title: 'Sign Out',
     icon: FiLogOut,
