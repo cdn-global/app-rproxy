@@ -384,7 +384,7 @@ const TopNav = () => {
 
   return (
     <Box
-      bg="gray.50"
+      bg={colorMode === 'light' ? 'gray.50' : 'gray.800'}
       px={4}
       py={2}
       position="sticky"
@@ -393,51 +393,35 @@ const TopNav = () => {
       boxShadow="sm"
       w="100%"
       borderBottomWidth="1px"
-      borderBottomColor="gray.300"
+      borderBottomColor={colorMode === 'light' ? 'gray.300' : 'gray.600'}
     >
       <Flex align="center" maxW="1200px" mx="auto" w="100%" justify="space-between">
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
-          boxSize="220px"
-          href="#"
+          href="/"
         />
         <Flex align="center" gap={4}>
-          <Box display={{ base: "none", md: "block" }}>
+          <Box display={{ base: 'none', md: 'block' }}>
             <NavItems />
           </Box>
           <IconButton
-            ref={btnRef}
-            onClick={isOpen ? onClose : onOpen}
-            display={{ base: "flex", md: "none" }}
-            aria-label="Toggle Menu"
-            fontSize="20px"
-            color="orange.600"
-            icon={<FiMenu />}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            display={{ base: 'block', md: 'none' }}
+            onClick={toggleMenu}
             variant="ghost"
+            size="lg"
           />
         </Flex>
       </Flex>
-
-      <Box
-        display={{ base: isOpen ? "block" : "none", md: "none" }}
-        position="absolute"
-        top="100%"
-        left={0}
-        right={0}
-        bg="white"
-        boxShadow="md"
-        p={4}
-        maxH="80vh"
-        overflowY="auto"
-        transition="all 0.3s"
-      >
-        <Flex flexDir="column" gap={4}>
-          <NavItems onClose={onClose} isMobile={true} />
-        </Flex>
-      </Box>
+      <Collapse in={isOpen} animateOpacity>
+        <Box display={{ base: 'block', md: 'none' }} mt={4}>
+          <NavItems />
+        </Box>
+      </Collapse>
     </Box>
   );
 };
 
-export default TopNav;
+export default Navbar;
