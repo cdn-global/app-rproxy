@@ -14,7 +14,7 @@ const Footer = () => {
     const hoverColor = "red.600";
 
     return (
-        <Box bg="white" py={3} px={4} boxShadow="sm" w="100%">
+        <Box bg="#c00d0f" py={3} px={4} boxShadow="sm" w="100%">
             <Flex
                 maxW="1200px"
                 mx="auto"
