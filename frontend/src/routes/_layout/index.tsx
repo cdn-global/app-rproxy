@@ -464,7 +464,7 @@ const HomePage = () => {
       </Link>
       <Link
         as={RouterLink}
-        to="/hosting/billing"
+        to="/settings"
         display="flex"
         alignItems="center"
         color="red.500"
