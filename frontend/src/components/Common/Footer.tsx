@@ -184,7 +184,7 @@ import {
           color={textColor}
           _hover={{ color: hoverColor }}
         >
-          Cobalt Data Networks
+          COBALTDATA.net
         </Link>
         ,{" "}
         <Link
