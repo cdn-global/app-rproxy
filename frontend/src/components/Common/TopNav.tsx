@@ -396,7 +396,7 @@ const TopNav = () => {
       borderBottomColor="gray.300"
     >
       <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-        <Logo />
+     <Logo href="/" />
 
         <IconButton
           ref={btnRef}
