@@ -26,6 +26,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { CopyIcon, CheckCircleIcon } from "@chakra-ui/icons";
+
 interface Server {
   name: string;
   email: string;
@@ -177,8 +178,6 @@ const servers: Server[] = [
   },
 ];
 
-
-
 // Reusable CopyCell component
 const CopyCell = ({ textToCopy, label }: { textToCopy: string; label: string }) => {
   const { onCopy } = useClipboard(textToCopy);
@@ -235,12 +234,12 @@ function HostingIndexPage() {
                     <Td>{server.ip}</Td>
                     <Td>{server.username}</Td>
                     <Td>{server.password}</Td>
-                    <Td>{server.os.charAt(0).toUpperCase() + server.os.slice(1)}</Td>
+                    <Td>{server.os ? server.os.charAt(0).toUpperCase() + server.os.slice(1) : "Unknown"}</Td>
                     <Td isNumeric>
                       <HStack spacing={2} justify="flex-end">
                         <CopyCell textToCopy={server.username} label="Username" />
                         <CopyCell textToCopy={server.password} label="Password" />
-                        <Button size="sm" as={Link} to={server.name} colorScheme="red" variant="outline">View Details</Button>
+                        <Button size="sm" as={Link} to={`/hosting/${encodeURIComponent(server.name)}`} colorScheme="red" variant="outline">View Details</Button>
                       </HStack>
                     </Td>
                   </Tr>
@@ -264,15 +263,15 @@ function HostingIndexPage() {
             <List spacing={4}>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
-                <Text as="span" fontWeight="semibold">Rotating IPs:</Text> {servers.filter(s => s.hasRotatingIP).length} servers with rotating IPs for enhanced privacy and geo-targeting.
+                <Text as="span" fontWeight="semibold">Rotating IPs:</Text> {servers.filter(s => s.hasRotatingIP === true).length} servers with rotating IPs for enhanced privacy and geo-targeting.
               </ListItem>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
-                <Text as="span" fontWeight="semibold">Backups:</Text> {servers.filter(s => s.hasBackup).length} servers with automated backups for data protection.
+                <Text as="span" fontWeight="semibold">Backups:</Text> {servers.filter(s => s.hasBackup === true).length} servers with automated backups for data protection.
               </ListItem>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
-                <Text as="span" fontWeight="semibold">Monitoring:</Text> {servers.filter(s => s.hasMonitoring).length} servers with 24/7 monitoring for optimal performance.
+                <Text as="span" fontWeight="semibold">Monitoring:</Text> {servers.filter(s => s.hasMonitoring === true).length} servers with 24/7 monitoring for optimal performance.
               </ListItem>
               <ListItem>
                 <ListIcon as={CheckCircleIcon} color="green.500" />
