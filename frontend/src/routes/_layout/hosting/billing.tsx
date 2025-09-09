@@ -27,11 +27,14 @@ import {
   AccordionIcon,
   Icon,
   useToast,
+  List,
+  ListItem,
+  ListIcon,
 } from "@chakra-ui/react";
-import { FaCreditCard } from "react-icons/fa";
+import { FaCreditCard, CheckCircleIcon } from "react-icons/fa";
 import { useState } from "react";
 
-// Hardcoded servers with pricing
+// Hardcoded servers with pricing (updated to Debian)
 interface Server {
   name: string;
   email: string;
@@ -60,7 +63,7 @@ const servers: Server[] = [
     kernel: "Linux 6.8.0-57-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
     monthlyComputePrice: 15,
@@ -78,7 +81,7 @@ const servers: Server[] = [
     kernel: "Linux 6.8.0-57-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
     monthlyComputePrice: 50,
@@ -96,7 +99,7 @@ const servers: Server[] = [
     kernel: "Linux 6.8.0-59-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
     monthlyComputePrice: 50,
@@ -114,7 +117,7 @@ const servers: Server[] = [
     kernel: "Linux 6.8.0-55-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
     monthlyComputePrice: 45,
@@ -132,7 +135,7 @@ const servers: Server[] = [
     kernel: "Linux 6.8.0-60-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
     monthlyComputePrice: 60,
@@ -150,7 +153,7 @@ const servers: Server[] = [
     kernel: "Linux 6.8.0-61-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
     monthlyComputePrice: 30,
@@ -262,11 +265,11 @@ function PaymentDetailsTab() {
     }
   };
 
-  // Mock data for saved payment method and billing address
+  // Updated to match transaction data
   const hasSavedCard = true;
   const cardLast4 = "3007";
   const cardBrand = "American Express";
-  const cardExp = "12/2026";
+  const cardExp = "11/2027";
   const billingAddress = {
     name: "Nik Popov",
     email: "nik@iconluxurygroup.com",
@@ -322,28 +325,16 @@ function BillingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
+  // Updated history to only include $449 transaction for Sep 9, 2025
   const history = [
     {
-      month: months[0],
-      total: 246.40,
-      invoiceId: "02A67775-0007",
-      paymentDate: "August 22, 2025",
+      month: months[1], // September 2025
+      total: 449.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
+      paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
+      description: "Debian Unlimited Bandwidth VPS with Floating IP",
     },
-    {
-      month: months[0],
-      total: 122.00,
-      invoiceId: "02A67775-0008",
-      paymentDate: "September 5, 2025",
-      paymentMethod: "American Express •••• 3007",
-    },
-    {
-    month: months[1], // September 2025
-    total: 246.30,
-    invoiceId: "02A67775-0009",
-    paymentDate: "September 5, 2025",
-    paymentMethod: "American Express •••• 3007",
-  },
   ];
 
   const allTimeTotal = history.reduce((sum, { total }) => sum + total, 0);
@@ -381,9 +372,9 @@ function BillingPage() {
   };
 
   return (
-    <Container maxW="container.xl" py={10}>
+    <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
-        <Heading size="xl" color="gray.800">VPS Billing Details</Heading>
+        <Heading as="h1" size="xl" color="gray.800">VPS Billing Details</Heading>
         <Text fontSize="lg" color="gray.600">Manage your hosting costs and review billing history</Text>
       </Flex>
 
@@ -394,6 +385,7 @@ function BillingPage() {
           <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Billing History</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Payment Details</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Pricing Details</Tab>
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
@@ -451,6 +443,9 @@ function BillingPage() {
                   </Tfoot>
                 </Table>
               </Box>
+              <Text color="gray.600" fontStyle="italic">
+                Note: The billed transaction for September 2025 ($449.00) reflects a premium Debian Unlimited Bandwidth VPS with Floating IP plan, which may differ from the computed server totals above.
+              </Text>
             </VStack>
           </TabPanel>
           <TabPanel>
@@ -543,16 +538,18 @@ function BillingPage() {
                     <Th color="orange.800">Invoice Number</Th>
                     <Th color="orange.800">Payment Date</Th>
                     <Th color="orange.800">Payment Method</Th>
+                    <Th color="orange.800">Description</Th>
                     <Th color="orange.800"></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {history.map(({ month, total, invoiceId, paymentDate, paymentMethod }) => (
+                  {history.map(({ month, total, invoiceId, paymentDate, paymentMethod, description }) => (
                     <Tr key={invoiceId}>
                       <Td>{month.name}</Td>
                       <Td>{invoiceId}</Td>
                       <Td>{paymentDate}</Td>
                       <Td>{paymentMethod}</Td>
+                      <Td>{description}</Td>
                       <Td>
                         <Flex justify="center" gap={2}>
                           <Button
@@ -587,6 +584,61 @@ function BillingPage() {
           </TabPanel>
           <TabPanel>
             <PaymentDetailsTab />
+          </TabPanel>
+          <TabPanel>
+            <Heading size="md" mb={6} color="gray.700">Pricing Details</Heading>
+            <Box borderWidth="1px" borderRadius="lg" p={6} bg="gray.50" boxShadow="sm">
+              <Text fontSize="lg" mb={4}>
+                <strong>Product:</strong> Debian Unlimited Bandwidth VPS with Floating IP
+              </Text>
+              <List spacing={3}>
+                <ListItem>
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
+                  <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
+                </ListItem>
+                <ListItem>
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
+                  <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
+                </ListItem>
+                <ListItem>
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
+                  <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
+                </ListItem>
+                <ListItem>
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
+                  <strong>Billing for Multiple Devices:</strong>
+                  <List pl={6} spacing={2}>
+                    <ListItem>
+                      Base VPS (1 unit): $399-$449/month. Add $2-5 per additional floating IP for unique device IPs. Example: 10 devices (1 VPS, 10 IPs) = $399 (VPS) + $20 (10 IPs @ $2) = $419/month.
+                    </ListItem>
+                    <ListItem>
+                      Avoid per-device billing unless CPU/RAM is heavily segmented to maintain competitiveness.
+                    </ListItem>
+                    <ListItem>
+                      Reseller tiers: $449 (up to 20 devices), $599 (up to 50 devices) with proportional IP allocations.
+                    </ListItem>
+                  </List>
+                </ListItem>
+                <ListItem>
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
+                  <strong>Invoice Description:</strong>
+                  <List pl={6} spacing={2}>
+                    <ListItem>
+                      <strong>Details:</strong> Debian Unlimited Bandwidth VPS with Floating IP: High-performance managed VPS with 8 vCPUs, 32GB RAM, 1TB SSD, unlimited bandwidth, and 2-5 floating IPs for seamless migrations and geo-flexible hosting.
+                    </ListItem>
+                    <ListItem>
+                      <strong>Invoice Line Items:</strong>
+                      <List pl={6}>
+                        <ListItem>Debian Managed VPS (Unlimited BW): $399</ListItem>
+                        <ListItem>Floating IP (x2): $10 ($5 each)</ListItem>
+                        <ListItem>Managed Support: $40</ListItem>
+                        <ListItem><strong>Total:</strong> $449/month (single transaction)</ListItem>
+                      </List>
+                    </ListItem>
+                  </List>
+                </ListItem>
+              </List>
+            </Box>
           </TabPanel>
         </TabPanels>
       </Tabs>
