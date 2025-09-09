@@ -30,6 +30,9 @@ import {
   List,
   ListItem,
   ListIcon,
+  Alert,
+  AlertIcon,
+  Divider,
 } from "@chakra-ui/react";
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
@@ -170,6 +173,86 @@ const fetchBillingPortal = async (token: string) => {
   return data.portal_url;
 };
 
+// --- BillingTab ---
+const BillingTab = () => {
+  const [token] = useState<string | null>(localStorage.getItem("access_token"));
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
+
+  const handleBillingClick = async () => {
+    if (!token) {
+      toast({
+        title: "Error",
+        description: "Please log in to manage your billing information.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const portalUrl = await fetchBillingPortal(token);
+      window.location.href = portalUrl;
+    } catch (error) {
+      console.error("Error accessing customer portal:", error);
+      toast({
+        title: "Error",
+        description: "Failed to access billing portal. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!token) {
+    return (
+      <Box p={6} width="100%">
+        <Alert status="warning">
+          <AlertIcon />
+          Please log in to manage your billing information.
+        </Alert>
+      </Box>
+    );
+  }
+
+  return (
+    <Box>
+      <VStack spacing={2} align="stretch">
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          justify="space-between"
+          align="center"
+        >
+          <Box>
+            <Text fontSize="lg" mb={2} color="gray.700">
+              Manage your subscriptions, view invoices, and update payment methods.
+            </Text>
+            <Text fontSize="lg" mb={4} color="gray.700">
+              You will be securely redirected to our customer portal.
+            </Text>
+          </Box>
+          <Button
+            colorScheme="blue"
+            onClick={handleBillingClick}
+            isLoading={isLoading}
+            loadingText="Redirecting..."
+            isDisabled={isLoading}
+          >
+            Manage Billing
+          </Button>
+        </Flex>
+        <Divider mb={4} />
+      </VStack>
+    </Box>
+  );
+};
+
+// --- Modified PaymentDetailsTab ---
 function PaymentDetailsTab() {
   const [token] = useState<string | null>(localStorage.getItem("access_token"));
   const [isLoading, setIsLoading] = useState(false);
@@ -231,6 +314,16 @@ function PaymentDetailsTab() {
       ) : (
         <Text color="gray.600">No payment method saved. Add a payment method in Stripe to continue.</Text>
       )}
+      <Button
+        colorScheme="blue"
+        onClick={handleBillingClick}
+        isLoading={isLoading}
+        loadingText="Redirecting..."
+        isDisabled={isLoading}
+        leftIcon={<Icon as={FaCreditCard} />}
+      >
+        Manage Payment Method
+      </Button>
       <Heading size="md" color="gray.700">Billing Address</Heading>
       <Text color="gray.600">Manage your billing address for invoices and payments.</Text>
       <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
@@ -242,15 +335,14 @@ function PaymentDetailsTab() {
         <Text>{billingAddress.phone}</Text>
       </Box>
       <Button
-        variant="link"
+        colorScheme="blue"
         onClick={handleBillingClick}
         isLoading={isLoading}
+        loadingText="Redirecting..."
+        isDisabled={isLoading}
         leftIcon={<Icon as={FaCreditCard} />}
-        colorScheme="orange"
-        fontWeight="medium"
-        justifyContent="flex-start"
       >
-        Billing Portal
+        Manage Billing Address
       </Button>
     </VStack>
   );
@@ -314,7 +406,7 @@ function BillingPage() {
   return (
     <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
-        <Heading as="h1" size="xl" color="gray.800">VPS Billing Details</Heading>
+        <Heading as="h1" size="xl" color="gray.800">VPS Billing</Heading>
         <Text fontSize="lg" color="gray.600">Manage your hosting costs and review billing history</Text>
       </Flex>
 
@@ -325,6 +417,7 @@ function BillingPage() {
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing History</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing</Tab>
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
@@ -399,8 +492,17 @@ function BillingPage() {
                       <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
                     </Flex>
                     <Text fontStyle="italic" color="gray.600">
-                    Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced. It can take 1-3 business days for the updated balance to be reflected.
+                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced. It can take 1-3 business days for the updated balance to be reflected.
                     </Text>
+                    <Button
+                      colorScheme="blue"
+                      onClick={handleBillingClick}
+                      isLoading={isLoading}
+                      loadingText="Redirecting..."
+                      isDisabled={isLoading}
+                    >
+                      Pay Outstanding Balance
+                    </Button>
                   </VStack>
                 </Box>
               )}
@@ -556,23 +658,23 @@ function BillingPage() {
                         <Flex justify="center" gap={2}>
                           <Button
                             size="sm"
-                            variant="link"
+                            colorScheme="blue"
                             onClick={handleBillingClick}
                             isLoading={isLoading}
+                            loadingText="Redirecting..."
+                            isDisabled={isLoading}
                             leftIcon={<Icon as={FaCreditCard} />}
-                            colorScheme="orange"
-                            fontWeight="medium"
                           >
                             View Invoice
                           </Button>
                           <Button
                             size="sm"
-                            variant="link"
+                            colorScheme="blue"
                             onClick={handleBillingClick}
                             isLoading={isLoading}
+                            loadingText="Redirecting..."
+                            isDisabled={isLoading}
                             leftIcon={<Icon as={FaCreditCard} />}
-                            colorScheme="orange"
-                            fontWeight="medium"
                           >
                             View Receipt
                           </Button>
@@ -583,9 +685,24 @@ function BillingPage() {
                 </Tbody>
               </Table>
             </Box>
+            <Box mt={4}>
+              <Button
+                colorScheme="blue"
+                onClick={handleBillingClick}
+                isLoading={isLoading}
+                loadingText="Redirecting..."
+                isDisabled={isLoading}
+                leftIcon={<Icon as={FaCreditCard} />}
+              >
+                Manage Invoices in Stripe
+              </Button>
+            </Box>
           </TabPanel>
           <TabPanel>
             <PaymentDetailsTab />
+          </TabPanel>
+          <TabPanel>
+            <BillingTab />
           </TabPanel>
         </TabPanels>
       </Tabs>
