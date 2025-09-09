@@ -600,7 +600,7 @@ function BillingPage() {
                       <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
                     </Flex>
                     <Text fontStyle="italic" color="gray.600">
-                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced, including the new icon series machines. It can take 1-3 business days for the updated balance to be reflected.
+                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced. It can take 1-3 business days for the updated balance to be reflected.
                     </Text>
                     <Button
                       colorScheme="blue"
