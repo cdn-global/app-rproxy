@@ -12,11 +12,161 @@ import {
   IconButton,
   useToast,
   HStack,
-  Alert,
-  AlertIcon,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
-import { servers } from "../data/servers";
+
+// Hardcoded servers
+
+interface Server {
+  name: string;
+  email: string;
+  ip: string;
+  version: string;
+  kernel: string;
+  status: string;
+  type: string;
+  os: string;
+  username: string;
+  password: string;
+  monthlyComputePrice: number;
+  storageSizeGB: number;
+  activeSince: string; // YYYY-MM-DD
+  hasRotatingIP?: boolean;
+  hasBackup?: boolean;
+  hasMonitoring?: boolean;
+  hasManagedSupport?: boolean;
+  vCPUs?: number;
+  ramGB?: number;
+}
+
+const servers: Server[] = [
+  {
+    name: "e-coast-nyc-lower-8core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.59",
+    version: "1.82.0",
+    kernel: "Linux 6.8.0-57-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 11.40,
+    storageSizeGB: 120,
+    activeSince: "2025-07-01",
+    hasRotatingIP: false,
+    hasBackup: true,
+    hasMonitoring: true,
+    hasManagedSupport: false,
+    vCPUs: 1,
+    ramGB: 2,
+  },
+  {
+    name: "e-coast-nyc-midtown-16core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.140.50.60",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 449,
+    storageSizeGB: 100,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 16,
+    ramGB: 64,
+  },
+  {
+    name: "e-coast-nyc-bk-4core-hdd",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.61",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 40.1,
+    storageSizeGB: 468,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 4,
+    ramGB: 4,
+  },
+  {
+    name: "e-coast-jersey-jersey-4core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.62",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 45.3,
+    storageSizeGB: 110,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 4,
+    ramGB: 16,
+  },
+  {
+    name: "e-coast-nyc-lower-8core-hdd",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.63",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 43.1,
+    storageSizeGB: 932,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 8,
+    ramGB: 4,
+  },
+  {
+    name: "e-coast-nyc-midtown-2core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.64",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 40.1,
+    storageSizeGB: 240,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 2,
+    ramGB: 8,
+  },
+];
 
 function DeviceDetailsPage() {
   const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" });
@@ -36,19 +186,7 @@ function DeviceDetailsPage() {
   if (!server) {
     return (
       <Container maxW="container.xl" py={8}>
-        <Alert status="error">
-          <AlertIcon />
-          <VStack align="stretch" spacing={2}>
-            <Text fontSize="xl">Server not found: {deviceName}</Text>
-            <Text fontSize="sm">
-              The server name may be incorrect. Return to the{" "}
-              <Link to="/hosting" style={{ color: "#3182CE" }}>
-                VPS Dashboard
-              </Link>{" "}
-              to view all servers.
-            </Text>
-          </VStack>
-        </Alert>
+        <Text fontSize="xl" color="red.500">Server not found</Text>
       </Container>
     );
   }
@@ -66,21 +204,26 @@ function DeviceDetailsPage() {
         </HStack>
         <Button
           as={Link}
-          to="/hosting"
+          to=".."
           colorScheme="blue"
           variant="outline"
           size="md"
           _hover={{ bg: "blue.50" }}
         >
-          Back to VPS Dashboard
+          Back to List
         </Button>
       </Flex>
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
-          <Heading size="md" mb={4}>
-            Basic Information
-          </Heading>
+        {/* Basic Information */}
+        <Box
+          bg="white"
+          p={6}
+          borderRadius="lg"
+          boxShadow="sm"
+          borderWidth="1px"
+        >
+          <Heading size="md" mb={4}>Basic Information</Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between" align="center">
               <Text fontWeight="medium">Name:</Text>
@@ -123,10 +266,15 @@ function DeviceDetailsPage() {
           </VStack>
         </Box>
 
-        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
-          <Heading size="md" mb={4}>
-            System Specifications
-          </Heading>
+        {/* System Specifications */}
+        <Box
+          bg="white"
+          p={6}
+          borderRadius="lg"
+          boxShadow="sm"
+          borderWidth="1px"
+        >
+          <Heading size="md" mb={4}>System Specifications</Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between">
               <Text fontWeight="medium">Version:</Text>
@@ -151,10 +299,15 @@ function DeviceDetailsPage() {
           </VStack>
         </Box>
 
-        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
-          <Heading size="md" mb={4}>
-            Credentials
-          </Heading>
+        {/* Credentials */}
+        <Box
+          bg="white"
+          p={6}
+          borderRadius="lg"
+          boxShadow="sm"
+          borderWidth="1px"
+        >
+          <Heading size="md" mb={4}>Credentials</Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between" align="center">
               <Text fontWeight="medium">Username:</Text>
@@ -185,10 +338,15 @@ function DeviceDetailsPage() {
           </VStack>
         </Box>
 
-        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
-          <Heading size="md" mb={4}>
-            Billing & Features
-          </Heading>
+        {/* Billing & Features */}
+        <Box
+          bg="white"
+          p={6}
+          borderRadius="lg"
+          boxShadow="sm"
+          borderWidth="1px"
+        >
+          <Heading size="md" mb={4}>Billing & Features</Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between">
               <Text fontWeight="medium">Monthly Compute Price:</Text>
