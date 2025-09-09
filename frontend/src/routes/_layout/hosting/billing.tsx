@@ -61,7 +61,7 @@ interface Server {
 
 const servers: Server[] = [
   {
-    name: "lowermanhattan-nyc-8core-ssd",
+    name: "lowermanhattan-ecoast-8core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -82,7 +82,7 @@ const servers: Server[] = [
     ramGB: 2,
   },
   {
-    name: "midtown-nyc-16core-ssd",
+    name: "midtown-ecoast-16core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
@@ -103,7 +103,7 @@ const servers: Server[] = [
     ramGB: 64,
   },
   {
-    name: "bk-nyc-4core-hdd",
+    name: "bk-ecoast-4core-hdd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.61",
     version: "1.88.0",
@@ -124,7 +124,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "jersey-nyc-4core-ssd",
+    name: "jersey-ecoast-4core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.62",
     version: "1.88.0",
@@ -145,7 +145,7 @@ const servers: Server[] = [
     ramGB: 16,
   },
   {
-    name: "lowermanhattan-nyc-8core-hdd",
+    name: "lowermanhattan-ecoast-8core-hdd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.63",
     version: "1.88.0",
@@ -166,7 +166,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "midtown-nyc-2core-ssd",
+    name: "midtown-ecoast-2core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.64",
     version: "1.88.0",
@@ -377,7 +377,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9)",
+      description: "Debian Unlimited Bandwidth VPS with Floating IP (riv8-ecoast-mini9)",
     },
     {
       month: months[8],
@@ -703,8 +703,8 @@ function BillingPage() {
                           <Td>
                             <List spacing={1}>
                               {server.hasManagedSupport && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Managed Services (OS updates, security, backups)</ListItem>}
-                              {server.name === "riv8-nyc-mini9" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />DDoS Protection</ListItem>}
-                              {server.name === "riv8-nyc-mini9" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />1-Hour Response Support</ListItem>}
+                              {server.name === "riv8-ecoast-mini9" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />DDoS Protection</ListItem>}
+                              {server.name === "riv8-ecoast-mini9" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />1-Hour Response Support</ListItem>}
                               {server.hasBackup && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Backup</ListItem>}
                               {server.hasMonitoring && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Monitoring</ListItem>}
                             </List>
