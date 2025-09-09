@@ -396,7 +396,12 @@ const TopNav = () => {
       borderBottomColor="gray.300"
     >
       <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-     <Logo href="/" />
+  <Logo 
+  src="/assets/images/roaming-proxy-network-logo.png"
+  alt="Roaming Proxy Logo"
+  boxSize="220px"
+  href="/"
+/>
 
         <IconButton
           ref={btnRef}
