@@ -140,13 +140,6 @@ const Footer = () => {
 
                 {/* Cobalt Data Section */}
                 <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Text
-                        fontWeight="bold"
-                        color={textColor}
-                        fontSize="sm"
-                    >
-                    Social  
-                    </Text>
                     <Flex gap={3}>
                         <Link href="https://x.com/cobaltdata" isExternal>
                             <Icon
