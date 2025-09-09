@@ -66,13 +66,6 @@ function UserSettingsTab({ user }: { user: UserPublic }) {
 // --- Tab Configuration ---
 const tabsConfig = [
   {
-    title: "Credentials",
-    component: () => {
-      const token = localStorage.getItem("access_token");
-      return <ApiKeyModule token={token} />;
-    },
-  },
-  {
     title: "User Settings",
     component: () => {
       const queryClient = useQueryClient();
