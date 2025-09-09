@@ -283,7 +283,7 @@ const HttpsProxyApiPage = () => {
           <Heading as="h1" size="xl" color="gray.800">HTTPS Proxy API</Heading>
           <Text fontSize="lg" color="gray.600">Route HTTP/S requests through our proxy network</Text>
         </VStack>
-        <Button as={Link} href="billing" colorScheme="red" variant="solid" size="md">View Billing</Button>
+        <Button as={Link} href="https://cloud.roamingproxy.com/hosting/billing" colorScheme="red" variant="solid" size="md">View Billing</Button>
       </Flex>
         {isLoading ? (
           <Flex justify="center" align="center" h="50vh"><Spinner /></Flex>
