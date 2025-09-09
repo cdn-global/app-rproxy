@@ -140,7 +140,7 @@ function Login() {
          <Logo 
       src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
-  width="110px"
+      boxSize="220px"
       href="/"
     />
 
