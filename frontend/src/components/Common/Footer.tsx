@@ -82,14 +82,6 @@ import {
                   boxSize="1em"
                 />
               </Link>
-              {/* <Link href="https://linkedin.com" isExternal>
-                <Icon
-                  as={FiLinkedin}
-                  color={textColor}
-                  _hover={{ color: hoverColor }}
-                  boxSize="1em"
-                />
-              </Link> */}
               <Link href="https://github.com/cdn-global" isExternal>
                 <Icon
                   as={FiGithub}
