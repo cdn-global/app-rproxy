@@ -38,7 +38,7 @@ import {
         color={textColor}
         fontSize="sm"
       >
-        Roaming Proxy
+        RoamingProxy.com
       </Text>
     </Link>
             <Text color={textColor} fontSize="xs" maxW="200px">
@@ -82,7 +82,7 @@ import {
                   boxSize="1em"
                 />
               </Link>
-              <Link href="https://github.com/cobaltdatanetwork" isExternal>
+              <Link href="https://github.com/cdn-global" isExternal>
                 <Icon
                   as={FiGithub}
                   color={textColor}
