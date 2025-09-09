@@ -174,7 +174,7 @@ function HostingIndexPage() {
         {/* Roaming Proxy Features Card */}
         <Card borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="gray.50">
           <CardHeader bg="red.100">
-            <Heading size="md" color="red.800">Roaming Proxy & Server Features</Heading>
+            <Heading size="md" color="red.800">Server Features</Heading>
           </CardHeader>
           <CardBody>
             <List spacing={4}>

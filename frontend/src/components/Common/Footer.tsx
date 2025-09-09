@@ -175,7 +175,7 @@ import {
           color={textColor}
           _hover={{ color: accentColor }}
         >
-          Roaming Proxy
+          RoamingProxy.com
         </Link>
         ,{" "}
         <Link
