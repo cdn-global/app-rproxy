@@ -4,33 +4,30 @@ import { useMemo, useState } from "react";
 import ProtectedComponent from "../../components/Common/ProtectedComponent";
 import { useQuery } from "@tanstack/react-query";
 import { FaBook, FaKey, FaCreditCard, FaGlobe, FaSearch, FaServer } from 'react-icons/fa';
-
 const featureDetails = {
-  'proxy-api': { 
-    name: 'Web Scraping API', 
-    description: 'Extract structured data from any website with our powerful and scalable scraping infrastructure.', 
-    icon: FaGlobe, 
+  'proxy-api': {
+    name: 'Web Scraping API',
+    description: 'Extract structured data from any website with our powerful and scalable scraping infrastructure.',
+    icon: FaGlobe,
     path: '/web-scraping-tools/https-api',
     period: '8/15/2025 - 9/15/2025'
   },
-  'vps-hosting': { 
-    name: 'VPS Hosting', 
-    description: 'Manage your virtual private servers with high performance and reliability.', 
-    icon: FaServer, 
+  'vps-hosting': {
+    name: 'VPS Hosting',
+    description: 'Manage your virtual private servers with high performance and reliability.',
+    icon: FaServer,
     path: '/hosting',
     period: '9/9/2025 - 10/9/2025'
   },
-  'serp-api': { 
-    name: 'SERP API', 
-    description: 'Get structured JSON data from major search engines.', 
-    icon: FaSearch, 
+  'serp-api': {
+    name: 'SERP API',
+    description: 'Get structured JSON data from major search engines.',
+    icon: FaSearch,
     path: '/web-scraping-tools/serp-api',
     period: 'N/A'
   },
 };
-
 type FeatureKey = keyof typeof featureDetails;
-
 interface Subscription {
   id: string;
   status: string;
@@ -45,7 +42,6 @@ interface Subscription {
   cancel_at_period_end: boolean;
   enabled_features: FeatureKey[];
 }
-
 interface ApiKey {
   key_preview: string;
   created_at: string;
@@ -53,7 +49,6 @@ interface ApiKey {
   is_active: boolean;
   request_count?: number;
 }
-
 async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No access token found. Please log in again.");
@@ -66,7 +61,6 @@ async function fetchSubscriptions(): Promise<Subscription[]> {
   }
   return (await response.json()) as Subscription[];
 }
-
 async function fetchBillingPortal(token: string): Promise<string> {
   const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
     headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` },
@@ -76,7 +70,6 @@ async function fetchBillingPortal(token: string): Promise<string> {
   if (!data.portal_url) throw new Error("No portal URL received from server.");
   return data.portal_url;
 }
-
 async function fetchApiKeys(token: string): Promise<ApiKey[]> {
   const response = await fetch("https://api.roamingproxy.com/v2/proxy/api-keys", {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
@@ -88,14 +81,12 @@ async function fetchApiKeys(token: string): Promise<ApiKey[]> {
   const data = await response.json();
   return (Array.isArray(data) ? data : []).map((key: ApiKey) => ({ ...key, request_count: key.request_count ?? 0 }));
 }
-
 const HomePage = () => {
   const { data: subscriptions, isLoading: isSubscriptionsLoading, error: subscriptionsError } = useQuery({
     queryKey: ["subscriptions"],
     queryFn: fetchSubscriptions,
     staleTime: 5 * 60 * 1000,
   });
-
   const token = localStorage.getItem("access_token") || "";
   const { data: apiKeys, isLoading: isApiKeysLoading, error: apiKeysError } = useQuery({
     queryKey: ["apiKeys"],
@@ -103,19 +94,15 @@ const HomePage = () => {
     staleTime: 5 * 60 * 1000,
     enabled: !!token,
   });
-
   const activeSubscriptions = useMemo(
     () => (Array.isArray(subscriptions) ? subscriptions.filter((sub) => ["active", "trialing", "past_due"].includes(sub.status)) : []),
     [subscriptions]
   );
-
   const totalRequests = useMemo(
     () => (Array.isArray(apiKeys) ? apiKeys.reduce((sum, key) => sum + (key.request_count || 0), 0) : 0),
     [apiKeys]
   );
-
   const totalDataGB = (totalRequests * 0.0005).toFixed(2);
-
   // Ensure proxy-api and vps-hosting are always displayed for testing
   const displayedFeatures = useMemo(() => {
     const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
@@ -123,12 +110,10 @@ const HomePage = () => {
     const selectedFeatures: FeatureKey[] = ['proxy-api', 'vps-hosting'];
     return selectedFeatures.filter((f) => featureDetails[f]);
   }, [activeSubscriptions]);
-
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
   const error = subscriptionsError || apiKeysError;
   const [isPortalLoading, setIsPortalLoading] = useState(false);
   const toast = useToast();
-
   const handleBillingClick = async () => {
     if (!token) {
       toast({ title: "Authentication Required", description: "Please log in to manage billing.", status: "warning", duration: 5000, isClosable: true });
@@ -145,7 +130,6 @@ const HomePage = () => {
       setIsPortalLoading(false);
     }
   };
-
   return (
     <ProtectedComponent>
       <Container maxW="full" mb={6}>
@@ -166,15 +150,22 @@ const HomePage = () => {
         ) : (
           <VStack spacing={8} align="stretch" mt={6} pb={10}>
             {/* Row 1: Usage */}
-            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
+            <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
-                    <Heading size="sm">Usage Summary</Heading>
-                    <Text fontSize="xl" fontWeight="bold">Total Requests (Web Scraping API): {totalRequests.toLocaleString()}</Text>
-                    <Text fontSize="xl" fontWeight="bold">Data Transferred (Web Scraping API): {totalDataGB} GB</Text>
-                    <Text fontSize="xl" fontWeight="bold">VPS Usage (CPU): 45%</Text>
-                    <Text fontSize="xl" fontWeight="bold">VPS Usage (Memory): 3.2 GB</Text>
+                    <Heading size="sm">Web Scraping API Usage</Heading>
+                    <Text fontSize="xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
+                    <Text fontSize="xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
+                  </VStack>
+                </Box>
+              </GridItem>
+              <GridItem>
+                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
+                  <VStack align="start" spacing={3}>
+                    <Heading size="sm">VPS Usage</Heading>
+                    <Text fontSize="xl" fontWeight="bold">CPU: 45%</Text>
+                    <Text fontSize="xl" fontWeight="bold">Memory: 3.2 GB</Text>
                     <Text fontSize="sm" color="gray.600">
                       Note: Detailed VPS usage is available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
                     </Text>
@@ -265,6 +256,5 @@ const HomePage = () => {
     </ProtectedComponent>
   );
 };
-
 export const Route = createFileRoute("/_layout/")({ component: HomePage });
 export default HomePage;
