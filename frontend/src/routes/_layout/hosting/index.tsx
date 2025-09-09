@@ -127,22 +127,6 @@ function HostingIndexPage() {
       </Flex>
 
       <VStack align="stretch" spacing={8}>
-        {/* API Key Card */}
-        <Card borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="gray.50">
-          <CardHeader>
-            <Heading size="md" color="gray.700">Active API Key</Heading>
-          </CardHeader>
-          <CardBody>
-            <Text fontWeight="semibold" mb={2} color="gray.600">
-              API Key: <Text as="span" fontFamily="mono">sk_1S5MosLqozOkbqR8Bx8H7FYy</Text>
-            </Text>
-            <HStack spacing={3}>
-              <CopyCell textToCopy="sk_1S5MosLqozOkbqR8Bx8H7FYy" label="API Key" />
-              <Button size="sm" colorScheme="red" variant="outline">Regenerate Key</Button>
-            </HStack>
-          </CardBody>
-        </Card>
-
         {/* Servers Table */}
         <Card borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm" bg="gray.50">
           <CardHeader bg="red.100">
