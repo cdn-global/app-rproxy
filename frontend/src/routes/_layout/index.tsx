@@ -422,7 +422,7 @@ const HomePage = () => {
                   <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
                     <Icon as={FaKey} mr={2} /> Manage API Keys
                   </Link>
-                  <Button
+                  {/* <Button
                     variant="link"
                     onClick={handleBillingClick}
                     isLoading={isPortalLoading}
@@ -432,7 +432,7 @@ const HomePage = () => {
                     justifyContent="flex-start"
                   >
                     Billing Portal
-                  </Button>
+                  </Button> */}
                   <Link href="https://docs.ROAMINGPROXY.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
                     <Icon as={FaBook} mr={2} /> Documentation
                   </Link>
