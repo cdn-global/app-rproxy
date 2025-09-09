@@ -26,7 +26,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
-import { FaCheckCircle } from "@chakra-ui/icons";
+import { FaCheckCircle } from "react-icons/fa";
 
 // Hardcoded servers with pricing
 interface Server {
