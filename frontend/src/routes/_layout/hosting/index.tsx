@@ -27,7 +27,6 @@ import {
 } from "@chakra-ui/react";
 import { CopyIcon, CheckCircleIcon } from "@chakra-ui/icons";
 
-// Hardcoded servers with pricing
 interface Server {
   name: string;
   email: string;
@@ -45,6 +44,9 @@ interface Server {
   hasRotatingIP?: boolean;
   hasBackup?: boolean;
   hasMonitoring?: boolean;
+  hasManagedSupport?: boolean;
+  vCPUs?: number;
+  ramGB?: number;
 }
 
 const servers: Server[] = [
@@ -59,104 +61,39 @@ const servers: Server[] = [
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 15,
+    monthlyComputePrice: 11.40,
     storageSizeGB: 120,
     activeSince: "2025-07-01",
     hasRotatingIP: false,
     hasBackup: true,
     hasMonitoring: true,
+    hasManagedSupport: false,
+    vCPUs: 1,
+    ramGB: 2,
   },
   {
-    name: "riv2-nyc-mini5",
+    name: "riv8-nyc-mini9",
     email: "apis.popov@gmail.com",
-    ip: "100.114.242.51",
-    version: "1.86.2",
-    kernel: "Linux 6.8.0-57-generic",
+    ip: "100.140.50.60",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
     status: "Connected",
     type: "VPS",
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 50,
-    storageSizeGB: 240,
-    activeSince: "2025-07-01",
-    hasRotatingIP: true,
-    hasBackup: false,
-    hasMonitoring: false,
-  },
-  {
-    name: "riv3-nyc-mini6",
-    email: "apis.popov@gmail.com",
-    ip: "100.91.158.116",
-    version: "1.82.5",
-    kernel: "Linux 6.8.0-59-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 50,
-    storageSizeGB: 240,
-    activeSince: "2025-08-01",
-    hasRotatingIP: true,
-    hasBackup: true,
-    hasMonitoring: true,
-  },
-  {
-    name: "riv4-nyc-mini5",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.106.3",
-    version: "1.80.2",
-    kernel: "Linux 6.8.0-55-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 45,
-    storageSizeGB: 120,
+    monthlyComputePrice: 449,
+    storageSizeGB: 100,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
     hasBackup: false,
     hasMonitoring: false,
-  },
-  {
-    name: "riv5-nyc-mini7",
-    email: "apis.popov@gmail.com",
-    ip: "100.120.30.40",
-    version: "1.85.0",
-    kernel: "Linux 6.8.0-60-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 60,
-    storageSizeGB: 500,
-    activeSince: "2025-08-01",
-    hasRotatingIP: true,
-    hasBackup: true,
-    hasMonitoring: true,
-  },
-  {
-    name: "riv6-nyc-mini8",
-    email: "apis.popov@gmail.com",
-    ip: "100.130.40.50",
-    version: "1.87.0",
-    kernel: "Linux 6.8.0-61-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 30,
-    storageSizeGB: 200,
-    activeSince: "2025-09-01",
-    hasRotatingIP: true,
-    hasBackup: false,
-    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 16,
+    ramGB: 64,
   },
 ];
+
 
 // Reusable CopyCell component
 const CopyCell = ({ textToCopy, label }: { textToCopy: string; label: string }) => {
