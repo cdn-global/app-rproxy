@@ -188,7 +188,7 @@ function ActivateAccount() {
       <Logo 
       src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
-      boxSize="220px"
+      width="110px"
       href="/"
     />
 
