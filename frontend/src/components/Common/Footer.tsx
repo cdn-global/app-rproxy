@@ -150,7 +150,7 @@ import {
               Cookie Policy
             </Link>
             <Link
-              href=" https://ROAMINGPROXY.com/compliance"
+              href="https://ROAMINGPROXY.com/compliance"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -184,7 +184,16 @@ import {
           color={textColor}
           _hover={{ color: hoverColor }}
         >
-          Cobalt Data Network
+          Cobalt Data Networks
+        </Link>
+        ,{" "}
+        <Link
+          href="https://tradevaultllc.com/"
+          isExternal
+          color={textColor}
+          _hover={{ color: hoverColor }}
+        >
+          Trade Vault LLC
         </Link>
         . All rights reserved.
       </Text>
