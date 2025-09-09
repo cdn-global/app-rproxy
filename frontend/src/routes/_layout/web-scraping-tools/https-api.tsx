@@ -22,7 +22,7 @@ import {
   useToast,
   Spinner,
   useDisclosure,
-  HStack,
+  VStack,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 import ProtectedComponent from "../../../components/Common/ProtectedComponent";
@@ -277,12 +277,14 @@ const HttpsProxyApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <Container maxW="full" py={9}>
-        <Flex align="center" justify="space-between" py={6}>
-                     <Heading as="h1" size="xl" color="gray.800"> HTTPS Proxy API</Heading>
-            <Text fontSize="lg" color="gray.600">Route HTTP/S requests through our proxy network</Text>
-        </Flex>
-
+    <Container maxW="container.xl" py={10} as="main">
+      <Flex align="center" justify="space-between" py={6} mb={6}>
+        <VStack align="start" spacing={2}>
+          <Heading as="h1" size="xl" color="gray.800">HTTPS Proxy API</Heading>
+          <Text fontSize="lg" color="gray.600">Route HTTP/S requests through our proxy network</Text>
+        </VStack>
+        <Button as={Link} to="billing" colorScheme="red" variant="solid" size="md">View Billing</Button>
+      </Flex>
         {isLoading ? (
           <Flex justify="center" align="center" h="50vh"><Spinner /></Flex>
         ) : error ? (
