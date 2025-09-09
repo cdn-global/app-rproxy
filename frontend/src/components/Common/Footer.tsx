@@ -72,43 +72,6 @@ const Footer = () => {
                     </Flex>
                 </VStack>
 
-                {/* Cobalt Data Section */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Text
-                        fontWeight="bold"
-                        color={textColor}
-                        fontSize="sm"
-                    >
-                        COBALTDATA.net
-                    </Text>
-                    <Flex gap={3}>
-                        <Link href="https://x.com/cobaltdata" isExternal>
-                            <Icon
-                                as={FiTwitter}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                        <Link href="https://github.com/cdn-global" isExternal>
-                            <Icon
-                                as={FiGithub}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                        <Link href="https://cobaltdata.net" isExternal>
-                            <Icon
-                                as={FiGlobe}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                    </Flex>
-                </VStack>
-
                 {/* Support Links */}
                 <VStack spacing={1} align={{ base: "center", md: "start" }}>
                     <Link
@@ -173,6 +136,43 @@ const Footer = () => {
                     >
                         Compliance
                     </Link>
+                </VStack>
+
+                {/* Cobalt Data Section */}
+                <VStack spacing={1} align={{ base: "center", md: "start" }}>
+                    <Text
+                        fontWeight="bold"
+                        color={textColor}
+                        fontSize="sm"
+                    >
+                        COBALTDATA.net
+                    </Text>
+                    <Flex gap={3}>
+                        <Link href="https://x.com/cobaltdata" isExternal>
+                            <Icon
+                                as={FiTwitter}
+                                color={textColor}
+                                _hover={{ color: hoverColor }}
+                                boxSize="1em"
+                            />
+                        </Link>
+                        <Link href="https://github.com/cdn-global" isExternal>
+                            <Icon
+                                as={FiGithub}
+                                color={textColor}
+                                _hover={{ color: hoverColor }}
+                                boxSize="1em"
+                            />
+                        </Link>
+                        <Link href="https://cobaltdata.net" isExternal>
+                            <Icon
+                                as={FiGlobe}
+                                color={textColor}
+                                _hover={{ color: hoverColor }}
+                                boxSize="1em"
+                            />
+                        </Link>
+                    </Flex>
                 </VStack>
             </Flex>
 
