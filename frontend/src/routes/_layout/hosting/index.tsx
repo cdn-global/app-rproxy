@@ -16,8 +16,12 @@ import {
   useToast,
   HStack,
   Button,
+  Heading,
+  List,
+  ListItem,
+  ListIcon,
 } from "@chakra-ui/react";
-import { CopyIcon } from "@chakra-ui/icons";
+import { CopyIcon, CheckCircleIcon } from "@chakra-ui/icons";
 
 // Hardcoded devices
 interface Device {
@@ -142,6 +146,61 @@ function HostingIndexPage() {
             ))}
           </Tbody>
         </Table>
+      </Box>
+
+      {/* New Pricing Section */}
+      <Box mt={8} p={6} borderWidth="1px" borderRadius="lg" bg="gray.50">
+        <Heading as="h2" size="lg" mb={4}>Suggested Competitive Pricing</Heading>
+        <Text fontSize="lg" mb={4}>
+          Product: <strong>Debian Unlimited Bandwidth VPS with Floating IP</strong>
+        </Text>
+        <List spacing={3}>
+          <ListItem>
+            <ListIcon as={CheckCircleIcon} color="green.500" />
+            <strong>Monthly Pricing ($449):</strong> Reduce to $399/month to undercut competitors like OVHcloud and Vultr for similar specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization.
+          </ListItem>
+          <ListItem>
+            <ListIcon as={CheckCircleIcon} color="green.500" />
+            <strong>Annual Pricing ($449):</strong> Highly competitive at ~$37.42/month. Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
+          </ListItem>
+          <ListItem>
+            <ListIcon as={CheckCircleIcon} color="green.500" />
+            <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
+          </ListItem>
+          <ListItem>
+            <ListIcon as={CheckCircleIcon} color="green.500" />
+            <strong>Billing for Multiple Devices:</strong>
+            <List pl={6} spacing={2}>
+              <ListItem>
+                Base VPS (1 unit): $399-$449/month. Add $2-5 per additional floating IP for unique device IPs. Example: 10 devices (1 VPS, 10 IPs) = $399 (VPS) + $20 (10 IPs @ $2) = $419/month.
+              </ListItem>
+              <ListItem>
+                Avoid per-device billing unless CPU/RAM is heavily segmented to maintain competitiveness.
+              </ListItem>
+              <ListItem>
+                Reseller tiers: $449 (up to 20 devices), $599 (up to 50 devices) with proportional IP allocations.
+              </ListItem>
+            </List>
+          </ListItem>
+          <ListItem>
+            <ListIcon as={CheckCircleIcon} color="green.500" />
+            <strong>Invoice Description:</strong>
+            <List pl={6} spacing={2}>
+              <ListItem>
+                <strong>Details:</strong> Debian Unlimited Bandwidth VPS with Floating IP: High-performance managed VPS with 8 vCPUs, 32GB RAM, 1TB SSD, unlimited bandwidth, and 2-5 floating IPs for seamless migrations and geo-flexible hosting.
+              </ListItem>
+              <ListItem>
+                <strong>Invoice Line Items:</strong>
+                <List pl={6}>
+                  <ListItem>Debian Managed VPS (Unlimited BW): $399</ListItem>
+                  <ListItem>Floating IP (x2): $10 ($5 each)</ListItem>
+                  <ListItem>Managed Support: $40</ListItem>
+                  <ListItem><strong>Total:</strong> $449/month (or $449/year if annual)</ListItem>
+                </List>
+              </ListItem>
+            </List>
+          </ListItem>
+        </List>
       </Box>
     </Container>
   );
