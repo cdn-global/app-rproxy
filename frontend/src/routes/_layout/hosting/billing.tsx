@@ -356,14 +356,6 @@ function BillingPage() {
       description: "SERPAPI",
     },
     {
-      month: months[2], // February 2025
-      total: 0.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZh",
-      paymentDate: "February 20, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "Invoice",
-    },
-    {
       month: months[1], // January 2025
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZi",
