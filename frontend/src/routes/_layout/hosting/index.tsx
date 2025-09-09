@@ -109,7 +109,7 @@ const CopyCell = ({ textToCopy, label }: { textToCopy: string; label: string }) 
       icon={<CopyIcon />}
       size="sm"
       onClick={handleCopy}
-      colorScheme="orange"
+      colorScheme="red"
       variant="outline"
     />
   );
@@ -123,7 +123,7 @@ function HostingIndexPage() {
           <Heading as="h1" size="xl" color="gray.800">Web Hosting Credentials</Heading>
           <Text fontSize="lg" color="gray.600">Login details and management for your Debian VPS servers</Text>
         </VStack>
-        <Button as={Link} to="billing" colorScheme="orange" variant="solid" size="md">View Billing</Button>
+        <Button as={Link} to="billing" colorScheme="red" variant="solid" size="md">View Billing</Button>
       </Flex>
 
       <VStack align="stretch" spacing={8}>
@@ -138,7 +138,7 @@ function HostingIndexPage() {
             </Text>
             <HStack spacing={3}>
               <CopyCell textToCopy="sk_1S5MosLqozOkbqR8Bx8H7FYy" label="API Key" />
-              <Button size="sm" colorScheme="orange" variant="outline">Regenerate Key</Button>
+              <Button size="sm" colorScheme="red" variant="outline">Regenerate Key</Button>
             </HStack>
           </CardBody>
         </Card>
@@ -172,7 +172,7 @@ function HostingIndexPage() {
                       <HStack spacing={2} justify="flex-end">
                         <CopyCell textToCopy={server.username} label="Username" />
                         <CopyCell textToCopy={server.password} label="Password" />
-                        <Button size="sm" as={Link} to={server.name} colorScheme="orange" variant="outline">View Details</Button>
+                        <Button size="sm" as={Link} to={server.name} colorScheme="red" variant="outline">View Details</Button>
                       </HStack>
                     </Td>
                   </Tr>

@@ -489,7 +489,7 @@ function BillingPage() {
         <Text fontSize="lg" color="gray.600">Manage your hosting costs and review billing history</Text>
       </Flex>
 
-      <Tabs variant="enclosed" colorScheme="orange" isFitted>
+      <Tabs variant="enclosed" colorScheme="red" isFitted>
         <TabList>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Current Billing</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Service Details</Tab>
@@ -744,7 +744,7 @@ function BillingPage() {
         </TabPanels>
       </Tabs>
 
-      <Button as={ChakraLink} href=".." mt={6} colorScheme="orange" variant="outline" size="md">
+      <Button as={ChakraLink} href=".." mt={6} colorScheme="red" variant="outline" size="md">
         Back to Hosting
       </Button>
     </Container>
