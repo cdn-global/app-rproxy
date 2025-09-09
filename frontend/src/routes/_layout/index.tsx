@@ -428,18 +428,6 @@ const HomePage = () => {
     >
       <Link
         as={RouterLink}
-        to="/settings"
-        display="flex"
-        alignItems="center"
-        color="red.500"
-        fontWeight="medium"
-        flex="1"
-        minW={{ base: "100%", md: "auto" }} // Full width on mobile, auto on larger screens
-      >
-        <Icon as={FaKey} mr={2} /> Manage API Keys
-      </Link>
-      <Link
-        as={RouterLink}
         to="/web-scraping-tools/user-agents"
         display="flex"
         alignItems="center"
