@@ -13,19 +13,18 @@ const featureDetails = {
     path: '/web-scraping-tools/https-api',
     period: '8/15/2025 - 9/15/2025'
   },
-  'serp-api': { 
-    name: 'SERP API', 
-    description: 'Get structured JSON data from major search engines.', 
-    icon: FaSearch, 
-    path: '/web-scraping-tools/serp-api',
-    period: 'N/A'
-  },
   'vps-hosting': { 
     name: 'VPS Hosting', 
     description: 'Manage your virtual private servers with high performance and reliability.', 
     icon: FaServer, 
     path: '/hosting',
     period: '9/9/2025 - 10/9/2025'
+  },  'serp-api': { 
+    name: 'SERP API', 
+    description: 'Get structured JSON data from major search engines.', 
+    icon: FaSearch, 
+    path: '/web-scraping-tools/serp-api',
+    period: 'N/A'
   },
 };
 
