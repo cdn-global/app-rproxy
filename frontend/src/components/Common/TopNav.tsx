@@ -400,7 +400,7 @@ const TopNav = () => {
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
           boxSize="220px"
-          href="/"
+          href="#"
         />
         <Flex align="center" gap={4}>
           <Box display={{ base: "none", md: "block" }}>
