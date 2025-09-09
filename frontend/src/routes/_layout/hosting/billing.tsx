@@ -31,10 +31,10 @@ import {
   ListItem,
   ListIcon,
 } from "@chakra-ui/react";
-import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
+import { FaCreditCard, CheckCircleIcon } from "react-icons/fa";
 import { useState } from "react";
 
-// Hardcoded servers with pricing (updated for $449 transaction)
+// Hardcoded servers with pricing (aligned to $449 transaction)
 interface Server {
   name: string;
   email: string;
@@ -174,7 +174,7 @@ const servers: Server[] = [
 
 const ELASTIC_IP_FEE_PER_MONTH = 3.6; // $0.005 per hour * 24 * 30 = $3.60 per IP per month
 const STORAGE_COST_PER_GB_MONTH = 0.10; // Approximate EBS gp2 cost: $0.10/GB-month
-const ROTATING_IP_FEE_PER_MONTH = 5.0; // Adjusted to $5/IP for two IPs
+const ROTATING_IP_FEE_PER_MONTH = 5.0; // $5/IP for two IPs
 const BACKUP_FEE_PER_MONTH = 5.0;
 const MONITORING_FEE_PER_MONTH = 8.0;
 const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0;
@@ -397,7 +397,6 @@ function BillingPage() {
           <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Billing History</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Payment Details</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Pricing Details</Tab>
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
@@ -498,6 +497,68 @@ function BillingPage() {
                   </AccordionItem>
                 );
               })}
+              <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
+                <h2>
+                  <AccordionButton bg="orange.50" _hover={{ bg: "orange.100" }}>
+                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="orange.800">
+                      Pricing Details
+                    </Box>
+                    <AccordionIcon color="orange.600" />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>
+                  <Text fontSize="lg" mb={4}>
+                    <strong>Product:</strong> Debian Unlimited Bandwidth VPS with Floating IP
+                  </Text>
+                  <List spacing={3}>
+                    <ListItem>
+                      <ListIcon as={CheckCircleIcon} color="green.500" />
+                      <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={CheckCircleIcon} color="green.500" />
+                      <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={CheckCircleIcon} color="green.500" />
+                      <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={CheckCircleIcon} color="green.500" />
+                      <strong>Billing for Multiple Devices:</strong>
+                      <List pl={6} spacing={2}>
+                        <ListItem>
+                          Base VPS (1 unit): $399-$449/month. Add $2-5 per additional floating IP for unique device IPs. Example: 10 devices (1 VPS, 10 IPs) = $399 (VPS) + $20 (10 IPs @ $2) = $419/month.
+                        </ListItem>
+                        <ListItem>
+                          Avoid per-device billing unless CPU/RAM is heavily segmented to maintain competitiveness.
+                        </ListItem>
+                        <ListItem>
+                          Reseller tiers: $449 (up to 20 devices), $599 (up to 50 devices) with proportional IP allocations.
+                        </ListItem>
+                      </List>
+                    </ListItem>
+                    <ListItem>
+                      <ListIcon as={CheckCircleIcon} color="green.500" />
+                      <strong>Invoice Description:</strong>
+                      <List pl={6} spacing={2}>
+                        <ListItem>
+                          <strong>Details:</strong> Debian Unlimited Bandwidth VPS with Floating IP: High-performance managed VPS with 8 vCPUs, 32GB RAM, 1TB SSD, unlimited bandwidth, and 2-5 floating IPs for seamless migrations and geo-flexible hosting.
+                        </ListItem>
+                        <ListItem>
+                          <strong>Invoice Line Items:</strong>
+                          <List pl={6}>
+                            <ListItem>Debian Managed VPS (Unlimited BW): $399</ListItem>
+                            <ListItem>Floating IP (x2): $10 ($5 each)</ListItem>
+                            <ListItem>Managed Support: $40</ListItem>
+                            <ListItem><strong>Total:</strong> $449/month (single transaction)</ListItem>
+                          </List>
+                        </ListItem>
+                      </List>
+                    </ListItem>
+                  </List>
+                </AccordionPanel>
+              </AccordionItem>
             </Accordion>
           </TabPanel>
           <TabPanel>
@@ -593,61 +654,6 @@ function BillingPage() {
           </TabPanel>
           <TabPanel>
             <PaymentDetailsTab />
-          </TabPanel>
-          <TabPanel>
-            <Heading size="md" mb={6} color="gray.700">Pricing Details</Heading>
-            <Box borderWidth="1px" borderRadius="lg" p={6} bg="gray.50" boxShadow="sm">
-              <Text fontSize="lg" mb={4}>
-                <strong>Product:</strong> Debian Unlimited Bandwidth VPS with Floating IP
-              </Text>
-              <List spacing={3}>
-                <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
-                  <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
-                </ListItem>
-                <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
-                  <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
-                </ListItem>
-                <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
-                  <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
-                </ListItem>
-                <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
-                  <strong>Billing for Multiple Devices:</strong>
-                  <List pl={6} spacing={2}>
-                    <ListItem>
-                      Base VPS (1 unit): $399-$449/month. Add $2-5 per additional floating IP for unique device IPs. Example: 10 devices (1 VPS, 10 IPs) = $399 (VPS) + $20 (10 IPs @ $2) = $419/month.
-                    </ListItem>
-                    <ListItem>
-                      Avoid per-device billing unless CPU/RAM is heavily segmented to maintain competitiveness.
-                    </ListItem>
-                    <ListItem>
-                      Reseller tiers: $449 (up to 20 devices), $599 (up to 50 devices) with proportional IP allocations.
-                    </ListItem>
-                  </List>
-                </ListItem>
-                <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
-                  <strong>Invoice Description:</strong>
-                  <List pl={6} spacing={2}>
-                    <ListItem>
-                      <strong>Details:</strong> Debian Unlimited Bandwidth VPS with Floating IP: High-performance managed VPS with 8 vCPUs, 32GB RAM, 1TB SSD, unlimited bandwidth, and 2-5 floating IPs for seamless migrations and geo-flexible hosting.
-                    </ListItem>
-                    <ListItem>
-                      <strong>Invoice Line Items:</strong>
-                      <List pl={6}>
-                        <ListItem>Debian Managed VPS (Unlimited BW): $399</ListItem>
-                        <ListItem>Floating IP (x2): $10 ($5 each)</ListItem>
-                        <ListItem>Managed Support: $40</ListItem>
-                        <ListItem><strong>Total:</strong> $449/month (single transaction)</ListItem>
-                      </List>
-                    </ListItem>
-                  </List>
-                </ListItem>
-              </List>
-            </Box>
           </TabPanel>
         </TabPanels>
       </Tabs>
