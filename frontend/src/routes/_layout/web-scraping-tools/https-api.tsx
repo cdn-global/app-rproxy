@@ -42,7 +42,7 @@ interface ProxyApiAccess {
   message: string | null;
 }
 
-const API_URL = "https://api.roamingproxy.com/v2";
+const API_URL = "https://api.ROAMINGPROXY.com/v2";
 
 // --- API Fetching Functions ---
 
@@ -131,7 +131,7 @@ const CodeBlock = ({ code, language, bg = "gray.800", ...rest }: { code: string;
 
 // --- Constants for GetStartedTab ---
 const TARGET_URL_EXAMPLE = "https://api.ipify.org?format=json";
-const PROXY_ENDPOINT = "https://api.roamingproxy.com/v2/proxy";
+const PROXY_ENDPOINT = "https://api.ROAMINGPROXY.com/v2/proxy";
 
 const CODE_EXAMPLES = {
   curl: `curl -X GET "${PROXY_ENDPOINT}?url=${encodeURIComponent(TARGET_URL_EXAMPLE)}" \\

@@ -28,7 +28,7 @@ import {
           {/* Company Info */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
           <Link
-      href="https://roamingproxy.com" 
+      href="https://ROAMINGPROXY.com" 
       isExternal
       color={textColor}
       _hover={{ color: accentColor }}
@@ -38,7 +38,7 @@ import {
         color={textColor}
         fontSize="sm"
       >
-        RoamingProxy.com
+        ROAMINGPROXY.com
       </Text>
     </Link>
             <Text color={textColor} fontSize="xs" maxW="200px">
@@ -62,12 +62,12 @@ import {
             <Flex align="center" gap={1}>
               <Icon as={FiMail} color={textColor} boxSize="0.9em" />
               <Link
-                href="mailto:info@roamingproxy.com"
+                href="mailto:info@ROAMINGPROXY.com"
                 color={textColor}
                 fontSize="xs"
                 _hover={{ color: hoverColor }}
               >
-                info@roamingproxy.com
+                info@ROAMINGPROXY.com
               </Link>
             </Flex>
           </VStack>
@@ -96,7 +96,7 @@ import {
           {/* Support Links */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Link
-              href="https://roamingproxy.com/resources/faq"
+              href="https://ROAMINGPROXY.com/resources/faq"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -105,7 +105,7 @@ import {
               FAQ
             </Link>
             <Link
-              href="https://roamingproxy.com/contact"
+              href="https://ROAMINGPROXY.com/contact"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -119,7 +119,7 @@ import {
           {/* Legal Links */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Link
-              href="https://roamingproxy.com/privacy"
+              href="https://ROAMINGPROXY.com/privacy"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -128,7 +128,7 @@ import {
               Privacy Policy
             </Link>
             <Link
-              href="https://roamingproxy.com/terms"
+              href="https://ROAMINGPROXY.com/terms"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -141,7 +141,7 @@ import {
           {/* Additional Legal Links */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Link
-              href="https://roamingproxy.com/cookie"
+              href="https://ROAMINGPROXY.com/cookie"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -150,7 +150,7 @@ import {
               Cookie Policy
             </Link>
             <Link
-              href=" https://roamingproxy.com/compliance"
+              href=" https://ROAMINGPROXY.com/compliance"
               isExternal
               color={textColor}
               fontSize="xs"
@@ -170,12 +170,12 @@ import {
       >
         © 2025{" "}
         <Link
-          href="https://roamingproxy.com"
+          href="https://ROAMINGPROXY.com"
           isExternal
           color={textColor}
           _hover={{ color: accentColor }}
         >
-          RoamingProxy.com
+          ROAMINGPROXY.com
         </Link>
         ,{" "}
         <Link

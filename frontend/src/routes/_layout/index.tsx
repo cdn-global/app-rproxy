@@ -52,7 +52,7 @@ interface ApiKey {
 async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No access token found. Please log in again.");
-  const response = await fetch("https://api.roamingproxy.com/v2/customer/subscriptions", {
+  const response = await fetch("https://api.ROAMINGPROXY.com/v2/customer/subscriptions", {
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
@@ -62,7 +62,7 @@ async function fetchSubscriptions(): Promise<Subscription[]> {
   return (await response.json()) as Subscription[];
 }
 async function fetchBillingPortal(token: string): Promise<string> {
-  const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
+  const response = await fetch("https://api.ROAMINGPROXY.com/v2/customer-portal", {
     headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` },
   });
   if (!response.ok) throw new Error(`Failed to fetch portal: ${response.status}`);
@@ -71,7 +71,7 @@ async function fetchBillingPortal(token: string): Promise<string> {
   return data.portal_url;
 }
 async function fetchApiKeys(token: string): Promise<ApiKey[]> {
-  const response = await fetch("https://api.roamingproxy.com/v2/proxy/api-keys", {
+  const response = await fetch("https://api.ROAMINGPROXY.com/v2/proxy/api-keys", {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
@@ -244,7 +244,7 @@ const HomePage = () => {
                   >
                     Billing Portal
                   </Button>
-                  <Link href="https://docs.roamingproxy.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
+                  <Link href="https://docs.ROAMINGPROXY.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
                     <Icon as={FaBook} mr={2} /> Documentation
                   </Link>
                 </VStack>

@@ -55,7 +55,7 @@ interface SerpResult {
 }
 
 // CORRECTED: Changed endpoint to match the backend router prefix
-const API_URL = "https://api.roamingproxy.com/v2/proxy/serp";
+const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy/serp";
 
 const PlaygroundSerpApi: React.FC = () => {
   const [query, setQuery] = useState<string>("best pizza in new york");

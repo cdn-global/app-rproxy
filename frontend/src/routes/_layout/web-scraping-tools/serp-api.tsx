@@ -83,7 +83,7 @@ interface ApiKey {
   request_count: number;
 }
 
-const API_URL = "https://api.roamingproxy.com/v2";
+const API_URL = "https://api.ROAMINGPROXY.com/v2";
 
 // --- API Fetching Functions ---
 
@@ -177,7 +177,7 @@ const CodeBlock = ({ code, language, bg = "gray.800", ...rest }: { code: string;
 };
 
 // --- Constants ---
-const API_ENDPOINT = "https://api.roamingproxy.com/v2/serp?q=best%20pizza%20in%20new%20york&engine=google®ion=us-east";
+const API_ENDPOINT = "https://api.ROAMINGPROXY.com/v2/serp?q=best%20pizza%20in%20new%20york&engine=google®ion=us-east";
 
 const CODE_EXAMPLES = {
   curl: `curl -X GET "${API_ENDPOINT}" \\
@@ -185,7 +185,7 @@ const CODE_EXAMPLES = {
   python: `import requests
 
 api_key = "YOUR_API_KEY"
-url = "https://api.roamingproxy.com/v2/serp"
+url = "https://api.ROAMINGPROXY.com/v2/serp"
 
 params = {
     "q": "best pizza in new york",
@@ -207,7 +207,7 @@ else:
 import fetch from 'node-fetch';
 
 const apiKey = 'YOUR_API_KEY';
-const url = new URL('https://api.roamingproxy.com/v2/serp');
+const url = new URL('https://api.ROAMINGPROXY.com/v2/serp');
 
 const params = {
     q: 'best pizza in new york',

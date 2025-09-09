@@ -55,7 +55,7 @@ import { CopyIcon, ChevronDownIcon, EditIcon, DeleteIcon, AddIcon, RepeatIcon } 
 import type { UserPublic } from "../../../client";
 
 // --- API Configuration & Types (No changes) ---
-const API_BASE_URL = "https://api.roamingproxy.com/v2";
+const API_BASE_URL = "https://api.ROAMINGPROXY.com/v2";
 
 interface UserAgentPublic {
   id: string;

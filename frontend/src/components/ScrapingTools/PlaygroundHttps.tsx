@@ -201,7 +201,7 @@ const REGIONS = [
   "us-east", "us-west", "us-central", "northamerica-northeast",
   "southamerica", "asia", "australia", "europe", "middle-east",
 ];
-const API_URL = "https://api.roamingproxy.com/v2/proxy";
+const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy";
 
 const PlaygroundGSerp: React.FC = () => {
   // --- State ---

@@ -54,7 +54,7 @@ const navStructure: NavItem[] = [ {
       },
       {
         title: 'Managed VPS',
-        path: 'https://cloud.roamingproxy.com/hosting',
+        path: 'https://cloud.ROAMINGPROXY.com/hosting',
         description: 'Fully managed virtual private servers for your needs.',
       },
         {
