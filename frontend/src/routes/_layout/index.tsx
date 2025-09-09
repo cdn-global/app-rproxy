@@ -151,16 +151,7 @@ const HomePage = () => {
           <VStack spacing={8} align="stretch" mt={6} pb={10}>
             {/* Row 1: Usage */}
             <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
-              <GridItem>
-                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
-                  <VStack align="start" spacing={3}>
-                    <Heading size="sm">HTTPs API Usage</Heading>
-                    <Text fontSize="2xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
-                    <Text fontSize="2xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
-                  </VStack>
-                </Box>
-              </GridItem>
-              <GridItem>
+                            <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
                     <Heading size="sm">VPS Status</Heading>
@@ -169,6 +160,15 @@ const HomePage = () => {
                     <Text fontSize="sm" color="gray.600">
                       Note: Detailed VPS settings available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
                     </Text>
+                  </VStack>
+                </Box>
+              </GridItem>
+              <GridItem>
+                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
+                  <VStack align="start" spacing={3}>
+                    <Heading size="sm">HTTPs API Usage</Heading>
+                    <Text fontSize="2xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
+                    <Text fontSize="2xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
                   </VStack>
                 </Box>
               </GridItem>
