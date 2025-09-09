@@ -54,25 +54,15 @@ const navStructure: NavItem[] = [
     icon: FiUserCheck,
   },
   {
-    title: 'Web Scraping APIs',
-    subItems: [
-      {
         title: 'HTTPS API',
         path: '/web-scraping-tools/https-api',
         description: 'Access any webpage with our powerful rotating proxy network.',
       },
-    ],
-  },
-  {
-    title: 'Hosting',
-    subItems: [
       {
         title: 'Managed VPS',
         path: 'https://cloud.roamingproxy.com/hosting',
         description: 'Fully managed virtual private servers for your needs.',
       },
-    ],
-  },
   {
     title: 'Billing',
     path: '/hosting/billing',
