@@ -8,6 +8,7 @@ import {
   Flex,
   Table,
   Thead,
+  Heading,
   Tbody,
   Tr,
   SimpleGrid,
@@ -416,7 +417,7 @@ function UserAgentsPage() {
     <>
       <Container maxW="full" py={9}>
         <Flex align="center" justify="space-between" py={6}>
-            <Text fontSize="3xl" color="black">User Agents</Text>
+           <Heading as="h1" size="xl" color="gray.800">User Agents</Heading>
             <Text fontSize="lg" color="gray.600">A dynamic list of user agents for web scraping</Text>
         </Flex>
 
