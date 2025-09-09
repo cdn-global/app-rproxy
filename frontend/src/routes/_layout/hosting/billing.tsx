@@ -343,7 +343,7 @@ function BillingPage() {
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing History</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing</Tab>
+         
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
