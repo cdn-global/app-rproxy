@@ -1,4 +1,3 @@
-// src/routes/_layout/hosting/index.tsx
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Box,
@@ -7,24 +6,29 @@ import {
   Table,
   Thead,
   Tbody,
+  Tfoot,
   Tr,
   Th,
   Td,
   IconButton,
   Text,
-  Heading,
-  List,
-  ListItem,
-  ListIcon,
   useClipboard,
   useToast,
   HStack,
   Button,
+  Card,
+  CardHeader,
+  CardBody,
+  Heading,
+  List,
+  ListItem,
+  ListIcon,
+  VStack,
 } from "@chakra-ui/react";
 import { CopyIcon, CheckCircleIcon } from "@chakra-ui/icons";
 
-// Hardcoded devices (updated to reflect Debian for consistency)
-interface Device {
+// Hardcoded servers with pricing
+interface Server {
   name: string;
   email: string;
   ip: string;
@@ -35,12 +39,18 @@ interface Device {
   os: string;
   username: string;
   password: string;
+  monthlyComputePrice: number;
+  storageSizeGB: number;
+  activeSince: string; // YYYY-MM-DD
+  hasRotatingIP?: boolean;
+  hasBackup?: boolean;
+  hasMonitoring?: boolean;
 }
 
-const devices: Device[] = [
+const servers: Server[] = [
   {
     name: "riv1-nyc-mini5",
-    email: "nik@popov.cloud",
+    email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
     kernel: "Linux 6.8.0-57-generic",
@@ -49,10 +59,16 @@ const devices: Device[] = [
     os: "debian",
     username: "user",
     password: "5660",
+    monthlyComputePrice: 15,
+    storageSizeGB: 120,
+    activeSince: "2025-07-01",
+    hasRotatingIP: false,
+    hasBackup: true,
+    hasMonitoring: true,
   },
   {
     name: "riv2-nyc-mini5",
-    email: "nik@popov.cloud",
+    email: "apis.popov@gmail.com",
     ip: "100.114.242.51",
     version: "1.86.2",
     kernel: "Linux 6.8.0-57-generic",
@@ -61,10 +77,16 @@ const devices: Device[] = [
     os: "debian",
     username: "user",
     password: "5660",
+    monthlyComputePrice: 50,
+    storageSizeGB: 240,
+    activeSince: "2025-07-01",
+    hasRotatingIP: true,
+    hasBackup: false,
+    hasMonitoring: false,
   },
   {
     name: "riv3-nyc-mini6",
-    email: "nik@popov.cloud",
+    email: "apis.popov@gmail.com",
     ip: "100.91.158.116",
     version: "1.82.5",
     kernel: "Linux 6.8.0-59-generic",
@@ -73,10 +95,16 @@ const devices: Device[] = [
     os: "debian",
     username: "user",
     password: "5660",
+    monthlyComputePrice: 50,
+    storageSizeGB: 240,
+    activeSince: "2025-08-01",
+    hasRotatingIP: true,
+    hasBackup: true,
+    hasMonitoring: true,
   },
   {
     name: "riv4-nyc-mini5",
-    email: "nik@popov.cloud",
+    email: "apis.popov@gmail.com",
     ip: "100.100.106.3",
     version: "1.80.2",
     kernel: "Linux 6.8.0-55-generic",
@@ -85,6 +113,48 @@ const devices: Device[] = [
     os: "debian",
     username: "user",
     password: "5660",
+    monthlyComputePrice: 45,
+    storageSizeGB: 120,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+  },
+  {
+    name: "riv5-nyc-mini7",
+    email: "apis.popov@gmail.com",
+    ip: "100.120.30.40",
+    version: "1.85.0",
+    kernel: "Linux 6.8.0-60-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 60,
+    storageSizeGB: 500,
+    activeSince: "2025-08-01",
+    hasRotatingIP: true,
+    hasBackup: true,
+    hasMonitoring: true,
+  },
+  {
+    name: "riv6-nyc-mini8",
+    email: "apis.popov@gmail.com",
+    ip: "100.130.40.50",
+    version: "1.87.0",
+    kernel: "Linux 6.8.0-61-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 30,
+    storageSizeGB: 200,
+    activeSince: "2025-09-01",
+    hasRotatingIP: true,
+    hasBackup: false,
+    hasMonitoring: false,
   },
 ];
 
@@ -102,124 +172,111 @@ const CopyCell = ({ textToCopy, label }: { textToCopy: string; label: string }) 
       icon={<CopyIcon />}
       size="sm"
       onClick={handleCopy}
+      colorScheme="orange"
+      variant="outline"
     />
   );
 };
 
 function HostingIndexPage() {
   return (
-    <Container maxW="full" py={9} as="main">
-      <Flex align="center" py={6}>
-        <Flex direction="column">
-          <Heading as="h1" fontSize="3xl" color="black">Web Hosting Credentials</Heading>
-          <Text fontSize="lg" color="gray.600">Login details for hosting devices</Text>
-        </Flex>
-        <Button ml="auto" as={Link} to="billing">View Billing</Button>
+    <Container maxW="container.xl" py={10} as="main">
+      <Flex align="center" justify="space-between" py={6} mb={6}>
+        <VStack align="start" spacing={2}>
+          <Heading as="h1" size="xl" color="gray.800">Web Hosting Credentials</Heading>
+          <Text fontSize="lg" color="gray.600">Login details and management for your Debian VPS servers</Text>
+        </VStack>
+        <Button as={Link} to="billing" colorScheme="orange" variant="solid" size="md">View Billing</Button>
       </Flex>
 
-      <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
-        <Table variant="simple" size="md">
-          <Thead>
-            <Tr>
-              <Th>Device Name</Th>
-              <Th>IP</Th>
-              <Th>Username</Th>
-              <Th>Password</Th>
-              <Th isNumeric>Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {devices.map((device) => (
-              <Tr key={device.name}>
-                <Td>{device.name}</Td>
-                <Td>{device.ip}</Td>
-                <Td>{device.username}</Td>
-                <Td>{device.password}</Td>
-                <Td isNumeric>
-                  <HStack spacing={2} justify="flex-end">
-                    <CopyCell textToCopy={device.username} label="Username" />
-                    <CopyCell textToCopy={device.password} label="Password" />
-                    <Button size="sm" as={Link} to={device.name}>View Details</Button>
-                  </HStack>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+      <VStack align="stretch" spacing={8}>
+        {/* API Key Card */}
+        <Card borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="gray.50">
+          <CardHeader>
+            <Heading size="md" color="gray.700">Active API Key</Heading>
+          </CardHeader>
+          <CardBody>
+            <Text fontWeight="semibold" mb={2} color="gray.600">
+              API Key: <Text as="span" fontFamily="mono">sk_1S5MosLqozOkbqR8Bx8H7FYy</Text>
+            </Text>
+            <HStack spacing={3}>
+              <CopyCell textToCopy="sk_1S5MosLqozOkbqR8Bx8H7FYy" label="API Key" />
+              <Button size="sm" colorScheme="orange" variant="outline">Regenerate Key</Button>
+            </HStack>
+          </CardBody>
+        </Card>
 
-      {/* Transaction Summary Section */}
-      <Box mt={8} p={6} borderWidth="1px" borderRadius="lg" bg="gray.50">
-        <Heading as="h2" size="lg" mb={4}>Transaction Summary</Heading>
-        <Text fontSize="lg" mb={2}>
-          <strong>Product:</strong> Debian Unlimited Bandwidth VPS with Floating IP
-        </Text>
-        <List spacing={2}>
-          <ListItem><strong>Total Amount:</strong> $449.00 USD (single transaction)</ListItem>
-          <ListItem><strong>Net Amount:</strong> $435.68 USD (after $13.32 Stripe fees)</ListItem>
-          <ListItem><strong>Customer:</strong> Nik Popov (nik@iconluxurygroup.com)</ListItem>
-          <ListItem><strong>Payment Method:</strong> American Express (•••• 3007), Expires 11/2027</ListItem>
-          <ListItem><strong>Date:</strong> September 9, 2025, 4:33 AM</ListItem>
-          <ListItem><strong>Status:</strong> Succeeded</ListItem>
-          <ListItem><strong>Invoice ID:</strong> in_1S5MosLqozOkbqR8Bx8H7FYy</ListItem>
-          <ListItem><strong>Statement Descriptor:</strong> ROAMINGPROXY.COM</ListItem>
-        </List>
-      </Box>
+        {/* Servers Table */}
+        <Card borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm" bg="gray.50">
+          <CardHeader bg="orange.100">
+            <Heading size="md" color="orange.800">Server Credentials</Heading>
+          </CardHeader>
+          <CardBody>
+            <Table variant="simple" size="md">
+              <Thead bg="orange.100">
+                <Tr>
+                  <Th color="orange.800">Device Name</Th>
+                  <Th color="orange.800">IP</Th>
+                  <Th color="orange.800">Username</Th>
+                  <Th color="orange.800">Password</Th>
+                  <Th color="orange.800">OS</Th>
+                  <Th color="orange.800" isNumeric>Actions</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {servers.map((server) => (
+                  <Tr key={server.name}>
+                    <Td>{server.name}</Td>
+                    <Td>{server.ip}</Td>
+                    <Td>{server.username}</Td>
+                    <Td>{server.password}</Td>
+                    <Td>{server.os.charAt(0).toUpperCase() + server.os.slice(1)}</Td>
+                    <Td isNumeric>
+                      <HStack spacing={2} justify="flex-end">
+                        <CopyCell textToCopy={server.username} label="Username" />
+                        <CopyCell textToCopy={server.password} label="Password" />
+                        <Button size="sm" as={Link} to={server.name} colorScheme="orange" variant="outline">View Details</Button>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+              <Tfoot bg="orange.50">
+                <Tr>
+                  <Th colSpan={6} color="orange.800">Total Servers: {servers.length}</Th>
+                </Tr>
+              </Tfoot>
+            </Table>
+          </CardBody>
+        </Card>
 
-      {/* Competitive Pricing Section */}
-      <Box mt={8} p={6} borderWidth="1px" borderRadius="lg" bg="gray.50">
-        <Heading as="h2" size="lg" mb={4}>Suggested Competitive Pricing</Heading>
-        <Text fontSize="lg" mb={4}>
-          Product: <strong>Debian Unlimited Bandwidth VPS with Floating IP</strong>
-        </Text>
-        <List spacing={3}>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Billing for Multiple Devices:</strong>
-            <List pl={6} spacing={2}>
+        {/* Roaming Proxy Features Card */}
+        <Card borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="gray.50">
+          <CardHeader bg="orange.100">
+            <Heading size="md" color="orange.800">Roaming Proxy & Server Features</Heading>
+          </CardHeader>
+          <CardBody>
+            <List spacing={4}>
               <ListItem>
-                Base VPS (1 unit): $399-$449/month. Add $2-5 per additional floating IP for unique device IPs. Example: 10 devices (1 VPS, 10 IPs) = $399 (VPS) + $20 (10 IPs @ $2) = $419/month.
+                <ListIcon as={CheckCircleIcon} color="green.500" />
+                <Text as="span" fontWeight="semibold">Rotating IPs:</Text> {servers.filter(s => s.hasRotatingIP).length} servers with rotating IPs for enhanced privacy and geo-targeting.
               </ListItem>
               <ListItem>
-                Avoid per-device billing unless CPU/RAM is heavily segmented to maintain competitiveness.
+                <ListIcon as={CheckCircleIcon} color="green.500" />
+                <Text as="span" fontWeight="semibold">Backups:</Text> {servers.filter(s => s.hasBackup).length} servers with automated backups for data protection.
               </ListItem>
               <ListItem>
-                Reseller tiers: $449 (up to 20 devices), $599 (up to 50 devices) with proportional IP allocations.
+                <ListIcon as={CheckCircleIcon} color="green.500" />
+                <Text as="span" fontWeight="semibold">Monitoring:</Text> {servers.filter(s => s.hasMonitoring).length} servers with 24/7 monitoring for optimal performance.
+              </ListItem>
+              <ListItem>
+                <ListIcon as={CheckCircleIcon} color="green.500" />
+                <Text as="span" fontWeight="semibold">Debian Optimized:</Text> All servers run on Debian for stability, performance, and unlimited bandwidth.
               </ListItem>
             </List>
-          </ListItem>
-          <ListItem>
-            <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Invoice Description:</strong>
-            <List pl={6} spacing={2}>
-              <ListItem>
-                <strong>Details:</strong> Debian Unlimited Bandwidth VPS with Floating IP: High-performance managed VPS with 8 vCPUs, 32GB RAM, 1TB SSD, unlimited bandwidth, and 2-5 floating IPs for seamless migrations and geo-flexible hosting.
-              </ListItem>
-              <ListItem>
-                <strong>Invoice Line Items:</strong>
-                <List pl={6}>
-                  <ListItem>Debian Managed VPS (Unlimited BW): $399</ListItem>
-                  <ListItem>Floating IP (x2): $10 ($5 each)</ListItem>
-                  <ListItem>Managed Support: $40</ListItem>
-                  <ListItem><strong>Total:</strong> $449/month (single transaction)</ListItem>
-                </List>
-              </ListItem>
-            </List>
-          </ListItem>
-        </List>
-      </Box>
+          </CardBody>
+        </Card>
+      </VStack>
     </Container>
   );
 }
