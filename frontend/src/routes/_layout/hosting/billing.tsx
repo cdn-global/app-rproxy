@@ -124,7 +124,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "e-coast-jersey-jersey-4core-ssd",
+    name: "e-coast-n-jersey-ruther-4core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.62",
     version: "1.88.0",
