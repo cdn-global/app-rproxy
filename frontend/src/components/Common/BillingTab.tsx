@@ -1,105 +1,153 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Box,
+  Container,
   Flex,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
-  Button,
+  Box,
   VStack,
-  Divider,
+  Heading,
+  Spinner,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
   useToast,
-  Alert,
-  AlertIcon,
 } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import type { UserPublic } from "../../client";
+import ApiKeyModule from "../../components/ScrapingTools/ApiKey";
 
-// --- Helper function for Billing ---
-const fetchBillingPortal = async (token: string) => {
-  const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch portal: ${response.status}`);
-  }
-  const data = await response.json();
-  if (!data.portal_url) {
-    throw new Error("No portal URL received");
-  }
-  return data.portal_url;
-};
-
-// --- Tab Content: BillingTab ---
-const BillingTab = () => {
-  const [token] = useState<string | null>(localStorage.getItem("access_token"));
-  const [isLoading, setIsLoading] = useState(false);
+// --- User Settings Tab Component ---
+function UserSettingsTab({ user }: { user: UserPublic }) {
   const toast = useToast();
 
-  const handleBillingClick = async () => {
-    if (!token) return;
-
-    setIsLoading(true);
-    try {
-      const portalUrl = await fetchBillingPortal(token);
-      window.location.href = portalUrl;
-    } catch (error) {
-      console.error("Error accessing customer portal:", error);
-      toast({
-        title: "Error",
-        description: "Failed to access billing portal. Please try again later.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  // Placeholder for future edit functionality
+  const handleUpdateSettings = () => {
+    toast({
+      title: "Update Settings",
+      description: "User settings update is not yet implemented.",
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
   };
 
-  // Guard clause to match the provided template's pattern
-  if (!token) {
-    return (
-      <Box p={6} width="100%">
-        <Alert status="warning">
-          <AlertIcon />
-          Please log in to manage your billing information.
-        </Alert>
+  return (
+    <VStack align="stretch" spacing={6}>
+      <Heading size="md" color="gray.700">User Settings</Heading>
+      <Text color="gray.600">View and manage your account details.</Text>
+      <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
+        <FormControl mb={4}>
+          <FormLabel color="gray.700">Full Name</FormLabel>
+          <Input value={user.full_name || "N/A"} isReadOnly bg="gray.100" />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel color="gray.700">Email</FormLabel>
+          <Input value={user.email || "N/A"} isReadOnly bg="gray.100" />
+        </FormControl>
+        <Button
+          colorScheme="blue"
+          onClick={handleUpdateSettings}
+          isDisabled // Placeholder: disabled until update API is implemented
+        >
+          Update Settings
+        </Button>
       </Box>
+    </VStack>
+  );
+}
+
+// --- Tab Configuration ---
+const tabsConfig = [
+  {
+    title: "Credentials",
+    component: () => {
+      const token = localStorage.getItem("access_token");
+      return <ApiKeyModule token={token} />;
+    },
+  },
+  {
+    title: "User Settings",
+    component: () => {
+      const queryClient = useQueryClient();
+      const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
+      return currentUser ? <UserSettingsTab user={currentUser} /> : null;
+    },
+  },
+];
+
+// --- TanStack Router Route Definition ---
+export const Route = createFileRoute("/_layout/settings")({
+  component: UserSettings,
+});
+
+// --- Main Settings Page Component ---
+function UserSettings() {
+  const queryClient = useQueryClient();
+  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
+
+  if (!currentUser) {
+    return (
+      <Container maxW="full" py={6}>
+        <Flex justify="center" align="center" h="50vh">
+          <Spinner size="xl" />
+        </Flex>
+      </Container>
     );
   }
 
-  return (
-    <Box>
-      <VStack spacing={2} align="stretch">
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          justify="space-between"
-          align="center"
-        >
-          <Box>
-            <Text fontSize="lg" mb={2} color="gray.700">
-              Manage your subscriptions, view invoices, and update payment methods.
-            </Text>
-            <Text fontSize="lg" mb={4} color="gray.700">
-              You will be securely redirected to our customer portal.
-            </Text>
-          </Box>
-          <Button
-            colorScheme="blue"
-            onClick={handleBillingClick}
-            isLoading={isLoading}
-            loadingText="Redirecting..."
-            isDisabled={isLoading}
-          >
-            Manage Billing
-          </Button>
-        </Flex>
-        <Divider mb={4} />
-      </VStack>
-    </Box>
-  );
-};
+  const finalTabs = currentUser.is_superuser ? tabsConfig : tabsConfig;
 
-export default BillingTab;
+  return (
+    <Container maxW="full" py={9}>
+      <Flex align="center" justify="space-between" py={6}>
+        <Text fontSize="3xl" color="black">
+          Settings
+        </Text>
+        <Text fontSize="lg" color="gray.600">
+          Manage your account settings
+        </Text>
+      </Flex>
+
+      <Tabs isLazy variant="enclosed-colored" colorScheme="red">
+        <TabList>
+          {finalTabs.map((tab, index) => (
+            <Tab
+              key={index}
+              bg="white"
+              fontWeight="semibold"
+              fontSize="lg"
+              color="gray.400"
+              _selected={{
+                bg: "gray.50",
+                color: "red.600",
+                borderColor: "inherit",
+                borderBottomColor: "gray.50",
+                borderTopWidth: "2px",
+                borderTopColor: "red.400",
+                marginTop: "-1px",
+              }}
+            >
+              {tab.title}
+            </Tab>
+          ))}
+        </TabList>
+        <TabPanels bg="gray.50" pt={6} pb={6} borderRadius="0 0 md md">
+          {finalTabs.map((tab, index) => (
+            <TabPanel key={index}>
+              {React.createElement(tab.component)}
+            </TabPanel>
+          ))}
+        </TabPanels>
+      </Tabs>
+    </Container>
+  );
+}
+
+export default UserSettings;
