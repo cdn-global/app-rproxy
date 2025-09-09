@@ -88,7 +88,16 @@ const HomePage = () => {
   );
 
   const totalDataGB = (totalRequests * 0.0005).toFixed(2);
-  
+
+  // Ensure exactly three service cards (including VPS Hosting)
+  const displayedFeatures = useMemo(() => {
+    const features = activeSubscription?.enabled_features || [];
+    // Filter out vps-hosting to handle it separately, take first two other features
+    const nonVpsFeatures = features.filter(f => f !== 'vps-hosting').slice(0, 2);
+    // Always include vps-hosting as the third card
+    return [...nonVpsFeatures, 'vps-hosting'].filter(f => featureDetails[f]);
+  }, [activeSubscription]);
+
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
   const error = subscriptionsError || apiKeysError;
   const [isPortalLoading, setIsPortalLoading] = useState(false);
@@ -183,11 +192,11 @@ const HomePage = () => {
             /> */}
 
             {/* Row 3: Services & Quick Links */}
-            {activeSubscription.enabled_features?.length > 0 && (
+            {displayedFeatures.length > 0 && (
               <VStack align="stretch" spacing={4} pt={4}>
                 <Heading size="md">Your Services & Tools</Heading>
-                <Grid templateColumns={{ base: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr" }} gap={6}>
-                  {activeSubscription.enabled_features.map((featureSlug) => {
+                <Grid templateColumns={{ base: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr 1fr" }} gap={6}>
+                  {displayedFeatures.slice(0, 3).map((featureSlug) => {
                     const details = featureDetails[featureSlug];
                     if (!details) return null;
                     return (
