@@ -122,7 +122,7 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
           as={Flex}
           px={4}
           py={2}
-          alignItems="center" // Ensure all items are vertically centered
+          alignItems="center"
           cursor="pointer"
           color={isGroupActive ? activeTextColor : textColor}
           _hover={hoverStyles}
@@ -395,16 +395,23 @@ const TopNav = () => {
       borderBottomWidth="1px"
       borderBottomColor="gray.300"
     >
-      <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-
-        <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
-            <Logo 
-  src="/assets/images/roaming-proxy-network-logo.png"
-  alt="Roaming Proxy Logo"
-  boxSize="220px"
-  href="/"
-/>
-
+      <Flex align="center" justify="space-between" maxW="1200px" mx="auto" w="100%">
+        <Flex align="center" gap={4}>
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            boxSize="220px"
+            href="/"
+          />
+          <Flex
+            align="center"
+            gap={4}
+            display={{ base: "none", md: "flex" }}
+            flexGrow={1}
+          >
+            <NavItems />
+          </Flex>
+        </Flex>
         <IconButton
           ref={btnRef}
           onClick={isOpen ? onClose : onOpen}
@@ -415,8 +422,6 @@ const TopNav = () => {
           icon={<FiMenu />}
           variant="ghost"
         />
-          <NavItems />
-        </Flex>
       </Flex>
 
       <Box
