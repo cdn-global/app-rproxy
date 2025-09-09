@@ -7,7 +7,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { FiPhone, FiMail, FiTwitter, FiGithub, FiGlobe, FiBook } from "react-icons/fi";
-
+import Logo from '../Common/Logo';
 const Footer = () => {
     const textColor = "gray.800";
     const accentColor = "red.400";
@@ -27,20 +27,12 @@ const Footer = () => {
             >
                 {/* Company Info */}
                 <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Link
-                        href="https://ROAMINGPROXY.com"
-                        isExternal
-                        color={textColor}
-                        _hover={{ color: accentColor }}
-                    >
-                        <Text
-                            fontWeight="bold"
-                            color={textColor}
-                            fontSize="sm"
-                        >
-                            ROAMINGPROXY.com
-                        </Text>
-                    </Link>
+        <Logo
+          src="/assets/images/roaming-proxy-network-logo.png"
+          alt="Roaming Proxy Logo"
+          to="/"
+          width={{ base: '80px', md: '110px' }}
+        />
                     <Text color={textColor} fontSize="xs" maxW="200px">
                         Enterprise proxy and scraping solutions for web data.
                     </Text>
