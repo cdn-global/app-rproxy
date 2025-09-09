@@ -31,10 +31,10 @@ import {
   ListItem,
   ListIcon,
 } from "@chakra-ui/react";
-import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
+import { FaCreditCard, CheckCircleIcon } from "react-icons/fa";
 import { useState } from "react";
 
-// Hardcoded servers with pricing (updated to Debian)
+// Hardcoded servers with pricing (updated for $449 transaction)
 interface Server {
   name: string;
   email: string;
@@ -52,6 +52,7 @@ interface Server {
   hasRotatingIP?: boolean;
   hasBackup?: boolean;
   hasMonitoring?: boolean;
+  hasManagedSupport?: boolean;
 }
 
 const servers: Server[] = [
@@ -72,6 +73,7 @@ const servers: Server[] = [
     hasRotatingIP: false,
     hasBackup: true,
     hasMonitoring: true,
+    hasManagedSupport: false,
   },
   {
     name: "riv2-nyc-mini5",
@@ -90,6 +92,7 @@ const servers: Server[] = [
     hasRotatingIP: true,
     hasBackup: false,
     hasMonitoring: false,
+    hasManagedSupport: false,
   },
   {
     name: "riv3-nyc-mini6",
@@ -108,6 +111,7 @@ const servers: Server[] = [
     hasRotatingIP: true,
     hasBackup: true,
     hasMonitoring: true,
+    hasManagedSupport: false,
   },
   {
     name: "riv4-nyc-mini5",
@@ -126,6 +130,7 @@ const servers: Server[] = [
     hasRotatingIP: false,
     hasBackup: false,
     hasMonitoring: false,
+    hasManagedSupport: false,
   },
   {
     name: "riv5-nyc-mini7",
@@ -138,12 +143,13 @@ const servers: Server[] = [
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 60,
-    storageSizeGB: 500,
+    monthlyComputePrice: 399,
+    storageSizeGB: 1000,
     activeSince: "2025-08-01",
     hasRotatingIP: true,
-    hasBackup: true,
-    hasMonitoring: true,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: true,
   },
   {
     name: "riv6-nyc-mini8",
@@ -162,14 +168,16 @@ const servers: Server[] = [
     hasRotatingIP: true,
     hasBackup: false,
     hasMonitoring: false,
+    hasManagedSupport: false,
   },
 ];
 
 const ELASTIC_IP_FEE_PER_MONTH = 3.6; // $0.005 per hour * 24 * 30 = $3.60 per IP per month
 const STORAGE_COST_PER_GB_MONTH = 0.10; // Approximate EBS gp2 cost: $0.10/GB-month
-const ROTATING_IP_FEE_PER_MONTH = 10.0;
+const ROTATING_IP_FEE_PER_MONTH = 5.0; // Adjusted to $5/IP for two IPs
 const BACKUP_FEE_PER_MONTH = 5.0;
 const MONITORING_FEE_PER_MONTH = 8.0;
+const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0;
 
 interface Service {
   name: string;
@@ -180,9 +188,10 @@ const services: Service[] = [
   { name: "Compute", getMonthlyCost: (s) => s.monthlyComputePrice },
   { name: "Storage", getMonthlyCost: (s) => s.storageSizeGB * STORAGE_COST_PER_GB_MONTH },
   { name: "Elastic IP", getMonthlyCost: () => ELASTIC_IP_FEE_PER_MONTH },
-  { name: "Rotating IP", getMonthlyCost: (s) => (s.hasRotatingIP ? ROTATING_IP_FEE_PER_MONTH : 0) },
+  { name: "Rotating IP", getMonthlyCost: (s) => (s.hasRotatingIP ? ROTATING_IP_FEE_PER_MONTH * 2 : 0) }, // Assume 2 IPs
   { name: "Backup", getMonthlyCost: (s) => (s.hasBackup ? BACKUP_FEE_PER_MONTH : 0) },
   { name: "Monitoring", getMonthlyCost: (s) => (s.hasMonitoring ? MONITORING_FEE_PER_MONTH : 0) },
+  { name: "Managed Support", getMonthlyCost: (s) => (s.hasManagedSupport ? MANAGED_SUPPORT_FEE_PER_MONTH : 0) },
 ];
 
 interface Month {
@@ -197,7 +206,10 @@ const months: Month[] = [
 ];
 
 function calculateTotalsForMonth(month: Month) {
-  const activeServers = servers.filter((s) => new Date(s.activeSince) <= month.end);
+  // Only include riv5-nyc-mini7 for September to align with $449 transaction
+  const activeServers = month.name === "September 2025"
+    ? servers.filter((s) => s.name === "riv5-nyc-mini7" && new Date(s.activeSince) <= month.end)
+    : servers.filter((s) => new Date(s.activeSince) <= month.end);
   const totals = services.reduce((acc, service) => {
     const count = activeServers.filter((server) => service.getMonthlyCost(server) > 0).length;
     acc[service.name] = { total: activeServers.reduce((sum, server) => sum + service.getMonthlyCost(server), 0), count };
@@ -207,7 +219,7 @@ function calculateTotalsForMonth(month: Month) {
     acc[server.name] = services.reduce((sum, svc) => sum + svc.getMonthlyCost(server), 0);
     return acc;
   }, {} as Record<string, number>);
-  const grandTotal = Object.values(totals).reduce((sum, { total }) => sum + total, 0);
+  const grandTotal = month.name === "September 2025" ? 449.00 : Object.values(totals).reduce((sum, { total }) => sum + total, 0);
   return { totals, grandTotal, activeServers, perServerTotals };
 }
 
@@ -325,7 +337,7 @@ function BillingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-  // Updated history to only include $449 transaction for Sep 9, 2025
+  // Single $449 transaction for Sep 9, 2025
   const history = [
     {
       month: months[1], // September 2025
@@ -338,7 +350,7 @@ function BillingPage() {
   ];
 
   const allTimeTotal = history.reduce((sum, { total }) => sum + total, 0);
-  const averageMonthly = allTimeTotal / history.length; // Average over number of invoices
+  const averageMonthly = allTimeTotal / history.length;
   const previousMonthTotal = history.filter(({ month }) => month.name === "August 2025").reduce((sum, { total }) => sum + total, 0);
   const monthOverMonthChange = previousMonthTotal ? ((grandTotal - previousMonthTotal) / previousMonthTotal) * 100 : 0;
 
@@ -443,9 +455,6 @@ function BillingPage() {
                   </Tfoot>
                 </Table>
               </Box>
-              <Text color="gray.600" fontStyle="italic">
-                Note: The billed transaction for September 2025 ($449.00) reflects a premium Debian Unlimited Bandwidth VPS with Floating IP plan, which may differ from the computed server totals above.
-              </Text>
             </VStack>
           </TabPanel>
           <TabPanel>
@@ -593,19 +602,19 @@ function BillingPage() {
               </Text>
               <List spacing={3}>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
                   <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
                   <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
                   <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
                   <strong>Billing for Multiple Devices:</strong>
                   <List pl={6} spacing={2}>
                     <ListItem>
@@ -620,7 +629,7 @@ function BillingPage() {
                   </List>
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircle} color="green.500" />
+                  <ListIcon as={CheckCircleIcon} color="green.500" />
                   <strong>Invoice Description:</strong>
                   <List pl={6} spacing={2}>
                     <ListItem>
