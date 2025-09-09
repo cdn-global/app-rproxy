@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Container,
   Flex,
@@ -9,19 +9,59 @@ import {
   Tabs,
   Text,
   Box,
-  Button,
   VStack,
-  useToast,
   Heading,
   Spinner,
-  // Imports required for ApiKeyModule are assumed to be within that component
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import type { UserPublic } from "../../client";
 import ApiKeyModule from "../../components/ScrapingTools/ApiKey";
-import BillingTab from "../../components/Common/BillingTab"
-// Note: ApiKeyModule definition is external to this file.
+
+// --- User Settings Tab Component ---
+function UserSettingsTab({ user }: { user: UserPublic }) {
+  const toast = useToast();
+
+  // Placeholder for future edit functionality
+  const handleUpdateSettings = () => {
+    toast({
+      title: "Update Settings",
+      description: "User settings update is not yet implemented.",
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  return (
+    <VStack align="stretch" spacing={6}>
+      <Heading size="md" color="gray.700">User Settings</Heading>
+      <Text color="gray.600">View and manage your account details.</Text>
+      <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
+        <FormControl mb={4}>
+          <FormLabel color="gray.700">Full Name</FormLabel>
+          <Input value={user.full_name || "N/A"} isReadOnly bg="gray.100" />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel color="gray.700">Email</FormLabel>
+          <Input value={user.email || "N/A"} isReadOnly bg="gray.100" />
+        </FormControl>
+        <Button
+          colorScheme="blue"
+          onClick={handleUpdateSettings}
+          isDisabled // Placeholder: disabled until update API is implemented
+        >
+          Update Settings
+        </Button>
+      </Box>
+    </VStack>
+  );
+}
 
 // --- Tab Configuration ---
 const tabsConfig = [
@@ -29,13 +69,16 @@ const tabsConfig = [
     title: "Credentials",
     component: () => {
       const token = localStorage.getItem("access_token");
-      // Render ApiKeyModule, passing the token if it exists.
       return <ApiKeyModule token={token} />;
     },
   },
   {
-    title: "Billing",
-    component: BillingTab,
+    title: "User Settings",
+    component: () => {
+      const queryClient = useQueryClient();
+      const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
+      return currentUser ? <UserSettingsTab user={currentUser} /> : null;
+    },
   },
 ];
 
@@ -50,7 +93,6 @@ function UserSettings() {
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
 
   if (!currentUser) {
-    // Show a spinner while user data is being fetched by the layout
     return (
       <Container maxW="full" py={6}>
         <Flex justify="center" align="center" h="50vh">
@@ -60,8 +102,7 @@ function UserSettings() {
     );
   }
 
-  // Example for potentially different tabs for superusers vs. regular users
-  const finalTabs = currentUser?.is_superuser ? tabsConfig : tabsConfig;
+  const finalTabs = currentUser.is_superuser ? tabsConfig : tabsConfig;
 
   return (
     <Container maxW="full" py={9}>
