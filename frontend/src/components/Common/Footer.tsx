@@ -50,9 +50,14 @@ import {
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Flex align="center" gap={1}>
               <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
-              <Text color={textColor} fontSize="xs">
+                 <Link
+                href="mailto:info@roamingproxy.com"
+                color={textColor}
+                fontSize="xs"
+                _hover={{ color: hoverColor }}
+              >
                 +1 (833) 435-3873‬
-              </Text>
+              </Link>
             </Flex>
             <Flex align="center" gap={1}>
               <Icon as={FiMail} color={textColor} boxSize="0.9em" />
