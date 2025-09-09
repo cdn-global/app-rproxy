@@ -73,6 +73,11 @@ const navStructure: NavItem[] = [
       },
     ],
   },
+  {
+    title: 'Billing',
+    path: '/hosting/billing',
+    icon: FaServer,
+  },
 ];
 
 const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavGroupDropdownProps) => {
@@ -210,6 +215,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
       'Settings',
       'Sign Out',
       'Managed VPS',
+      'Billing',
     ].includes(title);
   };
 
@@ -397,7 +403,7 @@ const TopNav = () => {
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
-          to="/" // Changed from href to to
+          to="/"
           width={{ base: '80px', md: '110px' }}
         />
         <Flex align="center" gap={4}>
