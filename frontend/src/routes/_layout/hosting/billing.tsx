@@ -178,85 +178,6 @@ const fetchBillingPortal = async (token: string) => {
   }
 };
 
-// --- BillingTab ---
-const BillingTab = () => {
-  const [token] = useState<string | null>(localStorage.getItem("access_token"));
-  const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast();
-
-  const handleBillingClick = async () => {
-    if (!token) {
-      toast({
-        title: "Error",
-        description: "Please log in to manage your billing information.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const portalUrl = await fetchBillingPortal(token);
-      window.location.href = portalUrl;
-    } catch (error) {
-      console.error("Error accessing customer portal:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to access billing portal. Please try again later.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!token) {
-    return (
-      <Box p={6} width="100%">
-        <Alert status="warning">
-          <AlertIcon />
-          Please log in to manage your billing information.
-        </Alert>
-      </Box>
-    );
-  }
-
-  return (
-    <Box>
-      <VStack spacing={2} align="stretch">
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          justify="space-between"
-          align="center"
-        >
-          <Box>
-            <Text fontSize="lg" mb={2} color="gray.700">
-              Manage your subscriptions, view invoices, and update payment methods.
-            </Text>
-            <Text fontSize="lg" mb={4} color="gray.700">
-              You will be securely redirected to our customer portal.
-            </Text>
-          </Box>
-          <Button
-            colorScheme="blue"
-            onClick={handleBillingClick}
-            isLoading={isLoading}
-            loadingText="Redirecting..."
-            isDisabled={isLoading}
-          >
-            Manage Billing
-          </Button>
-        </Flex>
-        <Divider mb={4} />
-      </VStack>
-    </Box>
-  );
-};
-
 // --- Modified PaymentDetailsTab ---
 function PaymentDetailsTab() {
   const [token] = useState<string | null>(localStorage.getItem("access_token"));
@@ -705,9 +626,6 @@ function BillingPage() {
           </TabPanel>
           <TabPanel>
             <PaymentDetailsTab />
-          </TabPanel>
-          <TabPanel>
-            <BillingTab />
           </TabPanel>
         </TabPanels>
       </Tabs>
