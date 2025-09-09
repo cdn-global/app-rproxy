@@ -77,6 +77,7 @@ const HomePage = () => {
     queryFn: fetchSubscriptions,
     staleTime: 5 * 60 * 1000,
   });
+
   const token = localStorage.getItem("access_token") || "";
   const { data: apiKeys, isLoading: isApiKeysLoading, error: apiKeysError } = useQuery({
     queryKey: ["apiKeys"],
@@ -85,8 +86,8 @@ const HomePage = () => {
     enabled: !!token,
   });
 
-  const activeSubscription = useMemo(
-    () => (Array.isArray(subscriptions) ? subscriptions.find((sub) => ["active", "trialing", "past_due"].includes(sub.status)) : undefined),
+  const activeSubscriptions = useMemo(
+    () => (Array.isArray(subscriptions) ? subscriptions.filter((sub) => ["active", "trialing", "past_due"].includes(sub.status)) : []),
     [subscriptions]
   );
 
@@ -98,10 +99,11 @@ const HomePage = () => {
   const totalDataGB = (totalRequests * 0.0005).toFixed(2);
 
   const displayedFeatures = useMemo(() => {
-    const features = activeSubscription?.enabled_features || [];
-    const nonVpsFeatures = features.filter((f) => f !== "vps-hosting").slice(0, 2);
+    const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
+    const uniqueFeatures = Array.from(new Set(features));
+    const nonVpsFeatures = uniqueFeatures.filter((f) => f !== "vps-hosting").slice(0, 2);
     return [...nonVpsFeatures, "vps-hosting"].filter((f) => featureDetails[f]);
-  }, [activeSubscription]);
+  }, [activeSubscriptions]);
 
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
   const error = subscriptionsError || apiKeysError;
@@ -137,76 +139,56 @@ const HomePage = () => {
             <AlertIcon />
             <Text fontSize="sm">Error: {error instanceof Error ? error.message : "Failed to load dashboard details."}</Text>
           </Alert>
-        ) : !activeSubscription ? (
+        ) : activeSubscriptions.length === 0 ? (
           <Alert status="info" mt={6}>
             <AlertIcon />
-            <Text fontSize="sm">No active subscription found. Please subscribe to access your dashboard.</Text>
+            <Text fontSize="sm">No active subscriptions found. Please subscribe to access your dashboard.</Text>
           </Alert>
         ) : (
           <VStack spacing={8} align="stretch" mt={6} pb={10}>
-            {/* Row 1: Summary & Subscription Details */}
-            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr 1.5fr" }} gap={6}>
+            {/* Row 1: Usage and Active Subscriptions */}
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
-                    <Heading size="sm">Active Subscriptions</Heading>
-                    <Text fontSize="4xl" fontWeight="bold">
-                      {totalRequests.toLocaleString()}
-                    </Text>
+                    <Heading size="sm">Usage Summary</Heading>
+                    <Text fontSize="xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
+                    <Text fontSize="xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
                   </VStack>
                 </Box>
               </GridItem>
               <GridItem>
-                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
-                  <VStack align="start" spacing={3}>
-                    <Heading size="sm">HTTPS Request API</Heading>
-                    <Text fontSize="4xl" fontWeight="bold">
-                      {totalDataGB} GB
-                    </Text>
-                  </VStack>
-                </Box>
-              </GridItem>
-              <GridItem>
-                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height={{ base: "auto", md: "180px" }} display="flex" flexDirection="column">
+                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%" display="flex" flexDirection="column">
+                  <Heading size="sm" mb={3}>Active Subscriptions</Heading>
                   <Box flex="1" overflowY="auto" pr={2}>
                     <Table variant="simple" size="sm">
                       <Tbody>
-                        <Tr>
-                          <Td fontWeight="bold">Current Period</Td>
-                          <Td>
-                            {activeSubscription.current_period_start && activeSubscription.current_period_end
-                              ? `${new Date(activeSubscription.current_period_start * 1000).toLocaleDateString()} - ${new Date(
-                                  activeSubscription.current_period_end * 1000
-                                ).toLocaleDateString()}`
-                              : "N/A"}
-                          </Td>
-                        </Tr>
-                        {activeSubscription.enabled_features?.length > 0 && (
-                          <>
-                            <Tr>
-                              <Td colSpan={2} fontWeight="bold" pt={4}>
-                                VPS
-                              </Td>
-                            </Tr>
-                            {activeSubscription.enabled_features.map((feature) => (
-                              <Tr key={feature}>
-                                <Td pl={8} textTransform="capitalize">
-                                  {feature.replace(/-/g, " ")}
-                                </Td>
-                                <Td textAlign="right">
-                                  <Badge colorScheme="green">Active</Badge>
-                                </Td>
-                              </Tr>
-                            ))}
-                          </>
-                        )}
+                        {activeSubscriptions.map((sub) => (
+                          <Tr key={sub.id}>
+                            <Td>
+                              <Text fontWeight="bold">{sub.plan_name || "Unknown Plan"}</Text>
+                              <Text fontSize="xs" color="gray.600">
+                                {sub.current_period_start && sub.current_period_end
+                                  ? `${new Date(sub.current_period_start * 1000).toLocaleDateString()} - ${new Date(
+                                      sub.current_period_end * 1000
+                                    ).toLocaleDateString()}`
+                                  : "N/A"}
+                              </Text>
+                            </Td>
+                            <Td textAlign="right">
+                              <Badge colorScheme={sub.status === "active" ? "green" : sub.status === "trialing" ? "yellow" : "red"}>
+                                {sub.status}
+                              </Badge>
+                            </Td>
+                          </Tr>
+                        ))}
                       </Tbody>
                     </Table>
                   </Box>
                 </Box>
               </GridItem>
             </Grid>
-            {/* Row 3: Services */}
+            {/* Row 2: Services */}
             {displayedFeatures.length > 0 && (
               <VStack align="stretch" spacing={4} pt={4}>
                 <Heading size="md">Your Services</Heading>
