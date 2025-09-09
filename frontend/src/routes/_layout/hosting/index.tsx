@@ -12,18 +12,18 @@ import {
   Td,
   IconButton,
   Text,
-  useClipboard,
-  useToast,
-  HStack,
-  Button,
   Heading,
   List,
   ListItem,
   ListIcon,
+  useClipboard,
+  useToast,
+  HStack,
+  Button,
 } from "@chakra-ui/react";
 import { CopyIcon, CheckCircleIcon } from "@chakra-ui/icons";
 
-// Hardcoded devices
+// Hardcoded devices (updated to reflect Debian for consistency)
 interface Device {
   name: string;
   email: string;
@@ -46,7 +46,7 @@ const devices: Device[] = [
     kernel: "Linux 6.8.0-57-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
   },
@@ -58,7 +58,7 @@ const devices: Device[] = [
     kernel: "Linux 6.8.0-57-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
   },
@@ -70,7 +70,7 @@ const devices: Device[] = [
     kernel: "Linux 6.8.0-59-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
   },
@@ -82,7 +82,7 @@ const devices: Device[] = [
     kernel: "Linux 6.8.0-55-generic",
     status: "Connected",
     type: "VPS",
-    os: "ubuntu",
+    os: "debian",
     username: "user",
     password: "5660",
   },
@@ -108,10 +108,10 @@ const CopyCell = ({ textToCopy, label }: { textToCopy: string; label: string }) 
 
 function HostingIndexPage() {
   return (
-    <Container maxW="full" py={9}>
+    <Container maxW="full" py={9} as="main">
       <Flex align="center" py={6}>
         <Flex direction="column">
-          <Text fontSize="3xl" color="black">Web Hosting Credentials</Text>
+          <Heading as="h1" fontSize="3xl" color="black">Web Hosting Credentials</Heading>
           <Text fontSize="lg" color="gray.600">Login details for hosting devices</Text>
         </Flex>
         <Button ml="auto" as={Link} to="billing">View Billing</Button>
@@ -148,7 +148,25 @@ function HostingIndexPage() {
         </Table>
       </Box>
 
-      {/* New Pricing Section */}
+      {/* Transaction Summary Section */}
+      <Box mt={8} p={6} borderWidth="1px" borderRadius="lg" bg="gray.50">
+        <Heading as="h2" size="lg" mb={4}>Transaction Summary</Heading>
+        <Text fontSize="lg" mb={2}>
+          <strong>Product:</strong> Debian Unlimited Bandwidth VPS with Floating IP
+        </Text>
+        <List spacing={2}>
+          <ListItem><strong>Total Amount:</strong> $449.00 USD (single transaction)</ListItem>
+          <ListItem><strong>Net Amount:</strong> $435.68 USD (after $13.32 Stripe fees)</ListItem>
+          <ListItem><strong>Customer:</strong> Nik Popov (nik@iconluxurygroup.com)</ListItem>
+          <ListItem><strong>Payment Method:</strong> American Express (•••• 3007), Expires 11/2027</ListItem>
+          <ListItem><strong>Date:</strong> September 9, 2025, 4:33 AM</ListItem>
+          <ListItem><strong>Status:</strong> Succeeded</ListItem>
+          <ListItem><strong>Invoice ID:</strong> in_1S5MosLqozOkbqR8Bx8H7FYy</ListItem>
+          <ListItem><strong>Statement Descriptor:</strong> ROAMINGPROXY.COM</ListItem>
+        </List>
+      </Box>
+
+      {/* Competitive Pricing Section */}
       <Box mt={8} p={6} borderWidth="1px" borderRadius="lg" bg="gray.50">
         <Heading as="h2" size="lg" mb={4}>Suggested Competitive Pricing</Heading>
         <Text fontSize="lg" mb={4}>
@@ -157,11 +175,11 @@ function HostingIndexPage() {
         <List spacing={3}>
           <ListItem>
             <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Monthly Pricing ($449):</strong> Reduce to $399/month to undercut competitors like OVHcloud and Vultr for similar specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization.
+            <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
           </ListItem>
           <ListItem>
             <ListIcon as={CheckCircleIcon} color="green.500" />
-            <strong>Annual Pricing ($449):</strong> Highly competitive at ~$37.42/month. Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
+            <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
           </ListItem>
           <ListItem>
             <ListIcon as={CheckCircleIcon} color="green.500" />
@@ -195,7 +213,7 @@ function HostingIndexPage() {
                   <ListItem>Debian Managed VPS (Unlimited BW): $399</ListItem>
                   <ListItem>Floating IP (x2): $10 ($5 each)</ListItem>
                   <ListItem>Managed Support: $40</ListItem>
-                  <ListItem><strong>Total:</strong> $449/month (or $449/year if annual)</ListItem>
+                  <ListItem><strong>Total:</strong> $449/month (single transaction)</ListItem>
                 </List>
               </ListItem>
             </List>
