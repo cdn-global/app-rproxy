@@ -56,12 +56,8 @@ const navStructure: NavItem[] = [ {
         title: 'Managed VPS',
         path: 'https://cloud.ROAMINGPROXY.com/hosting',
         description: 'Fully managed virtual private servers for your needs.',
+           icon: FaServer,
       },
-  {
-    title: 'Billing',
-    path: '/hosting/billing',
-    icon: FaServer,
-  },
 ];
 
 const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavGroupDropdownProps) => {
@@ -199,7 +195,6 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
       'Settings',
       'Sign Out',
       'Managed VPS',
-      'Billing',
     ].includes(title);
   };
 
