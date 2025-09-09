@@ -117,8 +117,9 @@ const HomePage = () => {
 
   const displayedFeatures = useMemo(() => {
     const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
-    const uniqueFeatures = Array.from(new Set(features));
-    return ['proxy-api', 'vps-hosting'].filter((f) => featureDetails[f] && uniqueFeatures.includes(f));
+    const uniqueFeatures = Array.from(new Set(features)) as FeatureKey[];
+    const selectedFeatures: FeatureKey[] = ['proxy-api', 'vps-hosting'];
+    return selectedFeatures.filter((f) => featureDetails[f] && uniqueFeatures.includes(f));
   }, [activeSubscriptions]);
 
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
@@ -163,7 +164,7 @@ const HomePage = () => {
         ) : (
           <VStack spacing={8} align="stretch" mt={6} pb={10}>
             {/* Row 1: Usage and Active Subscriptions */}
-            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
+            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
