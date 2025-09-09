@@ -620,7 +620,7 @@ function BillingPage() {
                   </List>
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaFaCheckCircle} color="green.500" />
+                  <ListIcon as={FaCheckCircle} color="green.500" />
                   <strong>Invoice Description:</strong>
                   <List pl={6} spacing={2}>
                     <ListItem>
