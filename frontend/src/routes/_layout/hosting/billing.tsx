@@ -449,7 +449,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZs",
       paymentDate: "November 17, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "Initial Charge Etheria Support",
+      description: "Initial Support Charge",
     },
   ];
 
