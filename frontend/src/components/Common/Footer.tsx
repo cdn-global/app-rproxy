@@ -6,7 +6,7 @@ import {
     Icon,
     VStack,
 } from "@chakra-ui/react";
-import { FiPhone, FiMail, FiTwitter, FiGithub, FiGlobe } from "react-icons/fi";
+import { FiPhone, FiMail, FiTwitter, FiGithub, FiGlobe, FiBook } from "react-icons/fi";
 
 const Footer = () => {
     const textColor = "gray.800";
@@ -167,6 +167,14 @@ const Footer = () => {
                         <Link href="https://cobaltdata.net" isExternal>
                             <Icon
                                 as={FiGlobe}
+                                color={textColor}
+                                _hover={{ color: hoverColor }}
+                                boxSize="1em"
+                            />
+                        </Link>
+                        <Link href="https://docs.roamingproxy.com/" isExternal>
+                            <Icon
+                                as={FiBook}
                                 color={textColor}
                                 _hover={{ color: hoverColor }}
                                 boxSize="1em"
