@@ -62,12 +62,12 @@ import {
             <Flex align="center" gap={1}>
               <Icon as={FiMail} color={textColor} boxSize="0.9em" />
               <Link
-                href="mailto:info@ROAMINGPROXY.com"
+                href="mailto:info@roamingproxy.com"
                 color={textColor}
                 fontSize="xs"
                 _hover={{ color: hoverColor }}
               >
-                info@ROAMINGPROXY.com
+                info@roamingproxy.com
               </Link>
             </Flex>
           </VStack>
