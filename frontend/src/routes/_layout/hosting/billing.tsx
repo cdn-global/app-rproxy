@@ -297,7 +297,7 @@ function BillingPage() {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlimited Bandwidth VPS with Floating IP",
+      description: "Debian Unlim VPS - Region Rotate",
     },
     {
       month: months[8], // August 2025
