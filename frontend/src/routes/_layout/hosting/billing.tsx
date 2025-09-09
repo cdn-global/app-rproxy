@@ -493,7 +493,6 @@ function BillingPage() {
         <TabList>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Current Billing</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Service Details</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing History</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
         </TabList>
@@ -672,43 +671,6 @@ function BillingPage() {
                 );
               })}
             </Accordion>
-          </TabPanel>
-          <TabPanel>
-            <Heading size="md" mb={6} color="gray.700">Billing History</Heading>
-            <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
-              <Table variant="simple" size="md">
-                <Thead bg="red.100">
-                  <Tr>
-                    <Th color="red.800">Month</Th>
-                    <Th color="red.800" isNumeric>Total Cost (USD)</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {history.map(({ month, total, invoiceId }) => (
-                    <Tr key={invoiceId}>
-                      <Td>{month.name}</Td>
-                      <Td isNumeric>${total.toFixed(2)}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </Box>
-            <Box mt={6} p={4} borderWidth="1px" borderRadius="lg" bg="red.50" boxShadow="sm">
-              <VStack align="stretch" spacing={3}>
-                <Flex justify="space-between">
-                  <Text fontWeight="semibold" color="red.800">Total Spent to Date</Text>
-                  <Text fontWeight="bold" color="red.800">${allTimeTotal.toFixed(2)}</Text>
-                </Flex>
-                <Flex justify="space-between">
-                  <Text fontWeight="semibold" color="red.800">Average Monthly Cost</Text>
-                  <Text fontWeight="bold" color="red.800">${averageMonthly.toFixed(2)}</Text>
-                </Flex>
-                <Flex justify="space-between">
-                  <Text fontWeight="semibold" color="red.800">Month-over-Month Change</Text>
-                  <Text fontWeight="bold" color="red.800">{monthOverMonthChange.toFixed(2)}%</Text>
-                </Flex>
-              </VStack>
-            </Box>
           </TabPanel>
           <TabPanel>
             <Heading size="md" mb={6} color="gray.700">Invoices</Heading>
