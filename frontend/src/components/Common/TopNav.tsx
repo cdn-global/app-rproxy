@@ -395,22 +395,20 @@ const TopNav = () => {
       borderBottomWidth="1px"
       borderBottomColor="gray.300"
     >
-      <Flex align="center" justify="space-between" maxW="1200px" mx="auto" w="100%">
-        <Flex align="center" gap={4}>
-          <Logo
-            src="/assets/images/roaming-proxy-network-logo.png"
-            alt="Roaming Proxy Logo"
-            boxSize="220px"
-            href="/"
-          />
-          <Flex
-            align="center"
-            gap={4}
-            display={{ base: "none", md: "flex" }}
-            flexGrow={1}
-          >
-            <NavItems />
-          </Flex>
+      <Flex align="center" maxW="1200px" mx="auto" w="100%">
+        <Logo
+          src="/assets/images/roaming-proxy-network-logo.png"
+          alt="Roaming Proxy Logo"
+          boxSize="220px"
+          href="/"
+        />
+        <Flex
+          align="center"
+          flexGrow={1}
+          justify="flex-end"
+          display={{ base: "none", md: "flex" }}
+        >
+          <NavItems />
         </Flex>
         <IconButton
           ref={btnRef}
