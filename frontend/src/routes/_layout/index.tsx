@@ -121,8 +121,7 @@ const HomePage = () => {
     const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
     const uniqueFeatures = Array.from(new Set(features)) as FeatureKey[];
     const selectedFeatures: FeatureKey[] = ['proxy-api', 'vps-hosting'];
-    // Include features even if not in subscriptions for testing purposes
-    return selectedFeatures.filter((f) => featureDetails[f]); // Removed uniqueFeatures check
+    return selectedFeatures.filter((f) => featureDetails[f]);
   }, [activeSubscriptions]);
 
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
@@ -166,7 +165,7 @@ const HomePage = () => {
           </Alert>
         ) : (
           <VStack spacing={8} align="stretch" mt={6} pb={10}>
-            {/* Row 1: Usage and Active Subscriptions */}
+            {/* Row 1: Usage */}
             <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
@@ -174,40 +173,12 @@ const HomePage = () => {
                     <Heading size="sm">Usage Summary</Heading>
                     <Text fontSize="xl" fontWeight="bold">Total Requests (Web Scraping API): {totalRequests.toLocaleString()}</Text>
                     <Text fontSize="xl" fontWeight="bold">Data Transferred (Web Scraping API): {totalDataGB} GB</Text>
+                    <Text fontSize="xl" fontWeight="bold">VPS Usage (CPU): 45%</Text>
+                    <Text fontSize="xl" fontWeight="bold">VPS Usage (Memory): 3.2 GB</Text>
                     <Text fontSize="sm" color="gray.600">
-                      Note: VPS Hosting usage (e.g., CPU, memory) is available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
+                      Note: Detailed VPS usage is available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
                     </Text>
                   </VStack>
-                </Box>
-              </GridItem>
-              <GridItem>
-                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%" display="flex" flexDirection="column">
-                  <Heading size="sm" mb={3}>Active Subscriptions</Heading>
-                  <Box flex="1" overflowY="auto" pr={2}>
-                    <Table variant="simple" size="sm">
-                      <Tbody>
-                        {activeSubscriptions.map((sub) => (
-                          <Tr key={sub.id}>
-                            <Td>
-                              <Text fontWeight="bold">{sub.plan_name || "Unknown Plan"}</Text>
-                              <Text fontSize="xs" color="gray.600">
-                                {sub.current_period_start && sub.current_period_end
-                                  ? `${new Date(sub.current_period_start * 1000).toLocaleDateString()} - ${new Date(
-                                      sub.current_period_end * 1000
-                                    ).toLocaleDateString()}`
-                                  : "N/A"}
-                              </Text>
-                            </Td>
-                            <Td textAlign="right">
-                              <Badge colorScheme={sub.status === "active" ? "green" : sub.status === "trialing" ? "yellow" : "red"}>
-                                {sub.status}
-                              </Badge>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </Box>
                 </Box>
               </GridItem>
             </Grid>
@@ -238,7 +209,10 @@ const HomePage = () => {
                                 <Heading size="sm" pr={4}>
                                   {details.name}
                                 </Heading>
-                                <Icon as={details.icon} boxSize={8} color="red.400" />
+                                <Flex alignItems="center" gap={2}>
+                                  <Badge colorScheme="green">Active</Badge>
+                                  <Icon as={details.icon} boxSize={8} color="red.400" />
+                                </Flex>
                               </Flex>
                               <Text fontSize="sm" color="gray.600" minHeight={{ base: "auto", md: "60px" }}>
                                 {details.description}
