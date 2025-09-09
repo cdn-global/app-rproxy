@@ -308,7 +308,7 @@ function PaymentDetailsTab() {
   const cardExp = "11/2027";
   const billingAddress = {
     name: "Nik Popov",
-    email: "nik@iconluxurygroup.com",
+    email: "apispopov@gmail.com",
     line1: "599 Broadway, floor 3",
     city: "New York",
     state: "NY",
@@ -581,7 +581,7 @@ function BillingPage() {
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
-            <Heading size="md" mb={6} color="gray.700">Costs for {currentMonth.name}</Heading>
+            <Heading size="md" mb={6} color="gray.700">Billing Cycle - {currentMonth.name}</Heading>
             <VStack align="stretch" spacing={6}>
               {outstandingBalance > 0 && (
                 <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">

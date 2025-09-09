@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 
+// Hardcoded servers
 interface Server {
   name: string;
   email: string;
@@ -29,16 +30,17 @@ interface Server {
   monthlyComputePrice: number;
   storageSizeGB: number;
   activeSince: string;
-  hasRotatingIP: boolean;
-  hasBackup: boolean;
-  hasMonitoring: boolean;
+  hasRotatingIP?: boolean;
+  hasBackup?: boolean;
+  hasMonitoring?: boolean;
   hasManagedSupport?: boolean;
   vCPUs?: number;
+  ramGB?: number;
 }
 
 const servers: Server[] = [
   {
-    name: "e-coast-nyc-lower-8core-ssd",
+    name: "riv1-nyc-mini5",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -59,7 +61,7 @@ const servers: Server[] = [
     ramGB: 2,
   },
   {
-    name: "e-coast-nyc-midtown-16core-ssd",
+    name: "riv8-nyc-mini9",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
@@ -79,91 +81,8 @@ const servers: Server[] = [
     vCPUs: 16,
     ramGB: 64,
   },
-  {
-    name: "e-coast-nyc-bk-4core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.61",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    storageSizeGB: 468,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 4,
-  },
-  {
-    name: "e-coast-jersey-jersey-4core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.62",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 45.3,
-    storageSizeGB: 110,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 16,
-  },
-  {
-    name: "e-coast-nyc-lower-8core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.63",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 43.1,
-    storageSizeGB: 932,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 8,
-    ramGB: 4,
-  },
-  {
-    name: "e-coast-nyc-midtown-2core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.64",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    storageSizeGB: 240,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 2,
-    ramGB: 8,
-  },
 ];
+
 function DeviceDetailsPage() {
   const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" });
   const server = servers.find((s) => s.name === deviceName);
