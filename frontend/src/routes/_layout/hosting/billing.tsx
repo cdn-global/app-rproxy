@@ -155,22 +155,27 @@ function calculateTotalsForMonth(month: Month) {
 
 // Helper function for fetching billing portal URL
 const fetchBillingPortal = async (token: string) => {
-  const response = await fetch("https://api.thedataproxy.com/v2/customer-portal", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch portal: ${response.status}`);
+  try {
+    const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    if (!data.portal_url) {
+      throw new Error("No portal URL received in response");
+    }
+    return data.portal_url;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    throw new Error(`Failed to fetch billing portal: ${errorMessage}`);
   }
-  const data = await response.json();
-  if (!data.portal_url) {
-    throw new Error("No portal URL received");
-  }
-  return data.portal_url;
 };
 
 // --- BillingTab ---
@@ -199,7 +204,7 @@ const BillingTab = () => {
       console.error("Error accessing customer portal:", error);
       toast({
         title: "Error",
-        description: "Failed to access billing portal. Please try again later.",
+        description: error instanceof Error ? error.message : "Failed to access billing portal. Please try again later.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -277,7 +282,7 @@ function PaymentDetailsTab() {
       console.error("Error accessing customer portal:", error);
       toast({
         title: "Error",
-        description: "Failed to access billing portal. Please try again later.",
+        description: error instanceof Error ? error.message : "Failed to access billing portal. Please try again later.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -393,7 +398,7 @@ function BillingPage() {
       console.error("Error accessing customer portal:", error);
       toast({
         title: "Error",
-        description: "Failed to access billing portal. Please try again later.",
+        description: error instanceof Error ? error.message : "Failed to access billing portal. Please try again later.",
         status: "error",
         duration: 5000,
         isClosable: true,
