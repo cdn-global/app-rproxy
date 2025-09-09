@@ -588,7 +588,7 @@ function BillingPage() {
           </TabPanel>
           <TabPanel>
             <Heading size="md" mb={6} color="gray.700">Service Details for {currentMonth.name}</Heading>
-            <Accordion allowMultiple>
+            <Accordion allowMultiple defaultIndex={[0]}>
               <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
                 <h2>
                   <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
