@@ -51,7 +51,7 @@ import {
             <Flex align="center" gap={1}>
               <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
                  <Link
-                href="mailto:info@roamingproxy.com"
+                href="tel:+18334353873"
                 color={textColor}
                 fontSize="xs"
                 _hover={{ color: hoverColor }}
