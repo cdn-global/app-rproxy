@@ -37,7 +37,6 @@ import {
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
 
-// Hardcoded servers with pricing
 interface Server {
   name: string;
   email: string;
@@ -62,7 +61,7 @@ interface Server {
 
 const servers: Server[] = [
   {
-    name: "riv1-nyc-mini5",
+    name: "lowermanhattan-nyc-mini5",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -83,7 +82,7 @@ const servers: Server[] = [
     ramGB: 2,
   },
   {
-    name: "riv8-nyc-mini9",
+    name: "midtown-nyc-mini9",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
@@ -104,7 +103,7 @@ const servers: Server[] = [
     ramGB: 64,
   },
   {
-    name: "icon01-nyc-mini7.1",
+    name: "bk-nyc-mini7.1",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.61",
     version: "1.88.0",
@@ -125,7 +124,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "icon02-nyc-mini5.1",
+    name: "jersey-nyc-mini5.1",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.62",
     version: "1.88.0",
@@ -146,7 +145,7 @@ const servers: Server[] = [
     ramGB: 16,
   },
   {
-    name: "icon03-nyc-mini6.2",
+    name: "lowermanhattan-nyc-mini6.2",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.63",
     version: "1.88.0",
@@ -167,7 +166,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "icon04-nyc-mini7.1",
+    name: "midtown-nyc-mini7.1",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.64",
     version: "1.88.0",

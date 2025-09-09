@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 
-// Hardcoded servers
+
 interface Server {
   name: string;
   email: string;
@@ -29,7 +29,7 @@ interface Server {
   password: string;
   monthlyComputePrice: number;
   storageSizeGB: number;
-  activeSince: string;
+  activeSince: string; // YYYY-MM-DD
   hasRotatingIP?: boolean;
   hasBackup?: boolean;
   hasMonitoring?: boolean;
@@ -40,7 +40,7 @@ interface Server {
 
 const servers: Server[] = [
   {
-    name: "riv1-nyc-mini5",
+    name: "lowermanhattan-nyc-mini5",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -61,7 +61,7 @@ const servers: Server[] = [
     ramGB: 2,
   },
   {
-    name: "riv8-nyc-mini9",
+    name: "midtown-nyc-mini9",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
@@ -81,8 +81,91 @@ const servers: Server[] = [
     vCPUs: 16,
     ramGB: 64,
   },
+  {
+    name: "bk-nyc-mini7.1",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.61",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 40.1,
+    storageSizeGB: 468,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 4,
+    ramGB: 4,
+  },
+  {
+    name: "jersey-nyc-mini5.1",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.62",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 45.3,
+    storageSizeGB: 110,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 4,
+    ramGB: 16,
+  },
+  {
+    name: "lowermanhattan-nyc-mini6.2",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.63",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 43.1,
+    storageSizeGB: 932,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 8,
+    ramGB: 4,
+  },
+  {
+    name: "midtown-nyc-mini7.1",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.95.64",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "debian",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 40.1,
+    storageSizeGB: 240,
+    activeSince: "2025-09-01",
+    hasRotatingIP: false,
+    hasBackup: false,
+    hasMonitoring: false,
+    hasManagedSupport: false,
+    vCPUs: 2,
+    ramGB: 8,
+  },
 ];
-
 function DeviceDetailsPage() {
   const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" });
   const server = servers.find((s) => s.name === deviceName);
