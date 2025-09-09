@@ -101,7 +101,7 @@ def generate_activation_email(email_to: str, token: str, username: str = None) -
     logger.debug(f"Generating activation email for: {email_to}")
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Activate Your Account"
-    link = f"https://cloud.roamingproxy.com/activate?token={token}"
+    link = f"https://cloud.ROAMINGPROXY.com/activate?token={token}"
     valid_hours = settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS
 
     # Set up Jinja2 environment
@@ -136,7 +136,7 @@ def generate_password_reset_email(email_to: str, email: str, token: str) -> Emai
     logger.debug(f"Generating password reset email for: {email_to}")
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Password Reset"
-    link = f"https://cloud.roamingproxy.com/reset-password?token={token}"
+    link = f"https://cloud.ROAMINGPROXY.com/reset-password?token={token}"
     valid_hours = settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS
 
     template_path = "app/templates/emails"
@@ -314,7 +314,7 @@ async def create_customer_portal(
     try:
         portal_session = stripe.billing_portal.Session.create(
             customer=current_user.stripe_customer_id,
-            return_url="https://cloud.roamingproxy.com"
+            return_url="https://cloud.ROAMINGPROXY.com"
         )
         logger.info(f"Created customer portal session for user: {current_user.email}")
         return {"portal_url": portal_session.url}

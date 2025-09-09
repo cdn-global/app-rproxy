@@ -82,8 +82,8 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-public"
       - "traefik.constraint-label=traefik-public"     
-      # ✅ API HTTP Router (Fix for api.roamingproxy.com)
-      - "traefik.http.routers.api-http.rule=Host(`api.roamingproxy.com`)"
+      # ✅ API HTTP Router (Fix for api.ROAMINGPROXY.com)
+      - "traefik.http.routers.api-http.rule=Host(`api.ROAMINGPROXY.com`)"
       - "traefik.http.routers.api-http.entrypoints=http"
       - "traefik.http.services.api-service.loadbalancer.server.port=8000"
   frontend:
@@ -104,7 +104,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.constraint-label=traefik-public
-      - traefik.http.routers.dashboard.rule=Host(`cloud.roamingproxy.com`)       
+      - traefik.http.routers.dashboard.rule=Host(`cloud.ROAMINGPROXY.com`)       
       - traefik.http.routers.dashboard.entrypoints=http
       - traefik.http.services.dashboard.loadbalancer.server.port=80
 
