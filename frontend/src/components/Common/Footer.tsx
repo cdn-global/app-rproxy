@@ -27,20 +27,6 @@ import {
         >
           {/* Company Info */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
-      <Link
-              href="https://cobaltdata.net"
-              isExternal
-              color={textColor}
-              _hover={{ color: hoverColor }}
-            >
-              <Text
-                fontWeight="bold"
-                color={textColor}
-                fontSize="xs"
-              >
-                COBALTDATA.net
-              </Text>
-            </Link>
                  <Link
       href="https://ROAMINGPROXY.com" 
       isExternal
@@ -54,6 +40,7 @@ import {
       >
         ROAMINGPROXY.com
       </Text>
+    
     </Link>
             <Text color={textColor} fontSize="xs" maxW="200px">
               Enterprise proxy and scraping solutions for web data.
@@ -86,6 +73,20 @@ import {
               </Link>
             </Flex>
           </VStack>
+
+          {/* Cobalt Data Link */}
+          <VStack spacing={1} align={{ base: "center", md: "start" }}>
+            <Link
+              href="https://cobaltdata.net"
+              isExternal
+              color={textColor}
+              fontSize="xs"
+              _hover={{ color: hoverColor }}
+            >
+              Cobalt Data
+            </Link>
+          </VStack>
+
     {/* Social Media */}
     <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Flex gap={3}>
