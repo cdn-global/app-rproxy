@@ -41,10 +41,7 @@ import {
         ROAMINGPROXY.com
       </Text>
     </Link>
-            <Text color={textColor} fontSize="xs" maxW="200px">
-              Enterprise proxy and scraping solutions for web data.
-            </Text>
-            <Link
+      <Link
               href="https://cobaltdata.net"
               isExternal
               color={textColor}
@@ -55,9 +52,13 @@ import {
                 color={textColor}
                 fontSize="xs"
               >
-                Cobalt Data Networks
+                Cobalt Data
               </Text>
             </Link>
+            <Text color={textColor} fontSize="xs" maxW="200px">
+              Enterprise proxy and scraping solutions for web data.
+            </Text>
+        
           </VStack>
   
           {/* Contact Info */}
