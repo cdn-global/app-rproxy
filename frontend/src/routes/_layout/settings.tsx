@@ -19,7 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import type { UserPublic } from "../../client";
 import ApiKeyModule from "../../components/ScrapingTools/ApiKey";
 
@@ -110,9 +110,19 @@ function UserSettings() {
         <Text fontSize="3xl" color="black">
           Settings
         </Text> 
-        <Text fontSize="lg" color="gray.600">
-          Manage your account settings
-        </Text>
+        <Flex align="center" gap={4}>
+          <Text fontSize="lg" color="gray.600">
+            Manage your account settings
+          </Text>
+          <Button
+            as={Link}
+            to="/hosting/billing"
+            colorScheme="blue"
+            variant="outline"
+          >
+            Manage Billing
+          </Button>
+        </Flex>
       </Flex>
 
       <Tabs isLazy variant="enclosed-colored" colorScheme="red">
