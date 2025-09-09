@@ -50,14 +50,9 @@ import {
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
             <Flex align="center" gap={1}>
               <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
-                 <Link
-                href="tel:+18334353873"
-                color={textColor}
-                fontSize="xs"
-                _hover={{ color: hoverColor }}
-              >
-               +1 (833) 435-3873
-              </Link>
+              <Text color={textColor} fontSize="xs">
+                +1 (833) 435-3873‬
+              </Text>
             </Flex>
             <Flex align="center" gap={1}>
               <Icon as={FiMail} color={textColor} boxSize="0.9em" />
@@ -82,7 +77,15 @@ import {
                   boxSize="1em"
                 />
               </Link>
-              <Link href="https://github.com/cdn-global" isExternal>
+              <Link href="https://linkedin.com" isExternal>
+                <Icon
+                  as={FiLinkedin}
+                  color={textColor}
+                  _hover={{ color: hoverColor }}
+                  boxSize="1em"
+                />
+              </Link>
+              <Link href="https://github.com/cobaltdatanetwork" isExternal>
                 <Icon
                   as={FiGithub}
                   color={textColor}
