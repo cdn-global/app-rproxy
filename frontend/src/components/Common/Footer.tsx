@@ -52,7 +52,7 @@ import {
                 color={textColor}
                 fontSize="xs"
               >
-                Cobalt Data
+                COBALTDATA.net
               </Text>
             </Link>
             <Text color={textColor} fontSize="xs" maxW="200px">
