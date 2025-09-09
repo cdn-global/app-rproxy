@@ -37,7 +37,7 @@ import {
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
 
-// Hardcoded servers with pricing (only riv1 and riv8 to match $552.60 for September 2025)
+// Hardcoded servers with pricing
 interface Server {
   name: string;
   email: string;
@@ -72,7 +72,7 @@ const servers: Server[] = [
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 11.40, // Adjusted to make total $552.60
+    monthlyComputePrice: 11.40,
     storageSizeGB: 120,
     activeSince: "2025-07-01",
     hasRotatingIP: false,
@@ -105,9 +105,9 @@ const servers: Server[] = [
   },
 ];
 
-const ELASTIC_IP_FEE_PER_MONTH = 3.6; // $0.005 per hour * 24 * 30 = $3.60 per IP per month
-const STORAGE_COST_PER_GB_MONTH = 0.10; // Approximate EBS gp2 cost: $0.10/GB-month
-const ROTATING_IP_FEE_PER_MONTH = 5.0; // $5/IP for two IPs
+const ELASTIC_IP_FEE_PER_MONTH = 3.6;
+const STORAGE_COST_PER_GB_MONTH = 0.10;
+const ROTATING_IP_FEE_PER_MONTH = 5.0;
 const BACKUP_FEE_PER_MONTH = 5.0;
 const MONITORING_FEE_PER_MONTH = 8.0;
 const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0;
@@ -161,7 +161,6 @@ function calculateTotalsForMonth(month: Month) {
   return { totals, grandTotal, activeServers, perServerTotals };
 }
 
-// Helper function for fetching billing portal URL
 const fetchBillingPortal = async (token: string) => {
   try {
     const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
@@ -186,7 +185,6 @@ const fetchBillingPortal = async (token: string) => {
   }
 };
 
-// --- Modified PaymentDetailsTab ---
 function PaymentDetailsTab() {
   const [token] = useState<string | null>(localStorage.getItem("access_token"));
   const [isLoading, setIsLoading] = useState(false);
@@ -289,164 +287,163 @@ function BillingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-  // Updated history array with all invoices
   const history = [
     {
-      month: months[9], // September 2025
+      month: months[9],
       total: 449.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlim VPS - Region Rotate",
+      description: "Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9)",
     },
     {
-      month: months[8], // August 2025
+      month: months[8],
       total: 318.81,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
       paymentDate: "August 15, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier",
+      description: "HTTPs Request API - Plus Tier Subscription",
     },
     {
-      month: months[7], // July 2025
+      month: months[7],
       total: 318.81,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
       paymentDate: "July 15, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier",
+      description: "HTTPs Request API - Plus Tier Subscription",
     },
     {
-      month: months[6], // June 2025
+      month: months[6],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
       paymentDate: "June 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier",
+      description: "HTTPs Request API - Plus Tier Subscription",
     },
     {
-      month: months[5], // May 2025
+      month: months[5],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
       paymentDate: "May 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier",
+      description: "HTTPs Request API - Plus Tier Subscription",
     },
     {
-      month: months[4], // April 2025
+      month: months[4],
       total: 322.92,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
       paymentDate: "April 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier",
+      description: "HTTPs Request API - Plus Tier Subscription",
     },
     {
-      month: months[3], // March 2025
+      month: months[3],
       total: 325.54,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZf",
       paymentDate: "March 20, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI (Failed Payment)",
+      description: "SERPAPI Subscription (Failed Payment Attempt)",
     },
     {
-      month: months[2], // February 2025
+      month: months[2],
       total: 325.54,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZg",
       paymentDate: "February 20, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI",
+      description: "SERPAPI Subscription",
     },
     {
-      month: months[1], // January 2025
+      month: months[1],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZi",
       paymentDate: "January 21, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI",
+      description: "SERPAPI Subscription",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZj",
       paymentDate: "December 21, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI",
+      description: "SERPAPI Subscription",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 378.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZk",
       paymentDate: "December 19, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "50,000 SERP Credits",
+      description: "50,000 SERP Credits Purchase",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 378.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZl",
       paymentDate: "December 11, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "50,000 SERP Credits",
+      description: "50,000 SERP Credits Purchase",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZm",
       paymentDate: "December 8, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "Invoice",
+      description: "General Invoice for Services",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 189.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZn",
       paymentDate: "December 5, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "50,000 SERP Credits",
+      description: "50,000 SERP Credits Purchase",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 297.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZo",
       paymentDate: "December 5, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI",
+      description: "SERPAPI Subscription",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 322.92,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZp",
       paymentDate: "December 3, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI",
+      description: "SERPAPI Subscription",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 21.60,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZq",
       paymentDate: "December 3, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "Extended Support Proxy Cloud",
+      description: "Extended Support for Proxy Cloud Services",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZr",
       paymentDate: "November 21, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI",
+      description: "SERPAPI Subscription",
     },
     {
-      month: months[0], // December 2024
+      month: months[0],
       total: 3.78,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZs",
       paymentDate: "November 17, 2024",
       paymentMethod: "American Express •••• 3007",
-      description: "Initial Support Charge",
+      description: "Initial Support Charge for Setup",
     },
   ];
 
   const allTimeTotal = history.reduce((sum, { total }) => sum + total, 0);
-  const averageMonthly = allTimeTotal / months.length; // Use months.length for per-month average
+  const averageMonthly = allTimeTotal / months.length;
   const previousMonthTotal = history
     .filter(({ month }) => month.name === "August 2025")
     .reduce((sum, { total }) => sum + total, 0);
@@ -499,12 +496,42 @@ function BillingPage() {
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing History</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
-         
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
             <Heading size="md" mb={6} color="gray.700">Costs for {currentMonth.name}</Heading>
             <VStack align="stretch" spacing={6}>
+              {outstandingBalance > 0 && (
+                <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
+                  <VStack align="stretch" spacing={2}>
+                    <Text fontWeight="semibold" color="red.800">Outstanding Balance</Text>
+                    <Flex justify="space-between">
+                      <Text>Total Cost:</Text>
+                      <Text fontWeight="bold">${grandTotal.toFixed(2)}</Text>
+                    </Flex>
+                    <Flex justify="space-between">
+                      <Text>Invoiced Amount:</Text>
+                      <Text fontWeight="bold">${invoicedAmount.toFixed(2)}</Text>
+                    </Flex>
+                    <Flex justify="space-between">
+                      <Text>Outstanding Balance:</Text>
+                      <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
+                    </Flex>
+                    <Text fontStyle="italic" color="gray.600">
+                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced. It can take 1-3 business days for the updated balance to be reflected.
+                    </Text>
+                    <Button
+                      colorScheme="blue"
+                      onClick={handleBillingClick}
+                      isLoading={isLoading}
+                      loadingText="Redirecting..."
+                      isDisabled={isLoading}
+                    >
+                      Pay Outstanding Balance
+                    </Button>
+                  </VStack>
+                </Box>
+              )}
               <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
                 <Table variant="simple" size="md">
                   <Thead bg="red.100">
@@ -557,80 +584,11 @@ function BillingPage() {
                   </Tfoot>
                 </Table>
               </Box>
-              {outstandingBalance > 0 && (
-                <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
-                  <VStack align="stretch" spacing={2}>
-                    <Text fontWeight="semibold" color="red.800">Billing Summary</Text>
-                    <Flex justify="space-between">
-                      <Text>Total Cost:</Text>
-                      <Text fontWeight="bold">${grandTotal.toFixed(2)}</Text>
-                    </Flex>
-                    <Flex justify="space-between">
-                      <Text>Invoiced Amount:</Text>
-                      <Text fontWeight="bold">${invoicedAmount.toFixed(2)}</Text>
-                    </Flex>
-                    <Flex justify="space-between">
-                      <Text>Outstanding Balance:</Text>
-                      <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
-                    </Flex>
-                    <Text fontStyle="italic" color="gray.600">
-                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced. It can take 1-3 business days for the updated balance to be reflected.
-                    </Text>
-                    <Button
-                      colorScheme="blue"
-                      onClick={handleBillingClick}
-                      isLoading={isLoading}
-                      loadingText="Redirecting..."
-                      isDisabled={isLoading}
-                    >
-                      Pay Outstanding Balance
-                    </Button>
-                  </VStack>
-                </Box>
-              )}
             </VStack>
           </TabPanel>
           <TabPanel>
             <Heading size="md" mb={6} color="gray.700">Service Details for {currentMonth.name}</Heading>
             <Accordion allowMultiple>
-              {services.map((s) => {
-                const relevantServers = currentActiveServers.filter((server) => s.getMonthlyCost(server) > 0);
-                const total = currentTotals[s.name].total;
-                return (
-                  <AccordionItem key={s.name} borderWidth="1px" borderRadius="md" mb={4}>
-                    <h2>
-                      <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
-                        <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
-                          {s.name} - ${total.toFixed(2)} (x {relevantServers.length} {relevantServers.length !== 1 ? "servers" : "server"})
-                        </Box>
-                        <AccordionIcon color="red.600" />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      {relevantServers.length > 0 ? (
-                        <Table variant="simple" size="sm">
-                          <Thead bg="red.100">
-                            <Tr>
-                              <Th color="red.800">Server Name</Th>
-                              <Th color="red.800" isNumeric>Cost (USD)</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {relevantServers.map((server) => (
-                              <Tr key={server.name}>
-                                <Td>{server.name}</Td>
-                                <Td isNumeric>${s.getMonthlyCost(server).toFixed(2)}</Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      ) : (
-                        <Text color="gray.600">No servers using this service.</Text>
-                      )}
-                    </AccordionPanel>
-                  </AccordionItem>
-                );
-              })}
               <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
                 <h2>
                   <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
@@ -675,6 +633,44 @@ function BillingPage() {
                   </Table>
                 </AccordionPanel>
               </AccordionItem>
+              {services.map((s) => {
+                const relevantServers = currentActiveServers.filter((server) => s.getMonthlyCost(server) > 0);
+                const total = currentTotals[s.name].total;
+                return (
+                  <AccordionItem key={s.name} borderWidth="1px" borderRadius="md" mb={4}>
+                    <h2>
+                      <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
+                        <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
+                          {s.name} - ${total.toFixed(2)} (x {relevantServers.length} {relevantServers.length !== 1 ? "servers" : "server"})
+                        </Box>
+                        <AccordionIcon color="red.600" />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      {relevantServers.length > 0 ? (
+                        <Table variant="simple" size="sm">
+                          <Thead bg="red.100">
+                            <Tr>
+                              <Th color="red.800">Server Name</Th>
+                              <Th color="red.800" isNumeric>Cost (USD)</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {relevantServers.map((server) => (
+                              <Tr key={server.name}>
+                                <Td>{server.name}</Td>
+                                <Td isNumeric>${s.getMonthlyCost(server).toFixed(2)}</Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      ) : (
+                        <Text color="gray.600">No servers using this service.</Text>
+                      )}
+                    </AccordionPanel>
+                  </AccordionItem>
+                );
+              })}
             </Accordion>
           </TabPanel>
           <TabPanel>
@@ -732,7 +728,7 @@ function BillingPage() {
                   {history.map(({ month, total, invoiceId, paymentDate, paymentMethod, description }) => (
                     <Tr key={invoiceId}>
                       <Td>{month.name}</Td>
-                      <Td>{invoiceId}</Td>
+                      <Td>{invoiceId.slice(0, 12)}...</Td>
                       <Td>{paymentDate}</Td>
                       <Td>{paymentMethod}</Td>
                       <Td>{description}</Td>
