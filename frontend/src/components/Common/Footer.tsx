@@ -44,6 +44,20 @@ import {
             <Text color={textColor} fontSize="xs" maxW="200px">
               Enterprise proxy and scraping solutions for web data.
             </Text>
+            <Link
+              href="https://cobaltdata.net"
+              isExternal
+              color={textColor}
+              _hover={{ color: hoverColor }}
+            >
+              <Text
+                fontWeight="bold"
+                color={textColor}
+                fontSize="xs"
+              >
+                Cobalt Data Networks
+              </Text>
+            </Link>
           </VStack>
   
           {/* Contact Info */}
@@ -176,15 +190,6 @@ import {
           _hover={{ color: accentColor }}
         >
           ROAMINGPROXY.com
-        </Link>
-        ,{" "}
-        <Link
-          href="https://cobaltdata.net"
-          isExternal
-          color={textColor}
-          _hover={{ color: hoverColor }}
-        >
-          COBALTDATA.net
         </Link>
         ,{" "}
         <Link
