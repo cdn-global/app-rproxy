@@ -12,76 +12,11 @@ import {
   IconButton,
   useToast,
   HStack,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
-
-// Hardcoded servers
-interface Server {
-  name: string;
-  email: string;
-  ip: string;
-  version: string;
-  kernel: string;
-  status: string;
-  type: string;
-  os: string;
-  username: string;
-  password: string;
-  monthlyComputePrice: number;
-  storageSizeGB: number;
-  activeSince: string;
-  hasRotatingIP?: boolean;
-  hasBackup?: boolean;
-  hasMonitoring?: boolean;
-  hasManagedSupport?: boolean;
-  vCPUs?: number;
-  ramGB?: number;
-}
-
-const servers: Server[] = [
-  {
-    name: "riv1-nyc-mini5",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.59",
-    version: "1.82.0",
-    kernel: "Linux 6.8.0-57-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 11.40,
-    storageSizeGB: 120,
-    activeSince: "2025-07-01",
-    hasRotatingIP: false,
-    hasBackup: true,
-    hasMonitoring: true,
-    hasManagedSupport: false,
-    vCPUs: 1,
-    ramGB: 2,
-  },
-  {
-    name: "riv8-nyc-mini9",
-    email: "apis.popov@gmail.com",
-    ip: "100.140.50.60",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 449,
-    storageSizeGB: 100,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 16,
-    ramGB: 64,
-  },
-];
+import { servers } from "../data/servers";
 
 function DeviceDetailsPage() {
   const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" });
@@ -101,7 +36,19 @@ function DeviceDetailsPage() {
   if (!server) {
     return (
       <Container maxW="container.xl" py={8}>
-        <Text fontSize="xl" color="red.500">Server not found</Text>
+        <Alert status="error">
+          <AlertIcon />
+          <VStack align="stretch" spacing={2}>
+            <Text fontSize="xl">Server not found: {deviceName}</Text>
+            <Text fontSize="sm">
+              The server name may be incorrect. Return to the{" "}
+              <Link to="/hosting" style={{ color: "#3182CE" }}>
+                VPS Dashboard
+              </Link>{" "}
+              to view all servers.
+            </Text>
+          </VStack>
+        </Alert>
       </Container>
     );
   }
@@ -119,26 +66,21 @@ function DeviceDetailsPage() {
         </HStack>
         <Button
           as={Link}
-          to=".."
+          to="/hosting"
           colorScheme="blue"
           variant="outline"
           size="md"
           _hover={{ bg: "blue.50" }}
         >
-          Back to List
+          Back to VPS Dashboard
         </Button>
       </Flex>
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        {/* Basic Information */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>Basic Information</Heading>
+        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+          <Heading size="md" mb={4}>
+            Basic Information
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between" align="center">
               <Text fontWeight="medium">Name:</Text>
@@ -181,15 +123,10 @@ function DeviceDetailsPage() {
           </VStack>
         </Box>
 
-        {/* System Specifications */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>System Specifications</Heading>
+        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+          <Heading size="md" mb={4}>
+            System Specifications
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between">
               <Text fontWeight="medium">Version:</Text>
@@ -214,15 +151,10 @@ function DeviceDetailsPage() {
           </VStack>
         </Box>
 
-        {/* Credentials */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>Credentials</Heading>
+        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+          <Heading size="md" mb={4}>
+            Credentials
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between" align="center">
               <Text fontWeight="medium">Username:</Text>
@@ -253,15 +185,10 @@ function DeviceDetailsPage() {
           </VStack>
         </Box>
 
-        {/* Billing & Features */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>Billing & Features</Heading>
+        <Box bg="white" p={6} borderRadius="lg" boxShadow="sm" borderWidth="1px">
+          <Heading size="md" mb={4}>
+            Billing & Features
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between">
               <Text fontWeight="medium">Monthly Compute Price:</Text>
