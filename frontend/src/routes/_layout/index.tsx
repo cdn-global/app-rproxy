@@ -415,41 +415,80 @@ const HomePage = () => {
               </VStack>
             )}
             {/* Quick Links */}
-            <VStack align="stretch" spacing={4} pt={4}>
-              <Heading size="md">Quick Links</Heading>
-              <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg">
-                <VStack align="start" spacing={3}>
-                  <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                    <Icon as={FaKey} mr={2} /> Manage API Keys
-                  </Link>
-                    <Link as={RouterLink} to="/web-scraping-tools/user-agents" display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                    <Icon as={FiUserCheck} mr={2} /> Find User Agents  
-                  </Link>
-                  <Link as={RouterLink} to="/hosting/billing" display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                    <Icon as={FiUserCheck} mr={2} />  Manage Billing  
-                  </Link>
-                /settings
-                 <Link as={RouterLink} to="/hosting/billing" display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                    <Icon as={FiUserCheck} mr={2} /> Manage Account   
-                  </Link>
-
-                  {/* <Button
-                    variant="link"
-                    onClick={handleBillingClick}
-                    isLoading={isPortalLoading}
-                    leftIcon={<Icon as={FaCreditCard} />}
-                    colorScheme="red"
-                    fontWeight="medium"
-                    justifyContent="flex-start"
-                  >
-                    Billing Portal
-                  </Button> */}
-                  <Link href="https://docs.ROAMINGPROXY.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                    <Icon as={FaBook} mr={2} /> Documentation
-                  </Link>
-                </VStack>
-              </Box>
-            </VStack>
+{/* Quick Links */}
+<Flex direction="column" align="stretch" gap={4} pt={4} w="full">
+  <Heading size="md">Quick Links</Heading>
+  <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg" w="full">
+    <Flex
+      direction={{ base: "column", md: "row" }} // Stack vertically on mobile, horizontally on larger screens
+      wrap="wrap" // Allow wrapping for better responsiveness
+      justify="space-between" // Spread links evenly
+      align="center"
+      gap={4} // Add spacing between links
+    >
+      <Link
+        as={RouterLink}
+        to="/settings"
+        display="flex"
+        alignItems="center"
+        color="red.500"
+        fontWeight="medium"
+        flex="1"
+        minW={{ base: "100%", md: "auto" }} // Full width on mobile, auto on larger screens
+      >
+        <Icon as={FaKey} mr={2} /> Manage API Keys
+      </Link>
+      <Link
+        as={RouterLink}
+        to="/web-scraping-tools/user-agents"
+        display="flex"
+        alignItems="center"
+        color="red.500"
+        fontWeight="medium"
+        flex="1"
+        minW={{ base: "100%", md: "auto" }}
+      >
+        <Icon as={FiUserCheck} mr={2} /> Find User Agents
+      </Link>
+      <Link
+        as={RouterLink}
+        to="/hosting/billing"
+        display="flex"
+        alignItems="center"
+        color="red.500"
+        fontWeight="medium"
+        flex="1"
+        minW={{ base: "100%", md: "auto" }}
+      >
+        <Icon as={FiUserCheck} mr={2} /> Manage Billing
+      </Link>
+      <Link
+        as={RouterLink}
+        to="/hosting/billing"
+        display="flex"
+        alignItems="center"
+        color="red.500"
+        fontWeight="medium"
+        flex="1"
+        minW={{ base: "100%", md: "auto" }}
+      >
+        <Icon as={FiUserCheck} mr={2} /> Manage Account
+      </Link>
+      <Link
+        href="https://docs.ROAMINGPROXY.com"
+        isExternal
+        display="flex"
+        alignItems="center"
+        color="red.500"
+        fontWeight="medium"
+        flex="1"
+        minW={{ base: "100%", md: "auto" }}
+      >
+        <Icon as={FaBook} mr={2} /> Documentation
+      </Link>
+    </Flex>
+  </Box>
+</Flex>
           </VStack>
         )}
       </Container>
