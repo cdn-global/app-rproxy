@@ -279,7 +279,7 @@ const HttpsProxyApiPage = () => {
     <ProtectedComponent>
       <Container maxW="full" py={9}>
         <Flex align="center" justify="space-between" py={6}>
-            <Text fontSize="3xl" color="black" >HTTPS Proxy API</Text>
+                     <Heading as="h1" size="xl" color="gray.800"> HTTPS Proxy API</Heading>
             <Text fontSize="lg" color="gray.600">Route HTTP/S requests through our proxy network</Text>
         </Flex>
 
