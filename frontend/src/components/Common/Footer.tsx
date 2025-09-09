@@ -27,20 +27,6 @@ import {
         >
           {/* Company Info */}
           <VStack spacing={1} align={{ base: "center", md: "start" }}>
-          <Link
-      href="https://ROAMINGPROXY.com" 
-      isExternal
-      color={textColor}
-      _hover={{ color: accentColor }}
-    >
-      <Text
-        fontWeight="bold"
-        color={textColor}
-        fontSize="sm"
-      >
-        ROAMINGPROXY.com
-      </Text>
-    </Link>
       <Link
               href="https://cobaltdata.net"
               isExternal
@@ -55,6 +41,20 @@ import {
                 COBALTDATA.net
               </Text>
             </Link>
+                 <Link
+      href="https://ROAMINGPROXY.com" 
+      isExternal
+      color={textColor}
+      _hover={{ color: accentColor }}
+    >
+      <Text
+        fontWeight="bold"
+        color={textColor}
+        fontSize="sm"
+      >
+        ROAMINGPROXY.com
+      </Text>
+    </Link>
             <Text color={textColor} fontSize="xs" maxW="200px">
               Enterprise proxy and scraping solutions for web data.
             </Text>
