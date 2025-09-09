@@ -145,19 +145,19 @@ function HostingIndexPage() {
 
         {/* Servers Table */}
         <Card borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm" bg="gray.50">
-          <CardHeader bg="orange.100">
-            <Heading size="md" color="orange.800">Server Credentials</Heading>
+          <CardHeader bg="red.100">
+            <Heading size="md" color="red.800">Server Credentials</Heading>
           </CardHeader>
           <CardBody>
             <Table variant="simple" size="md">
-              <Thead bg="orange.100">
+              <Thead bg="red.100">
                 <Tr>
-                  <Th color="orange.800">Device Name</Th>
-                  <Th color="orange.800">IP</Th>
-                  <Th color="orange.800">Username</Th>
-                  <Th color="orange.800">Password</Th>
-                  <Th color="orange.800">OS</Th>
-                  <Th color="orange.800" isNumeric>Actions</Th>
+                  <Th color="red.800">Device Name</Th>
+                  <Th color="red.800">IP</Th>
+                  <Th color="red.800">Username</Th>
+                  <Th color="red.800">Password</Th>
+                  <Th color="red.800">OS</Th>
+                  <Th color="red.800" isNumeric>Actions</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -178,9 +178,9 @@ function HostingIndexPage() {
                   </Tr>
                 ))}
               </Tbody>
-              <Tfoot bg="orange.50">
+              <Tfoot bg="red.50">
                 <Tr>
-                  <Th colSpan={6} color="orange.800">Total Servers: {servers.length}</Th>
+                  <Th colSpan={6} color="red.800">Total Servers: {servers.length}</Th>
                 </Tr>
               </Tfoot>
             </Table>
@@ -189,8 +189,8 @@ function HostingIndexPage() {
 
         {/* Roaming Proxy Features Card */}
         <Card borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="gray.50">
-          <CardHeader bg="orange.100">
-            <Heading size="md" color="orange.800">Roaming Proxy & Server Features</Heading>
+          <CardHeader bg="red.100">
+            <Heading size="md" color="red.800">Roaming Proxy & Server Features</Heading>
           </CardHeader>
           <CardBody>
             <List spacing={4}>

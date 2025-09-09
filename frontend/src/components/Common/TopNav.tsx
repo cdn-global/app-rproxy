@@ -114,7 +114,7 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
 
   const activeStyles: CSSProperties = {
     color: activeTextColor,
-    background: 'orange.100',
+    background: 'red.100',
   };
 
   return (
@@ -152,7 +152,7 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
               onClick={onClose}
               borderRadius="md"
               p={3}
-              _hover={{ background: 'orange.50' }}
+              _hover={{ background: 'red.50' }}
               activeProps={{ style: activeStyles }}
               aria-label={subItem.title}
             >
@@ -174,8 +174,8 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const queryClient = useQueryClient();
   const textColor = 'gray.800';
   const disabledColor = 'gray.300';
-  const hoverColor = 'orange.600';
-  const activeTextColor = 'orange.800';
+  const hoverColor = 'red.600';
+  const activeTextColor = 'red.800';
   const currentUser = queryClient.getQueryData<UserPublic>(['currentUser']);
   const { logout } = useAuth();
 
@@ -227,7 +227,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
 
   const activeStyles: CSSProperties = {
     color: activeTextColor,
-    background: 'orange.100',
+    background: 'red.100',
   };
 
   const disabledHoverStyles: CSSProperties = {
@@ -382,8 +382,8 @@ const TopNav = () => {
   const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
   const { colorMode } = useColorMode();
   const textColor = 'gray.800';
-  const hoverColor = 'orange.600';
-  const activeTextColor = 'orange.800';
+  const hoverColor = 'red.600';
+  const activeTextColor = 'red.800';
   const btnRef = useRef<HTMLButtonElement>(null);
 
   return (
