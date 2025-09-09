@@ -19,7 +19,8 @@ const featureDetails = {
     icon: FaServer, 
     path: '/hosting',
     period: '9/9/2025 - 10/9/2025'
-  },  'serp-api': { 
+  },
+  'serp-api': { 
     name: 'SERP API', 
     description: 'Get structured JSON data from major search engines.', 
     icon: FaSearch, 
@@ -115,11 +116,13 @@ const HomePage = () => {
 
   const totalDataGB = (totalRequests * 0.0005).toFixed(2);
 
+  // Ensure proxy-api and vps-hosting are always displayed for testing
   const displayedFeatures = useMemo(() => {
     const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
     const uniqueFeatures = Array.from(new Set(features)) as FeatureKey[];
     const selectedFeatures: FeatureKey[] = ['proxy-api', 'vps-hosting'];
-    return selectedFeatures.filter((f) => featureDetails[f] && uniqueFeatures.includes(f));
+    // Include features even if not in subscriptions for testing purposes
+    return selectedFeatures.filter((f) => featureDetails[f]); // Removed uniqueFeatures check
   }, [activeSubscriptions]);
 
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
@@ -169,8 +172,11 @@ const HomePage = () => {
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
                     <Heading size="sm">Usage Summary</Heading>
-                    <Text fontSize="xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
-                    <Text fontSize="xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
+                    <Text fontSize="xl" fontWeight="bold">Total Requests (Web Scraping API): {totalRequests.toLocaleString()}</Text>
+                    <Text fontSize="xl" fontWeight="bold">Data Transferred (Web Scraping API): {totalDataGB} GB</Text>
+                    <Text fontSize="sm" color="gray.600">
+                      Note: VPS Hosting usage (e.g., CPU, memory) is available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
+                    </Text>
                   </VStack>
                 </Box>
               </GridItem>
