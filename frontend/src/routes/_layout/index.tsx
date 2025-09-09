@@ -425,6 +425,10 @@ const HomePage = () => {
                     <Link as={RouterLink} to="/web-scraping-tools/user-agents" display="flex" alignItems="center" color="orange.500" fontWeight="medium">
                     <Icon as={FiUserCheck} mr={2} /> Find User Agents  
                   </Link>
+                  <Link as={RouterLink} to="/hosting/billing" display="flex" alignItems="center" color="orange.500" fontWeight="medium">
+                    <Icon as={FiUserCheck} mr={2} />  Manage Billing  
+                  </Link>
+           
                   {/* <Button
                     variant="link"
                     onClick={handleBillingClick}
