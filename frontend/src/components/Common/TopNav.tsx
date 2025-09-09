@@ -11,7 +11,10 @@ import {
   MenuList,
   MenuItem,
   VStack,
+  useColorMode, // Added
+  Collapse, // Added
 } from "@chakra-ui/react";
+import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons"; // Added
 import { useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router";
 import {
@@ -376,7 +379,8 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
 };
 
 const TopNav = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure(); // Added onToggle
+  const { colorMode } = useColorMode();
   const textColor = "gray.800";
   const hoverColor = "orange.600";
   const activeTextColor = "orange.800";
@@ -384,7 +388,7 @@ const TopNav = () => {
 
   return (
     <Box
-      bg={colorMode === 'light' ? 'gray.50' : 'gray.800'}
+      bg={colorMode === "light" ? "gray.50" : "gray.800"}
       px={4}
       py={2}
       position="sticky"
@@ -393,7 +397,7 @@ const TopNav = () => {
       boxShadow="sm"
       w="100%"
       borderBottomWidth="1px"
-      borderBottomColor={colorMode === 'light' ? 'gray.300' : 'gray.600'}
+      borderBottomColor={colorMode === "light" ? "gray.300" : "gray.600"}
     >
       <Flex align="center" maxW="1200px" mx="auto" w="100%" justify="space-between">
         <Logo
@@ -402,26 +406,27 @@ const TopNav = () => {
           href="/"
         />
         <Flex align="center" gap={4}>
-          <Box display={{ base: 'none', md: 'block' }}>
+          <Box display={{ base: "none", md: "block" }}>
             <NavItems />
           </Box>
           <IconButton
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            display={{ base: 'block', md: 'none' }}
-            onClick={toggleMenu}
+            display={{ base: "block", md: "none" }}
+            onClick={onToggle} // Fixed: Replaced toggleMenu with onToggle
             variant="ghost"
             size="lg"
+            ref={btnRef}
           />
         </Flex>
       </Flex>
       <Collapse in={isOpen} animateOpacity>
-        <Box display={{ base: 'block', md: 'none' }} mt={4}>
-          <NavItems />
+        <Box display={{ base: "block", md: "none" }} mt={4}>
+          <NavItems isMobile onClose={onClose} />
         </Box>
       </Collapse>
     </Box>
   );
 };
 
-export default Navbar;
+export default TopNav; // Fixed: Changed from Navbar to TopNav
