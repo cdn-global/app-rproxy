@@ -398,7 +398,7 @@ const TopNav = () => {
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
           href="/"
-          width={{ base: '80px', md: '110px' }}
+          width={{ base: '80px', md: '110px' }} // Responsive width
         />
         <Flex align="center" gap={4}>
           <Box display={{ base: 'none', md: 'block' }}>
