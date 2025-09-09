@@ -396,10 +396,12 @@ const TopNav = () => {
       borderBottomColor="gray.300"
     >
       <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-  <Logo 
+
+        <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
+            <Logo 
   src="/assets/images/roaming-proxy-network-logo.png"
   alt="Roaming Proxy Logo"
-  boxSize="40px"
+  boxSize="220px"
   href="/"
 />
 
@@ -413,8 +415,6 @@ const TopNav = () => {
           icon={<FiMenu />}
           variant="ghost"
         />
-
-        <Flex align="center" gap={4} display={{ base: "none", md: "flex" }}>
           <NavItems />
         </Flex>
       </Flex>
