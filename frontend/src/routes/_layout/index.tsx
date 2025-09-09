@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import ProtectedComponent from "../../components/Common/ProtectedComponent";
 import { useQuery } from "@tanstack/react-query";
 import { FaBook, FaKey, FaCreditCard, FaGlobe, FaSearch, FaServer } from 'react-icons/fa';
-
+import { FiUserCheck } from 'react-icons/fi';
 const featureDetails = {
   'proxy-api': {
     name: 'Web Scraping API',
@@ -421,6 +421,9 @@ const HomePage = () => {
                 <VStack align="start" spacing={3}>
                   <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
                     <Icon as={FaKey} mr={2} /> Manage API Keys
+                  </Link>
+                    <Link as={RouterLink} to="/web-scraping-tools/user-agents" display="flex" alignItems="center" color="orange.500" fontWeight="medium">
+                    <Icon as={FiUserCheck} mr={2} /> Find User Agents  
                   </Link>
                   {/* <Button
                     variant="link"
