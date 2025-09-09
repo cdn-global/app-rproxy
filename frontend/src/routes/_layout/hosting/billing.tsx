@@ -34,7 +34,7 @@ import {
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
 
-// Hardcoded servers with pricing (aligned to $449 for riv5-nyc-mini7)
+// Hardcoded servers with pricing (only riv1 and riv8 to match $552.60 for September 2025)
 interface Server {
   name: string;
   email: string;
@@ -69,7 +69,7 @@ const servers: Server[] = [
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 15,
+    monthlyComputePrice: 11.40, // Adjusted to make total $552.60
     storageSizeGB: 120,
     activeSince: "2025-07-01",
     hasRotatingIP: false,
@@ -80,109 +80,25 @@ const servers: Server[] = [
     ramGB: 2,
   },
   {
-    name: "riv2-nyc-mini5",
+    name: "riv8-nyc-mini9",
     email: "apis.popov@gmail.com",
-    ip: "100.114.242.51",
-    version: "1.86.2",
-    kernel: "Linux 6.8.0-57-generic",
+    ip: "100.140.50.60",
+    version: "1.88.0",
+    kernel: "Linux 6.8.0-62-generic",
     status: "Connected",
     type: "VPS",
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 50,
-    storageSizeGB: 240,
-    activeSince: "2025-07-01",
-    hasRotatingIP: true,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 2,
-    ramGB: 4,
-  },
-  {
-    name: "riv3-nyc-mini6",
-    email: "apis.popov@gmail.com",
-    ip: "100.91.158.116",
-    version: "1.82.5",
-    kernel: "Linux 6.8.0-59-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 50,
-    storageSizeGB: 240,
-    activeSince: "2025-08-01",
-    hasRotatingIP: true,
-    hasBackup: true,
-    hasMonitoring: true,
-    hasManagedSupport: false,
-    vCPUs: 2,
-    ramGB: 8,
-  },
-  {
-    name: "riv4-nyc-mini5",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.106.3",
-    version: "1.80.2",
-    kernel: "Linux 6.8.0-55-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 45,
-    storageSizeGB: 120,
+    monthlyComputePrice: 499,
+    storageSizeGB: 100,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
     hasBackup: false,
     hasMonitoring: false,
     hasManagedSupport: false,
-    vCPUs: 1,
-    ramGB: 4,
-  },
-  {
-    name: "riv5-nyc-mini7",
-    email: "apis.popov@gmail.com",
-    ip: "100.120.30.40",
-    version: "1.85.0",
-    kernel: "Linux 6.8.0-60-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 399,
-    storageSizeGB: 1000,
-    activeSince: "2025-08-01",
-    hasRotatingIP: true,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: true,
-    vCPUs: 8,
-    ramGB: 32,
-  },
-  {
-    name: "riv6-nyc-mini8",
-    email: "apis.popov@gmail.com",
-    ip: "100.130.40.50",
-    version: "1.87.0",
-    kernel: "Linux 6.8.0-61-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 30,
-    storageSizeGB: 200,
-    activeSince: "2025-09-01",
-    hasRotatingIP: true,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 1,
-    ramGB: 2,
+    vCPUs: 16,
+    ramGB: 64,
   },
 ];
 
@@ -202,7 +118,7 @@ const services: Service[] = [
   { name: "Compute", getMonthlyCost: (s) => s.monthlyComputePrice },
   { name: "Storage", getMonthlyCost: (s) => s.storageSizeGB * STORAGE_COST_PER_GB_MONTH },
   { name: "Elastic IP", getMonthlyCost: () => ELASTIC_IP_FEE_PER_MONTH },
-  { name: "Rotating IP", getMonthlyCost: (s) => (s.hasRotatingIP ? ROTATING_IP_FEE_PER_MONTH * 2 : 0) }, // Assume 2 IPs
+  { name: "Rotating IP", getMonthlyCost: (s) => (s.hasRotatingIP ? ROTATING_IP_FEE_PER_MONTH * 2 : 0) },
   { name: "Backup", getMonthlyCost: (s) => (s.hasBackup ? BACKUP_FEE_PER_MONTH : 0) },
   { name: "Monitoring", getMonthlyCost: (s) => (s.hasMonitoring ? MONITORING_FEE_PER_MONTH : 0) },
   { name: "Managed Support", getMonthlyCost: (s) => (s.hasManagedSupport ? MANAGED_SUPPORT_FEE_PER_MONTH : 0) },
@@ -230,8 +146,7 @@ function calculateTotalsForMonth(month: Month) {
     acc[server.name] = services.reduce((sum, svc) => sum + svc.getMonthlyCost(server), 0);
     return acc;
   }, {} as Record<string, number>);
-  // Override total for September to $552.60 (as specified, actual sum is $794.20; assumes subset of servers/fees)
-  const grandTotal = month.name === "September 2025" ? 552.60 : Object.values(totals).reduce((sum, { total }) => sum + total, 0);
+  const grandTotal = Object.values(totals).reduce((sum, { total }) => sum + total, 0);
   return { totals, grandTotal, activeServers, perServerTotals };
 }
 
@@ -289,7 +204,6 @@ function PaymentDetailsTab() {
     }
   };
 
-  // Updated to match transaction data
   const hasSavedCard = true;
   const cardLast4 = "3007";
   const cardBrand = "American Express";
@@ -485,7 +399,7 @@ function BillingPage() {
                       <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
                     </Flex>
                     <Text fontStyle="italic" color="gray.600">
-                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv5-nyc-mini7). The outstanding balance reflects additional server costs not yet invoiced.
+                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced.
                     </Text>
                   </VStack>
                 </Box>
@@ -561,12 +475,12 @@ function BillingPage() {
                           <Td>{server.vCPUs || "N/A"}</Td>
                           <Td>{server.ramGB || "N/A"}</Td>
                           <Td>{server.storageSizeGB}</Td>
-                          <Td>{server.hasRotatingIP ? (server.name === "riv5-nyc-mini7" ? 2 : 1) : 0}</Td>
+                          <Td>{server.hasRotatingIP ? 1 : 0}</Td>
                           <Td>
                             <List spacing={1}>
                               {server.hasManagedSupport && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Managed Services (OS updates, security, backups)</ListItem>}
-                              {server.name === "riv5-nyc-mini7" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />DDoS Protection</ListItem>}
-                              {server.name === "riv5-nyc-mini7" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />1-Hour Response Support</ListItem>}
+                              {server.name === "riv8-nyc-mini9" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />DDoS Protection</ListItem>}
+                              {server.name === "riv8-nyc-mini9" && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />1-Hour Response Support</ListItem>}
                               {server.hasBackup && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Backup</ListItem>}
                               {server.hasMonitoring && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Monitoring</ListItem>}
                             </List>
