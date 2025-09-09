@@ -134,6 +134,14 @@ interface Month {
 }
 
 const months: Month[] = [
+  { name: "December 2024", start: new Date(2024, 11, 1), end: new Date(2024, 11, 31) },
+  { name: "January 2025", start: new Date(2025, 0, 1), end: new Date(2025, 0, 31) },
+  { name: "February 2025", start: new Date(2025, 1, 1), end: new Date(2025, 1, 28) },
+  { name: "March 2025", start: new Date(2025, 2, 1), end: new Date(2025, 2, 31) },
+  { name: "April 2025", start: new Date(2025, 3, 1), end: new Date(2025, 3, 30) },
+  { name: "May 2025", start: new Date(2025, 4, 1), end: new Date(2025, 4, 31) },
+  { name: "June 2025", start: new Date(2025, 5, 1), end: new Date(2025, 5, 30) },
+  { name: "July 2025", start: new Date(2025, 6, 1), end: new Date(2025, 6, 31) },
   { name: "August 2025", start: new Date(2025, 7, 1), end: new Date(2025, 7, 31) },
   { name: "September 2025", start: new Date(2025, 8, 1), end: new Date(2025, 8, 30) },
 ];
@@ -281,23 +289,179 @@ function BillingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-  // Single $449 transaction for Sep 9, 2025
+  // Updated history array with all invoices
   const history = [
     {
-      month: months[1], // September 2025
+      month: months[9], // September 2025
       total: 449.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "Debian Unlimited Bandwidth VPS with Floating IP",
     },
+    {
+      month: months[8], // August 2025
+      total: 318.81,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
+      paymentDate: "August 15, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Plus Plan",
+    },
+    {
+      month: months[7], // July 2025
+      total: 318.81,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
+      paymentDate: "July 15, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Plus Plan",
+    },
+    {
+      month: months[6], // June 2025
+      total: 299.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
+      paymentDate: "June 10, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Plus Plan",
+    },
+    {
+      month: months[5], // May 2025
+      total: 299.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
+      paymentDate: "May 10, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Plus Plan",
+    },
+    {
+      month: months[4], // April 2025
+      total: 322.92,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
+      paymentDate: "April 10, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Plus Plan",
+    },
+    {
+      month: months[3], // March 2025
+      total: 325.54,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZf",
+      paymentDate: "March 20, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI (Failed Payment)",
+    },
+    {
+      month: months[2], // February 2025
+      total: 325.54,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZg",
+      paymentDate: "February 20, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI",
+    },
+    {
+      month: months[2], // February 2025
+      total: 0.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZh",
+      paymentDate: "February 20, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Invoice",
+    },
+    {
+      month: months[1], // January 2025
+      total: 299.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZi",
+      paymentDate: "January 21, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI",
+    },
+    {
+      month: months[0], // December 2024
+      total: 299.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZj",
+      paymentDate: "December 21, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI",
+    },
+    {
+      month: months[0], // December 2024
+      total: 378.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZk",
+      paymentDate: "December 19, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "50,000 SERP Credits",
+    },
+    {
+      month: months[0], // December 2024
+      total: 378.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZl",
+      paymentDate: "December 11, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "50,000 SERP Credits",
+    },
+    {
+      month: months[0], // December 2024
+      total: 299.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZm",
+      paymentDate: "December 8, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "Invoice",
+    },
+    {
+      month: months[0], // December 2024
+      total: 189.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZn",
+      paymentDate: "December 5, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "50,000 SERP Credits",
+    },
+    {
+      month: months[0], // December 2024
+      total: 297.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZo",
+      paymentDate: "December 5, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI",
+    },
+    {
+      month: months[0], // December 2024
+      total: 322.92,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZp",
+      paymentDate: "December 3, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI",
+    },
+    {
+      month: months[0], // December 2024
+      total: 21.60,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZq",
+      paymentDate: "December 3, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "Extended Support RoamingProxy",
+    },
+    {
+      month: months[0], // December 2024
+      total: 299.00,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZr",
+      paymentDate: "November 21, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "SERPAPI",
+    },
+    {
+      month: months[0], // December 2024
+      total: 3.78,
+      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZs",
+      paymentDate: "November 17, 2024",
+      paymentMethod: "American Express •••• 3007",
+      description: "Initial Charge Etheria Support",
+    },
   ];
 
   const allTimeTotal = history.reduce((sum, { total }) => sum + total, 0);
-  const averageMonthly = allTimeTotal / history.length;
-  const previousMonthTotal = history.filter(({ month }) => month.name === "August 2025").reduce((sum, { total }) => sum + total, 0);
+  const averageMonthly = allTimeTotal / months.length; // Use months.length for per-month average
+  const previousMonthTotal = history
+    .filter(({ month }) => month.name === "August 2025")
+    .reduce((sum, { total }) => sum + total, 0);
   const monthOverMonthChange = previousMonthTotal ? ((grandTotal - previousMonthTotal) / previousMonthTotal) * 100 : 0;
-  const invoicedAmount = history.reduce((sum, { total }) => sum + total, 0);
+  const invoicedAmount = history
+    .filter(({ month }) => month.name === "September 2025")
+    .reduce((sum, { total }) => sum + total, 0);
   const outstandingBalance = grandTotal - invoicedAmount;
 
   const handleBillingClick = async () => {
