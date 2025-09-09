@@ -40,7 +40,7 @@ function UserSettingsTab({ user }: { user: UserPublic }) {
 
   return (
     <VStack align="stretch" spacing={6}>
-      <Heading size="md" color="gray.700">User Settings</Heading>
+      <Heading as="h1" size="xl" color="gray.800">User Settings</Heading>
       <Text color="gray.600">View and manage your account details.</Text>
       <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
         <FormControl mb={4}>
