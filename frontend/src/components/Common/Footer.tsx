@@ -8,10 +8,10 @@ import {
 } from "@chakra-ui/react";
 import { FiPhone, FiMail, FiTwitter, FiGithub, FiGlobe, FiBook } from "react-icons/fi";
 import Logo from '../Common/Logo';
-const Footer = () => {
-    const textColor = "gray.800";
-    const accentColor = "red.400";
-    const hoverColor = "red.600";
+    const Footer = () => {
+    const textColor = "white"; // White for maximum contrast and readability on red
+    const accentColor = "gray.200"; // Light gray for subtle highlights
+    const hoverColor = "gray.400"; // Slightly darker gray for hover states`
 
     return (
         <Box bg="#c00d0f" py={3} px={4} boxShadow="sm" w="100%">
