@@ -428,7 +428,11 @@ const HomePage = () => {
                   <Link as={RouterLink} to="/hosting/billing" display="flex" alignItems="center" color="red.500" fontWeight="medium">
                     <Icon as={FiUserCheck} mr={2} />  Manage Billing  
                   </Link>
-           
+                /settings
+                 <Link as={RouterLink} to="/hosting/billing" display="flex" alignItems="center" color="red.500" fontWeight="medium">
+                    <Icon as={FiUserCheck} mr={2} /> Manage Account   
+                  </Link>
+
                   {/* <Button
                     variant="link"
                     onClick={handleBillingClick}
