@@ -3,8 +3,7 @@ import { Container, Flex, Text, Box, Heading, Alert, AlertIcon, Grid, GridItem, 
 import { useMemo, useState } from "react";
 import ProtectedComponent from "../../components/Common/ProtectedComponent";
 import { useQuery } from "@tanstack/react-query";
-import { FaBook, FaKey, FaCreditCard, FaGlobe, FaSearch, FaTools, FaServer } from 'react-icons/fa';
-// import UsageCharts from "../../components/Dashboard/UsageCharts";
+import { FaBook, FaKey, FaCreditCard, FaGlobe, FaSearch, FaServer } from 'react-icons/fa';
 
 const featureDetails = {
   'proxy-api': { name: 'Web Scraping API', description: 'Extract structured data from any website with our powerful and scalable scraping infrastructure.', icon: FaGlobe, path: '/web-scraping-tools/https-api' },
@@ -14,7 +13,6 @@ const featureDetails = {
 
 type FeatureKey = keyof typeof featureDetails;
 
-// --- Interfaces, featureDetails, and Fetch Functions ---
 interface Subscription {
   id: string;
   status: string;
@@ -41,17 +39,20 @@ interface ApiKey {
 async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No access token found. Please log in again.");
-  const response = await fetch("https://api.roamingproxy.com/v2/customer/subscriptions", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } });
+  const response = await fetch("https://api.roamingproxy.com/v2/customer/subscriptions", {
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.detail || `Failed to fetch subscriptions: ${response.status}`);
   }
-  const data = await response.json();
-  return Array.isArray(data) ? data : [];
+  return (await response.json()) as Subscription[];
 }
 
 async function fetchBillingPortal(token: string): Promise<string> {
-  const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", { headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` } });
+  const response = await fetch("https://api.roamingproxy.com/v2/customer-portal", {
+    headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) throw new Error(`Failed to fetch portal: ${response.status}`);
   const data = await response.json();
   if (!data.portal_url) throw new Error("No portal URL received from server.");
@@ -59,45 +60,47 @@ async function fetchBillingPortal(token: string): Promise<string> {
 }
 
 async function fetchApiKeys(token: string): Promise<ApiKey[]> {
-  const response = await fetch("https://api.roamingproxy.com/v2/proxy/api-keys", { headers: { Accept: "application/json", Authorization: `Bearer ${token}` } });
+  const response = await fetch("https://api.roamingproxy.com/v2/proxy/api-keys", {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) {
     if (response.status === 403 || response.status === 404) return [];
     throw new Error(`Failed to fetch API keys: ${response.status}`);
   }
   const data = await response.json();
-  const keys = Array.isArray(data) ? data : [];
-  return keys.map((key: ApiKey) => ({ ...key, request_count: key.request_count ?? 0 }));
+  return (Array.isArray(data) ? data : []).map((key: ApiKey) => ({ ...key, request_count: key.request_count ?? 0 }));
 }
 
-// --- Main Homepage Component ---
 const HomePage = () => {
-  const { data: subscriptions, isLoading: isSubscriptionsLoading, error: subscriptionsError } = useQuery({ queryKey: ["subscriptions"], queryFn: fetchSubscriptions, staleTime: 5 * 60 * 1000 });
-  const token = localStorage.getItem("access_token");
-  const { data: apiKeys, isLoading: isApiKeysLoading, error: apiKeysError } = useQuery({ queryKey: ["apiKeys"], queryFn: () => fetchApiKeys(token || ""), staleTime: 5 * 60 * 1000, enabled: !!token });
+  const { data: subscriptions, isLoading: isSubscriptionsLoading, error: subscriptionsError } = useQuery({
+    queryKey: ["subscriptions"],
+    queryFn: fetchSubscriptions,
+    staleTime: 5 * 60 * 1000,
+  });
+  const token = localStorage.getItem("access_token") || "";
+  const { data: apiKeys, isLoading: isApiKeysLoading, error: apiKeysError } = useQuery({
+    queryKey: ["apiKeys"],
+    queryFn: () => fetchApiKeys(token),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!token,
+  });
 
-  const activeSubscription = useMemo(() =>
-    Array.isArray(subscriptions)
-      ? subscriptions.find((sub) => ["active", "trialing", "past_due"].includes(sub.status))
-      : undefined,
+  const activeSubscription = useMemo(
+    () => (Array.isArray(subscriptions) ? subscriptions.find((sub) => ["active", "trialing", "past_due"].includes(sub.status)) : undefined),
     [subscriptions]
   );
 
-  const totalRequests = useMemo(() =>
-    Array.isArray(apiKeys)
-      ? apiKeys.reduce((sum, key) => sum + (key.request_count || 0), 0)
-      : 0,
+  const totalRequests = useMemo(
+    () => (Array.isArray(apiKeys) ? apiKeys.reduce((sum, key) => sum + (key.request_count || 0), 0) : 0),
     [apiKeys]
   );
 
   const totalDataGB = (totalRequests * 0.0005).toFixed(2);
 
-  // Ensure exactly three service cards (including VPS Hosting)
   const displayedFeatures = useMemo(() => {
     const features = activeSubscription?.enabled_features || [];
-    // Filter out vps-hosting to handle it separately, take first two other features
-    const nonVpsFeatures = features.filter(f => f !== 'vps-hosting').slice(0, 2);
-    // Always include vps-hosting as the third card
-    return [...nonVpsFeatures, 'vps-hosting'].filter(f => featureDetails[f]);
+    const nonVpsFeatures = features.filter((f) => f !== "vps-hosting").slice(0, 2);
+    return [...nonVpsFeatures, "vps-hosting"].filter((f) => featureDetails[f]);
   }, [activeSubscription]);
 
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
@@ -114,12 +117,10 @@ const HomePage = () => {
     try {
       const portalUrl = await fetchBillingPortal(token);
       window.location.href = portalUrl;
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error accessing customer portal:", error);
       toast({ title: "Error", description: "Could not open the billing portal. Please try again.", status: "error", duration: 5000, isClosable: true });
-    }
-    finally {
+    } finally {
       setIsPortalLoading(false);
     }
   };
@@ -128,7 +129,9 @@ const HomePage = () => {
     <ProtectedComponent>
       <Container maxW="full" mb={6}>
         {isLoading ? (
-          <Text fontSize="sm" mt={6}>Loading your dashboard...</Text>
+          <Text fontSize="sm" mt={6}>
+            Loading your dashboard...
+          </Text>
         ) : error ? (
           <Alert status="error" mt={6}>
             <AlertIcon />
@@ -147,7 +150,9 @@ const HomePage = () => {
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
                     <Heading size="sm">Active Subscriptions</Heading>
-                    <Text fontSize="4xl" fontWeight="bold">{totalRequests.toLocaleString()}</Text>
+                    <Text fontSize="4xl" fontWeight="bold">
+                      {totalRequests.toLocaleString()}
+                    </Text>
                   </VStack>
                 </Box>
               </GridItem>
@@ -155,26 +160,42 @@ const HomePage = () => {
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
                     <Heading size="sm">HTTPS Request API</Heading>
-                    <Text fontSize="4xl" fontWeight="bold">{totalDataGB} GB</Text>
+                    <Text fontSize="4xl" fontWeight="bold">
+                      {totalDataGB} GB
+                    </Text>
                   </VStack>
                 </Box>
               </GridItem>
               <GridItem>
-                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height={{base: "auto", md: "180px"}} display="flex" flexDirection="column">
+                <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height={{ base: "auto", md: "180px" }} display="flex" flexDirection="column">
                   <Box flex="1" overflowY="auto" pr={2}>
                     <Table variant="simple" size="sm">
                       <Tbody>
                         <Tr>
                           <Td fontWeight="bold">Current Period</Td>
-                          <Td>{activeSubscription.current_period_start && activeSubscription.current_period_end ? `${new Date(activeSubscription.current_period_start * 1000).toLocaleDateString()} - ${new Date(activeSubscription.current_period_end * 1000).toLocaleDateString()}` : "N/A"}</Td>
+                          <Td>
+                            {activeSubscription.current_period_start && activeSubscription.current_period_end
+                              ? `${new Date(activeSubscription.current_period_start * 1000).toLocaleDateString()} - ${new Date(
+                                  activeSubscription.current_period_end * 1000
+                                ).toLocaleDateString()}`
+                              : "N/A"}
+                          </Td>
                         </Tr>
                         {activeSubscription.enabled_features?.length > 0 && (
                           <>
-                            <Tr><Td colSpan={2} fontWeight="bold" pt={4}>VPS</Td></Tr>
-                            {activeSubscription.enabled_features.map(feature => (
+                            <Tr>
+                              <Td colSpan={2} fontWeight="bold" pt={4}>
+                                VPS
+                              </Td>
+                            </Tr>
+                            {activeSubscription.enabled_features.map((feature) => (
                               <Tr key={feature}>
-                                <Td pl={8} textTransform="capitalize">{feature.replace(/-/g, ' ')}</Td>
-                                <Td textAlign="right"><Badge colorScheme="green">Active</Badge></Td>
+                                <Td pl={8} textTransform="capitalize">
+                                  {feature.replace(/-/g, " ")}
+                                </Td>
+                                <Td textAlign="right">
+                                  <Badge colorScheme="green">Active</Badge>
+                                </Td>
                               </Tr>
                             ))}
                           </>
@@ -185,23 +206,17 @@ const HomePage = () => {
                 </Box>
               </GridItem>
             </Grid>
-            {/* Row 2: Usage Charts */}
-            {/* <UsageCharts
-              periodStart={activeSubscription.current_period_start}
-              totalRequests={totalRequests}
-              totalDataGB={parseFloat(totalDataGB)}
-            /> */}
-            {/* Row 3: Services & Quick Links */}
+            {/* Row 3: Services */}
             {displayedFeatures.length > 0 && (
               <VStack align="stretch" spacing={4} pt={4}>
-                <Heading size="md">Your Services & Tools</Heading>
-                <Grid templateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }} gap={6}>
+                <Heading size="md">Your Services</Heading>
+                <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
                   {displayedFeatures.slice(0, 3).map((featureSlug) => {
                     const details = featureDetails[featureSlug];
                     if (!details) return null;
                     return (
                       <GridItem key={featureSlug} w="100%">
-                        <Link as={RouterLink} to={details.path} _hover={{ textDecoration: 'none' }}>
+                        <Link as={RouterLink} to={details.path} _hover={{ textDecoration: "none" }}>
                           <Box
                             p={5}
                             shadow="md"
@@ -211,11 +226,13 @@ const HomePage = () => {
                             display="flex"
                             flexDirection="column"
                             transition="all 0.2s ease-in-out"
-                            _hover={{ shadow: 'xl', transform: 'translateY(-4px)' }}
+                            _hover={{ shadow: "xl", transform: "translateY(-4px)" }}
                           >
                             <Box flex="1">
                               <Flex justifyContent="space-between" alignItems="flex-start" mb={3}>
-                                <Heading size="sm" pr={4}>{details.name}</Heading>
+                                <Heading size="sm" pr={4}>
+                                  {details.name}
+                                </Heading>
                                 <Icon as={details.icon} boxSize={8} color="red.400" />
                               </Flex>
                               <Text fontSize="sm" color="gray.600" minHeight={{ base: "auto", md: "60px" }}>
@@ -230,38 +247,34 @@ const HomePage = () => {
                       </GridItem>
                     );
                   })}
-                  <GridItem w="100%">
-                    <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg" height="100%" display="flex" flexDirection="column">
-                      <Box flex="1">
-                        <Flex justifyContent="space-between" alignItems="flex-start" mb={3}>
-                          <Heading size="sm" pr={4}>Quick Links</Heading>
-                          <Icon as={FaTools} boxSize={8} color="gray.400" />
-                        </Flex>
-                        <VStack align="start" spacing={3} mt={5}>
-                          <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                            <Icon as={FaKey} mr={2} /> Manage API Keys
-                          </Link>
-                          <Button
-                            variant="link"
-                            onClick={handleBillingClick}
-                            isLoading={isPortalLoading}
-                            leftIcon={<Icon as={FaCreditCard} />}
-                            colorScheme="red"
-                            fontWeight="medium"
-                            justifyContent="flex-start"
-                          >
-                            Billing Portal
-                          </Button>
-                          <Link href="https://docs.roamingproxy.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
-                            <Icon as={FaBook} mr={2} /> Documentation
-                          </Link>
-                        </VStack>
-                      </Box>
-                    </Box>
-                  </GridItem>
                 </Grid>
               </VStack>
             )}
+            {/* Quick Links */}
+            <VStack align="stretch" spacing={4} pt={4}>
+              <Heading size="md">Quick Links</Heading>
+              <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg">
+                <VStack align="start" spacing={3}>
+                  <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
+                    <Icon as={FaKey} mr={2} /> Manage API Keys
+                  </Link>
+                  <Button
+                    variant="link"
+                    onClick={handleBillingClick}
+                    isLoading={isPortalLoading}
+                    leftIcon={<Icon as={FaCreditCard} />}
+                    colorScheme="red"
+                    fontWeight="medium"
+                    justifyContent="flex-start"
+                  >
+                    Billing Portal
+                  </Button>
+                  <Link href="https://docs.roamingproxy.com" isExternal display="flex" alignItems="center" color="red.500" fontWeight="medium">
+                    <Icon as={FaBook} mr={2} /> Documentation
+                  </Link>
+                </VStack>
+              </Box>
+            </VStack>
           </VStack>
         )}
       </Container>
