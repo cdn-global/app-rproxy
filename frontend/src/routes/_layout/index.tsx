@@ -6,9 +6,26 @@ import { useQuery } from "@tanstack/react-query";
 import { FaBook, FaKey, FaCreditCard, FaGlobe, FaSearch, FaServer } from 'react-icons/fa';
 
 const featureDetails = {
-  'proxy-api': { name: 'Web Scraping API', description: 'Extract structured data from any website with our powerful and scalable scraping infrastructure.', icon: FaGlobe, path: '/web-scraping-tools/https-api' },
-  'serp-api': { name: 'SERP API', description: 'Get structured JSON data from major search engines.', icon: FaSearch, path: '/web-scraping-tools/serp-api' },
-  'vps-hosting': { name: 'VPS Hosting', description: 'Manage your virtual private servers with high performance and reliability.', icon: FaServer, path: '/hosting' },
+  'proxy-api': { 
+    name: 'Web Scraping API', 
+    description: 'Extract structured data from any website with our powerful and scalable scraping infrastructure.', 
+    icon: FaGlobe, 
+    path: '/web-scraping-tools/https-api',
+    period: '8/15/2025 - 9/15/2025'
+  },
+  'serp-api': { 
+    name: 'SERP API', 
+    description: 'Get structured JSON data from major search engines.', 
+    icon: FaSearch, 
+    path: '/web-scraping-tools/serp-api'
+  },
+  'vps-hosting': { 
+    name: 'VPS Hosting', 
+    description: 'Manage your virtual private servers with high performance and reliability.', 
+    icon: FaServer, 
+    path: '/hosting',
+    period: '9/9/2025 - 10/9/2025'
+  },
 };
 
 type FeatureKey = keyof typeof featureDetails;
@@ -101,8 +118,7 @@ const HomePage = () => {
   const displayedFeatures = useMemo(() => {
     const features = activeSubscriptions.length > 0 ? activeSubscriptions.flatMap((sub) => sub.enabled_features) : [];
     const uniqueFeatures = Array.from(new Set(features));
-    const nonVpsFeatures = uniqueFeatures.filter((f) => f !== "vps-hosting").slice(0, 2);
-    return [...nonVpsFeatures, "vps-hosting"].filter((f) => featureDetails[f]);
+    return ['proxy-api', 'vps-hosting'].filter((f) => featureDetails[f] && uniqueFeatures.includes(f));
   }, [activeSubscriptions]);
 
   const isLoading = isSubscriptionsLoading || isApiKeysLoading;
@@ -193,7 +209,7 @@ const HomePage = () => {
               <VStack align="stretch" spacing={4} pt={4}>
                 <Heading size="md">Your Services</Heading>
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
-                  {displayedFeatures.slice(0, 3).map((featureSlug) => {
+                  {displayedFeatures.map((featureSlug) => {
                     const details = featureDetails[featureSlug];
                     if (!details) return null;
                     return (
@@ -220,6 +236,11 @@ const HomePage = () => {
                               <Text fontSize="sm" color="gray.600" minHeight={{ base: "auto", md: "60px" }}>
                                 {details.description}
                               </Text>
+                              {details.period && (
+                                <Text fontSize="xs" color="gray.600" mt={2}>
+                                  Period: {details.period}
+                                </Text>
+                              )}
                             </Box>
                             <Text mt={4} color="red.500" fontWeight="bold" fontSize="sm" alignSelf="flex-start">
                               Go to Service →
