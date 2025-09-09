@@ -4,35 +4,37 @@ import { useMemo, useState } from "react";
 import ProtectedComponent from "../../components/Common/ProtectedComponent";
 import { useQuery } from "@tanstack/react-query";
 import { FaBook, FaKey, FaCreditCard, FaGlobe, FaSearch, FaTools, FaServer } from 'react-icons/fa';
-
 // import UsageCharts from "../../components/Dashboard/UsageCharts";
+
 const featureDetails = {
   'proxy-api': { name: 'Web Scraping API', description: 'Extract structured data from any website with our powerful and scalable scraping infrastructure.', icon: FaGlobe, path: '/web-scraping-tools/https-api' },
   'serp-api': { name: 'SERP API', description: 'Get structured JSON data from major search engines.', icon: FaSearch, path: '/web-scraping-tools/serp-api' },
   'vps-hosting': { name: 'VPS Hosting', description: 'Manage your virtual private servers with high performance and reliability.', icon: FaServer, path: '/hosting' },
 };
-type FeatureKey = keyof typeof featureDetails; 
+
+type FeatureKey = keyof typeof featureDetails;
 
 // --- Interfaces, featureDetails, and Fetch Functions ---
 interface Subscription {
-  id: string; 
-  status: string; 
-  plan_id: string | null; 
-  plan_name: string | null; 
-  product_id: string | null; 
-  product_name: string | null; 
-  current_period_start: number | null; 
-  current_period_end: number | null; 
-  trial_start: number | null; 
-  trial_end: number | null; 
-  cancel_at_period_end: boolean; 
+  id: string;
+  status: string;
+  plan_id: string | null;
+  plan_name: string | null;
+  product_id: string | null;
+  product_name: string | null;
+  current_period_start: number | null;
+  current_period_end: number | null;
+  trial_start: number | null;
+  trial_end: number | null;
+  cancel_at_period_end: boolean;
   enabled_features: FeatureKey[];
 }
+
 interface ApiKey {
-  key_preview: string; 
-  created_at: string; 
-  expires_at: string; 
-  is_active: boolean; 
+  key_preview: string;
+  created_at: string;
+  expires_at: string;
+  is_active: boolean;
   request_count?: number;
 }
 
@@ -40,9 +42,9 @@ async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No access token found. Please log in again.");
   const response = await fetch("https://api.roamingproxy.com/v2/customer/subscriptions", { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } });
-  if (!response.ok) { 
-    const errorData = await response.json().catch(() => ({})); 
-    throw new Error(errorData.detail || `Failed to fetch subscriptions: ${response.status}`); 
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to fetch subscriptions: ${response.status}`);
   }
   const data = await response.json();
   return Array.isArray(data) ? data : [];
@@ -58,9 +60,9 @@ async function fetchBillingPortal(token: string): Promise<string> {
 
 async function fetchApiKeys(token: string): Promise<ApiKey[]> {
   const response = await fetch("https://api.roamingproxy.com/v2/proxy/api-keys", { headers: { Accept: "application/json", Authorization: `Bearer ${token}` } });
-  if (!response.ok) { 
-    if (response.status === 403 || response.status === 404) return []; 
-    throw new Error(`Failed to fetch API keys: ${response.status}`); 
+  if (!response.ok) {
+    if (response.status === 403 || response.status === 404) return [];
+    throw new Error(`Failed to fetch API keys: ${response.status}`);
   }
   const data = await response.json();
   const keys = Array.isArray(data) ? data : [];
@@ -102,37 +104,37 @@ const HomePage = () => {
   const error = subscriptionsError || apiKeysError;
   const [isPortalLoading, setIsPortalLoading] = useState(false);
   const toast = useToast();
-  
+
   const handleBillingClick = async () => {
-    if (!token) { 
-      toast({ title: "Authentication Required", description: "Please log in to manage billing.", status: "warning", duration: 5000, isClosable: true }); 
-      return; 
+    if (!token) {
+      toast({ title: "Authentication Required", description: "Please log in to manage billing.", status: "warning", duration: 5000, isClosable: true });
+      return;
     }
     setIsPortalLoading(true);
-    try { 
-      const portalUrl = await fetchBillingPortal(token); 
-      window.location.href = portalUrl; 
+    try {
+      const portalUrl = await fetchBillingPortal(token);
+      window.location.href = portalUrl;
     }
-    catch (error) { 
-      console.error("Error accessing customer portal:", error); 
-      toast({ title: "Error", description: "Could not open the billing portal. Please try again.", status: "error", duration: 5000, isClosable: true }); 
+    catch (error) {
+      console.error("Error accessing customer portal:", error);
+      toast({ title: "Error", description: "Could not open the billing portal. Please try again.", status: "error", duration: 5000, isClosable: true });
     }
-    finally { 
-      setIsPortalLoading(false); 
+    finally {
+      setIsPortalLoading(false);
     }
   };
 
   return (
     <ProtectedComponent>
       <Container maxW="full" mb={6}>
-        {isLoading ? ( 
+        {isLoading ? (
           <Text fontSize="sm" mt={6}>Loading your dashboard...</Text>
-        ) : error ? ( 
+        ) : error ? (
           <Alert status="error" mt={6}>
             <AlertIcon />
             <Text fontSize="sm">Error: {error instanceof Error ? error.message : "Failed to load dashboard details."}</Text>
           </Alert>
-        ) : !activeSubscription ? ( 
+        ) : !activeSubscription ? (
           <Alert status="info" mt={6}>
             <AlertIcon />
             <Text fontSize="sm">No active subscription found. Please subscribe to access your dashboard.</Text>
@@ -144,7 +146,7 @@ const HomePage = () => {
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
-                    <Heading size="sm">Total Requests</Heading>
+                    <Heading size="sm">Active Subscriptions</Heading>
                     <Text fontSize="4xl" fontWeight="bold">{totalRequests.toLocaleString()}</Text>
                   </VStack>
                 </Box>
@@ -152,7 +154,7 @@ const HomePage = () => {
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
-                    <Heading size="sm">Data Transferred</Heading>
+                    <Heading size="sm">HTTPS Request API</Heading>
                     <Text fontSize="4xl" fontWeight="bold">{totalDataGB} GB</Text>
                   </VStack>
                 </Box>
@@ -168,7 +170,7 @@ const HomePage = () => {
                         </Tr>
                         {activeSubscription.enabled_features?.length > 0 && (
                           <>
-                            <Tr><Td colSpan={2} fontWeight="bold" pt={4}>Active APIs</Td></Tr>
+                            <Tr><Td colSpan={2} fontWeight="bold" pt={4}>VPS</Td></Tr>
                             {activeSubscription.enabled_features.map(feature => (
                               <Tr key={feature}>
                                 <Td pl={8} textTransform="capitalize">{feature.replace(/-/g, ' ')}</Td>
@@ -183,34 +185,32 @@ const HomePage = () => {
                 </Box>
               </GridItem>
             </Grid>
-
             {/* Row 2: Usage Charts */}
             {/* <UsageCharts
               periodStart={activeSubscription.current_period_start}
               totalRequests={totalRequests}
               totalDataGB={parseFloat(totalDataGB)}
             /> */}
-
             {/* Row 3: Services & Quick Links */}
             {displayedFeatures.length > 0 && (
               <VStack align="stretch" spacing={4} pt={4}>
                 <Heading size="md">Your Services & Tools</Heading>
-                <Grid templateColumns={{ base: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr 1fr" }} gap={6}>
+                <Grid templateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }} gap={6}>
                   {displayedFeatures.slice(0, 3).map((featureSlug) => {
                     const details = featureDetails[featureSlug];
                     if (!details) return null;
                     return (
-                      <GridItem key={featureSlug}>
+                      <GridItem key={featureSlug} w="100%">
                         <Link as={RouterLink} to={details.path} _hover={{ textDecoration: 'none' }}>
-                          <Box 
-                            p={5} 
-                            shadow="md" 
-                            borderWidth="1px" 
-                            borderRadius="lg" 
-                            height="100%" 
-                            display="flex" 
-                            flexDirection="column" 
-                            transition="all 0.2s ease-in-out" 
+                          <Box
+                            p={5}
+                            shadow="md"
+                            borderWidth="1px"
+                            borderRadius="lg"
+                            height="100%"
+                            display="flex"
+                            flexDirection="column"
+                            transition="all 0.2s ease-in-out"
                             _hover={{ shadow: 'xl', transform: 'translateY(-4px)' }}
                           >
                             <Box flex="1">
@@ -230,7 +230,7 @@ const HomePage = () => {
                       </GridItem>
                     );
                   })}
-                  <GridItem>
+                  <GridItem w="100%">
                     <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg" height="100%" display="flex" flexDirection="column">
                       <Box flex="1">
                         <Flex justifyContent="space-between" alignItems="flex-start" mb={3}>
@@ -241,8 +241,8 @@ const HomePage = () => {
                           <Link as={RouterLink} to="/settings" display="flex" alignItems="center" color="red.500" fontWeight="medium">
                             <Icon as={FaKey} mr={2} /> Manage API Keys
                           </Link>
-                          <Button 
-                            variant="link" 
+                          <Button
+                            variant="link"
                             onClick={handleBillingClick}
                             isLoading={isPortalLoading}
                             leftIcon={<Icon as={FaCreditCard} />}
