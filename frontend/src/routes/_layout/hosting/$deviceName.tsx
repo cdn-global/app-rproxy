@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 
-
 interface Server {
   name: string;
   email: string;
@@ -29,13 +28,12 @@ interface Server {
   password: string;
   monthlyComputePrice: number;
   storageSizeGB: number;
-  activeSince: string; // YYYY-MM-DD
-  hasRotatingIP?: boolean;
-  hasBackup?: boolean;
-  hasMonitoring?: boolean;
+  activeSince: string;
+  hasRotatingIP: boolean;
+  hasBackup: boolean;
+  hasMonitoring: boolean;
   hasManagedSupport?: boolean;
   vCPUs?: number;
-  ramGB?: number;
 }
 
 const servers: Server[] = [
@@ -103,7 +101,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "e-coast-n-jersey-ruther-4core-ssd",
+    name: "e-coast-jersey-jersey-4core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.62",
     version: "1.88.0",
