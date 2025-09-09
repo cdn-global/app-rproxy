@@ -6,7 +6,7 @@ import {
     Icon,
     VStack,
 } from "@chakra-ui/react";
-import { FiPhone, FiMail, FiTwitter, FiGithub } from "react-icons/fi";
+import { FiPhone, FiMail, FiTwitter, FiGithub, FiGlobe } from "react-icons/fi";
 
 const Footer = () => {
     const textColor = "gray.800";
@@ -79,7 +79,7 @@ const Footer = () => {
                         color={textColor}
                         fontSize="sm"
                     >
-                        Cobalt Data
+                        COBALTDATA.net
                     </Text>
                     <Flex gap={3}>
                         <Link href="https://x.com/cobaltdata" isExternal>
@@ -93,6 +93,14 @@ const Footer = () => {
                         <Link href="https://github.com/cdn-global" isExternal>
                             <Icon
                                 as={FiGithub}
+                                color={textColor}
+                                _hover={{ color: hoverColor }}
+                                boxSize="1em"
+                            />
+                        </Link>
+                        <Link href="https://cobaltdata.net" isExternal>
+                            <Icon
+                                as={FiGlobe}
                                 color={textColor}
                                 _hover={{ color: hoverColor }}
                                 boxSize="1em"
