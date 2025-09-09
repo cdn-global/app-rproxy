@@ -31,7 +31,7 @@ import {
   ListItem,
   ListIcon,
 } from "@chakra-ui/react";
-import { FaCreditCard, FaFaCheckCircleIcon } from "react-icons/fa";
+import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
 
 // Hardcoded servers with pricing (updated to Debian)
@@ -593,19 +593,19 @@ function BillingPage() {
               </Text>
               <List spacing={3}>
                 <ListItem>
-                  <ListIcon as={FaCheckCircleIcon} color="green.500" />
+                  <ListIcon as={FaCheckCircle} color="green.500" />
                   <strong>Monthly Pricing:</strong> Priced at $449/month as a single transaction, competitive with OVHcloud and Vultr for high-end specs (8 vCPUs, 32GB RAM, 1TB SSD, 2-5 floating IPs, unlimited bandwidth). Includes managed services: OS updates, security, and backups with Debian optimization. Reduce to $399/month to further undercut competitors.
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircleIcon} color="green.500" />
+                  <ListIcon as={FaCheckCircle} color="green.500" />
                   <strong>Annual Pricing:</strong> If $449 is annual, it’s highly competitive (~$37.42/month). Keep at $449/year or offer $429/year for early sign-ups. Bundles 2-3 floating IPs and 24/7 priority support.
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircleIcon} color="green.500" />
+                  <ListIcon as={FaCheckCircle} color="green.500" />
                   <strong>Value-Add:</strong> Free setup, DDoS protection, and 1-hour response support included. Ideal for multi-device use (10-50 clients) with scalable unlimited bandwidth and floating IPs for failover/geo-targeting.
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircleIcon} color="green.500" />
+                  <ListIcon as={FaCheckCircle} color="green.500" />
                   <strong>Billing for Multiple Devices:</strong>
                   <List pl={6} spacing={2}>
                     <ListItem>
@@ -620,7 +620,7 @@ function BillingPage() {
                   </List>
                 </ListItem>
                 <ListItem>
-                  <ListIcon as={FaCheckCircleIcon} color="green.500" />
+                  <ListIcon as={FaFaCheckCircle} color="green.500" />
                   <strong>Invoice Description:</strong>
                   <List pl={6} spacing={2}>
                     <ListItem>
