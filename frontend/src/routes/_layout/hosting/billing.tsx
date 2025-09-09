@@ -31,7 +31,7 @@ import {
   ListItem,
   ListIcon,
 } from "@chakra-ui/react";
-import { FaCreditCard, CheckCircleIcon } from "react-icons/fa";
+import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
 
 // Hardcoded servers with pricing (updated to Debian)
