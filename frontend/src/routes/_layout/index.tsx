@@ -163,11 +163,11 @@ const HomePage = () => {
               <GridItem>
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
-                    <Heading size="sm">VPS Usage</Heading>
+                    <Heading size="sm">VPS Status</Heading>
                     <Text fontSize="xl" fontWeight="bold">CPU: 45%</Text>
                     <Text fontSize="xl" fontWeight="bold">Memory: 3.2 GB</Text>
                     <Text fontSize="sm" color="gray.600">
-                      Note: Detailed VPS usage is available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
+                      Note: Detailed VPS settings available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
                     </Text>
                   </VStack>
                 </Box>
