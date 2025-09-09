@@ -120,8 +120,8 @@ function HostingIndexPage() {
     <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
         <VStack align="start" spacing={2}>
-          <Heading as="h1" size="xl" color="gray.800">Web Hosting Credentials</Heading>
-          <Text fontSize="lg" color="gray.600">Login details and management for your Debian VPS servers</Text>
+          <Heading as="h1" size="xl" color="gray.800">VPS Details</Heading>
+          <Text fontSize="lg" color="gray.600">Login details and management for your Debian VPS servers. Fully managed virtual private servers for your needs.</Text>
         </VStack>
         <Button as={Link} to="billing" colorScheme="red" variant="solid" size="md">View Billing</Button>
       </Flex>
