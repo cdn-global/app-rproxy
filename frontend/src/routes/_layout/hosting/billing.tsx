@@ -90,7 +90,7 @@ const servers: Server[] = [
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 499,
+    monthlyComputePrice: 449,
     storageSizeGB: 100,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
@@ -320,11 +320,11 @@ function BillingPage() {
 
       <Tabs variant="enclosed" colorScheme="orange" isFitted>
         <TabList>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Current Billing</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Service Details</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Billing History</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Invoices</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Payment Details</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Current Billing</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Service Details</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Billing History</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
         </TabList>
         <TabPanels bg="gray.50" borderRadius="0 0 md md">
           <TabPanel>
@@ -332,11 +332,11 @@ function BillingPage() {
             <VStack align="stretch" spacing={6}>
               <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
                 <Table variant="simple" size="md">
-                  <Thead bg="orange.100">
+                  <Thead bg="red.100">
                     <Tr>
-                      <Th color="orange.800">Server Name</Th>
-                      <Th color="orange.800">IP Address</Th>
-                      <Th color="orange.800" isNumeric>Total Cost (USD)</Th>
+                      <Th color="red.800">Server Name</Th>
+                      <Th color="red.800">IP Address</Th>
+                      <Th color="red.800" isNumeric>Total Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -348,21 +348,21 @@ function BillingPage() {
                       </Tr>
                     ))}
                   </Tbody>
-                  <Tfoot bg="orange.50">
+                  <Tfoot bg="red.50">
                     <Tr>
-                      <Th colSpan={2} color="orange.800">Total</Th>
-                      <Th isNumeric color="orange.800">${grandTotal.toFixed(2)}</Th>
+                      <Th colSpan={2} color="red.800">Total</Th>
+                      <Th isNumeric color="red.800">${grandTotal.toFixed(2)}</Th>
                     </Tr>
                   </Tfoot>
                 </Table>
               </Box>
               <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
                 <Table variant="simple" size="md">
-                  <Thead bg="orange.100">
+                  <Thead bg="red.100">
                     <Tr>
-                      <Th color="orange.800">Service</Th>
-                      <Th color="orange.800">Quantity</Th>
-                      <Th color="orange.800" isNumeric>Cost (USD)</Th>
+                      <Th color="red.800">Service</Th>
+                      <Th color="red.800">Quantity</Th>
+                      <Th color="red.800" isNumeric>Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -374,18 +374,18 @@ function BillingPage() {
                       </Tr>
                     ))}
                   </Tbody>
-                  <Tfoot bg="orange.50">
+                  <Tfoot bg="red.50">
                     <Tr>
-                      <Th colSpan={2} color="orange.800">Total</Th>
-                      <Th isNumeric color="orange.800">${grandTotal.toFixed(2)}</Th>
+                      <Th colSpan={2} color="red.800">Total</Th>
+                      <Th isNumeric color="red.800">${grandTotal.toFixed(2)}</Th>
                     </Tr>
                   </Tfoot>
                 </Table>
               </Box>
               {outstandingBalance > 0 && (
-                <Box borderWidth="1px" borderRadius="lg" p={4} bg="orange.50" boxShadow="sm">
+                <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
                   <VStack align="stretch" spacing={2}>
-                    <Text fontWeight="semibold" color="orange.800">Billing Summary</Text>
+                    <Text fontWeight="semibold" color="red.800">Billing Summary</Text>
                     <Flex justify="space-between">
                       <Text>Total Cost:</Text>
                       <Text fontWeight="bold">${grandTotal.toFixed(2)}</Text>
@@ -399,7 +399,7 @@ function BillingPage() {
                       <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
                     </Flex>
                     <Text fontStyle="italic" color="gray.600">
-                      Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced.
+                    Note: The invoiced amount ($449.00) covers the premium Debian Unlimited Bandwidth VPS with Floating IP (riv8-nyc-mini9). The outstanding balance reflects additional server costs not yet invoiced. It can take 1-3 business days for the updated balance to be reflected.
                     </Text>
                   </VStack>
                 </Box>
@@ -415,20 +415,20 @@ function BillingPage() {
                 return (
                   <AccordionItem key={s.name} borderWidth="1px" borderRadius="md" mb={4}>
                     <h2>
-                      <AccordionButton bg="orange.50" _hover={{ bg: "orange.100" }}>
-                        <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="orange.800">
+                      <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
+                        <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
                           {s.name} - ${total.toFixed(2)} (x {relevantServers.length} {relevantServers.length !== 1 ? "servers" : "server"})
                         </Box>
-                        <AccordionIcon color="orange.600" />
+                        <AccordionIcon color="red.600" />
                       </AccordionButton>
                     </h2>
                     <AccordionPanel pb={4}>
                       {relevantServers.length > 0 ? (
                         <Table variant="simple" size="sm">
-                          <Thead bg="orange.100">
+                          <Thead bg="red.100">
                             <Tr>
-                              <Th color="orange.800">Server Name</Th>
-                              <Th color="orange.800" isNumeric>Cost (USD)</Th>
+                              <Th color="red.800">Server Name</Th>
+                              <Th color="red.800" isNumeric>Cost (USD)</Th>
                             </Tr>
                           </Thead>
                           <Tbody>
@@ -449,23 +449,23 @@ function BillingPage() {
               })}
               <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
                 <h2>
-                  <AccordionButton bg="orange.50" _hover={{ bg: "orange.100" }}>
-                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="orange.800">
+                  <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
+                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
                       Server Resources
                     </Box>
-                    <AccordionIcon color="orange.600" />
+                    <AccordionIcon color="red.600" />
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4}>
                   <Table variant="simple" size="sm">
-                    <Thead bg="orange.100">
+                    <Thead bg="red.100">
                       <Tr>
-                        <Th color="orange.800">Server Name</Th>
-                        <Th color="orange.800">vCPUs</Th>
-                        <Th color="orange.800">RAM (GB)</Th>
-                        <Th color="orange.800">Storage (GB)</Th>
-                        <Th color="orange.800">Floating IPs</Th>
-                        <Th color="orange.800">Features</Th>
+                        <Th color="red.800">Server Name</Th>
+                        <Th color="red.800">vCPUs</Th>
+                        <Th color="red.800">RAM (GB)</Th>
+                        <Th color="red.800">Storage (GB)</Th>
+                        <Th color="red.800">Floating IPs</Th>
+                        <Th color="red.800">Features</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -497,10 +497,10 @@ function BillingPage() {
             <Heading size="md" mb={6} color="gray.700">Billing History</Heading>
             <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
               <Table variant="simple" size="md">
-                <Thead bg="orange.100">
+                <Thead bg="red.100">
                   <Tr>
-                    <Th color="orange.800">Month</Th>
-                    <Th color="orange.800" isNumeric>Total Cost (USD)</Th>
+                    <Th color="red.800">Month</Th>
+                    <Th color="red.800" isNumeric>Total Cost (USD)</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -513,19 +513,19 @@ function BillingPage() {
                 </Tbody>
               </Table>
             </Box>
-            <Box mt={6} p={4} borderWidth="1px" borderRadius="lg" bg="orange.50" boxShadow="sm">
+            <Box mt={6} p={4} borderWidth="1px" borderRadius="lg" bg="red.50" boxShadow="sm">
               <VStack align="stretch" spacing={3}>
                 <Flex justify="space-between">
-                  <Text fontWeight="semibold" color="orange.800">Total Spent to Date</Text>
-                  <Text fontWeight="bold" color="orange.800">${allTimeTotal.toFixed(2)}</Text>
+                  <Text fontWeight="semibold" color="red.800">Total Spent to Date</Text>
+                  <Text fontWeight="bold" color="red.800">${allTimeTotal.toFixed(2)}</Text>
                 </Flex>
                 <Flex justify="space-between">
-                  <Text fontWeight="semibold" color="orange.800">Average Monthly Cost</Text>
-                  <Text fontWeight="bold" color="orange.800">${averageMonthly.toFixed(2)}</Text>
+                  <Text fontWeight="semibold" color="red.800">Average Monthly Cost</Text>
+                  <Text fontWeight="bold" color="red.800">${averageMonthly.toFixed(2)}</Text>
                 </Flex>
                 <Flex justify="space-between">
-                  <Text fontWeight="semibold" color="orange.800">Month-over-Month Change</Text>
-                  <Text fontWeight="bold" color="orange.800">{monthOverMonthChange.toFixed(2)}%</Text>
+                  <Text fontWeight="semibold" color="red.800">Month-over-Month Change</Text>
+                  <Text fontWeight="bold" color="red.800">{monthOverMonthChange.toFixed(2)}%</Text>
                 </Flex>
               </VStack>
             </Box>
@@ -534,14 +534,14 @@ function BillingPage() {
             <Heading size="md" mb={6} color="gray.700">Invoices</Heading>
             <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
               <Table variant="simple" size="md">
-                <Thead bg="orange.100">
+                <Thead bg="red.100">
                   <Tr>
-                    <Th color="orange.800">Month</Th>
-                    <Th color="orange.800">Invoice Number</Th>
-                    <Th color="orange.800">Payment Date</Th>
-                    <Th color="orange.800">Payment Method</Th>
-                    <Th color="orange.800">Description</Th>
-                    <Th color="orange.800"></Th>
+                    <Th color="red.800">Month</Th>
+                    <Th color="red.800">Invoice Number</Th>
+                    <Th color="red.800">Payment Date</Th>
+                    <Th color="red.800">Payment Method</Th>
+                    <Th color="red.800">Description</Th>
+                    <Th color="red.800"></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
