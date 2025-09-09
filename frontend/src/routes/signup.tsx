@@ -123,11 +123,11 @@ function SignUp() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-         <Logo 
+      <Logo
       src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
-      boxSize="220px"
-      href="/"
+      to="/"
+      width="110px"
     />
 
           <FormControl id="full_name" isInvalid={!!errors.full_name} width="100%">

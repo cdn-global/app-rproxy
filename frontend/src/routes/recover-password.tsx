@@ -140,13 +140,12 @@ function RecoverPassword() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-      <Logo 
+      <Logo
       src="/assets/images/roaming-proxy-network-logo.png"
       alt="Roaming Proxy Logo"
-      boxSize="220px"
-      href="/"
+      to="/"
+      width="110px"
     />
-
           <FormControl id="email" isInvalid={!!errors.email} width="100%">
             <FormLabel htmlFor="email" fontSize={{ base: "sm", md: "md" }}>
               Email
