@@ -47,13 +47,7 @@ interface NavItemsProps {
   isMobile?: boolean;
 }
 
-const navStructure: NavItem[] = [
-  {
-    title: 'User Agents',
-    path: '/web-scraping-tools/user-agents',
-    icon: FiUserCheck,
-  },
-  {
+const navStructure: NavItem[] = [ {
         title: 'HTTPS API',
         path: '/web-scraping-tools/https-api',
         description: 'Access any webpage with our powerful rotating proxy network.',
@@ -63,6 +57,11 @@ const navStructure: NavItem[] = [
         path: 'https://cloud.roamingproxy.com/hosting',
         description: 'Fully managed virtual private servers for your needs.',
       },
+        {
+    title: 'User Agents',
+    path: '/web-scraping-tools/user-agents',
+    icon: FiUserCheck,
+  }, 
   {
     title: 'Billing',
     path: '/hosting/billing',
