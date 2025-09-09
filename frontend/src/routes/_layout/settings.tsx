@@ -109,7 +109,7 @@ function UserSettings() {
       <Flex align="center" justify="space-between" py={6}>
         <Text fontSize="3xl" color="black">
           Settings
-        </Text>
+        </Text> 
         <Text fontSize="lg" color="gray.600">
           Manage your account settings
         </Text>

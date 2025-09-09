@@ -85,9 +85,11 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
   const { location } = useRouterState();
   const { pathname } = location;
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const { title, subItems, icon } = item;
+  const { title, subItems, icon, path } = item;
   const isGroupActive = subItems?.some((sub) => pathname.startsWith(sub.path!));
+  const defaultPath = path || (subItems && subItems.length > 0 ? subItems[0].path : '');
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -110,18 +112,21 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
     color: hoverColor,
     background: 'gray.100',
     textDecoration: 'none',
+    width: '100%',
   };
 
   const activeStyles: CSSProperties = {
     color: activeTextColor,
     background: 'red.100',
+    width: '100%',
   };
 
   return (
-    <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} position="relative">
+    <Box ref={menuRef} position="relative" width="100%">
       <Menu isOpen={isOpen} gutter={4} isLazy>
         <MenuButton
-          as={Flex}
+          as={defaultPath ? RouterLink : Flex}
+          to={defaultPath}
           px={4}
           py={2}
           alignItems="center"
@@ -131,40 +136,48 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
           borderRadius="md"
           transition="all 0.2s"
           aria-label={`Open ${title} menu`}
+          width="100%"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           {icon && <Icon as={icon} mr={2} boxSize={5} />}
           <Text fontWeight="500" mr={1}>{title}</Text>
         </MenuButton>
-        <MenuList
-          boxShadow="lg"
-          p={2}
-          borderRadius="md"
-          borderWidth={1}
-          minW="320px"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {subItems?.map((subItem) => (
-            <MenuItem
-              key={subItem.title}
-              as={RouterLink}
-              to={subItem.path}
-              onClick={onClose}
-              borderRadius="md"
-              p={3}
-              _hover={{ background: 'red.50' }}
-              activeProps={{ style: activeStyles }}
-              aria-label={subItem.title}
-            >
-              <Flex align="flex-start" w="100%">
-                <VStack align="flex-start" spacing={0}>
-                  <Text fontWeight="600" color="gray.800">{subItem.title}</Text>
-                  <Text fontSize="sm" color="gray.500" whiteSpace="normal">{subItem.description}</Text>
-                </VStack>
-              </Flex>
-            </MenuItem>
-          ))}
-        </MenuList>
+        {subItems && (
+          <MenuList
+            boxShadow="lg"
+            p={2}
+            borderRadius="md"
+            borderWidth={1}
+            minW="320px"
+            width="100%"
+            maxW="400px"
+            display={isOpen ? 'block' : 'none'}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            {subItems.map((subItem) => (
+              <MenuItem
+                key={subItem.title}
+                as={RouterLink}
+                to={subItem.path}
+                onClick={onClose}
+                borderRadius="md"
+                p={3}
+                _hover={{ background: 'red.50' }}
+                activeProps={{ style: activeStyles }}
+                aria-label={subItem.title}
+              >
+                <Flex align="flex-start" w="100%">
+                  <VStack align="flex-start" spacing={0}>
+                    <Text fontWeight="600" color="gray.800">{subItem.title}</Text>
+                    <Text fontSize="sm" color="gray.500" whiteSpace="normal">{subItem.description}</Text>
+                  </VStack>
+                </Flex>
+              </MenuItem>
+            ))}
+          </MenuList>
+        )}
       </Menu>
     </Box>
   );
@@ -223,15 +236,18 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
     color: hoverColor,
     background: 'gray.100',
     textDecoration: 'none',
+    width: '100%',
   };
 
   const activeStyles: CSSProperties = {
     color: activeTextColor,
     background: 'red.100',
+    width: '100%',
   };
 
   const disabledHoverStyles: CSSProperties = {
     background: 'gray.100',
+    width: '100%',
   };
 
   const renderNavItems = (items: NavItem[]) =>
@@ -309,6 +325,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
               _hover={disabledHoverStyles}
               borderRadius="md"
               transition="all 0.2s"
+              w="100%"
             >
               {icon && <Icon as={icon} mr={2} boxSize={5} color={disabledColor} />}
               <Text fontWeight="500">{title}</Text>
@@ -407,7 +424,7 @@ const TopNav = () => {
           width={{ base: '80px', md: '110px' }}
         />
         <Flex align="center" gap={4}>
-          <Box display={{ base: 'none', md: 'block' }}>
+          <Box display={{ base: 'none', md: 'block' }} width="100%">
             <NavItems />
           </Box>
           <IconButton
