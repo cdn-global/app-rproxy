@@ -11,26 +11,20 @@ import {
   MenuList,
   MenuItem,
   VStack,
-  useColorMode, // Added
-  Collapse, // Added
-} from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons"; // Added
-import { useQueryClient } from "@tanstack/react-query";
-import { Link as RouterLink, useRouterState } from "@tanstack/react-router";
-import {
-  FiLogOut,
-  FiMenu,
-  FiUsers,
-  FiUserCheck,
-  FiSettings,
-} from "react-icons/fi";
-import { FaGlobe, FaSitemap, FaServer } from "react-icons/fa";
-import { useEffect, useRef } from "react";
-import { CSSProperties } from "react";
+  useColorMode,
+  Collapse,
+} from '@chakra-ui/react';
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { Link as RouterLink, useRouterState } from '@tanstack/react-router';
+import { FiLogOut, FiUsers, FiUserCheck, FiSettings } from 'react-icons/fi';
+import { FaGlobe, FaSitemap, FaServer } from 'react-icons/fa';
+import { useEffect, useRef } from 'react';
+import { CSSProperties } from 'react';
 
-import Logo from "../Common/Logo";
-import type { UserPublic } from "../../client";
-import useAuth from "../../hooks/useAuth";
+import Logo from '../Common/Logo';
+import type { UserPublic } from '../../client';
+import useAuth from '../../hooks/useAuth';
 
 interface NavItem {
   title: string;
@@ -55,27 +49,27 @@ interface NavItemsProps {
 
 const navStructure: NavItem[] = [
   {
-    title: "User Agents",
-    path: "/web-scraping-tools/user-agents",
+    title: 'User Agents',
+    path: '/web-scraping-tools/user-agents',
     icon: FiUserCheck,
   },
   {
-    title: "Web Scraping APIs",
+    title: 'Web Scraping APIs',
     subItems: [
       {
-        title: "HTTPS API",
-        path: "/web-scraping-tools/https-api",
-        description: "Access any webpage with our powerful rotating proxy network.",
+        title: 'HTTPS API',
+        path: '/web-scraping-tools/https-api',
+        description: 'Access any webpage with our powerful rotating proxy network.',
       },
     ],
   },
   {
-    title: "Hosting",
+    title: 'Hosting',
     subItems: [
       {
-        title: "Managed VPS",
-        path: "https://cloud.roamingproxy.com/hosting/billing",
-        description: "Fully managed virtual private servers for your needs.",
+        title: 'Managed VPS',
+        path: 'https://cloud.roamingproxy.com/hosting/billing',
+        description: 'Fully managed virtual private servers for your needs.',
       },
     ],
   },
@@ -109,13 +103,13 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
 
   const hoverStyles: CSSProperties = {
     color: hoverColor,
-    background: "gray.100",
-    textDecoration: "none",
+    background: 'gray.100',
+    textDecoration: 'none',
   };
 
   const activeStyles: CSSProperties = {
     color: activeTextColor,
-    background: "orange.100",
+    background: 'orange.100',
   };
 
   return (
@@ -153,7 +147,7 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
               onClick={onClose}
               borderRadius="md"
               p={3}
-              _hover={{ background: "orange.50" }}
+              _hover={{ background: 'orange.50' }}
               activeProps={{ style: activeStyles }}
               aria-label={subItem.title}
             >
@@ -173,11 +167,11 @@ const NavGroupDropdown = ({ item, activeTextColor, hoverColor, textColor }: NavG
 
 const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const queryClient = useQueryClient();
-  const textColor = "gray.800";
-  const disabledColor = "gray.300";
-  const hoverColor = "orange.600";
-  const activeTextColor = "orange.800";
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
+  const textColor = 'gray.800';
+  const disabledColor = 'gray.300';
+  const hoverColor = 'orange.600';
+  const activeTextColor = 'orange.800';
+  const currentUser = queryClient.getQueryData<UserPublic>(['currentUser']);
   const { logout } = useAuth();
 
   const handleLogout = async () => {
@@ -188,50 +182,50 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const finalNavStructure: NavItem[] = [...navStructure];
   if (
     currentUser?.is_superuser &&
-    !finalNavStructure.some((item) => item.title === "Admin")
+    !finalNavStructure.some((item) => item.title === 'Admin')
   ) {
-    finalNavStructure.push({ title: "Admin", icon: FiUsers, path: "/admin" });
+    finalNavStructure.push({ title: 'Admin', icon: FiUsers, path: '/admin' });
   }
 
   if (currentUser) {
     finalNavStructure.push({
-      title: "Settings",
+      title: 'Settings',
       icon: FiSettings,
-      path: "/settings",
+      path: '/settings',
     });
   }
 
   finalNavStructure.push({
-    title: "Sign Out",
+    title: 'Sign Out',
     icon: FiLogOut,
     onClick: handleLogout,
   });
 
   const isEnabled = (title: string) => {
     return [
-      "Admin",
-      "HTTPS API",
-      "SERP API",
-      "User Agents",
-      "Settings",
-      "Sign Out",
-      "Managed VPS",
+      'Admin',
+      'HTTPS API',
+      'SERP API',
+      'User Agents',
+      'Settings',
+      'Sign Out',
+      'Managed VPS',
     ].includes(title);
   };
 
   const hoverStyles: CSSProperties = {
     color: hoverColor,
-    background: "gray.100",
-    textDecoration: "none",
+    background: 'gray.100',
+    textDecoration: 'none',
   };
 
   const activeStyles: CSSProperties = {
     color: activeTextColor,
-    background: "orange.100",
+    background: 'orange.100',
   };
 
   const disabledHoverStyles: CSSProperties = {
-    background: "gray.100",
+    background: 'gray.100',
   };
 
   const renderNavItems = (items: NavItem[]) =>
@@ -259,7 +253,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
               py={2}
               color={textColor}
               align="center"
-              _hover={{ color: hoverColor, background: "gray.100" }}
+              _hover={{ color: hoverColor, background: 'gray.100' }}
               borderRadius="md"
               transition="all 0.2s"
             >
@@ -297,7 +291,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
           <Tooltip
             key={title}
             label="Coming Soon"
-            placement={isMobile ? "right" : "bottom"}
+            placement={isMobile ? 'right' : 'bottom'}
           >
             <Flex
               px={4}
@@ -331,7 +325,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
             activeProps={{ style: activeStyles }}
             align="center"
             onClick={onClose}
-            w={isMobile ? "100%" : "auto"}
+            w={isMobile ? '100%' : 'auto'}
             borderRadius="md"
             transition="all 0.2s"
             aria-label={title}
@@ -354,7 +348,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
               if (onClick) onClick();
               if (onClose) onClose();
             }}
-            w={isMobile ? "100%" : "auto"}
+            w={isMobile ? '100%' : 'auto'}
             borderRadius="md"
             transition="all 0.2s"
             aria-label={title}
@@ -370,8 +364,8 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
     <Flex
       align="center"
       gap={isMobile ? 2 : 4}
-      flexDir={isMobile ? "column" : "row"}
-      w={isMobile ? "100%" : "auto"}
+      flexDir={isMobile ? 'column' : 'row'}
+      w={isMobile ? '100%' : 'auto'}
     >
       {renderNavItems(finalNavStructure)}
     </Flex>
@@ -379,16 +373,16 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
 };
 
 const TopNav = () => {
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure(); // Added onToggle
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
   const { colorMode } = useColorMode();
-  const textColor = "gray.800";
-  const hoverColor = "orange.600";
-  const activeTextColor = "orange.800";
+  const textColor = 'gray.800';
+  const hoverColor = 'orange.600';
+  const activeTextColor = 'orange.800';
   const btnRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Box
-      bg={colorMode === "light" ? "gray.50" : "gray.800"}
+      bg={colorMode === 'light' ? 'gray.50' : 'gray.800'}
       px={4}
       py={2}
       position="sticky"
@@ -397,7 +391,7 @@ const TopNav = () => {
       boxShadow="sm"
       w="100%"
       borderBottomWidth="1px"
-      borderBottomColor={colorMode === "light" ? "gray.300" : "gray.600"}
+      borderBottomColor={colorMode === 'light' ? 'gray.300' : 'gray.600'}
     >
       <Flex align="center" maxW="1200px" mx="auto" w="100%" justify="space-between">
         <Logo
@@ -406,14 +400,14 @@ const TopNav = () => {
           href="/"
         />
         <Flex align="center" gap={4}>
-          <Box display={{ base: "none", md: "block" }}>
+          <Box display={{ base: 'none', md: 'block' }}>
             <NavItems />
           </Box>
           <IconButton
-            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            display={{ base: "block", md: "none" }}
-            onClick={onToggle} // Fixed: Replaced toggleMenu with onToggle
+            display={{ base: 'block', md: 'none' }}
+            onClick={onToggle}
             variant="ghost"
             size="lg"
             ref={btnRef}
@@ -421,7 +415,7 @@ const TopNav = () => {
         </Flex>
       </Flex>
       <Collapse in={isOpen} animateOpacity>
-        <Box display={{ base: "block", md: "none" }} mt={4}>
+        <Box display={{ base: 'block', md: 'none' }} mt={4}>
           <NavItems isMobile onClose={onClose} />
         </Box>
       </Collapse>
@@ -429,4 +423,4 @@ const TopNav = () => {
   );
 };
 
-export default TopNav; // Fixed: Changed from Navbar to TopNav
+export default TopNav;
