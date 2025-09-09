@@ -155,8 +155,8 @@ const HomePage = () => {
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
                     <Heading size="sm">HTTPs API Usage</Heading>
-                    <Text fontSize="xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
-                    <Text fontSize="xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
+                    <Text fontSize="2xl" fontWeight="bold">Total Requests: {totalRequests.toLocaleString()}</Text>
+                    <Text fontSize="2xl" fontWeight="bold">Data Transferred: {totalDataGB} GB</Text>
                   </VStack>
                 </Box>
               </GridItem>
@@ -164,8 +164,8 @@ const HomePage = () => {
                 <Box shadow="md" borderWidth="1px" borderRadius="md" p={4} height="100%">
                   <VStack align="start" spacing={3}>
                     <Heading size="sm">VPS Status</Heading>
-                    <Text fontSize="xl" fontWeight="bold">CPU: 45%</Text>
-                    <Text fontSize="xl" fontWeight="bold">Memory: 3.2 GB</Text>
+                    <Text fontSize="2xl" fontWeight="bold">CPU: 45%</Text>
+                    <Text fontSize="2xl" fontWeight="bold">Memory: 3.2 GB</Text>
                     <Text fontSize="sm" color="gray.600">
                       Note: Detailed VPS settings available in the <Link as={RouterLink} to="/hosting" color="red.500">VPS Dashboard</Link>.
                     </Text>
