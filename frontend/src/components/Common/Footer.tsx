@@ -145,7 +145,7 @@ const Footer = () => {
                         color={textColor}
                         fontSize="sm"
                     >
-                        COBALTDATA.net
+                    Social  
                     </Text>
                     <Flex gap={3}>
                         <Link href="https://x.com/cobaltdata" isExternal>
