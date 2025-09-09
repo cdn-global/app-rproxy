@@ -395,31 +395,28 @@ const TopNav = () => {
       borderBottomWidth="1px"
       borderBottomColor="gray.300"
     >
-      <Flex align="center" maxW="1200px" mx="auto" w="100%">
+      <Flex align="center" maxW="1200px" mx="auto" w="100%" justify="space-between">
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
           boxSize="220px"
           href="/"
         />
-        <Flex
-          align="center"
-          flexGrow={1}
-          justify="flex-end"
-          display={{ base: "none", md: "flex" }}
-        >
-          <NavItems />
+        <Flex align="center" gap={4}>
+          <Box display={{ base: "none", md: "block" }}>
+            <NavItems />
+          </Box>
+          <IconButton
+            ref={btnRef}
+            onClick={isOpen ? onClose : onOpen}
+            display={{ base: "flex", md: "none" }}
+            aria-label="Toggle Menu"
+            fontSize="20px"
+            color="orange.600"
+            icon={<FiMenu />}
+            variant="ghost"
+          />
         </Flex>
-        <IconButton
-          ref={btnRef}
-          onClick={isOpen ? onClose : onOpen}
-          display={{ base: "flex", md: "none" }}
-          aria-label="Toggle Menu"
-          fontSize="20px"
-          color="orange.600"
-          icon={<FiMenu />}
-          variant="ghost"
-        />
       </Flex>
 
       <Box
