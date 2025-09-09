@@ -48,7 +48,7 @@ interface NavItemsProps {
 }
 
 const navStructure: NavItem[] = [ {
-        title: 'HTTPS API',
+        title: 'Roaming IP',
         path: '/web-scraping-tools/https-api',
         description: 'Access any webpage with our powerful rotating proxy network.',
       },
@@ -57,11 +57,6 @@ const navStructure: NavItem[] = [ {
         path: 'https://cloud.ROAMINGPROXY.com/hosting',
         description: 'Fully managed virtual private servers for your needs.',
       },
-        {
-    title: 'User Agents',
-    path: '/web-scraping-tools/user-agents',
-    icon: FiUserCheck,
-  }, 
   {
     title: 'Billing',
     path: '/hosting/billing',
@@ -198,7 +193,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const isEnabled = (title: string) => {
     return [
       'Admin',
-      'HTTPS API',
+      'Roaming IP',
       'SERP API',
       'User Agents',
       'Settings',
