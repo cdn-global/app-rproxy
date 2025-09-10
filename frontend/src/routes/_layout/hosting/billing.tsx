@@ -198,7 +198,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 2,
     ramGB: 8,
-        isTrial: true,
+        isTrial: false,
   },
 ];
 
