@@ -97,7 +97,7 @@ const servers: Server[] = [
     username: "user",
     password: "5660",
     monthlyComputePrice: 449,
-      fullMonthlyComputePrice: 449,
+    fullMonthlyComputePrice: 449,
     storageSizeGB: 100,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
@@ -106,7 +106,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 16,
     ramGB: 64,
-        isTrial: false,
+    isTrial: false,
   },
   {
     name: "03-NYC-BKN-4core-hdd",
@@ -120,7 +120,7 @@ const servers: Server[] = [
     username: "user",
     password: "5660",
     monthlyComputePrice: 40.1,
-    fullMonthlyComputePrice:40.1,
+    fullMonthlyComputePrice: 40.1,
     storageSizeGB: 468,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
@@ -129,7 +129,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 4,
     ramGB: 4,
-        isTrial: false,
+    isTrial: false,
   },
   {
     name: "04-NJ-SEC-4core-ssd",
@@ -143,7 +143,7 @@ const servers: Server[] = [
     username: "user",
     password: "5660",
     monthlyComputePrice: 45.3,
-    fullMonthlyComputePrice:45.3,
+    fullMonthlyComputePrice: 45.3,
     storageSizeGB: 110,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
@@ -152,7 +152,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 4,
     ramGB: 16,
-        isTrial: false,
+    isTrial: false,
   },
   {
     name: "05-NYC-FID-8core-hdd",
@@ -175,7 +175,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 8,
     ramGB: 4,
-        isTrial: true,
+    isTrial: true,
   },
   {
     name: "06-NYC-MTM-2core-ssd",
@@ -198,10 +198,9 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 2,
     ramGB: 8,
-        isTrial: false,
+    isTrial: false,
   },
 ];
-
 
 const ELASTIC_IP_FEE_PER_MONTH = 5;
 const STORAGE_COST_PER_GB_MONTH = 0.20;
@@ -210,7 +209,6 @@ const BACKUP_FEE_PER_MONTH = 7.0;
 const MONITORING_FEE_PER_MONTH = 11.0;
 const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0;
 const SUBSCRIPTION_COST_PER_MONTH = 299;
-
 
 interface Service {
   name: string;
@@ -286,7 +284,6 @@ function calculateTotalsForMonth(month: Month) {
 
   return { totals, grandTotal, fullPriceTotals, fullGrandTotal, activeServers, perServerTotals, fullPricePerServerTotals };
 }
-
 
 const fetchBillingPortal = async (token: string) => {
   try {
@@ -421,26 +418,26 @@ const BillingPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-interface PaymentRecord {
-  month: Month;
-  total: number;
-  invoiceId: string;
-  paymentDate: string;
-  paymentMethod: string;
-  description: string;
-  status: string;
-}
+  interface PaymentRecord {
+    month: Month;
+    total: number;
+    invoiceId: string;
+    paymentDate: string;
+    paymentMethod: string;
+    description: string;
+    status: string;
+  }
 
-const history: PaymentRecord[] = [
-  {
-    month: months[5], // September 2025
-    total: 193.70,
-    invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
-    paymentDate: "September 10, 2025",
-    paymentMethod: "American Express •••• 3007",
-    description: "Unlimited IP Rotation VPS - Multi-Region",
-    status: "Succeeded",
-  },
+  const history: PaymentRecord[] = [
+    {
+      month: months[5], // September 2025
+      total: 193.70,
+      invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
+      paymentDate: "September 10, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Unlimited IP Rotation VPS - Multi-Region",
+      status: "Succeeded",
+    },
     {
       month: months[5],
       total: 449.00,
@@ -448,25 +445,25 @@ const history: PaymentRecord[] = [
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "Unlimited IP Rotation VPS - Multi-Region ",
-     status: "Succeeded",
+      status: "Succeeded",
     },
     {
-       month: months[4],
+      month: months[4],
       total: 318.81,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
       paymentDate: "August 15, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      status: "Succeeded",
     },
     {
-   month: months[3],
+      month: months[3],
       total: 318.81,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
       paymentDate: "July 15, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      status: "Succeeded",
     },
     {
       month: months[2],
@@ -475,7 +472,7 @@ const history: PaymentRecord[] = [
       paymentDate: "June 10, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      status: "Succeeded",
     },
     {
       month: months[1],
@@ -484,7 +481,7 @@ const history: PaymentRecord[] = [
       paymentDate: "May 10, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      status: "Succeeded",
     },
     {
       month: months[0],
@@ -492,7 +489,8 @@ const history: PaymentRecord[] = [
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
       paymentDate: "April 10, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",  status: "Succeeded",
+      description: "HTTPs Request API - Plus Tier Subscription",
+      status: "Succeeded",
     },
   ];
 
@@ -539,9 +537,9 @@ const history: PaymentRecord[] = [
   };
 
   return (
-  <Container maxW="container.xl" py={10} as="main">
+    <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
-             <Heading size="xl" mb={6} color="red.700">{currentMonth.name} - Billing Cycle</Heading>
+        <Heading size="xl" mb={6} color="red.700">{currentMonth.name} - Billing Cycle</Heading>
         <Text fontSize="lg" color="red.600">Manage your hosting costs and review billing history</Text>
       </Flex>
       <Tabs variant="enclosed" colorScheme="orange" isFitted>
@@ -554,7 +552,6 @@ const history: PaymentRecord[] = [
         <TabPanels bg="red.50" borderRadius="0 0 md md">
           <TabPanel>
             <VStack align="stretch" spacing={6}>
-        
               {outstandingBalance > 0 && (
                 <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
                   <VStack align="stretch" spacing={2}>
@@ -598,39 +595,39 @@ const history: PaymentRecord[] = [
                 <Table variant="simple" size="md">
                   <Thead bg="red.100">
                     <Tr>
-                      <Th color="red.800">Server Name</Th>
-                      <Th color="red.800">IP Address</Th>
-                      <Th color="red.800">Status</Th>
-                      <Th color="red.800" isNumeric>Charged Cost (USD)</Th>
-                      <Th color="red.800" isNumeric>Full Cost (USD)</Th>
+                      <Th color="gray.700">Server Name</Th>
+                      <Th color="gray.700">IP Address</Th>
+                      <Th color="gray.700">Status</Th>
+                      <Th color="red.600" isNumeric>Charged Cost (USD)</Th>
+                      <Th color="red.600" isNumeric>Full Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {currentActiveServers.map((server) => (
                       <Tr key={server.name}>
-                        <Td>{server.name}</Td>
-                        <Td>{server.ip}</Td>
-                        <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                        <Td isNumeric>${perServerTotals[server.name].toFixed(2)}</Td>
-                        <Td isNumeric>${fullPricePerServerTotals[server.name].toFixed(2)}</Td>
+                        <Td color="gray.700">{server.name}</Td>
+                        <Td color="gray.700">{server.ip}</Td>
+                        <Td color="gray.700">{server.isTrial ? "Trial" : "Active"}</Td>
+                        <Td color="red.600" isNumeric>${perServerTotals[server.name].toFixed(2)}</Td>
+                        <Td color="red.600" isNumeric>${fullPricePerServerTotals[server.name].toFixed(2)}</Td>
                       </Tr>
                     ))}
                   </Tbody>
                   <Tfoot bg="red.50">
                     <Tr>
-                      <Th colSpan={3} color="red.800">Server Total</Th>
-                      <Th isNumeric color="red.800">${(grandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
-                      <Th isNumeric color="red.800">${(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
+                      <Th colSpan={3} color="gray.700">Server Total</Th>
+                      <Th isNumeric color="red.600">${(grandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
+                      <Th isNumeric color="red.600">${(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
                     </Tr>
                     <Tr>
-                      <Th colSpan={3} color="red.800">Subscription</Th>
-                      <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
-                      <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                      <Th colSpan={3} color="gray.700">Subscription</Th>
+                      <Th isNumeric color="red.600">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                      <Th isNumeric color="red.600">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
                     </Tr>
                     <Tr>
-                      <Th colSpan={3} color="red.800">Grand Total</Th>
-                      <Th isNumeric color="red.800">${grandTotal.toFixed(2)}</Th>
-                      <Th isNumeric color="red.800">${fullGrandTotal.toFixed(2)}</Th>
+                      <Th colSpan={3} color="gray.700">Grand Total</Th>
+                      <Th isNumeric color="red.600">${grandTotal.toFixed(2)}</Th>
+                      <Th isNumeric color="red.600">${fullGrandTotal.toFixed(2)}</Th>
                     </Tr>
                   </Tfoot>
                 </Table>
@@ -639,38 +636,38 @@ const history: PaymentRecord[] = [
                 <Table variant="simple" size="md">
                   <Thead bg="red.100">
                     <Tr>
-                      <Th color="red.800">Service</Th>
-                      <Th color="red.800">Quantity</Th>
-                      <Th color="red.800" isNumeric>Charged Cost (USD)</Th>
-                      <Th color="red.800" isNumeric>Full Cost (USD)</Th>
+                      <Th color="gray.700">Service</Th>
+                      <Th color="gray.700">Quantity</Th>
+                      <Th color="red.600" isNumeric>Charged Cost (USD)</Th>
+                      <Th color="red.600" isNumeric>Full Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {services.map((s) => (
                       <Tr key={s.name}>
-                        <Td>{s.name}</Td>
-                        <Td>x {currentTotals[s.name].count}</Td>
-                        <Td isNumeric>${currentTotals[s.name].total.toFixed(2)}</Td>
-                        <Td isNumeric>${fullPriceTotals[s.name].total.toFixed(2)}</Td>
+                        <Td color="gray.700">{s.name}</Td>
+                        <Td color="gray.700">x {currentTotals[s.name].count}</Td>
+                        <Td color="red.600" isNumeric>${currentTotals[s.name].total.toFixed(2)}</Td>
+                        <Td color="red.600" isNumeric>${fullPriceTotals[s.name].total.toFixed(2)}</Td>
                       </Tr>
                     ))}
                     <Tr>
-                      <Td>Unlimited HTTPS API Request - Plus Tier</Td>
-                      <Td>x 1</Td>
-                      <Td isNumeric>${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Td>
-                      <Td isNumeric>${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Td>
+                      <Td color="gray.700">Unlimited HTTPS API Request - Plus Tier</Td>
+                      <Td color="gray.700">x 1</Td>
+                      <Td color="red.600" isNumeric>${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Td>
+                      <Td color="red.600" isNumeric>${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Td>
                     </Tr>
                   </Tbody>
                   <Tfoot bg="red.50">
                     <Tr>
-                      <Th colSpan={2} color="red.800">Total</Th>
-                      <Th isNumeric color="red.800">${grandTotal.toFixed(2)}</Th>
-                      <Th isNumeric color="red.800">${fullGrandTotal.toFixed(2)}</Th>
+                      <Th colSpan={2} color="gray.700">Total</Th>
+                      <Th isNumeric color="red.600">${grandTotal.toFixed(2)}</Th>
+                      <Th isNumeric color="red.600">${fullGrandTotal.toFixed(2)}</Th>
                     </Tr>
                   </Tfoot>
                 </Table>
               </Box>
-                  <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
+              <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
                 <VStack align="stretch" spacing={2}>
                   <Text fontWeight="semibold" color="red.800">Current Subscription</Text>
                   <Text>Unlimited HTTPS API Request - Plus Tier</Text>
@@ -705,31 +702,31 @@ const history: PaymentRecord[] = [
                   <Table variant="simple" size="sm">
                     <Thead bg="red.100">
                       <Tr>
-                        <Th color="red.800">Server Name</Th>
-                        <Th color="red.800">vCPUs</Th>
-                        <Th color="red.800">RAM (GB)</Th>
-                        <Th color="red.800">Storage (GB)</Th>
-                        <Th color="red.800">Floating IPs</Th>
-                        <Th color="red.800">Features</Th>
-                        <Th color="red.800">Status</Th>
+                        <Th color="gray.700">Server Name</Th>
+                        <Th color="gray.700">vCPUs</Th>
+                        <Th color="gray.700">RAM (GB)</Th>
+                        <Th color="gray.700">Storage (GB)</Th>
+                        <Th color="gray.700">Floating IPs</Th>
+                        <Th color="gray.700">Features</Th>
+                        <Th color="gray.700">Status</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {currentActiveServers.map((server) => (
                         <Tr key={server.name}>
-                          <Td>{server.name}</Td>
-                          <Td>{server.vCPUs}</Td>
-                          <Td>{server.ramGB}</Td>
-                          <Td>{server.storageSizeGB}</Td>
-                          <Td>{server.hasRotatingIP ? 1 : 0}</Td>
-                          <Td>
+                          <Td color="gray.700">{server.name}</Td>
+                          <Td color="gray.700">{server.vCPUs}</Td>
+                          <Td color="gray.700">{server.ramGB}</Td>
+                          <Td color="gray.700">{server.storageSizeGB}</Td>
+                          <Td color="gray.700">{server.hasRotatingIP ? 1 : 0}</Td>
+                          <Td color="gray.700">
                             <List spacing={1}>
                               {server.hasManagedSupport && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Managed Services (OS updates, security, backups)</ListItem>}
                               {server.hasBackup && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Backup</ListItem>}
                               {server.hasMonitoring && <ListItem><ListIcon as={FaCheckCircle} color="green.500" />Monitoring</ListItem>}
                             </List>
                           </Td>
-                          <Td>{server.isTrial ? "Trial" : "Active"}</Td>
+                          <Td color="gray.700">{server.isTrial ? "Trial" : "Active"}</Td>
                         </Tr>
                       ))}
                     </Tbody>
@@ -755,19 +752,19 @@ const history: PaymentRecord[] = [
                         <Table variant="simple" size="sm">
                           <Thead bg="red.100">
                             <Tr>
-                              <Th color="red.800">Server Name</Th>
-                              <Th color="red.800">Status</Th>
-                              <Th color="red.800" isNumeric>Charged Cost (USD)</Th>
-                              <Th color="red.800" isNumeric>Full Cost (USD)</Th>
+                              <Th color="gray.700">Server Name</Th>
+                              <Th color="gray.700">Status</Th>
+                              <Th color="red.600" isNumeric>Charged Cost (USD)</Th>
+                              <Th color="red.600" isNumeric>Full Cost (USD)</Th>
                             </Tr>
                           </Thead>
                           <Tbody>
                             {relevantServers.map((server) => (
                               <Tr key={server.name}>
-                                <Td>{server.name}</Td>
-                                <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                                <Td isNumeric>${server.isTrial ? "0.00" : s.getMonthlyCost(server).toFixed(2)}</Td>
-                                <Td isNumeric>
+                                <Td color="gray.700">{server.name}</Td>
+                                <Td color="gray.700">{server.isTrial ? "Trial" : "Active"}</Td>
+                                <Td color="red.600" isNumeric>${server.isTrial ? "0.00" : s.getMonthlyCost(server).toFixed(2)}</Td>
+                                <Td color="red.600" isNumeric>
                                   ${s.name === "Compute" && server.isTrial ? server.fullMonthlyComputePrice.toFixed(2) : s.getMonthlyCost(server).toFixed(2)}
                                 </Td>
                               </Tr>
@@ -800,10 +797,10 @@ const history: PaymentRecord[] = [
                     <Table variant="simple" size="sm">
                       <Thead bg="red.100">
                         <Tr>
-                          <Th color="red.800">Server Name</Th>
-                          <Th color="red.800">Status</Th>
-                          <Th color="red.800" isNumeric>Charged Compute Cost (USD)</Th>
-                          <Th color="red.800" isNumeric>Full Compute Cost (USD)</Th>
+                          <Th color="gray.700">Server Name</Th>
+                          <Th color="gray.700">Status</Th>
+                          <Th color="red.600" isNumeric>Charged Compute Cost (USD)</Th>
+                          <Th color="red.600" isNumeric>Full Compute Cost (USD)</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
@@ -813,24 +810,24 @@ const history: PaymentRecord[] = [
                           const fullCost = computeService ? (server.isTrial ? server.fullMonthlyComputePrice : computeService.getMonthlyCost(server)) : 0;
                           return (
                             <Tr key={server.name}>
-                              <Td>{server.name}</Td>
-                              <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                              <Td isNumeric>${chargedCost.toFixed(2)}</Td>
-                              <Td isNumeric>${fullCost.toFixed(2)}</Td>
+                              <Td color="gray.700">{server.name}</Td>
+                              <Td color="gray.700">{server.isTrial ? "Trial" : "Active"}</Td>
+                              <Td color="red.600" isNumeric>${chargedCost.toFixed(2)}</Td>
+                              <Td color="red.600" isNumeric>${fullCost.toFixed(2)}</Td>
                             </Tr>
                           );
                         })}
                       </Tbody>
                       <Tfoot bg="red.50">
                         <Tr>
-                          <Th colSpan={2} color="red.800">Total Compute Cost</Th>
-                          <Th isNumeric color="red.800">${currentTotals["Compute"].total.toFixed(2)}</Th>
-                          <Th isNumeric color="red.800">${fullPriceTotals["Compute"].total.toFixed(2)}</Th>
+                          <Th colSpan={2} color="gray.700">Total Compute Cost</Th>
+                          <Th isNumeric color="red.600">${currentTotals["Compute"].total.toFixed(2)}</Th>
+                          <Th isNumeric color="red.600">${fullPriceTotals["Compute"].total.toFixed(2)}</Th>
                         </Tr>
                         <Tr>
-                          <Th colSpan={2} color="red.800">Subscription Cost</Th>
-                          <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
-                          <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                          <Th colSpan={2} color="gray.700">Subscription Cost</Th>
+                          <Th isNumeric color="red.600">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                          <Th isNumeric color="red.600">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
                         </Tr>
                       </Tfoot>
                     </Table>
@@ -840,27 +837,26 @@ const history: PaymentRecord[] = [
             </Accordion>
           </TabPanel>
           <TabPanel>
-          
             <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
               <Table variant="simple" size="md">
                 <Thead bg="red.100">
                   <Tr>
-                    <Th color="red.800">Month</Th>
-                    <Th color="red.800">Invoice Number</Th>
-                    <Th color="red.800">Payment Date</Th>
-                    <Th color="red.800">Payment Method</Th>
-                    <Th color="red.800">Description</Th>
-                    <Th color="red.800"></Th>
+                    <Th color="gray.700">Month</Th>
+                    <Th color="gray.700">Invoice Number</Th>
+                    <Th color="gray.700">Payment Date</Th>
+                    <Th color="gray.700">Payment Method</Th>
+                    <Th color="gray.700">Description</Th>
+                    <Th color="gray.700"></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {history.map(({ month, total, invoiceId, paymentDate, paymentMethod, description }) => (
                     <Tr key={invoiceId}>
-                      <Td>{month.name}</Td>
-                      <Td>{invoiceId.slice(0, 12)}...</Td>
-                      <Td>{paymentDate}</Td>
-                      <Td>{paymentMethod}</Td>
-                      <Td>{description}</Td>
+                      <Td color="gray.700">{month.name}</Td>
+                      <Td color="gray.700">{invoiceId.slice(0, 12)}...</Td>
+                      <Td color="gray.700">{paymentDate}</Td>
+                      <Td color="gray.700">{paymentMethod}</Td>
+                      <Td color="gray.700">{description}</Td>
                       <Td>
                         <Flex justify="center" gap={2}>
                           <Button
@@ -910,7 +906,6 @@ const history: PaymentRecord[] = [
           </TabPanel>
         </TabPanels>
       </Tabs>
-
       <Button as={ChakraLink} href=".." mt={6} colorScheme="red" variant="outline" size="md">
         Back to Hosting
       </Button>
