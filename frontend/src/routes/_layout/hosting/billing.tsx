@@ -432,7 +432,7 @@ const BillingPage = () => {
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlimited Bandwidth VPS with Floating IP (riv8-ecoast-mini9)",
+      description: "Debian Unlimited Bandwidth VPS with Floating IP ",
      status: "Succeeded",
     },
     {
