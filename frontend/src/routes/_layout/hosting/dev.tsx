@@ -30,8 +30,6 @@ import {
   List,
   ListItem,
   ListIcon,
-  Alert,
-  AlertIcon,
   Divider,
 } from "@chakra-ui/react";
 import { FaCreditCard, FaCheckCircle } from "react-icons/fa";
@@ -63,145 +61,138 @@ interface Server {
 
 const servers: Server[] = [
   {
-    name: "01-NYC-FID-8core-ssd",
+    name: "08-NYC-SOH-16core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
     kernel: "Linux 6.8.0-57-generic",
     status: "Connected",
     type: "VPS",
-    os: "debian",
+    os: "ubuntu",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 11.40,
-    fullMonthlyComputePrice: 11.40,
+    monthlyComputePrice: 43.60,
+    fullMonthlyComputePrice: 43.60,
     storageSizeGB: 120,
     activeSince: "2025-07-01",
     hasRotatingIP: false,
     hasBackup: true,
     hasMonitoring: true,
-    hasManagedSupport: false,
-    vCPUs: 1,
-    ramGB: 2,
+    ramGB: 4,
+    vCPUs: 2,
     isTrial: false,
   },
   {
-    name: "02-NYC-MTM-16core-ssd",
+    name: "09-NYC-TRB-16core-ssd",
     email: "apis.popov@gmail.com",
-    ip: "100.140.50.60",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
+    ip: "100.114.242.51",
+    version: "1.86.2",
+    kernel: "Linux 6.8.0-57-generic",
     status: "Connected",
     type: "VPS",
-    os: "debian",
+    os: "ubuntu",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 449,
-      fullMonthlyComputePrice: 449,
-    storageSizeGB: 100,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 16,
-    ramGB: 64,
-        isTrial: false,
-  },
-  {
-    name: "03-NYC-BKN-4core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.61",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    fullMonthlyComputePrice:40.1,
-    storageSizeGB: 468,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 4,
-        isTrial: false,
-  },
-  {
-    name: "04-NJ-SEC-4core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.62",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 45.3,
-    fullMonthlyComputePrice:45.3,
-    storageSizeGB: 110,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 16,
-        isTrial: false,
-  },
-  {
-    name: "05-NYC-FID-8core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.63",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 43.1,
-    fullMonthlyComputePrice: 43.1,
-    storageSizeGB: 932,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 8,
-    ramGB: 4,
-        isTrial: false,
-  },
-  {
-    name: "06-NYC-MTM-2core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.64",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    fullMonthlyComputePrice: 40.1,
+    monthlyComputePrice: 87.60,
+    fullMonthlyComputePrice: 87.60,
     storageSizeGB: 240,
+    activeSince: "2025-07-01",
+    hasRotatingIP: true,
+    hasBackup: false,
+    hasMonitoring: false,
+    ramGB: 16,
+    vCPUs: 8,
+    isTrial: false,
+  },
+  {
+    name: "10-NYC-LES-16core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.91.158.116",
+    version: "1.82.5",
+    kernel: "Linux 6.8.0-59-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "ubuntu",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 100.60,
+    fullMonthlyComputePrice: 100.60,
+    storageSizeGB: 240,
+    activeSince: "2025-08-01",
+    hasRotatingIP: true,
+    hasBackup: true,
+    hasMonitoring: true,
+    ramGB: 16,
+    vCPUs: 8,
+    isTrial: false,
+  },
+  {
+    name: "11-NYC-EVI-16core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.100.106.3",
+    version: "1.80.2",
+    kernel: "Linux 6.8.0-55-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "ubuntu",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 60.60,
+    fullMonthlyComputePrice: 60.60,
+    storageSizeGB: 120,
     activeSince: "2025-09-01",
     hasRotatingIP: false,
     hasBackup: false,
     hasMonitoring: false,
-    hasManagedSupport: false,
+    ramGB: 4,
     vCPUs: 2,
+    isTrial: false,
+  },
+  {
+    name: "12-NYC-WVI-16core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.120.30.40",
+    version: "1.85.0",
+    kernel: "Linux 6.8.0-60-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "ubuntu",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 0,
+    fullMonthlyComputePrice: 136.60,
+    storageSizeGB: 500,
+    activeSince: "2025-08-01",
+    hasRotatingIP: true,
+    hasBackup: true,
+    hasMonitoring: true,
+    ramGB: 64,
+    vCPUs: 16,
+    isTrial: true,
+  },
+  {
+    name: "13-NYC-MTW-16core-ssd",
+    email: "apis.popov@gmail.com",
+    ip: "100.130.40.50",
+    version: "1.87.0",
+    kernel: "Linux 6.8.0-61-generic",
+    status: "Connected",
+    type: "VPS",
+    os: "ubuntu",
+    username: "user",
+    password: "5660",
+    monthlyComputePrice: 0,
+    fullMonthlyComputePrice: 63.60,
+    storageSizeGB: 200,
+    activeSince: "2025-09-01",
+    hasRotatingIP: true,
+    hasBackup: false,
+    hasMonitoring: false,
     ramGB: 8,
-        isTrial: false,
+    vCPUs: 4,
+    isTrial: true,
   },
 ];
-
 
 const ELASTIC_IP_FEE_PER_MONTH = 3.6;
 const STORAGE_COST_PER_GB_MONTH = 0.10;
@@ -209,8 +200,7 @@ const ROTATING_IP_FEE_PER_MONTH = 5.0;
 const BACKUP_FEE_PER_MONTH = 5.0;
 const MONITORING_FEE_PER_MONTH = 8.0;
 const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0;
-const SUBSCRIPTION_COST_PER_MONTH = 318.81;
-
+const SUBSCRIPTION_COST_PER_MONTH = 299.00;
 
 interface Service {
   name: string;
@@ -291,10 +281,9 @@ function calculateTotalsForMonth(month: Month) {
   return { totals, grandTotal, fullPriceTotals, fullGrandTotal, activeServers, perServerTotals, fullPricePerServerTotals };
 }
 
-
 const fetchBillingPortal = async (token: string) => {
   try {
-    const response = await fetch("https://api.ROAMINGPROXY.com/v2/customer-portal", {
+    const response = await fetch("https://api.thedataproxy.com/v2/customer-portal", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -367,18 +356,17 @@ function PaymentDetailsTab() {
 
   return (
     <VStack align="stretch" spacing={6}>
-      <Heading size="md" color="gray.700">Payment Method</Heading>
-      <Text color="gray.600">View or update your payment method used for billing.</Text>
+      <Heading size="md" color="orange.700">Payment Method</Heading>
       {hasSavedCard ? (
         <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
           <Text fontWeight="bold">{cardBrand} ending in {cardLast4}</Text>
           <Text>Expires: {cardExp}</Text>
         </Box>
       ) : (
-        <Text color="gray.600">No payment method saved. Add a payment method in Stripe to continue.</Text>
+        <Text color="orange.600">No payment method saved. Add a payment method in Stripe to continue.</Text>
       )}
       <Button
-        colorScheme="blue"
+        colorScheme="orange"
         onClick={handleBillingClick}
         isLoading={isLoading}
         loadingText="Redirecting..."
@@ -387,8 +375,7 @@ function PaymentDetailsTab() {
       >
         Manage Payment Method
       </Button>
-      <Heading size="md" color="gray.700">Billing Address</Heading>
-      <Text color="gray.600">Manage your billing address for invoices and payments.</Text>
+      <Heading size="md" color="orange.700">Billing Address</Heading>
       <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
         <Text>{billingAddress.name}</Text>
         <Text>{billingAddress.email}</Text>
@@ -398,7 +385,7 @@ function PaymentDetailsTab() {
         <Text>{billingAddress.phone}</Text>
       </Box>
       <Button
-        colorScheme="blue"
+        colorScheme="orange"
         onClick={handleBillingClick}
         isLoading={isLoading}
         loadingText="Redirecting..."
@@ -428,161 +415,76 @@ function BillingPage() {
 
   const history = [
     {
-      month: months[9],
-      total: 449.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
-      paymentDate: "September 9, 2025",
+      month: months[9], // September 2025
+      total: 246.3,
+      invoiceId: "in_1S3rEQQ4QUFhozjpjdqNn81b",
+      paymentDate: "September 5, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlimited Bandwidth VPS with Floating IP (riv8-ecoast-mini9)",
-     status: "Succeeded",
+      description: "Payment for Invoice",
+      status: "Succeeded",
     },
     {
-      month: months[8],
-      total: 318.81,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
-      paymentDate: "August 15, 2025",
+      month: months[9], // September 2025
+      total: 122.0,
+      invoiceId: "in_1S3pkTQ4QUFhozjpto0souFo",
+      paymentDate: "September 5, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      description: "Payment for Invoice",
+      status: "Succeeded",
     },
     {
-      month: months[7],
-      total: 318.81,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
-      paymentDate: "July 15, 2025",
+      month: months[8], // August 2025
+      total: 246.4,
+      invoiceId: "in_1RykEAQ4QUFhozjpSfp13wEy",
+      paymentDate: "August 22, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      description: "Payment for Invoice",
+      status: "Succeeded",
     },
     {
-      month: months[6],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
-      paymentDate: "June 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      month: months[7], // July 2025
+      total: 299.0,
+      invoiceId: "in_1RxFkfQ4QUFhozjptnM5cAln",
+      paymentDate: "July 17, 2025",
+      paymentMethod: "Visa •••• 1001",
+      description: "Subscription update",
+      status: "Succeeded",
     },
     {
-      month: months[5],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
-      paymentDate: "May 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-        status: "Succeeded",
+      month: months[7], // July 2025
+      total: 299.0,
+      invoiceId: "in_1Rm0xmQ4QUFhozjpK9vIuC87",
+      paymentDate: "July 1, 2025",
+      paymentMethod: "Visa •••• 1001",
+      description: "Subscription update",
+      status: "Succeeded",
     },
     {
-      month: months[4],
-      total: 322.92,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
-      paymentDate: "April 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",  status: "Succeeded",
+      month: months[6], // June 2025
+      total: 159.0,
+      invoiceId: "in_1RcEvcQ4QUFhozjpXYYwsGj7",
+      paymentDate: "June 23, 2025",
+      paymentMethod: "Visa •••• 1001",
+      description: "Subscription update",
+      status: "Succeeded",
     },
     {
-      month: months[3],
-      total: 325.54,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZf",
-      paymentDate: "March 20, 2025",
+      month: months[5], // May 2025
+      total: 159.0,
+      invoiceId: "in_1RR06SQ4QUFhozjps3d0MT7M",
+      paymentDate: "May 22, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription (Failed Payment Attempt)",  status: "Succeeded",
+      description: "Subscription update",
+      status: "Succeeded",
     },
     {
-      month: months[2],
-      total: 325.54,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZg",
-      paymentDate: "February 20, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[1],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZi",
-      paymentDate: "January 21, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",
-    },
-    {
-      month: months[0],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZj",
-      paymentDate: "December 21, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 378.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZk",
-      paymentDate: "December 19, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "50,000 SERP Credits Purchase",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 378.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZl",
-      paymentDate: "December 11, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "50,000 SERP Credits Purchase",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZm",
-      paymentDate: "December 8, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "General Invoice for Services",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 189.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZn",
-      paymentDate: "December 5, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "50,000 SERP Credits Purchase",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 297.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZo",
-      paymentDate: "December 5, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 322.92,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZp",
-      paymentDate: "December 3, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 21.60,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZq",
-      paymentDate: "December 3, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "Extended Support for Proxy Cloud Services",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZr",
-      paymentDate: "November 21, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 3.78,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZs",
-      paymentDate: "November 17, 2024",
-      paymentMethod: "American Express •••• 3007",
-      description: "Initial Support Charge for Setup",  status: "Succeeded",
+      month: months[4], // April 2025
+      total: 159.0,
+      invoiceId: "in_1RG7nPQ4QUFhozjpFFRKiXMC",
+      paymentDate: "April 22, 2025",
+      paymentMethod: "Visa •••• 1001",
+      description: "Subscription creation",
+      status: "Succeeded",
     },
   ];
 
@@ -629,7 +531,7 @@ function BillingPage() {
   };
 
   return (
-  <Container maxW="container.xl" py={10} as="main">
+    <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
         <Heading as="h1" size="xl" color="orange.800">Billing</Heading>
         <Text fontSize="lg" color="orange.600">Manage your hosting costs and review billing history</Text>
@@ -932,32 +834,34 @@ function BillingPage() {
             </Accordion>
           </TabPanel>
           <TabPanel>
-            <Heading size="md" mb={6} color="gray.700">Invoices</Heading>
-            <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
+            <Heading size="md" mb={6} color="orange.700">Invoices</Heading>
+            <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm" bg="white" p={4}>
               <Table variant="simple" size="md">
-                <Thead bg="red.100">
+                <Thead bg="orange.100">
                   <Tr>
-                    <Th color="red.800">Month</Th>
-                    <Th color="red.800">Invoice Number</Th>
-                    <Th color="red.800">Payment Date</Th>
-                    <Th color="red.800">Payment Method</Th>
-                    <Th color="red.800">Description</Th>
-                    <Th color="red.800"></Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}>Month</Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}>Invoice Number</Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}>Status</Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}>Payment Date</Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}>Payment Method</Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}>Description</Th>
+                    <Th color="orange.800" style={{ padding: "12px" }}></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {history.map(({ month, total, invoiceId, paymentDate, paymentMethod, description }) => (
+                  {history.map(({ month, total, invoiceId, paymentDate, paymentMethod, description, status }) => (
                     <Tr key={invoiceId}>
-                      <Td>{month.name}</Td>
-                      <Td>{invoiceId.slice(0, 12)}...</Td>
-                      <Td>{paymentDate}</Td>
-                      <Td>{paymentMethod}</Td>
-                      <Td>{description}</Td>
-                      <Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0" }}>{month.name}</Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0" }}>{invoiceId.slice(0, 12)}...</Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0", color: status === "Succeeded" ? "#15803d" : "#dc2626" }}>{status}</Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0" }}>{paymentDate || "Pending"}</Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0" }}>{paymentMethod}</Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0" }}>{description}</Td>
+                      <Td style={{ padding: "12px", borderBottom: "1px solid #e0e0e0" }}>
                         <Flex justify="center" gap={2}>
                           <Button
                             size="sm"
-                            colorScheme="blue"
+                            colorScheme="orange"
                             onClick={handleBillingClick}
                             isLoading={isLoading}
                             loadingText="Redirecting..."
@@ -968,7 +872,7 @@ function BillingPage() {
                           </Button>
                           <Button
                             size="sm"
-                            colorScheme="blue"
+                            colorScheme="orange"
                             onClick={handleBillingClick}
                             isLoading={isLoading}
                             loadingText="Redirecting..."
@@ -986,7 +890,7 @@ function BillingPage() {
             </Box>
             <Box mt={4}>
               <Button
-                colorScheme="blue"
+                colorScheme="orange"
                 onClick={handleBillingClick}
                 isLoading={isLoading}
                 loadingText="Redirecting..."
@@ -1002,8 +906,7 @@ function BillingPage() {
           </TabPanel>
         </TabPanels>
       </Tabs>
-
-      <Button as={ChakraLink} href=".." mt={6} colorScheme="red" variant="outline" size="md">
+      <Button as={ChakraLink} href=".." mt={6} colorScheme="orange" variant="outline" size="md">
         Back to Hosting
       </Button>
     </Container>
