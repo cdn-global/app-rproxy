@@ -439,7 +439,7 @@ const history: PaymentRecord[] = [
     invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
     paymentDate: "September 10, 2025",
     paymentMethod: "American Express •••• 3007",
-    description: "Debian Unlimited Bandwidth VPS with Floating IP",
+    description: "Unlimited IP Rotation VPS - Multi-Region",
     status: "Succeeded",
   },
     {
@@ -448,7 +448,7 @@ const history: PaymentRecord[] = [
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
       paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlimited Bandwidth VPS with Floating IP ",
+      description: "Unlimited IP Rotation VPS - Multi-Region ",
      status: "Succeeded",
     },
     {
