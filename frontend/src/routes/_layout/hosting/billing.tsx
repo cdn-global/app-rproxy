@@ -410,8 +410,8 @@ function PaymentDetailsTab() {
   );
 }
 
-function BillingPage() {
-  const currentMonth = months[months.length - 1];
+const BillingPage = () => {
+  const currentMonth = months[months.length - 1] || { name: "Current Month", start: new Date(), end: new Date() };
   const {
     totals: currentTotals,
     activeServers: currentActiveServers,
