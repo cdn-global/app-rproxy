@@ -542,7 +542,7 @@ const history: PaymentRecord[] = [
   return (
   <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
-        <Heading as="h1" size="xl" color="red.800">Billing</Heading>
+             <Heading size="md" mb={6} color="red.700">{currentMonth.name} - Billing Cycle</Heading>
         <Text fontSize="lg" color="red.600">Manage your hosting costs and review billing history</Text>
       </Flex>
       <Tabs variant="enclosed" colorScheme="orange" isFitted>
@@ -554,7 +554,6 @@ const history: PaymentRecord[] = [
         </TabList>
         <TabPanels bg="red.50" borderRadius="0 0 md md">
           <TabPanel>
-            <Heading size="md" mb={6} color="red.700">{currentMonth.name} - Billing Cycle</Heading>
             <VStack align="stretch" spacing={6}>
         
               {outstandingBalance > 0 && (
