@@ -167,7 +167,7 @@ const servers: Server[] = [
     refIndex: 4,
   },
   {
-    name: 'e-coast-nyc-midtown-16core-ssd',
+    name: '02-NYC-MTM-16core-ssd',
     email: 'apis.popov@gmail.com',
     ip: '100.120.30.40',
     version: '1.85.0',

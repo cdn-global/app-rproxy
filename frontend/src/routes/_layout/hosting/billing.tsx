@@ -61,7 +61,7 @@ interface Server {
 
 const servers: Server[] = [
   {
-    name: "e-coast-nyc-lower-8core-ssd",
+    name: "01-NYC-FID-8core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -82,7 +82,7 @@ const servers: Server[] = [
     ramGB: 2,
   },
   {
-    name: "e-coast-nyc-midtown-16core-ssd",
+    name: "02-NYC-MTM-16core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
