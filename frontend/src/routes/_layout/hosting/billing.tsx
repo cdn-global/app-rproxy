@@ -363,7 +363,7 @@ function PaymentDetailsTab() {
 
   return (
     <VStack align="stretch" spacing={6}>
-      <Heading size="md" color="gray.700">Payment Method</Heading>
+      <Heading size="xl" color="gray.700">Payment Method</Heading>
       <Text color="gray.600">View or update your payment method used for billing.</Text>
       {hasSavedCard ? (
         <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
@@ -590,7 +590,7 @@ const history: PaymentRecord[] = [
                       loadingText="Redirecting..."
                       isDisabled={isLoading}
                     >
-                      Pay Outstanding Balance
+                      Manage Billing
                     </Button>
                   </VStack>
                 </Box>
