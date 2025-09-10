@@ -555,7 +555,7 @@ const BillingPage = () => {
       </Flex>
       <Tabs variant="enclosed" colorScheme="orange" isFitted>
         <TabList>
-          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Current Billing</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Current Usage</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Service Details</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
           <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
