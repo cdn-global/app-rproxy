@@ -427,7 +427,7 @@ const BillingPage = () => {
 
   const history = [
     {
-      month: months[8],
+      month: months[5],
       total: 449.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
       paymentDate: "September 9, 2025",
@@ -436,7 +436,7 @@ const BillingPage = () => {
      status: "Succeeded",
     },
     {
-       month: months[7],
+       month: months[4],
       total: 318.81,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
       paymentDate: "August 15, 2025",
@@ -445,7 +445,7 @@ const BillingPage = () => {
         status: "Succeeded",
     },
     {
-   month: months[6],
+   month: months[3],
       total: 318.81,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
       paymentDate: "July 15, 2025",
@@ -454,7 +454,7 @@ const BillingPage = () => {
         status: "Succeeded",
     },
     {
-      month: months[5],
+      month: months[2],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
       paymentDate: "June 10, 2025",
@@ -463,7 +463,7 @@ const BillingPage = () => {
         status: "Succeeded",
     },
     {
-      month: months[4],
+      month: months[1],
       total: 299.00,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
       paymentDate: "May 10, 2025",
@@ -472,36 +472,12 @@ const BillingPage = () => {
         status: "Succeeded",
     },
     {
-      month: months[3],
+      month: months[0],
       total: 322.92,
       invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
       paymentDate: "April 10, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "HTTPs Request API - Plus Tier Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[2],
-      total: 325.54,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZf",
-      paymentDate: "March 20, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription (Failed Payment Attempt)",  status: "Succeeded",
-    },
-    {
-      month: months[1],
-      total: 325.54,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZg",
-      paymentDate: "February 20, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",  status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZi",
-      paymentDate: "January 21, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "SERPAPI Subscription",
     },
   ];
 
