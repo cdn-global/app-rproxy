@@ -175,7 +175,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 8,
     ramGB: 4,
-        isTrial: false,
+        isTrial: true,
   },
   {
     name: "06-NYC-MTM-2core-ssd",
@@ -198,7 +198,7 @@ const servers: Server[] = [
     hasManagedSupport: false,
     vCPUs: 2,
     ramGB: 8,
-        isTrial: false,
+        isTrial: true,
   },
 ];
 
