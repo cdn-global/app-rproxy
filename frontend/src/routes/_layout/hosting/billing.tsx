@@ -234,7 +234,6 @@ interface Month {
 }
 
 const months: Month[] = [
-  { name: "December 2024", start: new Date(2024, 11, 1), end: new Date(2024, 11, 31) },
   { name: "January 2025", start: new Date(2025, 0, 1), end: new Date(2025, 0, 31) },
   { name: "February 2025", start: new Date(2025, 1, 1), end: new Date(2025, 1, 28) },
   { name: "March 2025", start: new Date(2025, 2, 1), end: new Date(2025, 2, 31) },
