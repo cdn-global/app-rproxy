@@ -423,6 +423,15 @@ const BillingPage = () => {
   const toast = useToast();
 
   const history = [
+        {
+      month: months[5],
+      total: 193.70,
+      invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
+      paymentDate: "September 10, 2025",
+      paymentMethod: "American Express •••• 3007",
+      description: "Debian Unlimited Bandwidth VPS with Floating IP ",
+     status: "Succeeded",
+    },
     {
       month: months[5],
       total: 449.00,
