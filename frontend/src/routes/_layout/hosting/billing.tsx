@@ -639,7 +639,7 @@ const BillingPage = () => {
                       <Th color="gray.700">Service</Th>
                       <Th color="gray.700">Quantity</Th>
                       <Th color="red.600" isNumeric>Charged Cost (USD)</Th>
-                      <Th color="red.700" isNumeric>Full Cost (USD)</Th>
+                      <Th color="gray.700" isNumeric>Full Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
