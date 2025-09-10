@@ -799,7 +799,7 @@ const history: PaymentRecord[] = [
                     <Text>Cost: ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} per month</Text>
                     <Text>Renews on: September 17, 2025</Text>
                     <Divider />
-                    <Text fontWeight="semibold" color="red.800">Compute Costs Under Subscription</Text>
+                    <Text fontWeight="semibold" color="red.800">Compute Costs</Text>
                     <Table variant="simple" size="sm">
                       <Thead bg="red.100">
                         <Tr>
