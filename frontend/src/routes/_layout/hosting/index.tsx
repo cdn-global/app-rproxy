@@ -114,7 +114,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "e-coast-jersey-jersey-4core-ssd",
+    name: "04-NJ-SEC-4core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.62",
     version: "1.88.0",
@@ -135,7 +135,7 @@ const servers: Server[] = [
     ramGB: 16,
   },
   {
-    name: "e-coast-nyc-lower-8core-hdd",
+    name: "05-NYC-FID-8core-hdd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.63",
     version: "1.88.0",
@@ -156,7 +156,7 @@ const servers: Server[] = [
     ramGB: 4,
   },
   {
-    name: "e-coast-nyc-midtown-2core-ssd",
+    name: "06-NYC-MTM-2core-ssd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.64",
     version: "1.88.0",
