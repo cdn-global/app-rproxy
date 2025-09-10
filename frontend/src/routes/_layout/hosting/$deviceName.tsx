@@ -83,7 +83,7 @@ const servers: Server[] = [
     ramGB: 64,
   },
   {
-    name: "e-coast-nyc-bk-4core-hdd",
+    name: "03-NYC-BKN-4core-hdd",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.61",
     version: "1.88.0",
