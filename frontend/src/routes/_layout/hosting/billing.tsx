@@ -558,11 +558,8 @@ const history: PaymentRecord[] = [
               {outstandingBalance > 0 && (
                 <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
                   <VStack align="stretch" spacing={2}>
-                    <Text fontWeight="semibold" color="red.800">Outstanding Balance</Text>
-                    <Flex justify="space-between">
-                      <Text>Current Month Cost (Servers + Subscription):</Text>
-                      <Text fontWeight="bold">${grandTotal.toFixed(2)}</Text>
-                    </Flex>
+                    <Text fontWeight="semibold" color="red.800">Balance</Text>
+                    
                     <Flex justify="space-between">
                       <Text>Invoiced Amount (September 2025):</Text>
                       <Text fontWeight="bold">${invoicedAmount.toFixed(2)}</Text>
