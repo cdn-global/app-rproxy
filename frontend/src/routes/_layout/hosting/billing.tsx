@@ -422,16 +422,26 @@ const BillingPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
-  const history = [
-        {
-      month: months[5],
-      total: 193.70,
-      invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
-      paymentDate: "September 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "Debian Unlimited Bandwidth VPS with Floating IP ",
-     status: "Succeeded",
-    },
+interface PaymentRecord {
+  month: Month;
+  total: number;
+  invoiceId: string;
+  paymentDate: string;
+  paymentMethod: string;
+  description: string;
+  status: string;
+}
+
+const history: PaymentRecord[] = [
+  {
+    month: months[5], // September 2025
+    total: 193.70,
+    invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
+    paymentDate: "September 10, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "Debian Unlimited Bandwidth VPS with Floating IP",
+    status: "Succeeded",
+  },
     {
       month: months[5],
       total: 449.00,
