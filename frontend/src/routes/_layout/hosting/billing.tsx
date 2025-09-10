@@ -550,25 +550,25 @@ const BillingPage = () => {
   return (
   <Container maxW="container.xl" py={10} as="main">
       <Flex align="center" justify="space-between" py={6} mb={6}>
-        <Heading as="h1" size="xl" color="orange.800">Billing</Heading>
-        <Text fontSize="lg" color="orange.600">Manage your hosting costs and review billing history</Text>
+        <Heading as="h1" size="xl" color="red.800">Billing</Heading>
+        <Text fontSize="lg" color="red.600">Manage your hosting costs and review billing history</Text>
       </Flex>
       <Tabs variant="enclosed" colorScheme="orange" isFitted>
         <TabList>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Current Billing</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Service Details</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Invoices</Tab>
-          <Tab fontWeight="semibold" _selected={{ color: "orange.600", borderTopColor: "orange.400" }}>Payment Details</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Current Billing</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Service Details</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Invoices</Tab>
+          <Tab fontWeight="semibold" _selected={{ color: "red.600", borderTopColor: "red.400" }}>Payment Details</Tab>
         </TabList>
-        <TabPanels bg="orange.50" borderRadius="0 0 md md">
+        <TabPanels bg="red.50" borderRadius="0 0 md md">
           <TabPanel>
-            <Heading size="md" mb={6} color="orange.700">{currentMonth.name} - Billing Cycle</Heading>
+            <Heading size="md" mb={6} color="red.700">{currentMonth.name} - Billing Cycle</Heading>
             <VStack align="stretch" spacing={6}>
         
               {outstandingBalance > 0 && (
-                <Box borderWidth="1px" borderRadius="lg" p={4} bg="orange.50" boxShadow="sm">
+                <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
                   <VStack align="stretch" spacing={2}>
-                    <Text fontWeight="semibold" color="orange.800">Outstanding Balance</Text>
+                    <Text fontWeight="semibold" color="red.800">Outstanding Balance</Text>
                     <Flex justify="space-between">
                       <Text>Current Month Cost (Servers + Subscription):</Text>
                       <Text fontWeight="bold">${grandTotal.toFixed(2)}</Text>
@@ -587,9 +587,9 @@ const BillingPage = () => {
                       ))}
                     <Flex justify="space-between">
                       <Text>Outstanding Balance:</Text>
-                      <Text fontWeight="bold" color="orange.600">${outstandingBalance.toFixed(2)}</Text>
+                      <Text fontWeight="bold" color="red.600">${outstandingBalance.toFixed(2)}</Text>
                     </Flex>
-                    <Text fontStyle="italic" color="orange.600">
+                    <Text fontStyle="italic" color="red.600">
                       Note: The outstanding balance includes unpaid invoices from previous months, current server costs, and subscription costs not yet invoiced. 
                     </Text>
                     <Button
@@ -606,13 +606,13 @@ const BillingPage = () => {
               )}
               <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
                 <Table variant="simple" size="md">
-                  <Thead bg="orange.100">
+                  <Thead bg="red.100">
                     <Tr>
-                      <Th color="orange.800">Server Name</Th>
-                      <Th color="orange.800">IP Address</Th>
-                      <Th color="orange.800">Status</Th>
-                      <Th color="orange.800" isNumeric>Charged Cost (USD)</Th>
-                      <Th color="orange.800" isNumeric>Full Cost (USD)</Th>
+                      <Th color="red.800">Server Name</Th>
+                      <Th color="red.800">IP Address</Th>
+                      <Th color="red.800">Status</Th>
+                      <Th color="red.800" isNumeric>Charged Cost (USD)</Th>
+                      <Th color="red.800" isNumeric>Full Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -626,33 +626,33 @@ const BillingPage = () => {
                       </Tr>
                     ))}
                   </Tbody>
-                  <Tfoot bg="orange.50">
+                  <Tfoot bg="red.50">
                     <Tr>
-                      <Th colSpan={3} color="orange.800">Server Total</Th>
-                      <Th isNumeric color="orange.800">${(grandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
-                      <Th isNumeric color="orange.800">${(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
+                      <Th colSpan={3} color="red.800">Server Total</Th>
+                      <Th isNumeric color="red.800">${(grandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
+                      <Th isNumeric color="red.800">${(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}</Th>
                     </Tr>
                     <Tr>
-                      <Th colSpan={3} color="orange.800">Subscription</Th>
-                      <Th isNumeric color="orange.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
-                      <Th isNumeric color="orange.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                      <Th colSpan={3} color="red.800">Subscription</Th>
+                      <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                      <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
                     </Tr>
                     <Tr>
-                      <Th colSpan={3} color="orange.800">Grand Total</Th>
-                      <Th isNumeric color="orange.800">${grandTotal.toFixed(2)}</Th>
-                      <Th isNumeric color="orange.800">${fullGrandTotal.toFixed(2)}</Th>
+                      <Th colSpan={3} color="red.800">Grand Total</Th>
+                      <Th isNumeric color="red.800">${grandTotal.toFixed(2)}</Th>
+                      <Th isNumeric color="red.800">${fullGrandTotal.toFixed(2)}</Th>
                     </Tr>
                   </Tfoot>
                 </Table>
               </Box>
               <Box borderWidth="1px" borderRadius="lg" overflow="hidden" boxShadow="sm">
                 <Table variant="simple" size="md">
-                  <Thead bg="orange.100">
+                  <Thead bg="red.100">
                     <Tr>
-                      <Th color="orange.800">Service</Th>
-                      <Th color="orange.800">Quantity</Th>
-                      <Th color="orange.800" isNumeric>Charged Cost (USD)</Th>
-                      <Th color="orange.800" isNumeric>Full Cost (USD)</Th>
+                      <Th color="red.800">Service</Th>
+                      <Th color="red.800">Quantity</Th>
+                      <Th color="red.800" isNumeric>Charged Cost (USD)</Th>
+                      <Th color="red.800" isNumeric>Full Cost (USD)</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -671,18 +671,18 @@ const BillingPage = () => {
                       <Td isNumeric>${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Td>
                     </Tr>
                   </Tbody>
-                  <Tfoot bg="orange.50">
+                  <Tfoot bg="red.50">
                     <Tr>
-                      <Th colSpan={2} color="orange.800">Total</Th>
-                      <Th isNumeric color="orange.800">${grandTotal.toFixed(2)}</Th>
-                      <Th isNumeric color="orange.800">${fullGrandTotal.toFixed(2)}</Th>
+                      <Th colSpan={2} color="red.800">Total</Th>
+                      <Th isNumeric color="red.800">${grandTotal.toFixed(2)}</Th>
+                      <Th isNumeric color="red.800">${fullGrandTotal.toFixed(2)}</Th>
                     </Tr>
                   </Tfoot>
                 </Table>
               </Box>
-                  <Box borderWidth="1px" borderRadius="lg" p={4} bg="orange.50" boxShadow="sm">
+                  <Box borderWidth="1px" borderRadius="lg" p={4} bg="red.50" boxShadow="sm">
                 <VStack align="stretch" spacing={2}>
-                  <Text fontWeight="semibold" color="orange.800">Current Subscription</Text>
+                  <Text fontWeight="semibold" color="red.800">Current Subscription</Text>
                   <Text>Unlimited HTTPS API Request - Plus Tier</Text>
                   <Text fontWeight="bold">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} per month</Text>
                   <Text>Your subscription renews on September 17, 2025.</Text>
@@ -701,28 +701,28 @@ const BillingPage = () => {
             </VStack>
           </TabPanel>
           <TabPanel>
-            <Heading size="md" mb={6} color="orange.700">{currentMonth.name} - Service Details</Heading>
+            <Heading size="md" mb={6} color="red.700">{currentMonth.name} - Service Details</Heading>
             <Accordion allowMultiple defaultIndex={[0]}>
               <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
                 <h2>
-                  <AccordionButton bg="orange.50" _hover={{ bg: "orange.100" }}>
-                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="orange.800">
+                  <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
+                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
                       Server Resources
                     </Box>
-                    <AccordionIcon color="orange.600" />
+                    <AccordionIcon color="red.600" />
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4}>
                   <Table variant="simple" size="sm">
-                    <Thead bg="orange.100">
+                    <Thead bg="red.100">
                       <Tr>
-                        <Th color="orange.800">Server Name</Th>
-                        <Th color="orange.800">vCPUs</Th>
-                        <Th color="orange.800">RAM (GB)</Th>
-                        <Th color="orange.800">Storage (GB)</Th>
-                        <Th color="orange.800">Floating IPs</Th>
-                        <Th color="orange.800">Features</Th>
-                        <Th color="orange.800">Status</Th>
+                        <Th color="red.800">Server Name</Th>
+                        <Th color="red.800">vCPUs</Th>
+                        <Th color="red.800">RAM (GB)</Th>
+                        <Th color="red.800">Storage (GB)</Th>
+                        <Th color="red.800">Floating IPs</Th>
+                        <Th color="red.800">Features</Th>
+                        <Th color="red.800">Status</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -754,22 +754,22 @@ const BillingPage = () => {
                 return (
                   <AccordionItem key={s.name} borderWidth="1px" borderRadius="md" mb={4}>
                     <h2>
-                      <AccordionButton bg="orange.50" _hover={{ bg: "orange.100" }}>
-                        <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="orange.800">
+                      <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
+                        <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
                           {s.name} - ${total.toFixed(2)} (x {relevantServers.length})
                         </Box>
-                        <AccordionIcon color="orange.600" />
+                        <AccordionIcon color="red.600" />
                       </AccordionButton>
                     </h2>
                     <AccordionPanel pb={4}>
                       {relevantServers.length > 0 ? (
                         <Table variant="simple" size="sm">
-                          <Thead bg="orange.100">
+                          <Thead bg="red.100">
                             <Tr>
-                              <Th color="orange.800">Server Name</Th>
-                              <Th color="orange.800">Status</Th>
-                              <Th color="orange.800" isNumeric>Charged Cost (USD)</Th>
-                              <Th color="orange.800" isNumeric>Full Cost (USD)</Th>
+                              <Th color="red.800">Server Name</Th>
+                              <Th color="red.800">Status</Th>
+                              <Th color="red.800" isNumeric>Charged Cost (USD)</Th>
+                              <Th color="red.800" isNumeric>Full Cost (USD)</Th>
                             </Tr>
                           </Thead>
                           <Tbody>
@@ -786,7 +786,7 @@ const BillingPage = () => {
                           </Tbody>
                         </Table>
                       ) : (
-                        <Text color="orange.600">No servers using this service.</Text>
+                        <Text color="red.600">No servers using this service.</Text>
                       )}
                     </AccordionPanel>
                   </AccordionItem>
@@ -794,11 +794,11 @@ const BillingPage = () => {
               })}
               <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
                 <h2>
-                  <AccordionButton bg="orange.50" _hover={{ bg: "orange.100" }}>
-                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="orange.800">
+                  <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
+                    <Box as="span" flex="1" textAlign="left" fontWeight="semibold" color="red.800">
                       Unlimited HTTPS API Request - Plus Tier - ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} (x 1)
                     </Box>
-                    <AccordionIcon color="orange.600" />
+                    <AccordionIcon color="red.600" />
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4}>
@@ -807,14 +807,14 @@ const BillingPage = () => {
                     <Text>Cost: ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} per month</Text>
                     <Text>Renews on: September 17, 2025</Text>
                     <Divider />
-                    <Text fontWeight="semibold" color="orange.800">Compute Costs Under Subscription</Text>
+                    <Text fontWeight="semibold" color="red.800">Compute Costs Under Subscription</Text>
                     <Table variant="simple" size="sm">
-                      <Thead bg="orange.100">
+                      <Thead bg="red.100">
                         <Tr>
-                          <Th color="orange.800">Server Name</Th>
-                          <Th color="orange.800">Status</Th>
-                          <Th color="orange.800" isNumeric>Charged Compute Cost (USD)</Th>
-                          <Th color="orange.800" isNumeric>Full Compute Cost (USD)</Th>
+                          <Th color="red.800">Server Name</Th>
+                          <Th color="red.800">Status</Th>
+                          <Th color="red.800" isNumeric>Charged Compute Cost (USD)</Th>
+                          <Th color="red.800" isNumeric>Full Compute Cost (USD)</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
@@ -832,16 +832,16 @@ const BillingPage = () => {
                           );
                         })}
                       </Tbody>
-                      <Tfoot bg="orange.50">
+                      <Tfoot bg="red.50">
                         <Tr>
-                          <Th colSpan={2} color="orange.800">Total Compute Cost</Th>
-                          <Th isNumeric color="orange.800">${currentTotals["Compute"].total.toFixed(2)}</Th>
-                          <Th isNumeric color="orange.800">${fullPriceTotals["Compute"].total.toFixed(2)}</Th>
+                          <Th colSpan={2} color="red.800">Total Compute Cost</Th>
+                          <Th isNumeric color="red.800">${currentTotals["Compute"].total.toFixed(2)}</Th>
+                          <Th isNumeric color="red.800">${fullPriceTotals["Compute"].total.toFixed(2)}</Th>
                         </Tr>
                         <Tr>
-                          <Th colSpan={2} color="orange.800">Subscription Cost</Th>
-                          <Th isNumeric color="orange.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
-                          <Th isNumeric color="orange.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                          <Th colSpan={2} color="red.800">Subscription Cost</Th>
+                          <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
+                          <Th isNumeric color="red.800">${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}</Th>
                         </Tr>
                       </Tfoot>
                     </Table>
