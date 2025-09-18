@@ -21,11 +21,9 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=["https://cloud.roamingproxy.com","https://api.roamingproxy.com"]
     allow_credentials=True,
-    # allow_methods=["GET", "POST", "PATCH", "OPTIONS", "DELETE"],
-    allow_methods=["*"], 
+    allow_methods=["GET", "POST", "PATCH", "OPTIONS","DELETE"],
     allow_headers=["*"],
-
 )
 app.include_router(api_router, prefix=settings.API_V1_STR)
