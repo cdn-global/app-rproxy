@@ -435,8 +435,8 @@ const history: PaymentRecord[] = [
       {
       month: months[5],
       total: 299.00,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
-      paymentDate: "June 10, 2025",
+      invoiceId: "28B73F19-0023",
+      paymentDate: "September 15, 2025",
       paymentMethod: "American Express •••• 3007",
       description: "HTTPs Request API - Plus Tier Subscription",
         status: "Succeeded",
