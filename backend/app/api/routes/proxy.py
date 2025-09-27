@@ -279,16 +279,45 @@ async def proxy_fetch_logic(
     proxy_request: ProxyRequest,
     user: User,
     x_api_key: str,
+    background_tasks: BackgroundTasks,  # Added to match original
 ) -> ProxyResponse:
     logger.debug(f"Proxy fetch request for URL '{proxy_request.url}' in region: {region}, user: {user.email}")
     if region not in endpoint_manager.endpoints:
         raise HTTPException(status_code=400, detail="Invalid region. Use /regions to list available regions")
-    
+
     token = session.query(APIToken).filter(APIToken.token == x_api_key).first()
     if not token:
         logger.error(f"API key passed verification but not found in DB for user {user.id}. Possible data inconsistency.")
         raise HTTPException(status_code=401, detail="API key is invalid or has been deactivated.")
-    
+
+    # Define screenshot request as a background task (from original code)
+    async def perform_screenshot_request():
+        screenshot_url = f"https://autoparse-41617314059.us-east4.run.app/screenshot?url={quote_plus(str(proxy_request.url))}"
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(
+                    screenshot_url,
+                    headers={"accept": "application/json", "User-Agent": request.headers.get("user-agent", "DataProxy-Internal-Fetcher/1.0")}
+                )
+                response.raise_for_status()
+                data = response.json()
+                logger.info(f"Background screenshot request successful for URL: {proxy_request.url}")
+                if data.get("result"):
+                    html_preview = data.get("result")[:200]
+                    logger.debug(f"Background HTML Preview for {proxy_request.url}: {html_preview}")
+        except httpx.ConnectError as e:
+            logger.error(f"Background screenshot connection error for URL {proxy_request.url}: {str(e)}")
+        except httpx.TimeoutException as e:
+            logger.error(f"Background screenshot timeout for URL {proxy_request.url}: {str(e)}")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Background screenshot HTTP error for URL {proxy_request.url}: {e.response.status_code} {str(e)}")
+        except Exception as e:
+            logger.error(f"Unexpected background screenshot error for URL {proxy_request.url}: {str(e)}")
+
+    # Schedule screenshot request as a background task
+    background_tasks.add_task(perform_screenshot_request)
+
+    # Proxy fetch logic using Cloud Functions
     async def try_endpoint(endpoint: str, attempt_region: str) -> Optional[Dict]:
         endpoint_id = endpoint_manager.get_endpoint_id(attempt_region, endpoint) or "unknown"
         try:
@@ -301,23 +330,38 @@ async def proxy_fetch_logic(
                 response.raise_for_status()
                 data = response.json()
                 logger.info(f"Proxy fetch successful in {attempt_region} (endpoint: {endpoint_id})")
+                if data.get("result"):
+                    html_preview = data.get("result")[:200]
+                    logger.debug(f"HTML Preview for {proxy_request.url}: {html_preview}")
                 return data
+        except httpx.ConnectError as e:
+            logger.error(f"Proxy fetch connection error in {attempt_region} (endpoint: {endpoint_id}): {str(e)}")
+            return None
+        except httpx.TimeoutException as e:
+            logger.error(f"Proxy fetch timeout in {attempt_region} (endpoint: {endpoint_id}): {str(e)}")
+            return None
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Proxy fetch HTTP error in {attempt_region} (endpoint: {endpoint_id}): {e.response.status_code} {str(e)}")
+            return None
         except Exception as e:
-            logger.error(f"Proxy fetch failed in {attempt_region} (endpoint: {endpoint_id}): {e}")
+            logger.error(f"Unexpected proxy fetch error in {attempt_region} (endpoint: {endpoint_id}): {str(e)}")
             return None
 
     regions_to_try = [region] + [r for r in random.sample(list(endpoint_manager.endpoints.keys()), len(endpoint_manager.endpoints)) if r != region]
-
     for current_region in regions_to_try:
         endpoints = endpoint_manager.get_endpoints(current_region)
         health_tasks = [check_proxy_health(endpoint, current_region) for endpoint in endpoints]
-        health_results = await asyncio.gather(*health_tasks)
-        healthy_endpoints = [r["endpoint"] for r in health_results if r["is_healthy"]]
-        
+        try:
+            health_results = await asyncio.gather(*health_tasks, return_exceptions=True)
+            healthy_endpoints = [r["endpoint"] for r in health_results if isinstance(r, dict) and r.get("is_healthy")]
+        except Exception as e:
+            logger.error(f"Health check failed for region {current_region}: {str(e)}")
+            continue
+
         if not healthy_endpoints:
             logger.warning(f"No healthy endpoints in region: {current_region}. Trying next region.")
             continue
-            
+
         random.shuffle(healthy_endpoints)
         for endpoint in healthy_endpoints:
             data = await try_endpoint(endpoint, current_region)
@@ -330,10 +374,10 @@ async def proxy_fetch_logic(
                     device_id=data.get("device_id", "unknown"),
                     region_used=current_region,
                 )
-    
+
     logger.error(f"All proxy fetch attempts failed for user {user.email} across all available regions.")
     raise HTTPException(status_code=503, detail="No healthy proxy endpoints available across all regions.")
-
+    
 @router.post("/fetch", response_model=ProxyResponse)
 async def proxy_fetch(
     request: Request,
