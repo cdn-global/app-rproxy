@@ -1,5 +1,3 @@
-
-
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Header, Request
 from typing import Annotated, Dict, List, Optional
 from pydantic import BaseModel, HttpUrl
@@ -14,23 +12,19 @@ from datetime import datetime, timedelta
 from app.api.deps import SessionDep, CurrentUser
 from app.models import User
 from app.core.security import generate_api_key, verify_api_key
-# REMOVED: No longer need to import `users` for the lookup
-# from app.api.routes import users 
 from sqlalchemy.orm import Session
 from sqlmodel import SQLModel, Field
 from uuid import UUID, uuid4
 from app.utils import generate_test_email, send_email
-
 from bs4 import BeautifulSoup
 from urllib.parse import quote_plus, unquote, parse_qs
-
 
 # Configure logging based on environment
 log_level = logging.INFO if os.getenv("ENV") == "production" else logging.DEBUG
 logging.basicConfig(level=log_level)
 logger = logging.getLogger(__name__)
 
-# REGION_ENDPOINTS dictionary... (keep as is)
+# REGION_ENDPOINTS dictionary
 REGION_ENDPOINTS = {
     "us-east": [
         "https://us-east4-proxy1-454912.cloudfunctions.net/main",
@@ -85,8 +79,7 @@ REGION_ENDPOINTS = {
     ]
 }
 
-
-# ProxyEndpointManager class... (keep as is)
+# ProxyEndpointManager class
 class ProxyEndpointManager:
     def __init__(self):
         self.endpoints = REGION_ENDPOINTS
@@ -105,11 +98,9 @@ class ProxyEndpointManager:
         return None
 
 endpoint_manager = ProxyEndpointManager()
-
-
 router = APIRouter(tags=["proxy"], prefix="/proxy")
 
-# Model definitions... (keep as is)
+# Model definitions
 class APIToken(SQLModel, table=True):
     __tablename__ = "apitoken"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
@@ -120,16 +111,49 @@ class APIToken(SQLModel, table=True):
     is_active: bool = Field(default=True)
     request_count: int = Field(default=0)
 
-class RegionsResponse(BaseModel): regions: List[str]
-class APIKeyResponse(BaseModel): key_preview: str; created_at: str; expires_at: str; is_active: bool; request_count: int
-class ProxyStatus(BaseModel): region: str; is_healthy: bool; avg_response_time: float; healthy_endpoints: int; total_endpoints: int; last_checked: datetime
-class ProxyStatusResponse(BaseModel): statuses: List[ProxyStatus]
-class ProxyRequest(BaseModel): url: HttpUrl
-class ProxyResponse(BaseModel): result: str; public_ip: str; device_id: str; region_used: str
-class SerpResult(BaseModel): position: int; title: str; link: str; snippet: str
-class SerpResponse(BaseModel): search_engine: str; search_query: str; region_used: str; organic_results: List[SerpResult]
+class RegionsResponse(BaseModel):
+    regions: List[str]
 
-# Health check, SERP parsers, SUPPORTED_ENGINES... (keep as is)
+class APIKeyResponse(BaseModel):
+    key_preview: str
+    created_at: str
+    expires_at: str
+    is_active: bool
+    request_count: int
+
+class ProxyStatus(BaseModel):
+    region: str
+    is_healthy: bool
+    avg_response_time: float
+    healthy_endpoints: int
+    total_endpoints: int
+    last_checked: datetime
+
+class ProxyStatusResponse(BaseModel):
+    statuses: List[ProxyStatus]
+
+class ProxyRequest(BaseModel):
+    url: HttpUrl
+
+class ProxyResponse(BaseModel):
+    result: str
+    public_ip: str
+    device_id: str
+    region_used: str
+
+class SerpResult(BaseModel):
+    position: int
+    title: str
+    link: str
+    snippet: str
+
+class SerpResponse(BaseModel):
+    search_engine: str
+    search_query: str
+    region_used: str
+    organic_results: List[SerpResult]
+
+# Health check, SERP parsers, SUPPORTED_ENGINES
 async def check_proxy_health(endpoint: str, region: str) -> Dict:
     start_time = time.time()
     endpoint_id = endpoint_manager.get_endpoint_id(region, endpoint) or "unknown"
@@ -140,8 +164,14 @@ async def check_proxy_health(endpoint: str, region: str) -> Dict:
             response_time = time.time() - start_time
             logger.debug(f"Health check succeeded for proxy {endpoint_id} in {region}")
             return {"region": region, "is_healthy": True, "response_time": response_time, "last_checked": datetime.utcnow(), "endpoint": endpoint}
+    except (httpx.ConnectError, httpx.TimeoutException) as e:
+        logger.error(f"Network error during health check for proxy {endpoint_id} in {region}: {str(e)}")
+        return {"region": region, "is_healthy": False, "response_time": time.time() - start_time, "last_checked": datetime.utcnow(), "endpoint": endpoint}
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error during health check for proxy {endpoint_id} in {region}: {e.response.status_code} {str(e)}")
+        return {"region": region, "is_healthy": False, "response_time": time.time() - start_time, "last_checked": datetime.utcnow(), "endpoint": endpoint}
     except Exception as e:
-        logger.error(f"Health check failed for proxy {endpoint_id} in {region}: {str(e)}")
+        logger.error(f"Unexpected error during health check for proxy {endpoint_id} in {region}: {str(e)}")
         return {"region": region, "is_healthy": False, "response_time": time.time() - start_time, "last_checked": datetime.utcnow(), "endpoint": endpoint}
 
 def parse_google_serp(html: str) -> List[SerpResult]:
@@ -178,8 +208,10 @@ def parse_duckduckgo_serp(html: str) -> List[SerpResult]:
                 try:
                     parsed_url = parse_qs(raw_href.split("?", 1)[1])
                     link = unquote(parsed_url.get("uddg", [""])[0])
-                except (IndexError, KeyError): link = raw_href
-            else: link = raw_href
+                except (IndexError, KeyError):
+                    link = raw_href
+            else:
+                link = raw_href
             results.append(SerpResult(position=i, title=title_tag.text, link=link, snippet=snippet_tag.text.strip() if snippet_tag else ""))
     return results
 
@@ -189,41 +221,29 @@ SUPPORTED_ENGINES = {
     "duckduckgo": {"base_url": "https://html.duckduckgo.com/html/?q={query}", "parser": parse_duckduckgo_serp},
 }
 
-
-# --- THIS IS THE CORRECTED FUNCTION ---
 async def verify_api_token(
     session: SessionDep,
     x_api_key: Annotated[str, Header()],
 ) -> User:
     logger.debug(f"Verifying API key: {x_api_key[:8]}...")
-    
     token_data = verify_api_key(x_api_key)
     if not token_data or "user_id" not in token_data:
         logger.warning(f"Invalid API key provided: {x_api_key[:8]}...")
         raise HTTPException(status_code=401, detail="Invalid API key")
-    
     user_id_from_token = token_data["user_id"]
-    
-    # Perform the database lookup directly right here.
     user = session.get(User, user_id_from_token)
-    
     if not user or not user.is_active:
         logger.warning(f"API key valid, but user is invalid or inactive. User ID: {user_id_from_token}")
         raise HTTPException(status_code=401, detail="Invalid or inactive user")
-    
     is_in_trial = user.is_trial and user.expiry_date and user.expiry_date > datetime.utcnow()
     if not user.has_subscription and not is_in_trial:
         logger.warning(f"User {user.email} lacks active subscription or trial.")
         raise HTTPException(status_code=403, detail="Active subscription or trial required")
-    
     logger.debug(f"API key verified for user: {user.email}")
     return user
 
-
-# --- All other API endpoints can remain the same ---
 @router.post("/generate-api-key", response_model=dict)
 async def generate_user_api_key(session: SessionDep, current_user: CurrentUser):
-    # ... (no changes needed)
     logger.debug(f"Generating API key for user: {current_user.email}")
     is_in_trial = current_user.is_trial and current_user.expiry_date and current_user.expiry_date > datetime.utcnow()
     if not current_user.has_subscription and not is_in_trial:
@@ -241,7 +261,6 @@ async def generate_user_api_key(session: SessionDep, current_user: CurrentUser):
         logger.error(f"Failed to generate API key for user {current_user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to generate API key")
 
-# ... (all other endpoints like /regions, /status, /fetch, /serp, /api-keys remain unchanged)
 @router.get("/regions", response_model=RegionsResponse)
 async def list_regions(user: Annotated[User, Depends(verify_api_token)]):
     logger.debug(f"Listing regions for user: {user.email}")
@@ -253,15 +272,12 @@ async def get_proxy_status(region: str, user: Annotated[User, Depends(verify_api
     if region not in endpoint_manager.endpoints:
         logger.info(f"Invalid region: {region}")
         raise HTTPException(status_code=400, detail="Invalid region. Use /regions to list available regions")
-    
     endpoints = endpoint_manager.get_endpoints(region)
     status_tasks = [check_proxy_health(endpoint, region) for endpoint in endpoints]
     results = await asyncio.gather(*status_tasks)
-    
     healthy_count = sum(1 for r in results if r["is_healthy"])
     total_count = len(endpoints)
     avg_response_time = sum(r["response_time"] for r in results) / total_count if total_count > 0 else 0.0
-    
     status = ProxyStatus(
         region=region,
         is_healthy=healthy_count > 0,
@@ -279,7 +295,7 @@ async def proxy_fetch_logic(
     proxy_request: ProxyRequest,
     user: User,
     x_api_key: str,
-    background_tasks: BackgroundTasks,  # Added to match original
+    background_tasks: BackgroundTasks,
 ) -> ProxyResponse:
     logger.debug(f"Proxy fetch request for URL '{proxy_request.url}' in region: {region}, user: {user.email}")
     if region not in endpoint_manager.endpoints:
@@ -290,7 +306,7 @@ async def proxy_fetch_logic(
         logger.error(f"API key passed verification but not found in DB for user {user.id}. Possible data inconsistency.")
         raise HTTPException(status_code=401, detail="API key is invalid or has been deactivated.")
 
-    # Define screenshot request as a background task (from original code)
+    # Define screenshot request as a background task
     async def perform_screenshot_request():
         screenshot_url = f"https://autoparse-41617314059.us-east4.run.app/screenshot?url={quote_plus(str(proxy_request.url))}"
         try:
@@ -306,46 +322,54 @@ async def proxy_fetch_logic(
                     html_preview = data.get("result")[:200]
                     logger.debug(f"Background HTML Preview for {proxy_request.url}: {html_preview}")
         except httpx.ConnectError as e:
-            logger.error(f"Background screenshot connection error for URL {proxy_request.url}: {str(e)}")
+            logger.error(f"Network error during background screenshot for URL {proxy_request.url}: {str(e)}")
         except httpx.TimeoutException as e:
-            logger.error(f"Background screenshot timeout for URL {proxy_request.url}: {str(e)}")
+            logger.error(f"Timeout during background screenshot for URL {proxy_request.url}: {str(e)}")
         except httpx.HTTPStatusError as e:
-            logger.error(f"Background screenshot HTTP error for URL {proxy_request.url}: {e.response.status_code} {str(e)}")
+            logger.error(f"HTTP error during background screenshot for URL {proxy_request.url}: {e.response.status_code} {str(e)}")
         except Exception as e:
-            logger.error(f"Unexpected background screenshot error for URL {proxy_request.url}: {str(e)}")
+            logger.error(f"Unexpected error during background screenshot for URL {proxy_request.url}: {str(e)}")
 
     # Schedule screenshot request as a background task
     background_tasks.add_task(perform_screenshot_request)
 
-    # Proxy fetch logic using Cloud Functions
-    async def try_endpoint(endpoint: str, attempt_region: str) -> Optional[Dict]:
+    # Proxy fetch logic with retry mechanism
+    async def try_endpoint(endpoint: str, attempt_region: str, max_retries: int = 3) -> Optional[Dict]:
         endpoint_id = endpoint_manager.get_endpoint_id(attempt_region, endpoint) or "unknown"
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                response = await client.post(
-                    f"{endpoint}/fetch",
-                    json={"url": str(proxy_request.url)},
-                    headers={"User-Agent": request.headers.get("user-agent", "DataProxy-Internal-Fetcher/1.0")}
-                )
-                response.raise_for_status()
-                data = response.json()
-                logger.info(f"Proxy fetch successful in {attempt_region} (endpoint: {endpoint_id})")
-                if data.get("result"):
-                    html_preview = data.get("result")[:200]
-                    logger.debug(f"HTML Preview for {proxy_request.url}: {html_preview}")
-                return data
-        except httpx.ConnectError as e:
-            logger.error(f"Proxy fetch connection error in {attempt_region} (endpoint: {endpoint_id}): {str(e)}")
-            return None
-        except httpx.TimeoutException as e:
-            logger.error(f"Proxy fetch timeout in {attempt_region} (endpoint: {endpoint_id}): {str(e)}")
-            return None
-        except httpx.HTTPStatusError as e:
-            logger.error(f"Proxy fetch HTTP error in {attempt_region} (endpoint: {endpoint_id}): {e.response.status_code} {str(e)}")
-            return None
-        except Exception as e:
-            logger.error(f"Unexpected proxy fetch error in {attempt_region} (endpoint: {endpoint_id}): {str(e)}")
-            return None
+        for attempt in range(1, max_retries + 1):
+            try:
+                async with httpx.AsyncClient(timeout=15.0) as client:
+                    response = await client.post(
+                        f"{endpoint}/fetch",
+                        json={"url": str(proxy_request.url)},
+                        headers={"User-Agent": request.headers.get("user-agent", "DataProxy-Internal-Fetcher/1.0")}
+                    )
+                    response.raise_for_status()
+                    data = response.json()
+                    logger.info(f"Proxy fetch successful in {attempt_region} (endpoint: {endpoint_id}, attempt: {attempt})")
+                    if data.get("result"):
+                        html_preview = data.get("result")[:200]
+                        logger.debug(f"HTML Preview for {proxy_request.url}: {html_preview}")
+                    return data
+            except httpx.ConnectError as e:
+                logger.error(f"Network error during proxy fetch in {attempt_region} (endpoint: {endpoint_id}, attempt: {attempt}): {str(e)}")
+                if attempt == max_retries:
+                    logger.warning(f"Max retries reached for {endpoint_id} in {attempt_region}")
+                    return None
+                await asyncio.sleep(1.0 * attempt)  # Exponential backoff
+            except httpx.TimeoutException as e:
+                logger.error(f"Timeout during proxy fetch in {attempt_region} (endpoint: {endpoint_id}, attempt: {attempt}): {str(e)}")
+                if attempt == max_retries:
+                    logger.warning(f"Max retries reached for {endpoint_id} in {attempt_region}")
+                    return None
+                await asyncio.sleep(1.0 * attempt)
+            except httpx.HTTPStatusError as e:
+                logger.error(f"HTTP error during proxy fetch in {attempt_region} (endpoint: {endpoint_id}, attempt: {attempt}): {e.response.status_code} {str(e)}")
+                return None
+            except Exception as e:
+                logger.error(f"Unexpected error during proxy fetch in {attempt_region} (endpoint: {endpoint_id}, attempt: {attempt}): {str(e)}")
+                return None
+        return None
 
     regions_to_try = [region] + [r for r in random.sample(list(endpoint_manager.endpoints.keys()), len(endpoint_manager.endpoints)) if r != region]
     for current_region in regions_to_try:
@@ -377,7 +401,7 @@ async def proxy_fetch_logic(
 
     logger.error(f"All proxy fetch attempts failed for user {user.email} across all available regions.")
     raise HTTPException(status_code=503, detail="No healthy proxy endpoints available across all regions.")
-    
+
 @router.post("/fetch", response_model=ProxyResponse)
 async def proxy_fetch(
     request: Request,
@@ -386,8 +410,9 @@ async def proxy_fetch(
     proxy_request: ProxyRequest,
     user: Annotated[User, Depends(verify_api_token)],
     x_api_key: Annotated[str, Header()],
+    background_tasks: BackgroundTasks,  # Added to match original
 ):
-    return await proxy_fetch_logic(request, session, region, proxy_request, user, x_api_key)
+    return await proxy_fetch_logic(request, session, region, proxy_request, user, x_api_key, background_tasks)
 
 @router.get("/serp", response_model=SerpResponse)
 async def serp_fetch(
@@ -397,6 +422,7 @@ async def serp_fetch(
     region: str,
     user: Annotated[User, Depends(verify_api_token)],
     x_api_key: Annotated[str, Header()],
+    background_tasks: BackgroundTasks,
     engine: str = "google",
 ):
     """
@@ -408,32 +434,28 @@ async def serp_fetch(
             status_code=400,
             detail=f"Unsupported engine '{engine}'. Supported: {list(SUPPORTED_ENGINES.keys())}",
         )
-    
     engine_config = SUPPORTED_ENGINES[engine]
     search_url = engine_config["base_url"].format(query=quote_plus(q))
     proxy_request = ProxyRequest(url=search_url)
-
     try:
         proxy_response = await proxy_fetch_logic(
             request=request, session=session, region=region,
-            proxy_request=proxy_request, user=user, x_api_key=x_api_key,
+            proxy_request=proxy_request, user=user, x_api_key=x_api_key, background_tasks=background_tasks
         )
     except HTTPException as e:
         logger.error(f"Proxy fetch logic failed during SERP request: {e.detail}")
         raise e
-
     html_content = proxy_response.result
     parser_func = engine_config["parser"]
     try:
         organic_results = parser_func(html_content)
         if not organic_results:
-             logger.warning(f"Parser for '{engine}' found 0 results for query '{q}'. HTML may have changed.")
+            logger.warning(f"Parser for '{engine}' found 0 results for query '{q}'. HTML may have changed.")
         else:
-             logger.info(f"Successfully parsed {len(organic_results)} results for query '{q}'")
+            logger.info(f"Successfully parsed {len(organic_results)} results for query '{q}'")
     except Exception as e:
         logger.error(f"Failed to parse SERP HTML for query '{q}': {e}")
         raise HTTPException(status_code=500, detail="Failed to parse search engine response.")
-    
     return SerpResponse(
         search_engine=engine,
         search_query=q,
@@ -451,7 +473,6 @@ async def list_user_api_keys(session: SessionDep, current_user: CurrentUser):
         APIToken.user_id == current_user.id,
         APIToken.is_active == True
     ).all()
-    
     return [
         APIKeyResponse(
             key_preview=f"{token.token[:FRONT_PREVIEW_LENGTH]}...{token.token[-END_PREVIEW_LENGTH:]}",
@@ -471,29 +492,23 @@ async def delete_api_key(
     background_tasks: BackgroundTasks
 ):
     logger.debug(f"Deleting API key with preview: {key_preview}, user: {current_user.email}")
-    
     if '...' not in key_preview:
         raise HTTPException(status_code=400, detail="Invalid key_preview format. Expected 'start...end'")
     key_start = key_preview.split('...')[0]
-    
     token = session.query(APIToken).filter(
         APIToken.user_id == current_user.id,
         APIToken.token.like(f"{key_start}%"),
         APIToken.is_active == True
     ).first()
-
     if not token:
         logger.info(f"API key deletion attempted but not found. User: {current_user.id}, Preview: {key_preview}")
         raise HTTPException(status_code=404, detail="API key not found")
-
     token_data = {
         "token_preview": f"{token.token[:FRONT_PREVIEW_LENGTH]}...{token.token[-END_PREVIEW_LENGTH:]}",
         "request_count": token.request_count
     }
-    
     session.delete(token)
     session.commit()
-
     def send_deletion_notification():
         try:
             html_content = f"""
@@ -513,7 +528,6 @@ async def delete_api_key(
             logger.info(f"Deletion notification sent for token {token_data['token_preview']}")
         except Exception as e:
             logger.error(f"Error sending deletion notification email: {e}")
-
     background_tasks.add_task(send_deletion_notification)
     logger.info(f"API key with preview {key_preview} deleted for user: {current_user.email}")
     return None
