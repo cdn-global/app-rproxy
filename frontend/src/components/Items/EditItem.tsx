@@ -1,20 +1,16 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   type ApiError,
   type ItemPublic,
@@ -69,51 +65,56 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size={{ base: "sm", md: "md" }}
-      isCentered
-    >
-      <ModalOverlay />
-      <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-        <ModalHeader>Edit Item</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          <FormControl isInvalid={!!errors.title}>
-            <FormLabel htmlFor="title">Title</FormLabel>
+    <Dialog open={isOpen} onOpenChange={(open) => (!open ? onClose() : undefined)}>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <DialogHeader>
+            <DialogTitle>Edit Item</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
             <Input
               id="title"
               {...register("title", { required: "Title is required" })}
               type="text"
+              aria-invalid={errors.title ? "true" : "false"}
+              aria-describedby={errors.title ? "title-error" : undefined}
             />
-            {errors.title && (
-              <FormErrorMessage>{errors.title.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel htmlFor="description">Description</FormLabel>
+            {errors.title ? (
+              <p className="text-sm text-destructive" id="title-error">
+                {errors.title.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
             <Input
               id="description"
               {...register("description")}
               placeholder="Description"
               type="text"
             />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter gap={3}>
-          <Button
-            variant="primary"
-            type="submit"
-            isLoading={isSubmitting}
-            isDisabled={!isDirty}
-          >
-            Save
-          </Button>
-          <Button onClick={onCancel}>Cancel</Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+          </div>
+
+          <DialogFooter className="gap-3">
+            <Button
+              variant="primary"
+              type="submit"
+              isLoading={isSubmitting}
+              loadingText="Saving"
+              disabled={!isDirty}
+            >
+              Save
+            </Button>
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

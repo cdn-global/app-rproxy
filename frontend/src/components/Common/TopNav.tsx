@@ -1,45 +1,36 @@
-import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons"
-import {
-  Box,
-  Collapse,
-  Flex,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
-  Tooltip,
-  VStack,
-  useColorMode,
-  useDisclosure,
-} from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
-import { useEffect, useRef } from "react"
-import type { CSSProperties } from "react"
-import { FaGlobe, FaServer, FaSitemap } from "react-icons/fa"
-import { FiLogOut, FiSettings, FiUserCheck, FiUsers } from "react-icons/fi"
+import { Menu, X } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { FaGlobe, FaServer } from "react-icons/fa"
+import { FiLogOut, FiUsers } from "react-icons/fi"
+import type { IconType } from "react-icons"
 
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 import type { UserPublic } from "../../client"
 import useAuth from "../../hooks/useAuth"
 import Logo from "../Common/Logo"
 
 interface NavItem {
   title: string
-  icon?: any
+  icon?: IconType
   path?: string
   onClick?: () => void
   description?: string
   subItems?: { title: string; path: string; description: string }[]
-}
-
-interface NavGroupDropdownProps {
-  item: NavItem
-  activeTextColor: string
-  hoverColor: string
-  textColor: string
 }
 
 interface NavItemsProps {
@@ -62,138 +53,57 @@ const navStructure: NavItem[] = [
   },
 ]
 
-const NavGroupDropdown = ({
-  item,
-  activeTextColor,
-  hoverColor,
-  textColor,
-}: NavGroupDropdownProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const { location } = useRouterState()
-  const { pathname } = location
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  const { title, subItems, icon } = item
-  const isGroupActive = subItems?.some((sub) => pathname.startsWith(sub.path!))
-
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    onOpen()
-  }
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      onClose()
-    }, 200)
-  }
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [])
-
-  const hoverStyles: CSSProperties = {
-    color: hoverColor,
-    background: "gray.100",
-    textDecoration: "none",
-  }
-
-  const activeStyles: CSSProperties = {
-    color: activeTextColor,
-    background: "red.100",
-  }
+const NavGroupDropdown = ({ item }: { item: NavItem }) => {
+  const { pathname } = useRouterState().location
+  const isGroupActive = item.subItems?.some((sub) => pathname.startsWith(sub.path))
 
   return (
-    <Box
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      position="relative"
-    >
-      <Menu isOpen={isOpen} gutter={4} isLazy>
-        <MenuButton
-          as={Flex}
-          px={4}
-          py={2}
-          alignItems="center"
-          cursor="pointer"
-          color={isGroupActive ? activeTextColor : textColor}
-          _hover={hoverStyles}
-          borderRadius="md"
-          transition="all 0.2s"
-          aria-label={`Open ${title} menu`}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors",
+            isGroupActive ? "text-primary" : "text-muted-foreground",
+            "hover:text-primary",
+          )}
+          aria-label={`Open ${item.title} menu`}
         >
-          {icon && <Icon as={icon} mr={2} boxSize={5} />}
-          <Text fontWeight="500" mr={1}>
-            {title}
-          </Text>
-        </MenuButton>
-        <MenuList
-          boxShadow="lg"
-          p={2}
-          borderRadius="md"
-          borderWidth={1}
-          minW="320px"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {subItems?.map((subItem) => (
-            <MenuItem
-              key={subItem.title}
-              as={RouterLink}
-              to={subItem.path}
-              onClick={onClose}
-              borderRadius="md"
-              p={3}
-              _hover={{ background: "red.50" }}
-              activeProps={{ style: activeStyles }}
-              aria-label={subItem.title}
-            >
-              <Flex align="flex-start" w="100%">
-                <VStack align="flex-start" spacing={0}>
-                  <Text fontWeight="600" color="gray.800">
-                    {subItem.title}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500" whiteSpace="normal">
-                    {subItem.description}
-                  </Text>
-                </VStack>
-              </Flex>
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-    </Box>
+          {item.icon ? <item.icon className="h-5 w-5" /> : null}
+          <span>{item.title}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-72">
+        {item.subItems?.map((subItem) => (
+          <DropdownMenuItem asChild key={subItem.title}>
+            <RouterLink to={subItem.path} className="flex flex-col gap-1">
+              <span className="text-sm font-medium text-foreground">
+                {subItem.title}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {subItem.description}
+              </span>
+            </RouterLink>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
 const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const queryClient = useQueryClient()
-  const textColor = "gray.800"
-  const disabledColor = "gray.300"
-  const hoverColor = "red.600"
-  const activeTextColor = "red.800"
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const { pathname } = useRouterState().location
   const { logout } = useAuth()
 
-  const handleLogout = async () => {
-    logout()
-    if (onClose) onClose()
-  }
-
-  const finalNavStructure: NavItem[] = [...navStructure]
-  if (
-    currentUser?.is_superuser &&
-    !finalNavStructure.some((item) => item.title === "Admin")
-  ) {
-    finalNavStructure.push({ title: "Admin", icon: FiUsers, path: "/admin" })
-  }
-
-  finalNavStructure.push({
-    title: "Sign Out",
-    icon: FiLogOut,
-    onClick: handleLogout,
-  })
+  const items = useMemo(() => {
+    const mapped: NavItem[] = [...navStructure]
+    if (currentUser?.is_superuser && !mapped.some((item) => item.title === "Admin")) {
+      mapped.push({ title: "Admin", icon: FiUsers, path: "/admin" })
+    }
+    mapped.push({ title: "Sign Out", icon: FiLogOut, onClick: logout })
+    return mapped
+  }, [currentUser, logout])
 
   const isEnabled = (title: string) => {
     return [
@@ -207,221 +117,142 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
     ].includes(title)
   }
 
-  const hoverStyles: CSSProperties = {
-    color: hoverColor,
-    background: "gray.100",
-    textDecoration: "none",
+  const textColor = "text-muted-foreground"
+  const activeClasses = "bg-primary/10 text-primary"
+  const hoverClasses = "hover:bg-muted hover:text-foreground"
+  const disabledClasses = "cursor-not-allowed text-muted-foreground"
+
+  const handleNavClick = (handler?: () => void) => {
+    return () => {
+      handler?.()
+      onClose?.()
+    }
   }
-
-  const activeStyles: CSSProperties = {
-    color: activeTextColor,
-    background: "red.100",
-  }
-
-  const disabledHoverStyles: CSSProperties = {
-    background: "gray.100",
-  }
-
-  const renderNavItems = (items: NavItem[]) =>
-    items.map((item) => {
-      const { icon, title, path, subItems, onClick } = item
-      const hasSubItems = subItems && subItems.length > 0
-
-      if (hasSubItems) {
-        if (!isMobile) {
-          return (
-            <NavGroupDropdown
-              key={item.title}
-              item={item}
-              textColor={textColor}
-              hoverColor={hoverColor}
-              activeTextColor={activeTextColor}
-            />
-          )
-        }
-
-        return (
-          <Box key={title} w="100%">
-            <Flex
-              px={4}
-              py={2}
-              color={textColor}
-              align="center"
-              _hover={{ color: hoverColor, background: "gray.100" }}
-              borderRadius="md"
-              transition="all 0.2s"
-            >
-              {icon && <Icon as={icon} mr={2} boxSize={5} />}
-              <Text fontWeight="600">{title}</Text>
-            </Flex>
-            <Flex direction="column" pl={6}>
-              {subItems.map((subItem) => (
-                <Flex
-                  key={subItem.title}
-                  as={RouterLink}
-                  to={subItem.path}
-                  px={4}
-                  py={2}
-                  color={textColor}
-                  _hover={hoverStyles}
-                  activeProps={{ style: activeStyles }}
-                  align="center"
-                  onClick={onClose}
-                  w="100%"
-                  borderRadius="md"
-                  transition="all 0.2s"
-                >
-                  <Text fontWeight="500">{subItem.title}</Text>
-                </Flex>
-              ))}
-            </Flex>
-          </Box>
-        )
-      }
-
-      const enabled = isEnabled(title)
-      if (!enabled) {
-        return (
-          <Tooltip
-            key={title}
-            label="Coming Soon"
-            placement={isMobile ? "right" : "bottom"}
-          >
-            <Flex
-              px={4}
-              py={2}
-              color={disabledColor}
-              cursor="not-allowed"
-              align="center"
-              flexDir="row"
-              _hover={disabledHoverStyles}
-              borderRadius="md"
-              transition="all 0.2s"
-            >
-              {icon && (
-                <Icon as={icon} mr={2} boxSize={5} color={disabledColor} />
-              )}
-              <Text fontWeight="500">{title}</Text>
-            </Flex>
-          </Tooltip>
-        )
-      }
-
-      const isLink = !!path
-      if (isLink) {
-        return (
-          <Flex
-            key={title}
-            as={RouterLink}
-            to={path}
-            px={4}
-            py={2}
-            color={textColor}
-            _hover={hoverStyles}
-            activeProps={{ style: activeStyles }}
-            align="center"
-            onClick={onClose}
-            w={isMobile ? "100%" : "auto"}
-            borderRadius="md"
-            transition="all 0.2s"
-            aria-label={title}
-          >
-            {icon && <Icon as={icon} mr={2} boxSize={5} />}
-            <Text fontWeight="500">{title}</Text>
-          </Flex>
-        )
-      }
-      return (
-        <Flex
-          key={title}
-          as="button"
-          px={4}
-          py={2}
-          color={textColor}
-          _hover={hoverStyles}
-          align="center"
-          onClick={() => {
-            if (onClick) onClick()
-            if (onClose) onClose()
-          }}
-          w={isMobile ? "100%" : "auto"}
-          borderRadius="md"
-          transition="all 0.2s"
-          aria-label={title}
-        >
-          {icon && <Icon as={icon} mr={2} boxSize={5} />}
-          <Text fontWeight="500">{title}</Text>
-        </Flex>
-      )
-    })
 
   return (
-    <Flex
-      align="center"
-      gap={isMobile ? 2 : 4}
-      flexDir={isMobile ? "column" : "row"}
-      w={isMobile ? "100%" : "auto"}
-    >
-      {renderNavItems(finalNavStructure)}
-    </Flex>
+    <TooltipProvider>
+      <div
+        className={cn(
+          "flex items-center",
+          isMobile ? "flex-col gap-2" : "gap-4",
+        )}
+      >
+        {items.map((item) => {
+          const hasSubItems = item.subItems?.length
+          const isExternal = item.path?.startsWith("http")
+          const active = item.path ? pathname.startsWith(item.path) : false
+
+          if (hasSubItems && item.subItems) {
+            return (
+              <NavGroupDropdown key={item.title} item={item} />
+            )
+          }
+
+          if (!isEnabled(item.title) && !item.onClick) {
+            return (
+              <Tooltip key={item.title}>
+                <TooltipTrigger asChild>
+                  <span className={cn("inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium", disabledClasses)}>
+                    {item.icon ? <item.icon className="h-5 w-5" /> : null}
+                    {item.title}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>Coming soon</TooltipContent>
+              </Tooltip>
+            )
+          }
+
+          const baseClasses = cn(
+            "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+            textColor,
+            hoverClasses,
+            active ? activeClasses : null,
+            isMobile ? "w-full justify-start" : undefined,
+          )
+
+          if (item.onClick) {
+            return (
+              <button
+                key={item.title}
+                type="button"
+                className={baseClasses}
+                onClick={handleNavClick(item.onClick)}
+              >
+                {item.icon ? <item.icon className="h-5 w-5" /> : null}
+                {item.title}
+              </button>
+            )
+          }
+
+          if (item.path && isExternal) {
+            return (
+              <a
+                key={item.title}
+                href={item.path}
+                target="_blank"
+                rel="noreferrer"
+                className={baseClasses}
+                onClick={handleNavClick()}
+              >
+                {item.icon ? <item.icon className="h-5 w-5" /> : null}
+                {item.title}
+              </a>
+            )
+          }
+
+          return (
+            <RouterLink
+              key={item.title}
+              to={item.path ?? "/"}
+              className={baseClasses}
+              onClick={handleNavClick()}
+            >
+              {item.icon ? <item.icon className="h-5 w-5" /> : null}
+              {item.title}
+            </RouterLink>
+          )
+        })}
+      </div>
+    </TooltipProvider>
   )
 }
 
 const TopNav = () => {
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure()
-  const { colorMode } = useColorMode()
-  const textColor = "gray.800"
-  const hoverColor = "red.600"
-  const activeTextColor = "red.800"
-  const btnRef = useRef<HTMLButtonElement>(null)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const { location } = useRouterState()
+
+  useEffect(() => {
+    setIsMobileOpen(false)
+  }, [location.pathname])
 
   return (
-    <Box
-      bg={colorMode === "light" ? "gray.50" : "gray.800"}
-      px={4}
-      py={2}
-      position="sticky"
-      top="0"
-      zIndex="sticky"
-      boxShadow="sm"
-      w="100%"
-      borderBottomWidth="1px"
-      borderBottomColor={colorMode === "light" ? "gray.300" : "gray.600"}
-    >
-      <Flex
-        align="center"
-        maxW="1200px"
-        mx="auto"
-        w="100%"
-        justify="space-between"
-      >
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
-          to="/"
-          width={{ base: "80px", md: "110px" }}
+          imgClassName="w-20 md:w-28"
         />
-        <Flex align="center" gap={4}>
-          <Box display={{ base: "none", md: "block" }}>
-            <NavItems />
-          </Box>
-          <IconButton
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            display={{ base: "block", md: "none" }}
-            onClick={onToggle}
-            variant="ghost"
-            size="lg"
-            ref={btnRef}
-          />
-        </Flex>
-      </Flex>
-      <Collapse in={isOpen} animateOpacity>
-        <Box display={{ base: "block", md: "none" }} mt={4}>
-          <NavItems isMobile onClose={onClose} />
-        </Box>
-      </Collapse>
-    </Box>
+        <div className="hidden md:block">
+          <NavItems />
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsMobileOpen((prev) => !prev)}
+          aria-label={isMobileOpen ? "Close menu" : "Open menu"}
+        >
+          {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
+      </div>
+      {isMobileOpen ? (
+        <div className="mt-3 px-1 md:hidden">
+          <NavItems isMobile onClose={() => setIsMobileOpen(false)} />
+        </div>
+      ) : null}
+    </header>
   )
 }
 

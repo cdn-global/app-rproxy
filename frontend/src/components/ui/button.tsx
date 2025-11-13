@@ -11,7 +11,11 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        primary:
+          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         destructive:
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        danger:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
@@ -38,18 +42,36 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  isLoading?: boolean
+  loadingText?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, isLoading, loadingText, children, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button"
+
+    const content = isLoading ? (
+      <span className="inline-flex items-center gap-2">
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        <span>{loadingText ?? "Loading..."}</span>
+      </span>
+    ) : (
+      children
+    )
 
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
+        data-loading={isLoading ? "true" : undefined}
+        disabled={isLoading || props.disabled}
         ref={ref}
         {...props}
-      />
+      >
+        {content}
+      </Comp>
     )
   },
 )

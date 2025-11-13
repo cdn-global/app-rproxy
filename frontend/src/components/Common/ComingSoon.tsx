@@ -1,52 +1,35 @@
-import { Box, Button, Link, Text, VStack } from "@chakra-ui/react"
 import type React from "react"
+
+import { Button } from "@/components/ui/button"
 
 const ComingSoon: React.FC = () => {
   return (
-    <Box maxW="100%" mx="auto" px={{ base: 6, md: 12 }} py={12}>
-      <VStack
-        spacing={8}
-        align="center"
-        justify="center"
-        maxW="600px"
-        mx="auto"
-      >
-        <Text
-          fontSize={{ base: "sm", md: "md" }}
-          color="gray.600"
-          textAlign="center"
-        >
+    <section className="mx-auto max-w-3xl px-6 py-12 text-center">
+      <div className="flex flex-col items-center justify-center gap-6">
+        <p className="text-sm text-muted-foreground md:text-base">
           Account is not linked to a valid subscription
-        </Text>
-        <Button
-          as="a"
-          href="https://ROAMINGPROXY.com/pricing"
-          target="_blank"
-          rel="noopener noreferrer"
-          colorScheme="blue"
-          size="md"
-          px={6}
-        >
-          Explore Plans
+        </p>
+        <Button asChild className="px-6">
+          <a
+            href="https://ROAMINGPROXY.com/pricing"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Explore Plans
+          </a>
         </Button>
-        <Text
-          fontSize={{ base: "sm", md: "md" }}
-          color="gray.600"
-          textAlign="center"
-        >
+        <p className="text-sm text-muted-foreground md:text-base">
           If you have purchased a subscription, please{" "}
-          <Link
+          <a
             href="mailto:support@ROAMINGPROXY.com"
-            color="red.500"
-            textDecoration="underline"
-            _hover={{ color: "red.700" }}
+            className="font-semibold text-primary underline-offset-4 hover:underline"
           >
             contact support
-          </Link>{" "}
+          </a>{" "}
           using the same email address used for the purchase.
-        </Text>
-      </VStack>
-    </Box>
+        </p>
+      </div>
+    </section>
   )
 }
 

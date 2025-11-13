@@ -1,4 +1,3 @@
-import { Box, Flex, Icon, Link, Text, VStack } from "@chakra-ui/react"
 import {
   FiBook,
   FiGithub,
@@ -9,194 +8,150 @@ import {
 } from "react-icons/fi"
 import Logo from "../Common/Logo"
 const Footer = () => {
-  const textColor = "white" // White for maximum contrast and readability on red
-  const accentColor = "gray.200" // Light gray for subtle highlights
-  const hoverColor = "gray.400" // Slightly darker gray for hover states`
-
   return (
-    <Box bg="#c00d0f" py={3} px={4} boxShadow="sm" w="100%">
-      <Flex
-        maxW="1200px"
-        mx="auto"
-        direction={{ base: "column", md: "row" }}
-        align={{ base: "center", md: "center" }}
-        justify="space-between"
-        gap={{ base: 4, md: 8 }}
-        textAlign={{ base: "center", md: "left" }}
-        flexWrap={{ base: "wrap", md: "nowrap" }}
-      >
-        {/* Company Info */}
-        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+    <footer className="w-full bg-[#c00d0f] py-4 text-white shadow-sm">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6 px-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
+        <div className="flex flex-col items-center gap-2 md:items-start">
           <Logo
             src="/assets/images/roaming-proxy-network-logo.png"
             alt="Roaming Proxy Logo"
-            to="/"
-            width={{ base: "80px", md: "110px" }}
+            imgClassName="w-20 md:w-28"
           />
-          <Text color={textColor} fontSize="xs" maxW="200px">
+          <p className="max-w-[200px] text-xs text-gray-100">
             Enterprise proxy and scraping solutions for web data.
-          </Text>
-        </VStack>
+          </p>
+        </div>
 
-        {/* Contact Info */}
-        <VStack spacing={1} align={{ base: "center", md: "start" }}>
-          <Flex align="center" gap={1}>
-            <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
-            <Link
-              href="tel:+18334353873"
-              color={textColor}
-              fontSize="xs"
-              _hover={{ color: hoverColor }}
-            >
-              +1 (833) 435-3873
-            </Link>
-          </Flex>
-          <Flex align="center" gap={1}>
-            <Icon as={FiMail} color={textColor} boxSize="0.9em" />
-            <Link
-              href="mailto:info@roamingproxy.com"
-              color={textColor}
-              fontSize="xs"
-              _hover={{ color: hoverColor }}
-            >
-              info@roamingproxy.com
-            </Link>
-          </Flex>
-        </VStack>
+        <div className="flex flex-col items-center gap-1 text-xs md:items-start">
+          <a
+            href="tel:+18334353873"
+            className="inline-flex items-center gap-2 transition hover:text-gray-200"
+          >
+            <FiPhone className="h-3.5 w-3.5" /> +1 (833) 435-3873
+          </a>
+          <a
+            href="mailto:info@roamingproxy.com"
+            className="inline-flex items-center gap-2 transition hover:text-gray-200"
+          >
+            <FiMail className="h-3.5 w-3.5" /> info@roamingproxy.com
+          </a>
+        </div>
 
-        {/* Support Links */}
-        <VStack spacing={1} align={{ base: "center", md: "start" }}>
-          <Link
+        <div className="flex flex-col items-center gap-1 text-xs md:items-start">
+          <a
             href="https://ROAMINGPROXY.com/resources/faq"
-            isExternal
-            color={textColor}
-            fontSize="xs"
-            _hover={{ color: hoverColor }}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-gray-200"
           >
             FAQ
-          </Link>
-          <Link
+          </a>
+          <a
             href="https://ROAMINGPROXY.com/contact"
-            isExternal
-            color={textColor}
-            fontSize="xs"
-            _hover={{ color: hoverColor }}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-gray-200"
           >
             Help & Support
-          </Link>
-        </VStack>
+          </a>
+        </div>
 
-        {/* Legal Links */}
-        <VStack spacing={1} align={{ base: "center", md: "start" }}>
-          <Link
+        <div className="flex flex-col items-center gap-1 text-xs md:items-start">
+          <a
             href="https://ROAMINGPROXY.com/privacy"
-            isExternal
-            color={textColor}
-            fontSize="xs"
-            _hover={{ color: hoverColor }}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-gray-200"
           >
             Privacy Policy
-          </Link>
-          <Link
+          </a>
+          <a
             href="https://ROAMINGPROXY.com/terms"
-            isExternal
-            color={textColor}
-            fontSize="xs"
-            _hover={{ color: hoverColor }}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-gray-200"
           >
             Terms of Service
-          </Link>
-        </VStack>
+          </a>
+        </div>
 
-        {/* Additional Legal Links */}
-        <VStack spacing={1} align={{ base: "center", md: "start" }}>
-          <Link
+        <div className="flex flex-col items-center gap-1 text-xs md:items-start">
+          <a
             href="https://ROAMINGPROXY.com/cookie"
-            isExternal
-            color={textColor}
-            fontSize="xs"
-            _hover={{ color: hoverColor }}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-gray-200"
           >
             Cookie Policy
-          </Link>
-          <Link
+          </a>
+          <a
             href="https://ROAMINGPROXY.com/compliance"
-            isExternal
-            color={textColor}
-            fontSize="xs"
-            _hover={{ color: hoverColor }}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-gray-200"
           >
             Compliance
-          </Link>
-        </VStack>
+          </a>
+        </div>
 
-        {/* Cobalt Data Section */}
-        <VStack spacing={1} align={{ base: "center", md: "start" }}>
-          <Flex gap={3}>
-            <Link href="https://x.com/cobaltdata" isExternal>
-              <Icon
-                as={FiTwitter}
-                color={textColor}
-                _hover={{ color: hoverColor }}
-                boxSize="1em"
-              />
-            </Link>
-            <Link href="https://github.com/cdn-global" isExternal>
-              <Icon
-                as={FiGithub}
-                color={textColor}
-                _hover={{ color: hoverColor }}
-                boxSize="1em"
-              />
-            </Link>
-            <Link href="https://cobaltdata.net" isExternal>
-              <Icon
-                as={FiGlobe}
-                color={textColor}
-                _hover={{ color: hoverColor }}
-                boxSize="1em"
-              />
-            </Link>
-            <Link href="https://docs.roamingproxy.com/" isExternal>
-              <Icon
-                as={FiBook}
-                color={textColor}
-                _hover={{ color: hoverColor }}
-                boxSize="1em"
-              />
-            </Link>
-          </Flex>
-        </VStack>
-      </Flex>
+        <div className="flex items-center gap-4 text-white">
+          <a
+            href="https://x.com/cobaltdata"
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:text-gray-200"
+          >
+            <FiTwitter className="h-4 w-4" />
+          </a>
+          <a
+            href="https://github.com/cdn-global"
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:text-gray-200"
+          >
+            <FiGithub className="h-4 w-4" />
+          </a>
+          <a
+            href="https://cobaltdata.net"
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:text-gray-200"
+          >
+            <FiGlobe className="h-4 w-4" />
+          </a>
+          <a
+            href="https://docs.roamingproxy.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:text-gray-200"
+          >
+            <FiBook className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
 
-      {/* Copyright and Links */}
-      <Text
-        color={textColor}
-        fontSize="xs"
-        textAlign="center"
-        mt={{ base: 3, md: 2 }}
-      >
-        © 2025{" "}
-        <Link
+      <p className="mt-4 text-center text-xs text-gray-100">
+        © 2025
+        <a
           href="https://ROAMINGPROXY.com"
-          isExternal
-          color={textColor}
-          _hover={{ color: accentColor }}
+          target="_blank"
+          rel="noreferrer"
+          className="mx-1 hover:text-gray-200"
         >
           ROAMINGPROXY.com
-        </Link>
-        ,{" "}
-        <Link
+        </a>
+        ,
+        <a
           href="https://tradevaultllc.com/"
-          isExternal
-          color={textColor}
-          _hover={{ color: hoverColor }}
+          target="_blank"
+          rel="noreferrer"
+          className="ml-1 hover:text-gray-200"
         >
           Trade Vault LLC
-        </Link>
+        </a>
         . All rights reserved.
-      </Text>
-    </Box>
+      </p>
+    </footer>
   )
 }
 
