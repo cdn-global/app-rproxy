@@ -23,4 +23,6 @@ COPY --from=build-stage /app/dist/ /usr/share/nginx/html
 COPY ./nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY ./nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.conf
 
-CMD ["/bin/bash", "-c", "envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+EXPOSE 80
+
+CMD ["/bin/bash", "-c", "envsubst '${PORT}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]

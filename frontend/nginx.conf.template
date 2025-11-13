@@ -1,6 +1,6 @@
 server {
-  listen ${PORT};
-  server_name cloud.roamingproxy.com;
+  listen 8080;
+  server_name _;
   root /usr/share/nginx/html;
   location / {
     try_files $uri $uri/ /index.html;
