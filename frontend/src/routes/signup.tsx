@@ -1,16 +1,16 @@
 import {
+  Box,
   Button,
   Container,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Image,
   Input,
   Link,
   Text,
-  Box,
-  Heading,
 } from "@chakra-ui/react"
 import {
   Link as RouterLink,
@@ -18,8 +18,8 @@ import {
   redirect,
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import Logo from "../components/Common/Logo"
 import type { UserRegister } from "../client"
+import Logo from "../components/Common/Logo"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { confirmPasswordRules, emailPattern, passwordRules } from "../utils"
 
@@ -61,16 +61,16 @@ function SignUp() {
   }
 
   return (
-    <Container 
-      maxW="container.xl" 
-      p={{ base: 4, md: 0 }} 
-      minH="100vh" 
-      display="flex" 
+    <Container
+      maxW="container.xl"
+      p={{ base: 4, md: 0 }}
+      minH="100vh"
+      display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
+      <Flex
+        direction={{ base: "column", md: "row" }}
         width="100%"
         maxW={{ base: "100%", md: "container.xl" }}
         bg="white"
@@ -88,26 +88,25 @@ function SignUp() {
           alignItems="flex-start"
           borderRadius={{ base: "lg lg 0 0", md: "md 0 0 md" }}
         >
-          <Heading 
-            as="h1" 
-            size={{ base: "lg", md: "xl" }} 
-            mb={{ base: 4, md: 6 }} 
+          <Heading
+            as="h1"
+            size={{ base: "lg", md: "xl" }}
+            mb={{ base: 4, md: 6 }}
             color="gray.800"
           >
             Access Your Data Needs
           </Heading>
-          <Text 
-            fontSize={{ base: "md", md: "lg" }} 
-            color="gray.600" 
+          <Text
+            fontSize={{ base: "md", md: "lg" }}
+            color="gray.600"
             mb={{ base: 3, md: 4 }}
           >
-            Sign up to wield cutting-edge tools and transform your data into pure power.
+            Sign up to wield cutting-edge tools and transform your data into
+            pure power.
           </Text>
-          <Text 
-            fontSize={{ base: "sm", md: "md" }} 
-            color="gray.500"
-          >
-            Curious how far you can go? Our expert crew and secret knowledge base are your launchpad to greatness.
+          <Text fontSize={{ base: "sm", md: "md" }} color="gray.500">
+            Curious how far you can go? Our expert crew and secret knowledge
+            base are your launchpad to greatness.
           </Text>
         </Box>
 
@@ -123,14 +122,18 @@ function SignUp() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-      <Logo
-      src="/assets/images/roaming-proxy-network-logo.png"
-      alt="Roaming Proxy Logo"
-      to="/"
-      width="110px"
-    />
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            to="/"
+            width="110px"
+          />
 
-          <FormControl id="full_name" isInvalid={!!errors.full_name} width="100%">
+          <FormControl
+            id="full_name"
+            isInvalid={!!errors.full_name}
+            width="100%"
+          >
             <FormLabel htmlFor="full_name" srOnly>
               Full Name
             </FormLabel>
@@ -182,7 +185,11 @@ function SignUp() {
             )}
           </FormControl>
 
-          <FormControl id="confirm_password" isInvalid={!!errors.confirm_password} width="100%">
+          <FormControl
+            id="confirm_password"
+            isInvalid={!!errors.confirm_password}
+            width="100%"
+          >
             <FormLabel htmlFor="confirm_password" srOnly>
               Confirm Password
             </FormLabel>
@@ -194,14 +201,16 @@ function SignUp() {
               size={{ base: "md", md: "lg" }}
             />
             {errors.confirm_password && (
-              <FormErrorMessage>{errors.confirm_password.message}</FormErrorMessage>
+              <FormErrorMessage>
+                {errors.confirm_password.message}
+              </FormErrorMessage>
             )}
           </FormControl>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
-            isLoading={isSubmitting} 
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={isSubmitting}
             width="100%"
             size={{ base: "md", md: "lg" }}
           >
@@ -210,11 +219,7 @@ function SignUp() {
 
           <Text fontSize={{ base: "sm", md: "md" }}>
             Already have an account?{" "}
-            <Link 
-              as={RouterLink} 
-              to="/login" 
-              color="red.500"
-            >
+            <Link as={RouterLink} to="/login" color="red.500">
               Log In
             </Link>
           </Text>

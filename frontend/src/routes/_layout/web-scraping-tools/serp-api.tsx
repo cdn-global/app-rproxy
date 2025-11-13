@@ -1,95 +1,99 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { AddIcon, CopyIcon, DeleteIcon } from "@chakra-ui/icons"
 import {
-  Container,
-  Flex,
-  Text,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Box,
-  Heading,
   Alert,
-  AlertIcon,
-  Link,
-  Code,
-  Textarea,
-  Divider,
-  IconButton,
-  Button,
-  useClipboard,
-  useToast,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  TableCaption,
-  Spinner,
-  Badge,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   AlertDialog,
   AlertDialogBody,
+  AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogContent,
   AlertDialogOverlay,
+  AlertIcon,
+  Badge,
+  Box,
+  Button,
+  Code,
+  Container,
+  Divider,
+  Flex,
   HStack,
-} from "@chakra-ui/react";
-import { CopyIcon, AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import ProtectedComponent from "../../../components/Common/ProtectedComponent";
-import PlaygroundSerpApi from "../../../components/ScrapingTools/PlaygroundSerp";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import ApiKeyModule from "../../../components/ScrapingTools/ApiKey";
+  Heading,
+  IconButton,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tabs,
+  Tbody,
+  Td,
+  Text,
+  Textarea,
+  Th,
+  Thead,
+  Tr,
+  useClipboard,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import { useRef, useState } from "react"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
+import ProtectedComponent from "../../../components/Common/ProtectedComponent"
+import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
+import PlaygroundSerpApi from "../../../components/ScrapingTools/PlaygroundSerp"
 
 // --- Interfaces and Helper Functions ---
 interface Subscription {
-  id: string;
-  status: string;
-  plan_id: string | null;
-  plan_name: string | null;
-  product_id: string | null;
-  product_name: string | null;
-  current_period_start: number | null;
-  current_period_end: number | null;
-  trial_start: number | null;
-  trial_end: number | null;
-  cancel_at_period_end: boolean;
+  id: string
+  status: string
+  plan_id: string | null
+  plan_name: string | null
+  product_id: string | null
+  product_name: string | null
+  current_period_start: number | null
+  current_period_end: number | null
+  trial_start: number | null
+  trial_end: number | null
+  cancel_at_period_end: boolean
 }
 
 interface ProxyApiAccess {
-  has_access: boolean;
-  message: string | null;
+  has_access: boolean
+  message: string | null
 }
 
 interface ApiKey {
-  key_preview: string;
-  created_at: string;
-  expires_at: string;
-  is_active: boolean;
-  request_count: number;
+  key_preview: string
+  created_at: string
+  expires_at: string
+  is_active: boolean
+  request_count: number
 }
 
-const API_URL = "https://api.ROAMINGPROXY.com/v2";
+const API_URL = "https://api.ROAMINGPROXY.com/v2"
 
 // --- API Fetching Functions ---
 
-async function fetchFromApi(endpoint: string, token: string, options: RequestInit = {}) {
+async function fetchFromApi(
+  endpoint: string,
+  token: string,
+  options: RequestInit = {},
+) {
   if (!token) {
-    throw new Error("No access token found. Please log in again.");
+    throw new Error("No access token found. Please log in again.")
   }
 
   const response = await fetch(`${API_URL}${endpoint}`, {
@@ -99,62 +103,73 @@ async function fetchFromApi(endpoint: string, token: string, options: RequestIni
       Authorization: `Bearer ${token}`,
       ...options.headers,
     },
-  });
+  })
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(() => ({}))
     throw new Error(
-      errorData.detail || `API request failed: ${response.status}`
-    );
+      errorData.detail || `API request failed: ${response.status}`,
+    )
   }
-  return response.json();
+  return response.json()
 }
 
 const fetchSubscriptions = (token: string): Promise<Subscription[]> =>
-  fetchFromApi("/customer/subscriptions", token);
+  fetchFromApi("/customer/subscriptions", token)
 
 const fetchProxyApiAccess = (token: string): Promise<ProxyApiAccess> =>
-  fetchFromApi("/serp-api/access", token);
+  fetchFromApi("/serp-api/access", token)
 
 const fetchApiKeys = (token: string): Promise<ApiKey[]> =>
   fetchFromApi("/proxy/api-keys", token).then((data: any[]) =>
     data.map((key) => ({
       ...key,
       request_count: key.request_count ?? 0,
-    }))
-  );
+    })),
+  )
 
 // --- CodeBlock Component ---
-const CodeBlock = ({ code, language, bg = "gray.800", ...rest }: { code: string; language: string; bg?: string; [key: string]: any }) => {
-  const { onCopy } = useClipboard(code.trim());
-  const toast = useToast();
+const CodeBlock = ({
+  code,
+  language,
+  bg = "gray.800",
+  ...rest
+}: { code: string; language: string; bg?: string; [key: string]: any }) => {
+  const { onCopy } = useClipboard(code.trim())
+  const toast = useToast()
 
   const handleCopy = () => {
-    onCopy();
+    onCopy()
     toast({
       title: "Copied to clipboard",
       status: "success",
       duration: 2000,
       isClosable: true,
       position: "top",
-    });
-  };
+    })
+  }
 
   return (
-    <Box position="relative" bg={bg} borderRadius="md" overflow="hidden" {...rest}>
+    <Box
+      position="relative"
+      bg={bg}
+      borderRadius="md"
+      overflow="hidden"
+      {...rest}
+    >
       <SyntaxHighlighter
         language={language}
         style={vscDarkPlus}
         customStyle={{
           margin: 0,
-          padding: '2rem 1rem 1rem 1rem',
-          fontSize: '0.9rem', 
-          backgroundColor: 'transparent',
+          padding: "2rem 1rem 1rem 1rem",
+          fontSize: "0.9rem",
+          backgroundColor: "transparent",
         }}
         codeTagProps={{
           style: {
             fontFamily: "var(--chakra-fonts-mono)",
-          }
+          },
         }}
         showLineNumbers
       >
@@ -173,11 +188,12 @@ const CodeBlock = ({ code, language, bg = "gray.800", ...rest }: { code: string;
         _hover={{ bg: "whiteAlpha.200", color: "white" }}
       />
     </Box>
-  );
-};
+  )
+}
 
 // --- Constants ---
-const API_ENDPOINT = "https://api.ROAMINGPROXY.com/v2/serp?q=best%20pizza%20in%20new%20york&engine=google®ion=us-east";
+const API_ENDPOINT =
+  "https://api.ROAMINGPROXY.com/v2/serp?q=best%20pizza%20in%20new%20york&engine=google®ion=us-east"
 
 const CODE_EXAMPLES = {
   curl: `curl -X GET "${API_ENDPOINT}" \\
@@ -232,36 +248,53 @@ fetch(url, options)
         return res.json();
     })
     .then(json => console.log(json))
-    .catch(err => console.error('error:' + err));`
-};
+    .catch(err => console.error('error:' + err));`,
+}
 
 const codeTabs = [
- 
-  { id: 'javascript', label: 'JavaScript', code: CODE_EXAMPLES.javascript, language: 'javascript' },
- { id: 'python', label: 'Python', code: CODE_EXAMPLES.python, language: 'python' },
-    { id: 'curl', label: 'cURL', code: CODE_EXAMPLES.curl, language: 'bash' },
-];
+  {
+    id: "javascript",
+    label: "JavaScript",
+    code: CODE_EXAMPLES.javascript,
+    language: "javascript",
+  },
+  {
+    id: "python",
+    label: "Python",
+    code: CODE_EXAMPLES.python,
+    language: "python",
+  },
+  { id: "curl", label: "cURL", code: CODE_EXAMPLES.curl, language: "bash" },
+]
 
 // --- Get Started Tab Component ---
 const GetStartedTab = () => {
   return (
     <Box>
       <Text fontSize="lg" mb={2} color="gray.700">
-        This tool allows you to programmatically fetch search engine results pages.
+        This tool allows you to programmatically fetch search engine results
+        pages.
       </Text>
       <Text fontSize="lg" mb={4} color="gray.700">
-        To get started, create an API key in the API Keys tab and use it in your requests. Remember to replace <Code fontSize="sm">YOUR_API_KEY</Code> with your actual key.
+        To get started, create an API key in the API Keys tab and use it in your
+        requests. Remember to replace <Code fontSize="sm">YOUR_API_KEY</Code>{" "}
+        with your actual key.
       </Text>
-      <Divider mb={4}></Divider>
+      <Divider mb={4} />
       <Tabs variant="enclosed" colorScheme="red">
         <TabList>
           {codeTabs.map((tab) => (
-            <Tab 
+            <Tab
               key={tab.id}
               fontWeight="semibold"
               fontSize="lg"
               color="gray.400"
-              _selected={{ bg: "gray.800", color: "red.400", borderColor: "inherit", borderBottomColor: "gray.800" }}
+              _selected={{
+                bg: "gray.800",
+                color: "red.400",
+                borderColor: "inherit",
+                borderBottomColor: "gray.800",
+              }}
             >
               {tab.label}
             </Tab>
@@ -270,83 +303,120 @@ const GetStartedTab = () => {
         <TabPanels>
           {codeTabs.map((tab) => (
             <TabPanel key={tab.id} p={0}>
-              <CodeBlock code={tab.code} language={tab.language} bg="gray.800" />
+              <CodeBlock
+                code={tab.code}
+                language={tab.language}
+                bg="gray.800"
+              />
             </TabPanel>
           ))}
         </TabPanels>
       </Tabs>
 
       <Box pt={8}>
-        <Box p={4} borderWidth="1px" borderRadius="md" bg="red.50" borderColor="red.200">
-            <Heading size="md" mb={2} color="gray.800">Need Help?</Heading>
-            <Text fontSize="md" color="gray.700">
-              Check our detailed{" "}
-              <Link color="red.600" fontWeight="bold" href="/documentation/serp-api" isExternal>
-                API Documentation
-              </Link>{" "}
-              for more examples. For further assistance, contact our{" "}
-              <Link color="red.600" fontWeight="bold" href="/support" isExternal>
-                Support Center
-              </Link>.
-            </Text>
+        <Box
+          p={4}
+          borderWidth="1px"
+          borderRadius="md"
+          bg="red.50"
+          borderColor="red.200"
+        >
+          <Heading size="md" mb={2} color="gray.800">
+            Need Help?
+          </Heading>
+          <Text fontSize="md" color="gray.700">
+            Check our detailed{" "}
+            <Link
+              color="red.600"
+              fontWeight="bold"
+              href="/documentation/serp-api"
+              isExternal
+            >
+              API Documentation
+            </Link>{" "}
+            for more examples. For further assistance, contact our{" "}
+            <Link color="red.600" fontWeight="bold" href="/support" isExternal>
+              Support Center
+            </Link>
+            .
+          </Text>
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
 const pageTabsData = [
   { id: "get-started", label: "Get Started", component: <GetStartedTab /> },
   { id: "keys", label: "Credentials" },
   // { id: "playground", label: "Playground", component: <PlaygroundSerpApi /> },
-];
+]
 
 // --- Main SERP API Page Component ---
 const SerpApiPage = () => {
-  const token = localStorage.getItem("access_token") || "";
+  const token = localStorage.getItem("access_token") || ""
 
-  const { data: subscriptions, isLoading: isSubscriptionsLoading, error: subscriptionsError } = useQuery({
+  const {
+    data: subscriptions,
+    isLoading: isSubscriptionsLoading,
+    error: subscriptionsError,
+  } = useQuery({
     queryKey: ["subscriptions"],
     queryFn: () => fetchSubscriptions(token),
     enabled: !!token,
     staleTime: 5 * 60 * 1000,
-  });
+  })
 
-  const { data: proxyApiAccess, isLoading: isAccessLoading, error: accessError } = useQuery({
+  const {
+    data: proxyApiAccess,
+    isLoading: isAccessLoading,
+    error: accessError,
+  } = useQuery({
     queryKey: ["proxyApiAccess"],
     queryFn: () => fetchProxyApiAccess(token),
     enabled: !!token,
     staleTime: 5 * 60 * 1000,
-  });
+  })
 
-  const hasActiveSubscription = subscriptions?.some(
-    (sub) => ["active", "trialing"].includes(sub.status)
-  ) || false;
+  const hasActiveSubscription =
+    subscriptions?.some((sub) => ["active", "trialing"].includes(sub.status)) ||
+    false
 
-  const isLoading = isSubscriptionsLoading || isAccessLoading;
-  const error = subscriptionsError || accessError;
+  const isLoading = isSubscriptionsLoading || isAccessLoading
+  const error = subscriptionsError || accessError
 
   return (
-      <ProtectedComponent>
-          <Container maxW="full" py={9}>
-             <Flex align="center" justify="space-between" py={6}>
-                 <Text fontSize="3xl" color="black" >SERP API</Text>
-                 <Text fontSize="lg" color="gray.600">Search Engine Results Page</Text>
-           </Flex>
+    <ProtectedComponent>
+      <Container maxW="full" py={9}>
+        <Flex align="center" justify="space-between" py={6}>
+          <Text fontSize="3xl" color="black">
+            SERP API
+          </Text>
+          <Text fontSize="lg" color="gray.600">
+            Search Engine Results Page
+          </Text>
+        </Flex>
 
         {isLoading ? (
-          <Flex justify="center" align="center" h="50vh"><Spinner /></Flex>
+          <Flex justify="center" align="center" h="50vh">
+            <Spinner />
+          </Flex>
         ) : error ? (
           <Alert status="error">
             <AlertIcon />
             <Text fontSize="sm">
-              Error: {error.message || "Failed to load user details. Please try again later."}
+              Error:{" "}
+              {error.message ||
+                "Failed to load user details. Please try again later."}
             </Text>
           </Alert>
         ) : !hasActiveSubscription ? (
           <Alert status="warning">
             <AlertIcon />
-            <Text fontSize="sm">No active subscription found. Please subscribe to a plan to use the SERP API.</Text>
+            <Text fontSize="sm">
+              No active subscription found. Please subscribe to a plan to use
+              the SERP API.
+            </Text>
           </Alert>
         ) : (
           <>
@@ -354,11 +424,12 @@ const SerpApiPage = () => {
               <Alert status="warning" mb={4}>
                 <AlertIcon />
                 <Text fontSize="sm">
-                  {proxyApiAccess?.message || "Your current plan does not include SERP API access. Please upgrade to an eligible plan."}
+                  {proxyApiAccess?.message ||
+                    "Your current plan does not include SERP API access. Please upgrade to an eligible plan."}
                 </Text>
               </Alert>
             )}
-           <Tabs isLazy variant="enclosed-colored" colorScheme="red">
+            <Tabs isLazy variant="enclosed-colored" colorScheme="red">
               <TabList>
                 {pageTabsData.map((tab) => (
                   <Tab
@@ -371,35 +442,39 @@ const SerpApiPage = () => {
                       bg: "gray.50",
                       color: "red.600",
                       borderColor: "inherit",
-                      borderBottomColor: "gray.50", 
-                      borderTopWidth: "2px", 
-                      borderTopColor: "red.400", 
-                      marginTop: "-1px", 
+                      borderBottomColor: "gray.50",
+                      borderTopWidth: "2px",
+                      borderTopColor: "red.400",
+                      marginTop: "-1px",
                     }}
                   >
                     {tab.label}
                   </Tab>
                 ))}
               </TabList>
-              
+
               <TabPanels bg="gray.50" pt={4} borderRadius="0 0 md md">
-                <TabPanel><GetStartedTab /></TabPanel>
+                <TabPanel>
+                  <GetStartedTab />
+                </TabPanel>
                 <TabPanel>
                   <ApiKeyModule token={token} />
                 </TabPanel>
-                <TabPanel><PlaygroundSerpApi /></TabPanel>
+                <TabPanel>
+                  <PlaygroundSerpApi />
+                </TabPanel>
               </TabPanels>
             </Tabs>
           </>
         )}
       </Container>
     </ProtectedComponent>
-  );
-};
+  )
+}
 
 // --- Route Definition ---
 export const Route = createFileRoute("/_layout/web-scraping-tools/serp-api")({
   component: SerpApiPage,
-});
+})
 
-export default SerpApiPage;
+export default SerpApiPage

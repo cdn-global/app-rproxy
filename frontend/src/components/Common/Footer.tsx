@@ -1,203 +1,203 @@
+import { Box, Flex, Icon, Link, Text, VStack } from "@chakra-ui/react"
 import {
-    Box,
-    Flex,
-    Text,
-    Link,
-    Icon,
-    VStack,
-} from "@chakra-ui/react";
-import { FiPhone, FiMail, FiTwitter, FiGithub, FiGlobe, FiBook } from "react-icons/fi";
-import Logo from '../Common/Logo';
-    const Footer = () => {
-    const textColor = "white"; // White for maximum contrast and readability on red
-    const accentColor = "gray.200"; // Light gray for subtle highlights
-    const hoverColor = "gray.400"; // Slightly darker gray for hover states`
+  FiBook,
+  FiGithub,
+  FiGlobe,
+  FiMail,
+  FiPhone,
+  FiTwitter,
+} from "react-icons/fi"
+import Logo from "../Common/Logo"
+const Footer = () => {
+  const textColor = "white" // White for maximum contrast and readability on red
+  const accentColor = "gray.200" // Light gray for subtle highlights
+  const hoverColor = "gray.400" // Slightly darker gray for hover states`
 
-    return (
-        <Box bg="#c00d0f" py={3} px={4} boxShadow="sm" w="100%">
-            <Flex
-                maxW="1200px"
-                mx="auto"
-                direction={{ base: "column", md: "row" }}
-                align={{ base: "center", md: "center" }}
-                justify="space-between"
-                gap={{ base: 4, md: 8 }}
-                textAlign={{ base: "center", md: "left" }}
-                flexWrap={{ base: "wrap", md: "nowrap" }}
+  return (
+    <Box bg="#c00d0f" py={3} px={4} boxShadow="sm" w="100%">
+      <Flex
+        maxW="1200px"
+        mx="auto"
+        direction={{ base: "column", md: "row" }}
+        align={{ base: "center", md: "center" }}
+        justify="space-between"
+        gap={{ base: 4, md: 8 }}
+        textAlign={{ base: "center", md: "left" }}
+        flexWrap={{ base: "wrap", md: "nowrap" }}
+      >
+        {/* Company Info */}
+        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            to="/"
+            width={{ base: "80px", md: "110px" }}
+          />
+          <Text color={textColor} fontSize="xs" maxW="200px">
+            Enterprise proxy and scraping solutions for web data.
+          </Text>
+        </VStack>
+
+        {/* Contact Info */}
+        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+          <Flex align="center" gap={1}>
+            <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
+            <Link
+              href="tel:+18334353873"
+              color={textColor}
+              fontSize="xs"
+              _hover={{ color: hoverColor }}
             >
-                {/* Company Info */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-        <Logo
-          src="/assets/images/roaming-proxy-network-logo.png"
-          alt="Roaming Proxy Logo"
-          to="/"
-          width={{ base: '80px', md: '110px' }}
-        />
-                    <Text color={textColor} fontSize="xs" maxW="200px">
-                        Enterprise proxy and scraping solutions for web data.
-                    </Text>
-                </VStack>
+              +1 (833) 435-3873
+            </Link>
+          </Flex>
+          <Flex align="center" gap={1}>
+            <Icon as={FiMail} color={textColor} boxSize="0.9em" />
+            <Link
+              href="mailto:info@roamingproxy.com"
+              color={textColor}
+              fontSize="xs"
+              _hover={{ color: hoverColor }}
+            >
+              info@roamingproxy.com
+            </Link>
+          </Flex>
+        </VStack>
 
-                {/* Contact Info */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Flex align="center" gap={1}>
-                        <Icon as={FiPhone} color={textColor} boxSize="0.9em" />
-                        <Link
-                            href="tel:+18334353873"
-                            color={textColor}
-                            fontSize="xs"
-                            _hover={{ color: hoverColor }}
-                        >
-                            +1 (833) 435-3873
-                        </Link>
-                    </Flex>
-                    <Flex align="center" gap={1}>
-                        <Icon as={FiMail} color={textColor} boxSize="0.9em" />
-                        <Link
-                            href="mailto:info@roamingproxy.com"
-                            color={textColor}
-                            fontSize="xs"
-                            _hover={{ color: hoverColor }}
-                        >
-                            info@roamingproxy.com
-                        </Link>
-                    </Flex>
-                </VStack>
+        {/* Support Links */}
+        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+          <Link
+            href="https://ROAMINGPROXY.com/resources/faq"
+            isExternal
+            color={textColor}
+            fontSize="xs"
+            _hover={{ color: hoverColor }}
+          >
+            FAQ
+          </Link>
+          <Link
+            href="https://ROAMINGPROXY.com/contact"
+            isExternal
+            color={textColor}
+            fontSize="xs"
+            _hover={{ color: hoverColor }}
+          >
+            Help & Support
+          </Link>
+        </VStack>
 
-                {/* Support Links */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Link
-                        href="https://ROAMINGPROXY.com/resources/faq"
-                        isExternal
-                        color={textColor}
-                        fontSize="xs"
-                        _hover={{ color: hoverColor }}
-                    >
-                        FAQ
-                    </Link>
-                    <Link
-                        href="https://ROAMINGPROXY.com/contact"
-                        isExternal
-                        color={textColor}
-                        fontSize="xs"
-                        _hover={{ color: hoverColor }}
-                    >
-                        Help & Support
-                    </Link>
-                </VStack>
+        {/* Legal Links */}
+        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+          <Link
+            href="https://ROAMINGPROXY.com/privacy"
+            isExternal
+            color={textColor}
+            fontSize="xs"
+            _hover={{ color: hoverColor }}
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            href="https://ROAMINGPROXY.com/terms"
+            isExternal
+            color={textColor}
+            fontSize="xs"
+            _hover={{ color: hoverColor }}
+          >
+            Terms of Service
+          </Link>
+        </VStack>
 
-                {/* Legal Links */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Link
-                        href="https://ROAMINGPROXY.com/privacy"
-                        isExternal
-                        color={textColor}
-                        fontSize="xs"
-                        _hover={{ color: hoverColor }}
-                    >
-                        Privacy Policy
-                    </Link>
-                    <Link
-                        href="https://ROAMINGPROXY.com/terms"
-                        isExternal
-                        color={textColor}
-                        fontSize="xs"
-                        _hover={{ color: hoverColor }}
-                    >
-                        Terms of Service
-                    </Link>
-                </VStack>
+        {/* Additional Legal Links */}
+        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+          <Link
+            href="https://ROAMINGPROXY.com/cookie"
+            isExternal
+            color={textColor}
+            fontSize="xs"
+            _hover={{ color: hoverColor }}
+          >
+            Cookie Policy
+          </Link>
+          <Link
+            href="https://ROAMINGPROXY.com/compliance"
+            isExternal
+            color={textColor}
+            fontSize="xs"
+            _hover={{ color: hoverColor }}
+          >
+            Compliance
+          </Link>
+        </VStack>
 
-                {/* Additional Legal Links */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Link
-                        href="https://ROAMINGPROXY.com/cookie"
-                        isExternal
-                        color={textColor}
-                        fontSize="xs"
-                        _hover={{ color: hoverColor }}
-                    >
-                        Cookie Policy
-                    </Link>
-                    <Link
-                        href="https://ROAMINGPROXY.com/compliance"
-                        isExternal
-                        color={textColor}
-                        fontSize="xs"
-                        _hover={{ color: hoverColor }}
-                    >
-                        Compliance
-                    </Link>
-                </VStack>
-
-                {/* Cobalt Data Section */}
-                <VStack spacing={1} align={{ base: "center", md: "start" }}>
-                    <Flex gap={3}>
-                        <Link href="https://x.com/cobaltdata" isExternal>
-                            <Icon
-                                as={FiTwitter}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                        <Link href="https://github.com/cdn-global" isExternal>
-                            <Icon
-                                as={FiGithub}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                        <Link href="https://cobaltdata.net" isExternal>
-                            <Icon
-                                as={FiGlobe}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                        <Link href="https://docs.roamingproxy.com/" isExternal>
-                            <Icon
-                                as={FiBook}
-                                color={textColor}
-                                _hover={{ color: hoverColor }}
-                                boxSize="1em"
-                            />
-                        </Link>
-                    </Flex>
-                </VStack>
-            </Flex>
-
-            {/* Copyright and Links */}
-            <Text
+        {/* Cobalt Data Section */}
+        <VStack spacing={1} align={{ base: "center", md: "start" }}>
+          <Flex gap={3}>
+            <Link href="https://x.com/cobaltdata" isExternal>
+              <Icon
+                as={FiTwitter}
                 color={textColor}
-                fontSize="xs"
-                textAlign="center"
-                mt={{ base: 3, md: 2 }}
-            >
-                © 2025{" "}
-                <Link
-                    href="https://ROAMINGPROXY.com"
-                    isExternal
-                    color={textColor}
-                    _hover={{ color: accentColor }}
-                >
-                    ROAMINGPROXY.com
-                </Link>
-                ,{" "}
-                <Link
-                    href="https://tradevaultllc.com/"
-                    isExternal
-                    color={textColor}
-                    _hover={{ color: hoverColor }}
-                >
-                    Trade Vault LLC
-                </Link>
-                . All rights reserved.
-            </Text>
-        </Box>
-    );
-};
+                _hover={{ color: hoverColor }}
+                boxSize="1em"
+              />
+            </Link>
+            <Link href="https://github.com/cdn-global" isExternal>
+              <Icon
+                as={FiGithub}
+                color={textColor}
+                _hover={{ color: hoverColor }}
+                boxSize="1em"
+              />
+            </Link>
+            <Link href="https://cobaltdata.net" isExternal>
+              <Icon
+                as={FiGlobe}
+                color={textColor}
+                _hover={{ color: hoverColor }}
+                boxSize="1em"
+              />
+            </Link>
+            <Link href="https://docs.roamingproxy.com/" isExternal>
+              <Icon
+                as={FiBook}
+                color={textColor}
+                _hover={{ color: hoverColor }}
+                boxSize="1em"
+              />
+            </Link>
+          </Flex>
+        </VStack>
+      </Flex>
 
-export default Footer;
+      {/* Copyright and Links */}
+      <Text
+        color={textColor}
+        fontSize="xs"
+        textAlign="center"
+        mt={{ base: 3, md: 2 }}
+      >
+        © 2025{" "}
+        <Link
+          href="https://ROAMINGPROXY.com"
+          isExternal
+          color={textColor}
+          _hover={{ color: accentColor }}
+        >
+          ROAMINGPROXY.com
+        </Link>
+        ,{" "}
+        <Link
+          href="https://tradevaultllc.com/"
+          isExternal
+          color={textColor}
+          _hover={{ color: hoverColor }}
+        >
+          Trade Vault LLC
+        </Link>
+        . All rights reserved.
+      </Text>
+    </Box>
+  )
+}
+
+export default Footer

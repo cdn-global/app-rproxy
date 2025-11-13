@@ -1,22 +1,22 @@
 import {
+  Box,
   Button,
   Container,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Image,
-  Link,
-  Input,
-  Text,
-  Box,
   Heading,
+  Image,
+  Input,
+  Link,
+  Text,
 } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import Logo from "../components/Common/Logo"
 import { type ApiError, LoginService } from "../client"
+import Logo from "../components/Common/Logo"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
 import { emailPattern, handleError } from "../utils"
@@ -78,16 +78,16 @@ function RecoverPassword() {
   }
 
   return (
-    <Container 
-      maxW="container.xl" 
-      p={{ base: 4, md: 0 }} 
-      minH="100vh" 
-      display="flex" 
+    <Container
+      maxW="container.xl"
+      p={{ base: 4, md: 0 }}
+      minH="100vh"
+      display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
+      <Flex
+        direction={{ base: "column", md: "row" }}
         width="100%"
         maxW={{ base: "100%", md: "container.xl" }}
         bg="white"
@@ -105,26 +105,25 @@ function RecoverPassword() {
           alignItems="flex-start"
           borderRadius={{ base: "lg lg 0 0", md: "md 0 0 md" }}
         >
-          <Heading 
-            as="h1" 
-            size={{ base: "lg", md: "xl" }} 
-            mb={{ base: 4, md: 6 }} 
+          <Heading
+            as="h1"
+            size={{ base: "lg", md: "xl" }}
+            mb={{ base: 4, md: 6 }}
             color="gray.800"
           >
             Recover Your Password
           </Heading>
-          <Text 
-            fontSize={{ base: "md", md: "lg" }} 
-            color="gray.600" 
+          <Text
+            fontSize={{ base: "md", md: "lg" }}
+            color="gray.600"
             mb={{ base: 3, md: 4 }}
           >
-            Enter your email to receive a link to reset your password and regain access.
+            Enter your email to receive a link to reset your password and regain
+            access.
           </Text>
-          <Text 
-            fontSize={{ base: "sm", md: "md" }} 
-            color="gray.500"
-          >
-            Need assistance? Our support team and documentation are here to help.
+          <Text fontSize={{ base: "sm", md: "md" }} color="gray.500">
+            Need assistance? Our support team and documentation are here to
+            help.
           </Text>
         </Box>
 
@@ -140,12 +139,12 @@ function RecoverPassword() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-      <Logo
-      src="/assets/images/roaming-proxy-network-logo.png"
-      alt="Roaming Proxy Logo"
-      to="/"
-      width="110px"
-    />
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            to="/"
+            width="110px"
+          />
           <FormControl id="email" isInvalid={!!errors.email} width="100%">
             <FormLabel htmlFor="email" fontSize={{ base: "sm", md: "md" }}>
               Email
@@ -165,9 +164,9 @@ function RecoverPassword() {
             )}
           </FormControl>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
+          <Button
+            variant="primary"
+            type="submit"
             isLoading={isSubmitting}
             width="100%"
             size={{ base: "md", md: "lg" }}

@@ -1,9 +1,12 @@
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
 import {
+  Box,
   Button,
   Container,
+  Flex,
   FormControl,
   FormErrorMessage,
+  Heading,
   Icon,
   Image,
   Input,
@@ -11,15 +14,16 @@ import {
   InputRightElement,
   Link,
   Text,
-  Flex,
-  Box,
-  Heading,
   useBoolean,
 } from "@chakra-ui/react"
-import { Link as RouterLink, createFileRoute, redirect } from "@tanstack/react-router"
+import {
+  Link as RouterLink,
+  createFileRoute,
+  redirect,
+} from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import Logo from "../components/Common/Logo"
 import type { Body_login_login_access_token as AccessToken } from "../client"
+import Logo from "../components/Common/Logo"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern } from "../utils"
 
@@ -57,34 +61,58 @@ function Login() {
 
   // Social media logo components
   const GitHubLogo = () => (
-    <Link href="https://github.com/CobaltDataNet" target="_blank" rel="noopener noreferrer">
-      <Image src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" boxSize={{ base: "28px", md: "32px" }} />
+    <Link
+      href="https://github.com/CobaltDataNet"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Image
+        src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+        alt="GitHub Logo"
+        boxSize={{ base: "28px", md: "32px" }}
+      />
     </Link>
   )
 
   const LinkedInLogo = () => (
-    <Link href="https://www.linkedin.com/company/CobaltDataNet" target="_blank" rel="noopener noreferrer">
-      <Image src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn Logo" boxSize={{ base: "28px", md: "32px" }} />
+    <Link
+      href="https://www.linkedin.com/company/CobaltDataNet"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Image
+        src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
+        alt="LinkedIn Logo"
+        boxSize={{ base: "28px", md: "32px" }}
+      />
     </Link>
   )
 
   const XLogo = () => (
-    <Link href="https://twitter.com/cobaltdata" target="_blank" rel="noopener noreferrer">
-      <Image src="https://images.freeimages.com/image/large-previews/f35/x-twitter-logo-on-black-circle-5694247.png" alt="XLogo" boxSize={{ base: "28px", md: "32px" }} />
+    <Link
+      href="https://twitter.com/cobaltdata"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Image
+        src="https://images.freeimages.com/image/large-previews/f35/x-twitter-logo-on-black-circle-5694247.png"
+        alt="XLogo"
+        boxSize={{ base: "28px", md: "32px" }}
+      />
     </Link>
   )
 
   return (
-    <Container 
-      maxW="container.xl" 
-      p={{ base: 4, md: 0 }} 
-      minH="100vh" 
-      display="flex" 
+    <Container
+      maxW="container.xl"
+      p={{ base: 4, md: 0 }}
+      minH="100vh"
+      display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
+      <Flex
+        direction={{ base: "column", md: "row" }}
         width="100%"
         maxW={{ base: "100%", md: "container.xl" }}
         bg="white"
@@ -102,26 +130,25 @@ function Login() {
           alignItems="flex-start"
           borderRadius={{ base: "lg lg 0 0", md: "md 0 0 md" }}
         >
-          <Heading 
-            as="h1" 
-            size={{ base: "lg", md: "xl" }} 
-            mb={{ base: 4, md: 6 }} 
+          <Heading
+            as="h1"
+            size={{ base: "lg", md: "xl" }}
+            mb={{ base: 4, md: 6 }}
             color="gray.800"
           >
-          Web Scraping, Made Easy
+            Web Scraping, Made Easy
           </Heading>
-          <Text 
-            fontSize={{ base: "md", md: "lg" }} 
-            color="gray.600" 
+          <Text
+            fontSize={{ base: "md", md: "lg" }}
+            color="gray.600"
             mb={{ base: 3, md: 4 }}
           >
-            Sign in to experience seamless data management and take control with confidence.
+            Sign in to experience seamless data management and take control with
+            confidence.
           </Text>
-          <Text 
-            fontSize={{ base: "sm", md: "md" }} 
-            color="gray.500"
-          >
-            Need a Boost? Our expert support team and comprehensive documentation are here to fuel your success.
+          <Text fontSize={{ base: "sm", md: "md" }} color="gray.500">
+            Need a Boost? Our expert support team and comprehensive
+            documentation are here to fuel your success.
           </Text>
         </Box>
 
@@ -137,14 +164,18 @@ function Login() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-      <Logo
-      src="/assets/images/roaming-proxy-network-logo.png"
-      alt="Roaming Proxy Logo"
-      to="/"
-      width="110px"
-    />
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            to="/"
+            width="110px"
+          />
 
-          <FormControl id="username" isInvalid={!!errors.username || !!error} width="100%">
+          <FormControl
+            id="username"
+            isInvalid={!!errors.username || !!error}
+            width="100%"
+          >
             <Input
               id="username"
               {...register("username", {
@@ -170,8 +201,8 @@ function Login() {
                 required
                 size={{ base: "md", md: "lg" }}
               />
-              <InputRightElement 
-                color="ui.dim" 
+              <InputRightElement
+                color="ui.dim"
                 _hover={{ cursor: "pointer" }}
                 pr={{ base: 2, md: 3 }}
               >
@@ -186,19 +217,19 @@ function Login() {
             {error && <FormErrorMessage>{error}</FormErrorMessage>}
           </FormControl>
 
-          <Link 
-            as={RouterLink} 
-            to="/recover-password" 
+          <Link
+            as={RouterLink}
+            to="/recover-password"
             color="red.500"
             fontSize={{ base: "sm", md: "md" }}
           >
             Forgot password?
           </Link>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
-            isLoading={isSubmitting} 
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={isSubmitting}
             width="100%"
             size={{ base: "md", md: "lg" }}
           >
@@ -207,20 +238,16 @@ function Login() {
 
           <Text fontSize={{ base: "sm", md: "md" }}>
             Don't have an account?{" "}
-            <Link 
-              as={RouterLink} 
-              to="/signup" 
-              color="red.500"
-            >
+            <Link as={RouterLink} to="/signup" color="red.500">
               Sign up
             </Link>
           </Text>
 
-          <Flex 
-            direction={{ base: "column", md: "row" }} 
-            justify="center" 
-            align="center" 
-            gap={{ base: 3, md: 4 }} 
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            justify="center"
+            align="center"
+            gap={{ base: 3, md: 4 }}
             mt={{ base: 4, md: 6 }}
           >
             <GitHubLogo />

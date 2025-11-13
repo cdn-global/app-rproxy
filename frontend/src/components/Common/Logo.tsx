@@ -1,14 +1,21 @@
-import React from 'react';
-import { Image, Box, BoxProps } from '@chakra-ui/react';
-import { Link as RouterLink } from '@tanstack/react-router';
+import { Box, type BoxProps, Image } from "@chakra-ui/react"
+import { Link as RouterLink } from "@tanstack/react-router"
+import type React from "react"
 
 interface LogoProps extends BoxProps {
-  src: string;
-  alt?: string;
-  to?: string;
+  src: string
+  alt?: string
+  to?: string
 }
 
-const Logo: React.FC<LogoProps> = ({ to = '/', src, alt = 'Company Logo', width, boxSize, ...rest }) => {
+const Logo: React.FC<LogoProps> = ({
+  to = "/",
+  src,
+  alt = "Company Logo",
+  width,
+  boxSize,
+  ...rest
+}) => {
   return (
     <Box
       as={RouterLink}
@@ -20,12 +27,12 @@ const Logo: React.FC<LogoProps> = ({ to = '/', src, alt = 'Company Logo', width,
       <Image
         src={src}
         alt={alt}
-        width={width || boxSize || '110px'}
+        width={width || boxSize || "110px"}
         height="auto"
         objectFit="contain"
       />
     </Box>
-  );
-};
+  )
+}
 
-export default Logo;
+export default Logo

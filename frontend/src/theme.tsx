@@ -1,9 +1,9 @@
-import { extendTheme, ThemeConfig } from "@chakra-ui/react";
+import { type ThemeConfig, extendTheme } from "@chakra-ui/react"
 
 const config: ThemeConfig = {
   initialColorMode: "light", // Changed to light mode as the default
   useSystemColorMode: false,
-};
+}
 
 const theme = extendTheme({
   config,
@@ -14,7 +14,6 @@ const theme = extendTheme({
         lineHeight: "1.7",
         bg: "gray.50", // Hardcoded light gray background for light mode
         color: "gray.900", // Hardcoded dark text for readability in light mode
-
       },
     }),
   },
@@ -148,6 +147,6 @@ const theme = extendTheme({
       },
     },
   },
-});
+})
 
-export default theme;
+export default theme

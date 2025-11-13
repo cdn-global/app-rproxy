@@ -1,5 +1,5 @@
-import type { ApiError } from "./client"
 import type { RegisterOptions } from "react-hook-form"
+import type { ApiError } from "./client"
 
 export const emailPattern = {
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -44,7 +44,10 @@ export const confirmPasswordRules = (
   return rules
 }
 
-export const handleError = (err: ApiError, showToast: (title: string, description: string, status: "error") => void) => {
+export const handleError = (
+  err: ApiError,
+  showToast: (title: string, description: string, status: "error") => void,
+) => {
   const errDetail = (err.body as any)?.detail
   let errorMessage = errDetail || "Something went wrong."
   if (Array.isArray(errDetail) && errDetail.length > 0) {

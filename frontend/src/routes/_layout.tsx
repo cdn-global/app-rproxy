@@ -1,9 +1,9 @@
-import { Flex, Spinner } from "@chakra-ui/react";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { Flex, Spinner } from "@chakra-ui/react"
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
-import TopNav from "../components/Common/TopNav";
-import Footer from "../components/Common/Footer"; 
-import useAuth, { isLoggedIn } from "../hooks/useAuth";
+import Footer from "../components/Common/Footer"
+import TopNav from "../components/Common/TopNav"
+import useAuth, { isLoggedIn } from "../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -11,13 +11,13 @@ export const Route = createFileRoute("/_layout")({
     if (!isLoggedIn()) {
       throw redirect({
         to: "/login",
-      });
+      })
     }
   },
-});
+})
 
 function Layout() {
-  const { isLoading } = useAuth();
+  const { isLoading } = useAuth()
 
   return (
     <Flex direction="column" minH="100vh" w="100%">
@@ -40,7 +40,7 @@ function Layout() {
       )}
       <Footer />
     </Flex>
-  );
+  )
 }
 
-export default Layout;
+export default Layout

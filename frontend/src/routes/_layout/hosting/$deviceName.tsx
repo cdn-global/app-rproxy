@@ -1,42 +1,42 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { CopyIcon } from "@chakra-ui/icons"
 import {
+  Badge,
   Box,
+  Button,
   Container,
   Flex,
-  Text,
-  Button,
-  VStack,
-  Heading,
-  SimpleGrid,
-  Badge,
-  IconButton,
-  useToast,
   HStack,
-} from "@chakra-ui/react";
-import { CopyIcon } from "@chakra-ui/icons";
+  Heading,
+  IconButton,
+  SimpleGrid,
+  Text,
+  VStack,
+  useToast,
+} from "@chakra-ui/react"
+import { Link, createFileRoute, useParams } from "@tanstack/react-router"
 
 // Hardcoded servers
 
 interface Server {
-  name: string;
-  email: string;
-  ip: string;
-  version: string;
-  kernel: string;
-  status: string;
-  type: string;
-  os: string;
-  username: string;
-  password: string;
-  monthlyComputePrice: number;
-  storageSizeGB: number;
-  activeSince: string; // YYYY-MM-DD
-  hasRotatingIP?: boolean;
-  hasBackup?: boolean;
-  hasMonitoring?: boolean;
-  hasManagedSupport?: boolean;
-  vCPUs?: number;
-  ramGB?: number;
+  name: string
+  email: string
+  ip: string
+  version: string
+  kernel: string
+  status: string
+  type: string
+  os: string
+  username: string
+  password: string
+  monthlyComputePrice: number
+  storageSizeGB: number
+  activeSince: string // YYYY-MM-DD
+  hasRotatingIP?: boolean
+  hasBackup?: boolean
+  hasMonitoring?: boolean
+  hasManagedSupport?: boolean
+  vCPUs?: number
+  ramGB?: number
 }
 
 const servers: Server[] = [
@@ -51,7 +51,7 @@ const servers: Server[] = [
     os: "debian",
     username: "user",
     password: "5660",
-    monthlyComputePrice: 11.40,
+    monthlyComputePrice: 11.4,
     storageSizeGB: 120,
     activeSince: "2025-07-01",
     hasRotatingIP: false,
@@ -166,32 +166,34 @@ const servers: Server[] = [
     vCPUs: 2,
     ramGB: 8,
   },
-];
+]
 
 function DeviceDetailsPage() {
-  const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" });
-  const server = servers.find((s) => s.name === deviceName);
-  const toast = useToast();
+  const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" })
+  const server = servers.find((s) => s.name === deviceName)
+  const toast = useToast()
 
   const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text)
     toast({
       title: `${label} copied!`,
       status: "success",
       duration: 2000,
       isClosable: true,
-    });
-  };
+    })
+  }
 
   if (!server) {
     return (
       <Container maxW="container.xl" py={8}>
-        <Text fontSize="xl" color="red.500">Server not found</Text>
+        <Text fontSize="xl" color="red.500">
+          Server not found
+        </Text>
       </Container>
-    );
+    )
   }
 
-  const statusColor = server.status === "Connected" ? "green" : "red";
+  const statusColor = server.status === "Connected" ? "green" : "red"
 
   return (
     <Container maxW="container.xl" py={8}>
@@ -223,7 +225,9 @@ function DeviceDetailsPage() {
           boxShadow="sm"
           borderWidth="1px"
         >
-          <Heading size="md" mb={4}>Basic Information</Heading>
+          <Heading size="md" mb={4}>
+            Basic Information
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between" align="center">
               <Text fontWeight="medium">Name:</Text>
@@ -274,7 +278,9 @@ function DeviceDetailsPage() {
           boxShadow="sm"
           borderWidth="1px"
         >
-          <Heading size="md" mb={4}>System Specifications</Heading>
+          <Heading size="md" mb={4}>
+            System Specifications
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between">
               <Text fontWeight="medium">Version:</Text>
@@ -307,7 +313,9 @@ function DeviceDetailsPage() {
           boxShadow="sm"
           borderWidth="1px"
         >
-          <Heading size="md" mb={4}>Credentials</Heading>
+          <Heading size="md" mb={4}>
+            Credentials
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between" align="center">
               <Text fontWeight="medium">Username:</Text>
@@ -346,7 +354,9 @@ function DeviceDetailsPage() {
           boxShadow="sm"
           borderWidth="1px"
         >
-          <Heading size="md" mb={4}>Billing & Features</Heading>
+          <Heading size="md" mb={4}>
+            Billing & Features
+          </Heading>
           <VStack align="stretch" spacing={3}>
             <Flex justify="space-between">
               <Text fontWeight="medium">Monthly Compute Price:</Text>
@@ -376,9 +386,9 @@ function DeviceDetailsPage() {
         </Box>
       </SimpleGrid>
     </Container>
-  );
+  )
 }
 
 export const Route = createFileRoute("/_layout/hosting/$deviceName")({
   component: DeviceDetailsPage,
-});
+})

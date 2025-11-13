@@ -1,10 +1,10 @@
 // vite.config.ts
 
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
-import path from "path";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
+import path from "node:path"
+import { TanStackRouterVite } from "@tanstack/router-vite-plugin"
+import react from "@vitejs/plugin-react-swc"
+import { defineConfig } from "vite"
+import { nodePolyfills } from "vite-plugin-node-polyfills"
 
 export default defineConfig({
   plugins: [
@@ -27,14 +27,12 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
-      '@chakra-ui/react',
-      '@chakra-ui/icons',
-      '@emotion/react',
-      '@emotion/styled',
-      'framer-motion',
+      "@chakra-ui/react",
+      "@chakra-ui/icons",
+      "@emotion/react",
+      "@emotion/styled",
+      "framer-motion",
     ],
-    exclude: [
-      'vite-plugin-node-polyfills'
-    ]
+    exclude: ["vite-plugin-node-polyfills"],
   },
-});
+})

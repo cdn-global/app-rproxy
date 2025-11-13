@@ -1,31 +1,31 @@
-import React from "react";
 import {
+  Box,
+  Button,
   Container,
   Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Spinner,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
-  Box,
   VStack,
-  Heading,
-  Spinner,
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
   useToast,
-} from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import type { UserPublic } from "../../client";
-import ApiKeyModule from "../../components/ScrapingTools/ApiKey";
+} from "@chakra-ui/react"
+import { useQueryClient } from "@tanstack/react-query"
+import { Link, createFileRoute } from "@tanstack/react-router"
+import React from "react"
+import type { UserPublic } from "../../client"
+import ApiKeyModule from "../../components/ScrapingTools/ApiKey"
 
 // --- User Settings Tab Component ---
 function UserSettingsTab({ user }: { user: UserPublic }) {
-  const toast = useToast();
+  const toast = useToast()
 
   // Placeholder for future edit functionality
   const handleUpdateSettings = () => {
@@ -35,12 +35,14 @@ function UserSettingsTab({ user }: { user: UserPublic }) {
       status: "info",
       duration: 5000,
       isClosable: true,
-    });
-  };
+    })
+  }
 
   return (
     <VStack align="stretch" spacing={6}>
-      <Heading as="h1" size="xl" color="gray.800">User Settings</Heading>
+      <Heading as="h1" size="xl" color="gray.800">
+        User Settings
+      </Heading>
       <Text color="gray.600">View and manage your account details.</Text>
       <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
         <FormControl mb={4}>
@@ -60,7 +62,7 @@ function UserSettingsTab({ user }: { user: UserPublic }) {
         </Button>
       </Box>
     </VStack>
-  );
+  )
 }
 
 // --- Tab Configuration ---
@@ -68,22 +70,22 @@ const tabsConfig = [
   {
     title: "User Settings",
     component: () => {
-      const queryClient = useQueryClient();
-      const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
-      return currentUser ? <UserSettingsTab user={currentUser} /> : null;
+      const queryClient = useQueryClient()
+      const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+      return currentUser ? <UserSettingsTab user={currentUser} /> : null
     },
   },
-];
+]
 
 // --- TanStack Router Route Definition ---
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
-});
+})
 
 // --- Main Settings Page Component ---
 function UserSettings() {
-  const queryClient = useQueryClient();
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
+  const queryClient = useQueryClient()
+  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
 
   if (!currentUser) {
     return (
@@ -92,17 +94,17 @@ function UserSettings() {
           <Spinner size="xl" />
         </Flex>
       </Container>
-    );
+    )
   }
 
-  const finalTabs = currentUser.is_superuser ? tabsConfig : tabsConfig;
+  const finalTabs = currentUser.is_superuser ? tabsConfig : tabsConfig
 
   return (
     <Container maxW="full" py={9}>
       <Flex align="center" justify="space-between" py={6}>
         <Text fontSize="3xl" color="black">
           Settings
-        </Text> 
+        </Text>
         <Flex align="center" gap={4}>
           <Text fontSize="lg" color="gray.600">
             Manage your account settings
@@ -150,7 +152,7 @@ function UserSettings() {
         </TabPanels>
       </Tabs>
     </Container>
-  );
+  )
 }
 
-export default UserSettings;
+export default UserSettings

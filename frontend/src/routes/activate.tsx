@@ -1,22 +1,22 @@
 import {
+  Box,
   Button,
   Container,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Image,
   Input,
   Link,
   Text,
-  Box,
-  Heading,
 } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
+import type { ApiError } from "../client"
 import Logo from "../components/Common/Logo"
-import { type ApiError } from "../client"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
 import { confirmPasswordRules, handleError, passwordRules } from "../utils"
@@ -26,7 +26,7 @@ interface NewPasswordForm {
   confirm_password: string
 }
 
-export const Route = createFileRoute('/activate')({
+export const Route = createFileRoute("/activate")({
   component: ActivateAccount,
   beforeLoad: async () => {
     if (isLoggedIn()) {
@@ -38,7 +38,7 @@ export const Route = createFileRoute('/activate')({
 })
 
 async function activateAccount(data: { new_password: string; token: string }) {
-  const baseUrl = 'https://api.ROAMINGPROXY.com'
+  const baseUrl = "https://api.ROAMINGPROXY.com"
   if (!baseUrl) {
     console.error("base url is not defined")
     throw new Error("API URL is not configured")
@@ -49,7 +49,7 @@ async function activateAccount(data: { new_password: string; token: string }) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "accept": "application/json"
+      accept: "application/json",
     },
     body: JSON.stringify({
       token: data.token,
@@ -72,7 +72,7 @@ async function activateAccount(data: { new_password: string; token: string }) {
         url: apiUrl,
         headers: {
           "Content-Type": "application/json",
-          "accept": "application/json"
+          accept: "application/json",
         },
       },
       message: errorData.detail || "Failed to activate account",
@@ -101,7 +101,11 @@ function ActivateAccount() {
   const showToast = useCustomToast()
   const navigate = useNavigate()
 
-  const mutation = useMutation<{ message: string }, ApiError, { new_password: string; token: string }>({
+  const mutation = useMutation<
+    { message: string },
+    ApiError,
+    { new_password: string; token: string }
+  >({
     mutationFn: activateAccount,
     onSuccess: () => {
       showToast("Success!", "Account activated successfully.", "success")
@@ -123,16 +127,16 @@ function ActivateAccount() {
   }
 
   return (
-    <Container 
-      maxW="container.xl" 
-      p={{ base: 4, md: 0 }} 
-      minH="100vh" 
-      display="flex" 
+    <Container
+      maxW="container.xl"
+      p={{ base: 4, md: 0 }}
+      minH="100vh"
+      display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
+      <Flex
+        direction={{ base: "column", md: "row" }}
         width="100%"
         maxW={{ base: "100%", md: "container.xl" }}
         bg="white"
@@ -150,26 +154,25 @@ function ActivateAccount() {
           alignItems="flex-start"
           borderRadius={{ base: "lg lg 0 0", md: "md 0 0 md" }}
         >
-          <Heading 
-            as="h1" 
-            size={{ base: "lg", md: "xl" }} 
-            mb={{ base: 4, md: 6 }} 
+          <Heading
+            as="h1"
+            size={{ base: "lg", md: "xl" }}
+            mb={{ base: 4, md: 6 }}
             color="gray.800"
           >
             Activate Your Account
           </Heading>
-          <Text 
-            fontSize={{ base: "md", md: "lg" }} 
-            color="gray.600" 
+          <Text
+            fontSize={{ base: "md", md: "lg" }}
+            color="gray.600"
             mb={{ base: 3, md: 4 }}
           >
-            Set your new password to unlock seamless data management and take control with confidence.
+            Set your new password to unlock seamless data management and take
+            control with confidence.
           </Text>
-          <Text 
-            fontSize={{ base: "sm", md: "md" }} 
-            color="gray.500"
-          >
-            Need assistance? Our expert support team and comprehensive documentation are here to help.
+          <Text fontSize={{ base: "sm", md: "md" }} color="gray.500">
+            Need assistance? Our expert support team and comprehensive
+            documentation are here to help.
           </Text>
         </Box>
 
@@ -185,15 +188,22 @@ function ActivateAccount() {
           gap={{ base: 4, md: 6 }}
           width={{ base: "100%", md: "auto" }}
         >
-     <Logo
-      src="/assets/images/roaming-proxy-network-logo.png"
-      alt="Roaming Proxy Logo"
-      to="/"
-      width="110px"
-    />
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            to="/"
+            width="110px"
+          />
 
-          <FormControl id="new_password" isInvalid={!!errors.new_password} width="100%">
-            <FormLabel htmlFor="new_password" fontSize={{ base: "sm", md: "md" }}>
+          <FormControl
+            id="new_password"
+            isInvalid={!!errors.new_password}
+            width="100%"
+          >
+            <FormLabel
+              htmlFor="new_password"
+              fontSize={{ base: "sm", md: "md" }}
+            >
               Set Password
             </FormLabel>
             <Input
@@ -208,8 +218,15 @@ function ActivateAccount() {
             )}
           </FormControl>
 
-          <FormControl id="confirm_password" isInvalid={!!errors.confirm_password} width="100%">
-            <FormLabel htmlFor="confirm_password" fontSize={{ base: "sm", md: "md" }}>
+          <FormControl
+            id="confirm_password"
+            isInvalid={!!errors.confirm_password}
+            width="100%"
+          >
+            <FormLabel
+              htmlFor="confirm_password"
+              fontSize={{ base: "sm", md: "md" }}
+            >
               Confirm Password
             </FormLabel>
             <Input
@@ -220,13 +237,15 @@ function ActivateAccount() {
               size={{ base: "md", md: "lg" }}
             />
             {errors.confirm_password && (
-              <FormErrorMessage>{errors.confirm_password.message}</FormErrorMessage>
+              <FormErrorMessage>
+                {errors.confirm_password.message}
+              </FormErrorMessage>
             )}
           </FormControl>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
+          <Button
+            variant="primary"
+            type="submit"
             isLoading={isSubmitting}
             width="100%"
             size={{ base: "md", md: "lg" }}

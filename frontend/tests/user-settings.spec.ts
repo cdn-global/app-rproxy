@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test"
 import { firstSuperuser, firstSuperuserPassword } from "./config.ts"
+import { createUser } from "./utils/privateApi.ts"
 import { randomEmail, randomPassword } from "./utils/random"
 import { logInUser, logOutUser } from "./utils/user"
-import { createUser } from "./utils/privateApi.ts"
 
 const tabs = ["My profile", "Password", "Appearance"]
 
@@ -241,7 +241,7 @@ test("Appearance tab is visible", async ({ page }) => {
 test("User can switch from light mode to dark mode", async ({ page }) => {
   await page.goto("/settings")
   await page.getByRole("tab", { name: "Appearance" }).click()
-  await page.getByLabel("Appearance").locator("span").nth(3).click()
+  await page.getByLabel("Dark Mode").click()
   const isDarkMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-dark"),
   )
@@ -251,7 +251,7 @@ test("User can switch from light mode to dark mode", async ({ page }) => {
 test("User can switch from dark mode to light mode", async ({ page }) => {
   await page.goto("/settings")
   await page.getByRole("tab", { name: "Appearance" }).click()
-  await page.getByLabel("Appearance").locator("span").first().click()
+  await page.getByLabel("Light Mode").click()
   const isLightMode = await page.evaluate(() =>
     document.body.classList.contains("chakra-ui-light"),
   )
@@ -261,7 +261,7 @@ test("User can switch from dark mode to light mode", async ({ page }) => {
 test("Selected mode is preserved across sessions", async ({ page }) => {
   await page.goto("/settings")
   await page.getByRole("tab", { name: "Appearance" }).click()
-  await page.getByLabel("Appearance").locator("span").nth(3).click()
+  await page.getByLabel("Dark Mode").click()
 
   await logOutUser(page)
 

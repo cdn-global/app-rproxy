@@ -1,30 +1,31 @@
-import React, { useState } from "react";
+import { CopyIcon, DownloadIcon, ViewIcon } from "@chakra-ui/icons"
 import {
+  Alert,
+  AlertIcon,
   Box,
-  Text,
-  Flex,
   Button,
-  Input,
-  Select,
-  Textarea,
-  Spinner,
-  Tooltip,
+  Flex,
   FormControl,
   FormLabel,
   Grid,
   GridItem,
-  IconButton,
   Heading,
-  Alert,
-  AlertIcon,
-  Tabs,
-  TabList,
-  TabPanels,
+  IconButton,
+  Input,
+  Select,
+  Spinner,
   Tab,
+  TabList,
   TabPanel,
-} from "@chakra-ui/react";
-import { CopyIcon, DownloadIcon, ViewIcon } from "@chakra-ui/icons";
-import { FiSend } from "react-icons/fi";
+  TabPanels,
+  Tabs,
+  Text,
+  Textarea,
+  Tooltip,
+} from "@chakra-ui/react"
+import type React from "react"
+import { useState } from "react"
+import { FiSend } from "react-icons/fi"
 
 // Define regions and search engines
 const REGIONS = [
@@ -37,45 +38,47 @@ const REGIONS = [
   "australia",
   "europe",
   "middle-east",
-];
+]
 
 // CORRECTED: Matched search engines to backend support
 const SEARCH_ENGINES = [
   { value: "google", label: "Google" },
   { value: "bing", label: "Bing" },
   { value: "duckduckgo", label: "DuckDuckGo" },
-];
+]
 
 // Define interface for structured result
 interface SerpResult {
-  position: number;
-  title: string;
-  link: string;
-  snippet: string;
+  position: number
+  title: string
+  link: string
+  snippet: string
 }
 
 // CORRECTED: Changed endpoint to match the backend router prefix
-const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy/serp";
+const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy/serp"
 
 const PlaygroundSerpApi: React.FC = () => {
-  const [query, setQuery] = useState<string>("best pizza in new york");
-  const [region, setRegion] = useState<string>(REGIONS[0]);
-  const [searchEngine, setSearchEngine] = useState<string>(SEARCH_ENGINES[0].value);
-  const [apiKey, setApiKey] = useState<string>("");
-  const [response, setResponse] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [responseTime, setResponseTime] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [query, setQuery] = useState<string>("best pizza in new york")
+  const [region, setRegion] = useState<string>(REGIONS[0])
+  const [searchEngine, setSearchEngine] = useState<string>(
+    SEARCH_ENGINES[0].value,
+  )
+  const [apiKey, setApiKey] = useState<string>("")
+  const [response, setResponse] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>("")
+  const [responseTime, setResponseTime] = useState<number | null>(null)
+  const [activeTab, setActiveTab] = useState<number>(0)
 
   const generateCurlCommand = () => {
     const params = new URLSearchParams({
       q: query,
       region,
       engine: searchEngine,
-    });
-    return `curl -X GET "${API_URL}?${params.toString()}" \\\n  -H "x-api-key: ${apiKey}"`;
-  };
+    })
+    return `curl -X GET "${API_URL}?${params.toString()}" \\\n  -H "x-api-key: ${apiKey}"`
+  }
 
   const generatePythonCode = () => {
     return `import requests
@@ -92,8 +95,8 @@ headers = {
 
 response = requests.get(url, params=params, headers=headers)
 print(response.json())
-`;
-  };
+`
+  }
 
   const generateJsCode = () => {
     return `const fetch = require('node-fetch');
@@ -111,81 +114,88 @@ fetch(url, {
 .then(response => response.json())
 .then(data => console.log(data))
 .catch(error => console.error('Error:', error));
-`;
-  };
+`
+  }
 
   const handleCopyCode = () => {
-    const code = activeTab === 0 ? generateCurlCommand() : activeTab === 1 ? generatePythonCode() : generateJsCode();
+    const code =
+      activeTab === 0
+        ? generateCurlCommand()
+        : activeTab === 1
+          ? generatePythonCode()
+          : generateJsCode()
     navigator.clipboard.writeText(code).then(() => {
-      alert("Code copied to clipboard!");
-    });
-  };
+      alert("Code copied to clipboard!")
+    })
+  }
 
   const handleCopyResponse = () => {
     if (response) {
       navigator.clipboard.writeText(response).then(() => {
-        alert("Response copied to clipboard!");
-      });
+        alert("Response copied to clipboard!")
+      })
     }
-  };
+  }
 
   const handleTestRequest = async () => {
-    setIsLoading(true);
-    setResponse("");
-    setError("");
-    setResponseTime(null);
+    setIsLoading(true)
+    setResponse("")
+    setError("")
+    setResponseTime(null)
 
     try {
-      const startTime = performance.now();
+      const startTime = performance.now()
       const params = new URLSearchParams({
         q: query,
         region,
         engine: searchEngine,
-      });
-      const requestUrl = `${API_URL}?${params.toString()}`;
+      })
+      const requestUrl = `${API_URL}?${params.toString()}`
       const res = await fetch(requestUrl, {
         method: "GET",
         headers: {
           "x-api-key": apiKey,
           Accept: "application/json",
         },
-      });
+      })
 
-      const endTime = performance.now();
-      const timeTaken = Math.round(endTime - startTime);
-      setResponseTime(timeTaken);
+      const endTime = performance.now()
+      const timeTaken = Math.round(endTime - startTime)
+      setResponseTime(timeTaken)
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ detail: `HTTP error! status: ${res.status}` }));
-        throw new Error(errorData.detail || "An unknown error occurred.");
+        const errorData = await res
+          .json()
+          .catch(() => ({ detail: `HTTP error! status: ${res.status}` }))
+        throw new Error(errorData.detail || "An unknown error occurred.")
       }
 
-      const jsonResponse = await res.json();
-      setResponse(JSON.stringify(jsonResponse, null, 2));
+      const jsonResponse = await res.json()
+      setResponse(JSON.stringify(jsonResponse, null, 2))
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Unknown error");
+      setError(error instanceof Error ? error.message : "Unknown error")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleDownloadResponse = () => {
     if (response) {
-      const blob = new Blob([response], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "response.json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const blob = new Blob([response], { type: "application/json" })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "response.json"
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     }
-  };
+  }
 
   const handleViewFormatted = () => {
     if (response) {
-      const newWindow = window.open("", "_blank");
+      const newWindow = window.open("", "_blank")
       if (newWindow) {
         newWindow.document.write(`
           <html>
@@ -197,13 +207,13 @@ fetch(url, {
               <pre>${JSON.stringify(JSON.parse(response), null, 2)}</pre>
             </body>
           </html>
-        `);
-        newWindow.document.close();
+        `)
+        newWindow.document.close()
       } else {
-        alert("Popup blocked. Please allow popups for this site.");
+        alert("Popup blocked. Please allow popups for this site.")
       }
     }
-  };
+  }
 
   return (
     <Box width="100%">
@@ -266,7 +276,12 @@ fetch(url, {
                     colorScheme="blue"
                     onClick={handleTestRequest}
                     isLoading={isLoading}
-                    isDisabled={!query.trim() || !apiKey.trim() || !region || !searchEngine}
+                    isDisabled={
+                      !query.trim() ||
+                      !apiKey.trim() ||
+                      !region ||
+                      !searchEngine
+                    }
                   >
                     <FiSend />
                   </Button>
@@ -349,7 +364,9 @@ fetch(url, {
                 icon={<CopyIcon />}
                 size="sm"
                 onClick={handleCopyCode}
-                isDisabled={!query.trim() || !apiKey.trim() || !region || !searchEngine}
+                isDisabled={
+                  !query.trim() || !apiKey.trim() || !region || !searchEngine
+                }
               />
             </Tooltip>
           </Flex>
@@ -395,7 +412,7 @@ fetch(url, {
         </GridItem>
       </Grid>
     </Box>
-  );
-};
+  )
+}
 
-export default PlaygroundSerpApi;
+export default PlaygroundSerpApi
