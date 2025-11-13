@@ -160,4 +160,3 @@ export const Route = createFileRoute("/_layout/web-scraping-tools/serp-api")({
 })
 
 export default SerpApiPage
-        customStyle={{

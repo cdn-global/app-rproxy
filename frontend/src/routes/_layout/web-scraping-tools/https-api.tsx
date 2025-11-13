@@ -1,32 +1,12 @@
-import { CopyIcon } from "@chakra-ui/icons"
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Button,
-  Code,
-  Container,
-  Divider,
-  Flex,
-  Heading,
-  IconButton,
-  Link,
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  VStack,
-  useClipboard,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { ExternalLink } from "lucide-react"
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
 import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
 import PlaygroundHttpsProxy from "../../../components/ScrapingTools/PlaygroundHttps"
@@ -44,269 +24,38 @@ interface ProxyApiAccess {
 
 const API_URL = "https://api.ROAMINGPROXY.com/v2"
 
-// --- API Fetching Functions ---
-
-async function fetchFromApi(
-  endpoint: string,
-  token: string,
-  options: RequestInit = {},
-) {
+async function requestFromApi<T>(endpoint: string, token: string) {
   if (!token) {
     throw new Error("No access token found. Please log in again.")
   }
 
   const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      ...options.headers,
     },
   })
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new Error(
-      errorData.detail || `API request failed: ${response.status}`,
-    )
-  }
-  return response.json()
-}
-
-const fetchSubscriptions = (token: string): Promise<Subscription[]> =>
-  fetchFromApi("/customer/subscriptions", token)
-
-const fetchProxyApiAccess = (token: string): Promise<ProxyApiAccess> =>
-  fetchFromApi("/proxy-api/access", token)
-
-// --- CodeBlock Component (from serp-api) ---
-const CodeBlock = ({
-  code,
-  language,
-  bg = "gray.800",
-  ...rest
-}: { code: string; language: string; bg?: string; [key: string]: any }) => {
-  const { onCopy } = useClipboard(code.trim())
-  const toast = useToast()
-
-  const handleCopy = () => {
-    onCopy()
-    toast({
-      title: "Copied to clipboard",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-      position: "top",
-    })
+    const payload = await response.json().catch(() => ({}))
+    throw new Error(payload.detail || `Request failed (${response.status})`)
   }
 
-  return (
-    <Box
-      position="relative"
-      bg={bg}
-      borderRadius="md"
-      overflow="hidden"
-      {...rest}
-    >
-      <SyntaxHighlighter
-        language={language}
-        style={vscDarkPlus}
-        customStyle={{
-          margin: 0,
-          padding: "2rem 1rem 1rem 1rem",
-          fontSize: "0.9rem",
-          backgroundColor: "transparent",
-        }}
-        codeTagProps={{
-          style: {
-            fontFamily: "var(--chakra-fonts-mono)",
-          },
-        }}
-        showLineNumbers
-      >
-        {code.trim()}
-      </SyntaxHighlighter>
-      <IconButton
-        aria-label="Copy Code"
-        icon={<CopyIcon />}
-        size="sm"
-        position="absolute"
-        top="0.5rem"
-        right="0.5rem"
-        onClick={handleCopy}
-        variant="ghost"
-        color="gray.400"
-        _hover={{ bg: "whiteAlpha.200", color: "white" }}
-      />
-    </Box>
-  )
+  return response.json() as Promise<T>
 }
 
-// --- Constants for GetStartedTab ---
-const TARGET_URL_EXAMPLE = "https://api.ipify.org?format=json"
-const PROXY_ENDPOINT = "https://api.ROAMINGPROXY.com/v2/proxy"
+const fetchSubscriptions = (token: string) =>
+  requestFromApi<Subscription[]>("/customer/subscriptions", token)
 
-const CODE_EXAMPLES = {
-  curl: `curl -X GET "${PROXY_ENDPOINT}?url=${encodeURIComponent(
-    TARGET_URL_EXAMPLE,
-  )}" \\
-  -H "x-api-key: YOUR_API_KEY"`,
-  python: `import requests
-import urllib.parse
+const fetchProxyApiAccess = (token: string) =>
+  requestFromApi<ProxyApiAccess>("/proxy-api/access", token)
 
-api_key = "YOUR_API_KEY"
-target_url = "${TARGET_URL_EXAMPLE}"
-proxy_endpoint = "${PROXY_ENDPOINT}"
-
-params = {"url": target_url}
-headers = {"x-api-key": api_key}
-
-# The target URL is automatically encoded by the requests library
-response = requests.get(proxy_endpoint, params=params, headers=headers)
-
-if response.status_code == 200:
-    print("Successfully fetched URL through proxy.")
-    print("Response Body:", response.json())
-else:
-    print(f"Error: {response.status_code}")
-    print(response.text)`,
-  javascript: `// Using node-fetch, or native fetch in browser/deno/node 18+
-import fetch from 'node-fetch';
-
-const apiKey = 'YOUR_API_KEY';
-const targetUrl = '${TARGET_URL_EXAMPLE}';
-const proxyEndpoint = new URL('${PROXY_ENDPOINT}');
-
-// Append the target URL as a search parameter
-proxyEndpoint.searchParams.append('url', targetUrl);
-
-const options = {
-    method: 'GET',
-    headers: {
-        'x-api-key': apiKey,
-        'Accept': 'application/json'
-    }
-};
-
-fetch(proxyEndpoint, options)
-    .then(res => {
-        if (!res.ok) {
-            throw new Error(\`HTTP error! status: \${res.status}\`);
-        }
-        return res.json();
-    })
-    .then(json => console.log(json))
-    .catch(err => console.error('error:' + err));`,
-}
-
-const codeTabs = [
-  {
-    id: "javascript",
-    label: "JavaScript",
-    code: CODE_EXAMPLES.javascript,
-    language: "javascript",
-  },
-  {
-    id: "python",
-    label: "Python",
-    code: CODE_EXAMPLES.python,
-    language: "python",
-  },
-  { id: "curl", label: "cURL", code: CODE_EXAMPLES.curl, language: "bash" },
-]
-
-// --- Get Started Tab Component ---
-const GetStartedTab = () => {
-  return (
-    <Box>
-      <Text fontSize="lg" mb={2} color="gray.700">
-        This tool allows you to programmatically route any HTTP/S request
-        through our premium proxy network.
-      </Text>
-      <Text fontSize="lg" mb={4} color="gray.700">
-        To get started, create an API key in the API Keys tab and use it in your
-        requests. Remember to replace <Code fontSize="sm">YOUR_API_KEY</Code>{" "}
-        with your actual key.
-      </Text>
-      <Divider mb={4} />
-      <Tabs variant="enclosed" colorScheme="red">
-        <TabList>
-          {codeTabs.map((tab) => (
-            <Tab
-              key={tab.id}
-              fontWeight="semibold"
-              fontSize="lg"
-              color="gray.400"
-              _selected={{
-                bg: "gray.800",
-                color: "red.400",
-                borderColor: "inherit",
-                borderBottomColor: "gray.800",
-              }}
-            >
-              {tab.label}
-            </Tab>
-          ))}
-        </TabList>
-        <TabPanels>
-          {codeTabs.map((tab) => (
-            <TabPanel key={tab.id} p={0}>
-              <CodeBlock
-                code={tab.code}
-                language={tab.language}
-                bg="gray.800"
-              />
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
-
-      <Box mt={8}>
-        <Box
-          p={4}
-          borderWidth="1px"
-          borderRadius="md"
-          bg="red.50"
-          borderColor="red.200"
-        >
-          <Heading size="md" mb={2} color="gray.800">
-            Need Help?
-          </Heading>
-          <Text fontSize="md" color="gray.700">
-            Check our detailed{" "}
-            <Link
-              color="red.600"
-              fontWeight="bold"
-              href="/documentation/https-api"
-              isExternal
-            >
-              API Documentation
-            </Link>{" "}
-            for more examples. For further assistance, contact our{" "}
-            <Link color="red.600" fontWeight="bold" href="/support" isExternal>
-              Support Center
-            </Link>
-            .
-          </Text>
-        </Box>
-      </Box>
-    </Box>
-  )
-}
-
-const pageTabsData = [
-  { id: "get-started", label: "Get Started" },
-  { id: "keys", label: "Keys" },
-  { id: "playground", label: "Playground" },
-]
-
-// --- Main Page Component ---
 const HttpsProxyApiPage = () => {
-  const token = localStorage.getItem("access_token") || ""
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") || "" : ""
 
   const {
     data: subscriptions,
-    isLoading: isSubscriptionsLoading,
+    isLoading: subscriptionsLoading,
     error: subscriptionsError,
   } = useQuery({
     queryKey: ["subscriptions"],
@@ -317,7 +66,7 @@ const HttpsProxyApiPage = () => {
 
   const {
     data: proxyApiAccess,
-    isLoading: isAccessLoading,
+    isLoading: accessLoading,
     error: accessError,
   } = useQuery({
     queryKey: ["proxyApiAccess"],
@@ -326,107 +75,97 @@ const HttpsProxyApiPage = () => {
     staleTime: 5 * 60 * 1000,
   })
 
-  const hasActiveSubscription =
-    subscriptions?.some(
-      (sub) => sub.status === "active" || sub.status === "trialing",
-    ) || false
-
-  const isLoading = isSubscriptionsLoading || isAccessLoading
+  const isLoading = subscriptionsLoading || accessLoading
   const error = subscriptionsError || accessError
+  const hasActiveSubscription = subscriptions?.some((sub) =>
+    ["active", "trialing"].includes(sub.status),
+  )
 
   return (
     <ProtectedComponent>
-      <Container maxW="container.xl" py={10} as="main">
-        <Flex align="center" justify="space-between" py={6} mb={6}>
-          <VStack align="start" spacing={2}>
-            <Heading as="h1" size="xl" color="gray.800">
-              HTTPS Proxy API
-            </Heading>
-            <Text fontSize="lg" color="gray.600">
-              Route HTTP/S requests through our proxy network
-            </Text>
-          </VStack>
-          <Button
-            as={Link}
-            href="https://cloud.roamingproxy.com/hosting/billing"
-            colorScheme="red"
-            variant="solid"
-            size="md"
-          >
-            View Billing
-          </Button>
-        </Flex>
+      <div className="space-y-10 py-10">
+        <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+          <CardHeader className="space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/70 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-muted-foreground dark:border-slate-700/60 dark:bg-slate-900/70">
+              <span>Web Scraping</span>
+              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+              <span>HTTPS Proxy</span>
+            </div>
+            <div className="space-y-2">
+              <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Route requests through the roaming network
+              </CardTitle>
+              <CardDescription>
+                Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
+              </CardDescription>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              <Badge variant="outline">Global egress</Badge>
+              <Badge variant="outline">Session pinning</Badge>
+              <Badge variant="outline">Rotating IPs</Badge>
+            </div>
+            <div>
+              <Button asChild variant="outline" size="sm" className="mt-2">
+                <a
+                  href="https://cloud.roamingproxy.com/hosting/billing"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  Manage billing
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+
         {isLoading ? (
-          <Flex justify="center" align="center" h="50vh">
-            <Spinner />
-          </Flex>
+          <div className="flex h-[40vh] items-center justify-center">
+            <Spinner size={48} />
+          </div>
         ) : error ? (
-          <Alert status="error">
-            <AlertIcon />
-            <Text fontSize="sm">
-              Error:{" "}
-              {error.message ||
-                "Failed to load user details. Please try again later."}
-            </Text>
+          <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+            <AlertTitle>Unable to load access details</AlertTitle>
+            <AlertDescription>
+              {error instanceof Error ? error.message : "Something went wrong while loading your subscription status."}
+            </AlertDescription>
           </Alert>
         ) : !hasActiveSubscription ? (
-          <Alert status="warning">
-            <AlertIcon />
-            <Text fontSize="sm">
-              No active subscription found. Please subscribe to a plan to use
-              the HTTPS Proxy API.
-            </Text>
+          <Alert className="border-amber-300/40 bg-amber-100/60 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+            <AlertTitle>No active subscription detected</AlertTitle>
+            <AlertDescription>
+              Subscribe to an eligible plan to unlock HTTPS Proxy API access for this workspace.
+            </AlertDescription>
           </Alert>
         ) : (
-          <>
-            {!proxyApiAccess?.has_access && (
-              <Alert status="warning" mb={4}>
-                <AlertIcon />
-                <Text fontSize="sm">
+          <div className="space-y-8">
+            {!proxyApiAccess?.has_access ? (
+              <Alert className="border-amber-300/40 bg-amber-100/60 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+                <AlertTitle>HTTPS Proxy not included in your plan</AlertTitle>
+                <AlertDescription>
                   {proxyApiAccess?.message ||
-                    "Your current plan does not include HTTPS Proxy API access. Please upgrade to an eligible plan."}
-                </Text>
+                    "Upgrade to a plan that bundles HTTPS proxy usage, or contact support to enable access."}
+                </AlertDescription>
               </Alert>
-            )}
-            <Tabs isLazy variant="enclosed-colored" colorScheme="red">
-              <TabList>
-                {pageTabsData.map((tab) => (
-                  <Tab
-                    key={tab.id}
-                    bg="white"
-                    fontWeight="semibold"
-                    fontSize="lg"
-                    color="gray.400"
-                    _selected={{
-                      bg: "gray.50",
-                      color: "red.600",
-                      borderColor: "inherit",
-                      borderBottomColor: "gray.50",
-                      borderTopWidth: "2px",
-                      borderTopColor: "red.400",
-                      marginTop: "-1px",
-                    }}
-                  >
-                    {tab.label}
-                  </Tab>
-                ))}
-              </TabList>
+            ) : null}
 
-              <TabPanels bg="gray.50" pt={4} borderRadius="0 0 md md">
-                <TabPanel>
-                  <GetStartedTab />
-                </TabPanel>
-                <TabPanel>
-                  <ApiKeyModule token={token} />
-                </TabPanel>
-                <TabPanel>
-                  <PlaygroundHttpsProxy />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </>
+            <ApiKeyModule token={token} />
+
+            <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+              <CardHeader>
+                <CardTitle className="text-2xl">Interactive playground</CardTitle>
+                <CardDescription>
+                  Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PlaygroundHttpsProxy />
+              </CardContent>
+            </Card>
+          </div>
         )}
-      </Container>
+      </div>
     </ProtectedComponent>
   )
 }
