@@ -1,26 +1,23 @@
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Flex,
-  Heading,
-  HStack,
-  Stack,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  Tag,
-  useColorModeValue,
-} from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { FiArrowUpRight } from "react-icons/fi"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 import type { ServerNode } from "./types"
 
@@ -40,123 +37,106 @@ interface InfrastructureTableProps {
 }
 
 const InfrastructureTable = ({ servers, totals, formatCurrency, ctaTo }: InfrastructureTableProps) => {
-  const borderColor = useColorModeValue("blackAlpha.100", "whiteAlpha.100")
-  const background = useColorModeValue("rgba(255,255,255,0.94)", "rgba(15,23,42,0.82)")
-  const headerBg = useColorModeValue("rgba(148,163,184,0.16)", "rgba(71,85,105,0.26)")
-  const headerColor = useColorModeValue("gray.600", "gray.300")
-  const rowHover = useColorModeValue("rgba(148,163,184,0.12)", "rgba(71,85,105,0.32)")
-  const metaColor = useColorModeValue("gray.500", "gray.400")
-
   return (
-    <Card
-      variant="outline"
-      borderRadius="28px"
-      borderWidth="1px"
-      borderColor={borderColor}
-      bg={background}
-      backdropFilter="blur(18px)"
-      boxShadow={useColorModeValue("0 26px 60px -34px rgba(15,23,42,0.42)", "0 26px 60px -30px rgba(15,23,42,0.62)")}
-    >
-      <CardHeader borderBottomWidth="1px" borderColor={borderColor}>
-        <Heading size="md">Infrastructure footprint</Heading>
-        <Text fontSize="sm" color={metaColor} mt={1.5}>
+    <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_26px_60px_-34px_rgba(15,23,42,0.42)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_26px_60px_-30px_rgba(15,23,42,0.62)]">
+      <CardHeader className="space-y-1.5 border-b border-slate-200/70 dark:border-slate-700/60">
+        <CardTitle className="text-lg font-semibold">Infrastructure footprint</CardTitle>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Managed VPS instances across your RoamingProxy regions.
-        </Text>
+        </p>
       </CardHeader>
-      <CardBody>
-        <TableContainer borderRadius="24px" borderWidth="1px" borderColor={borderColor} overflow="hidden">
-          <Table variant="simple" size="sm">
-            <Thead bg={headerBg}>
-              <Tr>
-                <Th color={headerColor}>Server</Th>
-                <Th color={headerColor}>IP</Th>
-                <Th color={headerColor}>Status</Th>
-                <Th color={headerColor}>Specs</Th>
-                <Th color={headerColor}>Features</Th>
-                <Th isNumeric color={headerColor}>
-                  Monthly
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
+      <CardContent className="p-6">
+        <div className="overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-700/60">
+          <Table>
+            <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+              <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                <TableHead>Server</TableHead>
+                <TableHead>IP</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Specs</TableHead>
+                <TableHead>Features</TableHead>
+                <TableHead className="text-right">Monthly</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {servers.length === 0 ? (
-                <Tr>
-                  <Td colSpan={6} py={8}>
-                    <Stack spacing={2} align="center" color={metaColor}>
-                      <Heading size="sm">No managed nodes yet</Heading>
-                      <Text fontSize="sm">
+                <TableRow>
+                  <TableCell colSpan={6} className="py-8 text-center text-slate-500 dark:text-slate-400">
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">No managed nodes yet</p>
+                      <p className="text-sm">
                         Provision your first server to track availability, spend, and feature coverage.
-                      </Text>
-                    </Stack>
-                  </Td>
-                </Tr>
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
               ) : (
                 servers.map((server) => (
-                  <Tr key={server.name} _hover={{ bg: rowHover }} transition="background 0.15s ease">
-                    <Td fontWeight="medium">
-                      <Text>{server.name}</Text>
-                      <Text fontSize="xs" color={metaColor} mt={1}>
+                  <TableRow
+                    key={server.name}
+                    className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/60"
+                  >
+                    <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
+                      <div>{server.name}</div>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         Active since {formatDate(server.activeSince)}
-                      </Text>
-                    </Td>
-                    <Td>
-                      <Text>{server.ip}</Text>
-                      <Text fontSize="xs" color={metaColor} mt={1}>
+                      </p>
+                    </TableCell>
+                    <TableCell className="align-top">
+                      <div className="text-slate-900 dark:text-slate-50">{server.ip}</div>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         {server.os} · v{server.version}
-                      </Text>
-                    </Td>
-                    <Td>
+                      </p>
+                    </TableCell>
+                    <TableCell className="align-top">
                       <Badge
-                        colorScheme={server.status === "Connected" ? "green" : "orange"}
-                        borderRadius="full"
-                        px={3}
-                        py={1}
+                        variant={server.status === "Connected" ? "success" : "warning"}
+                        className="rounded-full px-3 py-1 text-xs font-semibold"
                       >
                         {server.status}
                       </Badge>
-                    </Td>
-                    <Td>
-                      <Stack spacing={1}>
-                        <Text fontSize="sm" color={metaColor}>
+                    </TableCell>
+                    <TableCell className="align-top">
+                      <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                        <div>
                           {server.vCPUs ?? "-"} vCPU · {server.ramGB} GB RAM · {server.storageSizeGB} GB SSD
-                        </Text>
-                        <Text fontSize="xs" color={metaColor}>
-                          Kernel {server.kernel}
-                        </Text>
-                      </Stack>
-                    </Td>
-                    <Td>
+                        </div>
+                        <div className="text-xs">Kernel {server.kernel}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="align-top">
                       <FeatureTags server={server} />
-                    </Td>
-                    <Td isNumeric fontWeight="semibold">
+                    </TableCell>
+                    <TableCell className="align-top text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
                       {formatCurrency(server.monthlyComputePrice)}
-                    </Td>
-                  </Tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </Tbody>
+            </TableBody>
           </Table>
-        </TableContainer>
-        <Flex justify="space-between" align="center" mt={8} wrap="wrap" gap={4}>
-          <Stack spacing={1} color={metaColor}>
-            <Text fontSize="sm">
-              Network total: {totals.totalCount} servers · {totals.totalVCPUs} vCPUs · {totals.totalRAM} GB RAM · {totals.totalStorage} GB SSD
-            </Text>
-            <Text fontSize="sm">
-              Monthly run rate {formatCurrency(totals.totalMonthlySpend)} across active nodes.
-            </Text>
-          </Stack>
+        </div>
+      </CardContent>
+      <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/60 py-6 dark:border-slate-700/60 dark:bg-slate-900/50">
+        <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+          <p>
+            Network total: {totals.totalCount} servers · {totals.totalVCPUs} vCPUs · {totals.totalRAM} GB RAM · {totals.totalStorage} GB SSD
+          </p>
+          <p>Monthly run rate {formatCurrency(totals.totalMonthlySpend)} across active nodes.</p>
+        </div>
+        <div className="ml-auto">
           <Button
-            as={RouterLink}
-            to={ctaTo}
+            asChild
             variant="outline"
-            borderRadius="full"
-            rightIcon={<FiArrowUpRight />}
+            className="gap-2 rounded-full px-5 py-2 text-sm font-semibold"
           >
-            Open infrastructure view
+            <RouterLink to={ctaTo}>
+              <span>Open infrastructure view</span>
+              <FiArrowUpRight className="h-4 w-4" />
+            </RouterLink>
           </Button>
-        </Flex>
-      </CardBody>
+        </div>
+      </CardFooter>
     </Card>
   )
 }
@@ -170,20 +150,20 @@ const FeatureTags = ({ server }: { server: ServerNode }) => {
 
   if (tags.length === 0) {
     return (
-      <Tag size="sm" variant="subtle" colorScheme="gray" borderRadius="full">
+      <Badge variant="subtle" className="rounded-full px-3 py-1 text-xs font-medium">
         Standard
-      </Tag>
+      </Badge>
     )
   }
 
   return (
-    <HStack spacing={2} wrap="wrap">
+    <div className="flex flex-wrap gap-2">
       {tags.map((label) => (
-        <Tag key={label} size="sm" variant="subtle" colorScheme="blue" borderRadius="full">
+        <Badge key={label} variant="outline" className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-medium dark:border-slate-600/80">
           {label}
-        </Tag>
+        </Badge>
       ))}
-    </HStack>
+    </div>
   )
 }
 

@@ -1,18 +1,9 @@
-import {
-  Badge,
-  Box,
-  Button,
-  ButtonGroup,
-  Card,
-  CardBody,
-  Heading,
-  SimpleGrid,
-  Stack,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { FiArrowUpRight } from "react-icons/fi"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 interface DashboardHeaderProps {
   servicesCount: number
@@ -33,148 +24,94 @@ const DashboardHeader = ({
   isBillingLoading,
   apiConsoleTo,
 }: DashboardHeaderProps) => {
-  const cardBg = useColorModeValue("rgba(255,255,255,0.92)", "rgba(15,23,42,0.82)")
-  const badgeBg = useColorModeValue("rgba(99,102,241,0.12)", "rgba(99,102,241,0.24)")
-  const badgeColor = useColorModeValue("brand.600", "brand.200")
-  const detailBg = useColorModeValue("rgba(255,255,255,0.6)", "rgba(15,23,42,0.5)")
-  const detailBorder = useColorModeValue("blackAlpha.100", "whiteAlpha.100")
-
   return (
-    <Card
-      position="relative"
-      overflow="hidden"
-      borderRadius="28px"
-      borderWidth="1px"
-      borderColor={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
-      bg={cardBg}
-      backdropFilter="blur(18px)"
-      boxShadow={useColorModeValue("0 24px 60px -32px rgba(15,23,42,0.36)", "0 20px 50px -32px rgba(148,163,184,0.35)")}
-    >
-      <CardBody position="relative" zIndex={1} p={{ base: 8, md: 10 }}>
-        <Stack spacing={8}>
-          <Stack spacing={5} maxW={{ base: "full", xl: "2xl" }}>
-            <Badge
-              alignSelf="flex-start"
-              px={4}
-              py={1.5}
-              borderRadius="full"
-              bg={badgeBg}
-              color={badgeColor}
-              textTransform="none"
-              letterSpacing="0.08em"
-            >
-              {servicesCount} active services · next renewal {nextRenewalLabel}
-            </Badge>
-            <Stack spacing={3}>
-              <Heading size="lg" lineHeight="1.2">
-                Welcome back. Everything is synced and ready for your next crawl.
-              </Heading>
-              <Text
-                fontSize="md"
-                color={useColorModeValue("gray.600", "gray.300")}
-                lineHeight="1.7"
-              >
-                Track infrastructure health, monitor usage trends, and launch new workloads from a single, refined workspace.
-              </Text>
-            </Stack>
-          </Stack>
-
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={4}>
-            <StatBadge label="API keys" value={apiKeyCount.toString()} bg={detailBg} borderColor={detailBorder} />
-            <StatBadge
-              label="Avg requests / key"
-              value={averageRequestsPerKey.toLocaleString()}
-              bg={detailBg}
-              borderColor={detailBorder}
-            />
-            <StatBadge label="Active services" value={servicesCount.toString()} bg={detailBg} borderColor={detailBorder} />
-            <StatBadge label="Next renewal" value={nextRenewalLabel} bg={detailBg} borderColor={detailBorder} />
-          </SimpleGrid>
-
-          <ButtonGroup flexWrap="wrap" gap={3}>
-            <Button
-              as={RouterLink}
-              to={apiConsoleTo}
-              colorScheme="brand"
-              rightIcon={<FiArrowUpRight />}
-              borderRadius="full"
-              size="lg"
-            >
-              Open API console
-            </Button>
-            <Button
-              variant="outline"
-              rightIcon={<FiArrowUpRight />}
-              onClick={onBillingClick}
-              isLoading={isBillingLoading}
-              borderRadius="full"
-              size="lg"
-            >
-              Customer billing
-            </Button>
-          </ButtonGroup>
-        </Stack>
-      </CardBody>
-
+    <Card className="relative overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl transition-shadow dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
       <BackgroundAura />
+      <CardContent className="relative z-[1] space-y-10 p-8 md:p-10">
+        <div className="space-y-5 xl:max-w-2xl">
+          <Badge className="inline-flex items-center rounded-full bg-primary/15 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-primary/80 dark:bg-primary/25 dark:text-primary-foreground/80">
+            {servicesCount} active services · next renewal {nextRenewalLabel}
+          </Badge>
+          <div className="space-y-3">
+            <h1 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-slate-100">
+              Welcome back. Everything is synced and ready for your next crawl.
+            </h1>
+            <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">
+              Track infrastructure health, monitor usage trends, and launch new workloads from a single, refined workspace.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatBadge label="API keys" value={apiKeyCount.toString()} />
+          <StatBadge
+            label="Avg requests / key"
+            value={averageRequestsPerKey.toLocaleString()}
+          />
+          <StatBadge label="Active services" value={servicesCount.toString()} />
+          <StatBadge label="Next renewal" value={nextRenewalLabel} />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            asChild
+            size="lg"
+            className="gap-2 rounded-full px-6 text-base font-semibold shadow-lg"
+          >
+            <RouterLink to={apiConsoleTo}>
+              <span>Open API console</span>
+              <FiArrowUpRight className="h-4 w-4" />
+            </RouterLink>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            className="gap-2 rounded-full px-6 text-base font-medium"
+            onClick={onBillingClick}
+            isLoading={isBillingLoading}
+          >
+            <span>Customer billing</span>
+            <FiArrowUpRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
     </Card>
   )
 }
 
 const BackgroundAura = () => (
-  <Box
-    position="absolute"
-    inset={0}
-    pointerEvents="none"
-    zIndex={0}
-    opacity={{ base: 0.45, md: 0.6 }}
-  >
-    <Box
-      position="absolute"
-      top="-120px"
-      right="-140px"
-      w="320px"
-      h="320px"
-      bgGradient="radial(rgba(99,102,241,0.32), transparent 60%)"
-      filter="blur(10px)"
-      transform="rotate(8deg)"
+  <div className="pointer-events-none absolute inset-0 -z-10 opacity-50">
+    <div
+      className="absolute -right-36 -top-32 h-80 w-80 rounded-full blur-3xl"
+      style={{
+        background:
+          "radial-gradient(circle, rgba(99,102,241,0.32) 0%, transparent 60%)",
+      }}
     />
-    <Box
-      position="absolute"
-      bottom="-160px"
-      left="-120px"
-      w="360px"
-      h="360px"
-      bgGradient="radial(rgba(14,165,233,0.28), transparent 65%)"
-      filter="blur(14px)"
+    <div
+      className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full blur-[70px]"
+      style={{
+        background:
+          "radial-gradient(circle, rgba(14,165,233,0.28) 0%, transparent 65%)",
+      }}
     />
-  </Box>
+  </div>
 )
 
 interface StatBadgeProps {
   label: string
   value: string
-  bg: string
-  borderColor: string
 }
 
-const StatBadge = ({ label, value, bg, borderColor }: StatBadgeProps) => (
-  <Stack
-    spacing={1.5}
-    p={4}
-    borderRadius="xl"
-    bg={bg}
-    borderWidth="1px"
-    borderColor={borderColor}
-    backdropFilter="blur(12px)"
-  >
-    <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.16em" color="gray.500">
+const StatBadge = ({ label, value }: StatBadgeProps) => (
+  <div className="rounded-2xl border border-slate-200/70 bg-white/60 p-4 backdrop-blur-2xl transition-colors dark:border-slate-700/50 dark:bg-slate-900/50">
+    <span className="text-[0.68rem] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
       {label}
-    </Text>
-    <Text fontWeight="semibold" fontSize="lg">
+    </span>
+    <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-50">
       {value}
-    </Text>
-  </Stack>
+    </p>
+  </div>
 )
 
 export default DashboardHeader

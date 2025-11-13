@@ -1,18 +1,4 @@
-import {
-  Alert,
-  AlertIcon,
-  Badge,
-  Box,
-  Button,
-  Card,
-  Heading,
-  HStack,
-  SimpleGrid,
-  Spinner,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react"
+import { AlertCircle } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { useCallback, useMemo, useState } from "react"
@@ -26,18 +12,24 @@ import {
 import { FiArrowUpRight, FiDatabase, FiUserCheck } from "react-icons/fi"
 import type { IconType } from "react-icons"
 
-import ActiveServicesGrid from "../../components/Dashboard/ActiveServicesGrid"
-import DashboardHeader from "../../components/Dashboard/DashboardHeader"
-import InfrastructureTable from "../../components/Dashboard/InfrastructureTable"
-import QuickActionsGrid from "../../components/Dashboard/QuickActionsGrid"
-import StatHighlights from "../../components/Dashboard/StatHighlights"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
+import ActiveServicesGrid from "@/components/Dashboard/ActiveServicesGrid"
+import DashboardHeader from "@/components/Dashboard/DashboardHeader"
+import InfrastructureTable from "@/components/Dashboard/InfrastructureTable"
+import QuickActionsGrid from "@/components/Dashboard/QuickActionsGrid"
+import StatHighlights from "@/components/Dashboard/StatHighlights"
 import type {
   DashboardStat,
   DisplayedFeature,
   QuickActionLink,
   ServerNode,
-} from "../../components/Dashboard/types"
-import ProtectedComponent from "../../components/Common/ProtectedComponent"
+} from "@/components/Dashboard/types"
+import ProtectedComponent from "@/components/Common/ProtectedComponent"
+import useCustomToast from "@/hooks/useCustomToast"
 
 type FeatureMeta = {
   name: string
@@ -50,6 +42,12 @@ type FeatureMeta = {
 
 type FeatureKey = "proxy-api" | "vps-hosting" | "serp-api"
 
+const defaultFeatureSlugs: FeatureKey[] = [
+  "proxy-api",
+  "vps-hosting",
+  "serp-api",
+]
+
 const featureDetails: Record<FeatureKey, FeatureMeta> = {
   "proxy-api": {
     name: "Web Scraping API",
@@ -57,7 +55,8 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "Low-latency rotating proxies with smart routing, retry logic, and geo-targeting out of the box.",
     icon: FaGlobe,
     path: "/web-scraping-tools/https-api",
-    gradient: "linear(to-br, rgba(99,102,241,0.16), rgba(14,165,233,0.1))",
+    gradient:
+      "linear-gradient(135deg, rgba(99,102,241,0.16), rgba(14,165,233,0.1))",
     period: "Aug 15 – Sep 15, 2025",
   },
   "vps-hosting": {
@@ -66,7 +65,8 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "Monitor health, snapshots, and failover orchestration across your managed RoamingProxy compute footprint.",
     icon: FaServer,
     path: "/hosting",
-    gradient: "linear(to-br, rgba(34,197,94,0.16), rgba(6,182,212,0.12))",
+    gradient:
+      "linear-gradient(135deg, rgba(34,197,94,0.16), rgba(6,182,212,0.12))",
     period: "Sep 9 – Oct 9, 2025",
   },
   "serp-api": {
@@ -75,7 +75,8 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "Fresh structured search results with localized keywords, device targeting, and historical snapshots.",
     icon: FaSearch,
     path: "/web-scraping-tools/serp-api",
-    gradient: "linear(to-br, rgba(251,191,36,0.18), rgba(99,102,241,0.12))",
+    gradient:
+      "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(99,102,241,0.12))",
     period: "Available for activation",
   },
 }
@@ -317,6 +318,8 @@ async function fetchApiKeys(token: string): Promise<ApiKey[]> {
 }
 
 const HomePage = () => {
+  const showToast = useCustomToast()
+
   const {
     data: subscriptions,
     isLoading: isSubscriptionsLoading,
@@ -446,20 +449,11 @@ const HomePage = () => {
       })
     })
 
-    if (enabled.size === 0) {
-      ("proxy-api,vps-hosting,serp-api".split(",") as FeatureKey[]).forEach(
-        (feature) => {
-          if (featureDetails[feature]) {
-            enabled.add(feature)
-          }
-        },
-      )
-    }
+  const slugs = enabled.size > 0 ? Array.from(enabled) : defaultFeatureSlugs
 
-    return Array.from(enabled).reduce<DisplayedFeature[]>((acc, slug) => {
+    return slugs.map((slug) => {
       const meta = featureDetails[slug]
-      if (!meta) return acc
-      acc.push({
+      return {
         slug,
         name: meta.name,
         description: meta.description,
@@ -467,9 +461,8 @@ const HomePage = () => {
         path: meta.path,
         gradient: meta.gradient,
         period: meta.period,
-      })
-      return acc
-    }, [])
+      }
+    })
   }, [activeSubscriptions])
 
   const nextRenewalLabel = nextRenewal
@@ -477,17 +470,14 @@ const HomePage = () => {
     : "No renewal scheduled"
 
   const [isPortalLoading, setIsPortalLoading] = useState(false)
-  const toast = useToast()
 
   const handleBillingClick = useCallback(async () => {
     if (!token) {
-      toast({
-        title: "Sign in required",
-        description: "Log in again to open the customer billing portal.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      })
+      showToast(
+        "Sign in required",
+        "Log in again to open the customer billing portal.",
+        "warning",
+      )
       return
     }
 
@@ -497,18 +487,15 @@ const HomePage = () => {
       window.location.href = portalUrl
     } catch (error) {
       console.error("Error accessing customer portal:", error)
-      toast({
-        title: "Unable to open portal",
-        description:
-          "Something went wrong loading billing. Please try again shortly.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
+      showToast(
+        "Unable to open portal",
+        "Something went wrong loading billing. Please try again shortly.",
+        "error",
+      )
     } finally {
       setIsPortalLoading(false)
     }
-  }, [toast, token])
+  }, [showToast, token])
 
   const quickActions = useMemo<QuickActionLink[]>(
     () => [
@@ -563,82 +550,76 @@ const HomePage = () => {
   const isLoading = isSubscriptionsLoading || isApiKeysLoading
   const error = subscriptionsError || apiKeysError
 
-  let content: React.ReactNode
+  let content: JSX.Element
 
   if (isLoading) {
     content = (
-      <Card variant="outline" borderRadius="2xl" borderColor="transparent" p={8}>
-        <Stack align="center" spacing={4}>
-          <Spinner size="lg" color="primary" thickness="4px" />
-          <Text fontSize="sm" color="fg.muted">
+      <Card className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
+        <CardContent className="flex flex-col items-center gap-4 p-10">
+          <Spinner size={40} />
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Loading your dashboard...
-          </Text>
-        </Stack>
+          </p>
+        </CardContent>
       </Card>
     )
   } else if (error) {
     content = (
       <Alert
-        status="error"
-        variant="left-accent"
-        borderRadius="2xl"
-        bg="rgba(248, 113, 113, 0.08)"
-        borderColor="rgba(248, 113, 113, 0.45)"
-        alignItems="flex-start"
+        variant="destructive"
+        className="rounded-[24px] border border-red-500/40 bg-red-500/10 text-red-700 backdrop-blur dark:text-red-200"
       >
-        <AlertIcon />
-        <Stack spacing={1}>
-          <Heading size="sm">We couldn&apos;t load your workspace</Heading>
-          <Text fontSize="sm" color="fg.muted">
+        <AlertCircle className="h-5 w-5" />
+        <div>
+          <AlertTitle>We couldn&apos;t load your workspace</AlertTitle>
+          <AlertDescription>
             {error instanceof Error
               ? error.message
               : "Unexpected error loading subscriptions. Please refresh and try again."}
-          </Text>
-        </Stack>
+          </AlertDescription>
+        </div>
       </Alert>
     )
   } else if (activeSubscriptions.length === 0) {
     content = (
-      <Card
-        variant="outline"
-        borderRadius="2xl"
-        p={10}
-        bgGradient="linear(to-br, rgba(99,102,241,0.14), rgba(14,165,233,0.12))"
-        boxShadow="0 32px 70px -38px rgba(15,23,42,0.45)"
-      >
-        <Stack spacing={6} align="center" textAlign="center">
-          <Badge
-            colorScheme="brand"
-            borderRadius="full"
-            px={4}
-            py={1.5}
-            bg="rgba(99, 102, 241, 0.18)"
-          >
+      <Card className="rounded-[28px] border border-indigo-400/30 bg-[linear-gradient(135deg,_rgba(99,102,241,0.14),_rgba(14,165,233,0.12))] text-center text-slate-900 shadow-[0_32px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-indigo-400/40 dark:text-slate-100">
+        <CardContent className="space-y-6 p-10">
+          <Badge className="mx-auto inline-flex items-center rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-indigo-700 dark:bg-white/10 dark:text-indigo-100">
             No active subscriptions yet
           </Badge>
-          <Heading size="lg">Activate your first service</Heading>
-          <Text maxW="2xl" color="fg.muted">
+          <h2 className="text-2xl font-semibold">
+            Activate your first service
+          </h2>
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-700/90 dark:text-slate-200/90">
             Provision global rotating proxies, managed VPS infrastructure, and SERP datasets in minutes. Choose a plan that matches your throughput and scale instantly when workloads spike.
-          </Text>
-          <HStack spacing={4}>
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
             <Button
-              as={RouterLink}
-              to="/pricing"
-              colorScheme="brand"
-              rightIcon={<FiArrowUpRight />}
+              asChild
+              className="gap-2 rounded-full px-6 py-2 text-base font-semibold"
             >
-              Explore plans
+              <RouterLink to="/pricing">
+                <span>Explore plans</span>
+                <FiArrowUpRight className="h-4 w-4" />
+              </RouterLink>
             </Button>
-            <Button as={RouterLink} to="/contact" variant="outline" rightIcon={<FiArrowUpRight />}>
-              Talk with sales
+            <Button
+              asChild
+              variant="outline"
+              className="gap-2 rounded-full px-6 py-2 text-base font-medium"
+            >
+              <RouterLink to="/contact">
+                <span>Talk with sales</span>
+                <FiArrowUpRight className="h-4 w-4" />
+              </RouterLink>
             </Button>
-          </HStack>
-        </Stack>
+          </div>
+        </CardContent>
       </Card>
     )
   } else {
     content = (
-      <Stack spacing={12}>
+      <div className="space-y-12">
         <DashboardHeader
           servicesCount={displayedFeatures.length}
           nextRenewalLabel={nextRenewalLabel}
@@ -651,24 +632,27 @@ const HomePage = () => {
 
         <StatHighlights stats={statHighlights} />
 
-        <SimpleGrid columns={{ base: 1, xl: 2 }} gap={10} alignItems="start">
-          <Stack spacing={5}>
-            <Heading size="md">Active services</Heading>
-            <Text color="fg.muted" fontSize="sm">
-              Keep tabs on throughput, activation windows,
-              and available feature sets across your workspace.
-            </Text>
+        <div className="grid gap-10 xl:grid-cols-2 xl:items-start">
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Active services
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Keep tabs on throughput, activation windows, and available feature sets across your workspace.
+            </p>
             <ActiveServicesGrid features={displayedFeatures} />
-          </Stack>
+          </div>
 
-          <Stack spacing={5}>
-            <Heading size="md">Quick actions</Heading>
-            <Text color="fg.muted" fontSize="sm">
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Quick actions
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Jump straight into the tools your team relies on most.
-            </Text>
+            </p>
             <QuickActionsGrid actions={quickActions} />
-          </Stack>
-        </SimpleGrid>
+          </div>
+        </div>
 
         <InfrastructureTable
           servers={servers.slice(0, 6)}
@@ -676,13 +660,13 @@ const HomePage = () => {
           formatCurrency={formatCurrency}
           ctaTo="/hosting"
         />
-      </Stack>
+      </div>
     )
   }
 
   return (
     <ProtectedComponent>
-      <Box mb={10}>{content}</Box>
+      <div className="mb-10 space-y-10">{content}</div>
     </ProtectedComponent>
   )
 }

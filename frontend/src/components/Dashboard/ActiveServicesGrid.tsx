@@ -1,18 +1,9 @@
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  Circle,
-  Heading,
-  Icon,
-  SimpleGrid,
-  Stack,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { FiArrowUpRight } from "react-icons/fi"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 import type { DisplayedFeature } from "./types"
 
@@ -21,100 +12,58 @@ interface ActiveServicesGridProps {
 }
 
 const ActiveServicesGrid = ({ features }: ActiveServicesGridProps) => {
-  const borderColor = useColorModeValue("blackAlpha.100", "whiteAlpha.100")
-  const descriptionColor = useColorModeValue("rgba(15,23,42,0.76)", "rgba(226,232,240,0.92)")
-  const headingColor = useColorModeValue("gray.900", "whiteAlpha.900")
-  const badgeBg = useColorModeValue("rgba(255,255,255,0.22)", "rgba(255,255,255,0.16)")
-  const buttonHoverBg = useColorModeValue("rgba(255,255,255,0.22)", "rgba(255,255,255,0.24)")
-  const cardShadow = useColorModeValue(
-    "0 24px 60px -36px rgba(15,23,42,0.48)",
-    "0 20px 60px -36px rgba(15,23,42,0.7)",
-  )
-  const cardHoverShadow = useColorModeValue(
-    "0 36px 70px -34px rgba(15,23,42,0.56)",
-    "0 34px 80px -38px rgba(15,23,42,0.7)",
-  )
-  const fallbackBg = useColorModeValue("rgba(148,163,184,0.08)", "rgba(51,65,85,0.45)")
-  const fallbackBorder = useColorModeValue("blackAlpha.100", "whiteAlpha.100")
-
   if (features.length === 0) {
     return (
-      <Stack
-        spacing={3}
-        borderWidth="1px"
-        borderRadius="xl"
-        borderColor={fallbackBorder}
-        bg={fallbackBg}
-        p={6}
-      >
-        <Heading size="sm" color={headingColor}>
-          No active services yet
-        </Heading>
-        <Text fontSize="sm" color={descriptionColor}>
+      <div className="space-y-3 rounded-2xl border border-slate-200/70 bg-slate-100/70 p-6 text-slate-700 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-200">
+        <h3 className="text-sm font-semibold">No active services yet</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Activate a subscription to see managed assets, renewal windows, and quick access links in this panel.
-        </Text>
-      </Stack>
+        </p>
+      </div>
     )
   }
 
   return (
-    <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {features.map((feature) => (
         <Card
           key={feature.slug}
-          variant="outline"
-          borderRadius="24px"
-          borderWidth="1px"
-          borderColor={borderColor}
-          bgGradient={feature.gradient}
-          backdropFilter="blur(16px)"
-          boxShadow={cardShadow}
-          transition="transform 0.2s ease, box-shadow 0.2s ease"
-          _hover={{ transform: "translateY(-6px)", boxShadow: cardHoverShadow }}
-          height="100%"
+          className="group relative h-full overflow-hidden rounded-[24px] border border-white/30 bg-white/80 shadow-[0_24px_60px_-36px_rgba(15,23,42,0.5)] backdrop-blur-2xl transition duration-200 ease-out hover:-translate-y-1.5 hover:shadow-[0_36px_70px_-32px_rgba(15,23,42,0.56)] dark:border-slate-700/60 dark:bg-slate-900/80"
+          style={{ background: feature.gradient }}
         >
-          <CardBody display="flex" flexDirection="column" gap={4}>
-            <Circle size="12" bg="rgba(255,255,255,0.2)">
-              <Icon as={feature.icon} boxSize={6} color="white" />
-            </Circle>
-            <Stack spacing={2} flex="1">
-              <Heading size="sm" color={headingColor}>
+          <CardContent className="flex h-full flex-col gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white">
+              <feature.icon className="h-6 w-6" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                 {feature.name}
-              </Heading>
-              <Text color={descriptionColor} fontSize="sm">
+              </h3>
+              <p className="text-sm leading-relaxed text-slate-900/80 dark:text-slate-100/80">
                 {feature.description}
-              </Text>
-            </Stack>
-            <Stack spacing={3}>
+              </p>
+            </div>
+            <div className="mt-auto space-y-3">
               {feature.period ? (
-                <Badge
-                  alignSelf="flex-start"
-                  borderRadius="full"
-                  px={3}
-                  py={1}
-                  bg={badgeBg}
-                  color="white"
-                  textTransform="none"
-                >
+                <Badge className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white">
                   {feature.period}
                 </Badge>
               ) : null}
               <Button
-                as={RouterLink}
-                to={feature.path}
+                asChild
                 variant="outline"
-                borderRadius="full"
-                colorScheme="whiteAlpha"
-                rightIcon={<FiArrowUpRight />}
-                _hover={{ bg: buttonHoverBg }}
+                className="gap-2 rounded-full border-white/40 bg-white/10 text-white transition hover:bg-white/20"
               >
-                Manage service
+                <RouterLink to={feature.path}>
+                  <span>Manage service</span>
+                  <FiArrowUpRight className="h-4 w-4" />
+                </RouterLink>
               </Button>
-            </Stack>
-          </CardBody>
+            </div>
+          </CardContent>
         </Card>
       ))}
-    </SimpleGrid>
+    </div>
   )
 }
 
