@@ -4,61 +4,102 @@ import {
   Badge,
   Box,
   Button,
-  Container,
-  Flex,
-  Grid,
-  GridItem,
+  Card,
   Heading,
-  Icon,
-  Link,
-  Table,
-  Tbody,
-  Td,
+  HStack,
+  SimpleGrid,
+  Spinner,
+  Stack,
   Text,
-  Tr,
-  VStack,
   useToast,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import {
   FaBook,
   FaCreditCard,
   FaGlobe,
-  FaKey,
   FaSearch,
   FaServer,
 } from "react-icons/fa"
-import { FiUserCheck } from "react-icons/fi"
+import { FiArrowUpRight, FiDatabase, FiUserCheck } from "react-icons/fi"
+import type { IconType } from "react-icons"
+
+import ActiveServicesGrid from "../../components/Dashboard/ActiveServicesGrid"
+import DashboardHeader from "../../components/Dashboard/DashboardHeader"
+import InfrastructureTable from "../../components/Dashboard/InfrastructureTable"
+import QuickActionsGrid from "../../components/Dashboard/QuickActionsGrid"
+import StatHighlights from "../../components/Dashboard/StatHighlights"
+import type {
+  DashboardStat,
+  DisplayedFeature,
+  QuickActionLink,
+  ServerNode,
+} from "../../components/Dashboard/types"
 import ProtectedComponent from "../../components/Common/ProtectedComponent"
-const featureDetails = {
+
+type FeatureMeta = {
+  name: string
+  description: string
+  icon: IconType
+  path: string
+  gradient: string
+  period?: string
+}
+
+type FeatureKey = "proxy-api" | "vps-hosting" | "serp-api"
+
+const featureDetails: Record<FeatureKey, FeatureMeta> = {
   "proxy-api": {
     name: "Web Scraping API",
     description:
-      "Extract structured data from any website with our powerful and scalable scraping infrastructure.",
+      "Low-latency rotating proxies with smart routing, retry logic, and geo-targeting out of the box.",
     icon: FaGlobe,
     path: "/web-scraping-tools/https-api",
-    period: "8/15/2025 - 9/15/2025",
+    gradient: "linear(to-br, rgba(99,102,241,0.16), rgba(14,165,233,0.1))",
+    period: "Aug 15 – Sep 15, 2025",
   },
   "vps-hosting": {
-    name: "VPS Hosting",
+    name: "Managed VPS Fleet",
     description:
-      "Manage your virtual private servers with high performance and reliability.",
+      "Monitor health, snapshots, and failover orchestration across your managed RoamingProxy compute footprint.",
     icon: FaServer,
     path: "/hosting",
-    period: "9/9/2025 - 10/9/2025",
+    gradient: "linear(to-br, rgba(34,197,94,0.16), rgba(6,182,212,0.12))",
+    period: "Sep 9 – Oct 9, 2025",
   },
   "serp-api": {
-    name: "SERP API",
-    description: "Get structured JSON data from major search engines.",
+    name: "SERP Intelligence",
+    description:
+      "Fresh structured search results with localized keywords, device targeting, and historical snapshots.",
     icon: FaSearch,
     path: "/web-scraping-tools/serp-api",
-    period: "N/A",
+    gradient: "linear(to-br, rgba(251,191,36,0.18), rgba(99,102,241,0.12))",
+    period: "Available for activation",
   },
 }
 
-type FeatureKey = keyof typeof featureDetails
+const numberFormatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+})
+
+const decimalFormatter = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2,
+})
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+})
 
 interface Subscription {
   id: string
@@ -83,30 +124,7 @@ interface ApiKey {
   request_count?: number
 }
 
-interface Server {
-  name: string
-  email: string
-  ip: string
-  version: string
-  kernel: string
-  status: string
-  type: string
-  os: string
-  username: string
-  password: string
-  monthlyComputePrice: number
-  storageSizeGB: number
-  activeSince: string
-  hasRotatingIP: boolean
-  hasBackup: boolean
-  hasMonitoring: boolean
-  hasManagedSupport?: boolean
-  vCPUs?: number
-  ramGB: number
-  refIndex?: number
-}
-
-const servers: Server[] = [
+const servers: ServerNode[] = [
   {
     name: "e-coast-nyc-lower-4core-ssd",
     email: "apis.popov@gmail.com",
@@ -308,6 +326,7 @@ const HomePage = () => {
     queryFn: fetchSubscriptions,
     staleTime: 5 * 60 * 1000,
   })
+
   const token = localStorage.getItem("access_token") || ""
   const {
     data: apiKeys,
@@ -319,6 +338,7 @@ const HomePage = () => {
     staleTime: 5 * 60 * 1000,
     enabled: !!token,
   })
+
   const activeSubscriptions = useMemo(
     () =>
       Array.isArray(subscriptions)
@@ -328,6 +348,7 @@ const HomePage = () => {
         : [],
     [subscriptions],
   )
+
   const totalRequests = useMemo(
     () =>
       Array.isArray(apiKeys)
@@ -335,7 +356,11 @@ const HomePage = () => {
         : 0,
     [apiKeys],
   )
-  const totalDataGB = (totalRequests * 0.0005).toFixed(2)
+
+  const totalDataGB = useMemo(
+    () => (totalRequests > 0 ? totalRequests * 0.0005 : 0),
+    [totalRequests],
+  )
 
   const totalVCPUs = useMemo(
     () => servers.reduce((sum, s) => sum + (s.vCPUs || 0), 0),
@@ -349,33 +374,123 @@ const HomePage = () => {
     () => servers.reduce((sum, s) => sum + s.storageSizeGB, 0),
     [],
   )
+  const totalMonthlySpend = useMemo(
+    () => servers.reduce((sum, s) => sum + s.monthlyComputePrice, 0),
+    [],
+  )
+  const connectedServers = useMemo(
+    () => servers.filter((server) => server.status === "Connected").length,
+    [],
+  )
+  const offlineServers = servers.length - connectedServers
+  const apiKeyCount = Array.isArray(apiKeys) ? apiKeys.length : 0
+  const averageRequestsPerKey = apiKeyCount
+    ? Math.round(totalRequests / apiKeyCount)
+    : 0
 
-  const displayedFeatures = useMemo(() => {
-    const features =
-      activeSubscriptions.length > 0
-        ? activeSubscriptions.flatMap((sub) => sub.enabled_features)
-        : []
-    const uniqueFeatures = Array.from(new Set(features)) as FeatureKey[]
-    const selectedFeatures: FeatureKey[] = ["proxy-api", "vps-hosting"]
-    return selectedFeatures.filter((f) => featureDetails[f])
+  const statHighlights = useMemo<DashboardStat[]>(
+    () => [
+      {
+        label: "Total Requests",
+        value: numberFormatter.format(totalRequests),
+        description: "Across active API keys",
+        icon: FaGlobe,
+        accent: "brand",
+      },
+      {
+        label: "Estimated Transfer",
+        value: `${decimalFormatter.format(totalDataGB)} GB`,
+        description: "Based on current data egress",
+        icon: FiDatabase,
+        accent: "ocean",
+      },
+      {
+        label: "Monthly Spend",
+        value: currencyFormatter.format(totalMonthlySpend),
+        description: "Managed compute and add-ons",
+        icon: FaCreditCard,
+        accent: "warning",
+      },
+      {
+        label: "Connected Servers",
+        value: numberFormatter.format(connectedServers),
+        description:
+          offlineServers > 0
+            ? `${offlineServers} awaiting attention`
+            : "All systems healthy",
+        icon: FaServer,
+        accent: "success",
+      },
+    ],
+    [connectedServers, offlineServers, totalDataGB, totalMonthlySpend, totalRequests],
+  )
+
+  const nextRenewal = useMemo(() => {
+    const futurePeriods = activeSubscriptions
+      .map((sub) => sub.current_period_end)
+      .filter((value): value is number => Boolean(value))
+    if (futurePeriods.length === 0) {
+      return null
+    }
+    const earliest = Math.min(...futurePeriods)
+    return new Date(earliest * 1000)
   }, [activeSubscriptions])
 
-  const isLoading = isSubscriptionsLoading || isApiKeysLoading
-  const error = subscriptionsError || apiKeysError
+  const displayedFeatures = useMemo<DisplayedFeature[]>(() => {
+    const enabled = new Set<FeatureKey>()
+    activeSubscriptions.forEach((sub) => {
+      sub.enabled_features?.forEach((feature) => {
+        if (featureDetails[feature]) {
+          enabled.add(feature)
+        }
+      })
+    })
+
+    if (enabled.size === 0) {
+      ("proxy-api,vps-hosting,serp-api".split(",") as FeatureKey[]).forEach(
+        (feature) => {
+          if (featureDetails[feature]) {
+            enabled.add(feature)
+          }
+        },
+      )
+    }
+
+    return Array.from(enabled).reduce<DisplayedFeature[]>((acc, slug) => {
+      const meta = featureDetails[slug]
+      if (!meta) return acc
+      acc.push({
+        slug,
+        name: meta.name,
+        description: meta.description,
+        icon: meta.icon,
+        path: meta.path,
+        gradient: meta.gradient,
+        period: meta.period,
+      })
+      return acc
+    }, [])
+  }, [activeSubscriptions])
+
+  const nextRenewalLabel = nextRenewal
+    ? dateFormatter.format(nextRenewal)
+    : "No renewal scheduled"
+
   const [isPortalLoading, setIsPortalLoading] = useState(false)
   const toast = useToast()
 
-  const handleBillingClick = async () => {
+  const handleBillingClick = useCallback(async () => {
     if (!token) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in to manage billing.",
+        title: "Sign in required",
+        description: "Log in again to open the customer billing portal.",
         status: "warning",
         duration: 5000,
         isClosable: true,
       })
       return
     }
+
     setIsPortalLoading(true)
     try {
       const portalUrl = await fetchBillingPortal(token)
@@ -383,8 +498,9 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error accessing customer portal:", error)
       toast({
-        title: "Error",
-        description: "Could not open the billing portal. Please try again.",
+        title: "Unable to open portal",
+        description:
+          "Something went wrong loading billing. Please try again shortly.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -392,270 +508,181 @@ const HomePage = () => {
     } finally {
       setIsPortalLoading(false)
     }
+  }, [toast, token])
+
+  const quickActions = useMemo<QuickActionLink[]>(
+    () => [
+      {
+        label: "HTTP API Console",
+        description:
+          "Inspect live requests, rotate endpoints, and manage credentials.",
+        icon: FaGlobe,
+        to: "/web-scraping-tools/https-api",
+      },
+      {
+        label: "User Agents Library",
+        description:
+          "Download curated desktop, mobile, and search engine agent strings.",
+        icon: FiUserCheck,
+        to: "/web-scraping-tools/user-agents",
+      },
+      {
+        label: "Customer Billing Portal",
+        description:
+          "Update payment methods, invoices, and usage caps in seconds.",
+        icon: FaCreditCard,
+        onClick: handleBillingClick,
+        isLoading: isPortalLoading,
+      },
+      {
+        label: "API Reference",
+        description: "Review authentication, endpoints, and best practices.",
+        icon: FaBook,
+        href: "https://docs.roamingproxy.com/",
+      },
+    ],
+    [handleBillingClick, isPortalLoading],
+  )
+
+  const formatCurrency = useCallback(
+    (value: number) => currencyFormatter.format(value),
+    [],
+  )
+
+  const infrastructureTotals = useMemo(
+    () => ({
+      totalCount: servers.length,
+      totalVCPUs,
+      totalRAM,
+      totalStorage,
+      totalMonthlySpend,
+    }),
+    [totalMonthlySpend, totalRAM, totalStorage, totalVCPUs],
+  )
+
+  const isLoading = isSubscriptionsLoading || isApiKeysLoading
+  const error = subscriptionsError || apiKeysError
+
+  let content: React.ReactNode
+
+  if (isLoading) {
+    content = (
+      <Card variant="outline" borderRadius="2xl" borderColor="transparent" p={8}>
+        <Stack align="center" spacing={4}>
+          <Spinner size="lg" color="primary" thickness="4px" />
+          <Text fontSize="sm" color="fg.muted">
+            Loading your dashboard...
+          </Text>
+        </Stack>
+      </Card>
+    )
+  } else if (error) {
+    content = (
+      <Alert
+        status="error"
+        variant="left-accent"
+        borderRadius="2xl"
+        bg="rgba(248, 113, 113, 0.08)"
+        borderColor="rgba(248, 113, 113, 0.45)"
+        alignItems="flex-start"
+      >
+        <AlertIcon />
+        <Stack spacing={1}>
+          <Heading size="sm">We couldn&apos;t load your workspace</Heading>
+          <Text fontSize="sm" color="fg.muted">
+            {error instanceof Error
+              ? error.message
+              : "Unexpected error loading subscriptions. Please refresh and try again."}
+          </Text>
+        </Stack>
+      </Alert>
+    )
+  } else if (activeSubscriptions.length === 0) {
+    content = (
+      <Card
+        variant="outline"
+        borderRadius="2xl"
+        p={10}
+        bgGradient="linear(to-br, rgba(99,102,241,0.14), rgba(14,165,233,0.12))"
+        boxShadow="0 32px 70px -38px rgba(15,23,42,0.45)"
+      >
+        <Stack spacing={6} align="center" textAlign="center">
+          <Badge
+            colorScheme="brand"
+            borderRadius="full"
+            px={4}
+            py={1.5}
+            bg="rgba(99, 102, 241, 0.18)"
+          >
+            No active subscriptions yet
+          </Badge>
+          <Heading size="lg">Activate your first service</Heading>
+          <Text maxW="2xl" color="fg.muted">
+            Provision global rotating proxies, managed VPS infrastructure, and SERP datasets in minutes. Choose a plan that matches your throughput and scale instantly when workloads spike.
+          </Text>
+          <HStack spacing={4}>
+            <Button
+              as={RouterLink}
+              to="/pricing"
+              colorScheme="brand"
+              rightIcon={<FiArrowUpRight />}
+            >
+              Explore plans
+            </Button>
+            <Button as={RouterLink} to="/contact" variant="outline" rightIcon={<FiArrowUpRight />}>
+              Talk with sales
+            </Button>
+          </HStack>
+        </Stack>
+      </Card>
+    )
+  } else {
+    content = (
+      <Stack spacing={12}>
+        <DashboardHeader
+          servicesCount={displayedFeatures.length}
+          nextRenewalLabel={nextRenewalLabel}
+          apiKeyCount={apiKeyCount}
+          averageRequestsPerKey={averageRequestsPerKey}
+          onBillingClick={handleBillingClick}
+          isBillingLoading={isPortalLoading}
+          apiConsoleTo="/web-scraping-tools/https-api"
+        />
+
+        <StatHighlights stats={statHighlights} />
+
+        <SimpleGrid columns={{ base: 1, xl: 2 }} gap={10} alignItems="start">
+          <Stack spacing={5}>
+            <Heading size="md">Active services</Heading>
+            <Text color="fg.muted" fontSize="sm">
+              Keep tabs on throughput, activation windows,
+              and available feature sets across your workspace.
+            </Text>
+            <ActiveServicesGrid features={displayedFeatures} />
+          </Stack>
+
+          <Stack spacing={5}>
+            <Heading size="md">Quick actions</Heading>
+            <Text color="fg.muted" fontSize="sm">
+              Jump straight into the tools your team relies on most.
+            </Text>
+            <QuickActionsGrid actions={quickActions} />
+          </Stack>
+        </SimpleGrid>
+
+        <InfrastructureTable
+          servers={servers.slice(0, 6)}
+          totals={infrastructureTotals}
+          formatCurrency={formatCurrency}
+          ctaTo="/hosting"
+        />
+      </Stack>
+    )
   }
 
   return (
     <ProtectedComponent>
-      <Container maxW="full" mb={6}>
-        {isLoading ? (
-          <Text fontSize="sm" mt={6}>
-            Loading your dashboard...
-          </Text>
-        ) : error ? (
-          <Alert status="error" mt={6}>
-            <AlertIcon />
-            <Text fontSize="sm">
-              Error:{" "}
-              {error instanceof Error
-                ? error.message
-                : "Failed to load dashboard details."}
-            </Text>
-          </Alert>
-        ) : activeSubscriptions.length === 0 ? (
-          <Alert status="info" mt={6}>
-            <AlertIcon />
-            <Text fontSize="sm">
-              No active subscriptions found. Please subscribe to access your
-              dashboard.
-            </Text>
-          </Alert>
-        ) : (
-          <VStack spacing={8} align="stretch" mt={6} pb={10}>
-            {/* Row 1: Usage */}
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-              gap={6}
-            >
-              <GridItem>
-                <Box
-                  shadow="md"
-                  borderWidth="1px"
-                  borderRadius="md"
-                  p={4}
-                  height="100%"
-                >
-                  <VStack align="start" spacing={3}>
-                    <Heading size="xs" color="gray.700">
-                      VPS Status
-                    </Heading>
-                    <Flex alignItems="baseline">
-                      <Text fontSize="sm" color="gray.600" mr={2}>
-                        Total vCPUs:
-                      </Text>
-                      <Text fontSize="3xl" fontWeight="bold" color="red.500">
-                        {totalVCPUs}
-                      </Text>
-                    </Flex>
-                    <Flex alignItems="baseline">
-                      <Text fontSize="sm" color="gray.600" mr={2}>
-                        Total RAM:
-                      </Text>
-                      <Text fontSize="3xl" fontWeight="bold" color="red.500">
-                        {totalRAM} GB
-                      </Text>
-                    </Flex>
-                    <Flex alignItems="baseline">
-                      <Text fontSize="sm" color="gray.600" mr={2}>
-                        Total Storage:
-                      </Text>
-                      <Text fontSize="3xl" fontWeight="bold" color="red.500">
-                        {totalStorage} GB
-                      </Text>
-                    </Flex>
-                    <Text fontSize="sm" color="gray.600">
-                      Note: Detailed VPS settings available in the{" "}
-                      <Link as={RouterLink} to="/hosting" color="red.500">
-                        VPS Dashboard
-                      </Link>
-                      .
-                    </Text>
-                  </VStack>
-                </Box>
-              </GridItem>
-              <GridItem>
-                <Box
-                  shadow="md"
-                  borderWidth="1px"
-                  borderRadius="md"
-                  p={4}
-                  height="100%"
-                >
-                  <VStack align="start" spacing={3}>
-                    <Heading size="xs" color="gray.700">
-                      HTTPs API Usage
-                    </Heading>
-                    <Flex alignItems="baseline">
-                      <Text fontSize="sm" color="gray.600" mr={2}>
-                        Total Requests:
-                      </Text>
-                      <Text fontSize="3xl" fontWeight="bold" color="red.500">
-                        {totalRequests.toLocaleString()}
-                      </Text>
-                    </Flex>
-                    <Flex alignItems="baseline">
-                      <Text fontSize="sm" color="gray.600" mr={2}>
-                        Data Transferred:
-                      </Text>
-                      <Text fontSize="3xl" fontWeight="bold" color="red.500">
-                        {totalDataGB} GB
-                      </Text>
-                    </Flex>
-                  </VStack>
-                </Box>
-              </GridItem>
-            </Grid>
-            {/* Row 2: Services */}
-            {displayedFeatures.length > 0 && (
-              <VStack align="stretch" spacing={4} pt={4}>
-                <Heading size="md">Your Services</Heading>
-                <Grid
-                  templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-                  gap={6}
-                >
-                  {displayedFeatures.map((featureSlug) => {
-                    const details = featureDetails[featureSlug]
-                    if (!details) return null
-                    return (
-                      <GridItem key={featureSlug} w="100%">
-                        <Link
-                          as={RouterLink}
-                          to={details.path}
-                          _hover={{ textDecoration: "none" }}
-                        >
-                          <Box
-                            p={5}
-                            shadow="md"
-                            borderWidth="1px"
-                            borderRadius="lg"
-                            height="100%"
-                            display="flex"
-                            flexDirection="column"
-                            transition="all 0.2s ease-in-out"
-                            _hover={{
-                              shadow: "xl",
-                              transform: "translateY(-4px)",
-                            }}
-                          >
-                            <Box flex="1">
-                              <Flex
-                                justifyContent="space-between"
-                                alignItems="flex-start"
-                                mb={3}
-                              >
-                                <Heading size="sm" pr={4}>
-                                  {details.name}
-                                </Heading>
-                                <Flex alignItems="center" gap={2}>
-                                  <Badge colorScheme="green">Active</Badge>
-                                  <Icon
-                                    as={details.icon}
-                                    boxSize={8}
-                                    color="red.400"
-                                  />
-                                </Flex>
-                              </Flex>
-                              <Text
-                                fontSize="sm"
-                                color="gray.600"
-                                minHeight={{ base: "auto", md: "60px" }}
-                              >
-                                {details.description}
-                              </Text>
-                              {details.period && (
-                                <Text fontSize="xs" color="gray.600" mt={2}>
-                                  Period: {details.period}
-                                </Text>
-                              )}
-                            </Box>
-                            <Text
-                              mt={4}
-                              color="red.500"
-                              fontWeight="bold"
-                              fontSize="sm"
-                              alignSelf="flex-start"
-                            >
-                              Go to Service →
-                            </Text>
-                          </Box>
-                        </Link>
-                      </GridItem>
-                    )
-                  })}
-                </Grid>
-              </VStack>
-            )}
-            {/* Quick Links */}
-            {/* Quick Links */}
-            <Flex direction="column" align="stretch" gap={4} pt={4} w="full">
-              <Heading size="md">Quick Links</Heading>
-              <Box
-                p={5}
-                shadow="md"
-                borderWidth="1px"
-                borderRadius="lg"
-                w="full"
-              >
-                <Flex
-                  direction={{ base: "column", md: "row" }} // Stack vertically on mobile, horizontally on larger screens
-                  wrap="wrap" // Allow wrapping for better responsiveness
-                  justify="space-between" // Spread links evenly
-                  align="center"
-                  gap={4} // Add spacing between links
-                >
-                  <Link
-                    as={RouterLink}
-                    to="/web-scraping-tools/user-agents"
-                    display="flex"
-                    alignItems="center"
-                    color="red.500"
-                    fontWeight="medium"
-                    flex="1"
-                    minW={{ base: "100%", md: "auto" }}
-                  >
-                    <Icon as={FiUserCheck} mr={2} /> Find User Agents
-                  </Link>
-                  <Link
-                    as={RouterLink}
-                    to="/hosting/billing"
-                    display="flex"
-                    alignItems="center"
-                    color="red.500"
-                    fontWeight="medium"
-                    flex="1"
-                    minW={{ base: "100%", md: "auto" }}
-                  >
-                    <Icon as={FiUserCheck} mr={2} /> Manage Billing
-                  </Link>
-                  <Link
-                    as={RouterLink}
-                    to="/settings"
-                    display="flex"
-                    alignItems="center"
-                    color="red.500"
-                    fontWeight="medium"
-                    flex="1"
-                    minW={{ base: "100%", md: "auto" }}
-                  >
-                    <Icon as={FiUserCheck} mr={2} /> Manage Account
-                  </Link>
-                  <Link
-                    href="https://docs.ROAMINGPROXY.com"
-                    isExternal
-                    display="flex"
-                    alignItems="center"
-                    color="red.500"
-                    fontWeight="medium"
-                    flex="1"
-                    minW={{ base: "100%", md: "auto" }}
-                  >
-                    <Icon as={FaBook} mr={2} /> Documentation
-                  </Link>
-                </Flex>
-              </Box>
-            </Flex>
-          </VStack>
-        )}
-      </Container>
+      <Box mb={10}>{content}</Box>
     </ProtectedComponent>
   )
 }
