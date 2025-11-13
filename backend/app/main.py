@@ -19,11 +19,15 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://cloud.roamingproxy.com","https://api.roamingproxy.com"],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PATCH", "OPTIONS","DELETE"],
-    allow_headers=["*"],
-)
+# Set all CORS enabled origins
+if settings.all_cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            str(origin).strip("/") for origin in settings.all_cors_origins
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 app.include_router(api_router, prefix=settings.API_V1_STR)
