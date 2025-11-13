@@ -3,7 +3,7 @@ from app.models import SubscriptionStatus, User
 from typing import Annotated, List
 from pydantic import BaseModel
 import stripe
-from stripe.error import StripeError
+from stripe import StripeError
 import os
 import logging
 from datetime import datetime
