@@ -21,7 +21,7 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://cloud.roamingproxy.com","https://api.roamingproxy.com"],
+    allow_origins=["https://cloud.roamingproxy.com","https://api.roamingproxy.com", "https://staging-rproxy-820888259045.europe-west9.run.app"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "OPTIONS","DELETE"],
     allow_headers=["*"],
