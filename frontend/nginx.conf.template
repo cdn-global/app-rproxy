@@ -1,0 +1,14 @@
+server {
+  listen ${PORT};
+  server_name cloud.roamingproxy.com;
+  root /usr/share/nginx/html;
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+  location /assets/ {
+    try_files $uri =404;
+  }
+  location /api/ {
+    proxy_pass https://api.roamingproxy.com;
+  }
+}
