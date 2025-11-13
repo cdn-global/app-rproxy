@@ -41,9 +41,10 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def all_cors_origins(self) -> list[str]:
-        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            self.FRONTEND_HOST
-        ]
+        origins = [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
+        origins.append(self.FRONTEND_HOST.rstrip("/"))
+        origins.append("https://staging-rproxy-820888259045.europe-west9.run.app")
+        return list(dict.fromkeys(origins))
 
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
