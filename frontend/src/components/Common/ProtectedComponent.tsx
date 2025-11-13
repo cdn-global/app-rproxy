@@ -1,10 +1,13 @@
-import { Button, Flex, Spinner, Text, VStack } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import type React from "react"
 import { useCallback, useEffect } from "react"
 import useAuth from "../../hooks/useAuth"
 import PromoSERP from "./ComingSoon" // Adjust the import path as needed
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 
 interface SubscriptionStatus {
   hasSubscription: boolean
@@ -101,10 +104,10 @@ const ProtectedComponent: React.FC<{ children: React.ReactNode }> = ({
   // Loading state
   if (isLoading) {
     return (
-      <VStack spacing={4}>
-        <Spinner size="lg" />
-        <Text>Loading subscription status...</Text>
-      </VStack>
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-3 text-center">
+        <Spinner size={32} />
+        <p className="text-sm text-muted-foreground">Loading subscription status…</p>
+      </div>
     )
   }
 
@@ -116,42 +119,46 @@ const ProtectedComponent: React.FC<{ children: React.ReactNode }> = ({
     // Handle session expiration immediately
     if (isUnauthorizedError) {
       return (
-        <VStack spacing={4}>
-          <Text color="red.500">
-            Your session has expired. Please log in again.
-          </Text>
-          <Button colorScheme="blue" onClick={() => navigate({ to: "/login" })}>
-            Log In
-          </Button>
-        </VStack>
+        <div className="flex h-[50vh] flex-col items-center justify-center gap-4 text-center">
+          <Alert variant="destructive" className="max-w-md border-destructive/40 bg-destructive/10">
+            <AlertTitle>Session expired</AlertTitle>
+            <AlertDescription>
+              Your session has expired. Please sign in again to continue.
+            </AlertDescription>
+          </Alert>
+          <Button onClick={() => navigate({ to: "/login" })}>Log in</Button>
+        </div>
       )
     }
 
     // Handle other errors with a timed logout
     return (
-      <VStack spacing={4}>
-        <Text color="red.500">
-          An error occurred while loading your subscription status.
-        </Text>
-        <Text>You will be logged out in 30 seconds to clear your session.</Text>
-        <Button colorScheme="red" onClick={handleLogout}>
-          Logout and Relogin Now
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-4 text-center">
+        <Alert variant="destructive" className="max-w-lg border-destructive/40 bg-destructive/10">
+          <AlertTitle>We hit a snag</AlertTitle>
+          <AlertDescription>
+            An error occurred while loading your subscription status. You&apos;ll be signed out shortly so you can start a fresh session.
+          </AlertDescription>
+        </Alert>
+        <Button variant="destructive" onClick={handleLogout}>
+          Logout now
         </Button>
-      </VStack>
+      </div>
     )
   }
 
   // Validate subscription status
   if (!subscriptionStatus) {
     return (
-      <VStack spacing={4}>
-        <Text color="red.500">
-          Unable to load subscription status. Please try again.
-        </Text>
-        <Button colorScheme="blue" onClick={() => window.location.reload()}>
-          Retry
-        </Button>
-      </VStack>
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-4 text-center">
+        <Alert variant="destructive" className="max-w-md border-destructive/40 bg-destructive/10">
+          <AlertTitle>Unable to load account data</AlertTitle>
+          <AlertDescription>
+            Please refresh the page or try again in a moment. If the problem persists, contact support.
+          </AlertDescription>
+        </Alert>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
+      </div>
     )
   }
 
@@ -170,22 +177,16 @@ const ProtectedComponent: React.FC<{ children: React.ReactNode }> = ({
   // Deactivated tools: prompt to reactivate (only for non-subscribed users)
   if (isFullyDeactivated) {
     return (
-      <Flex
-        justify="space-between"
-        align="center"
-        w="full"
-        p={4}
-        bg="red.50"
-        borderRadius="md"
-      >
-        <Text color="gray.800">Your tools have been deactivated.</Text>
+      <div className="flex items-center justify-between gap-4 rounded-2xl border border-destructive/20 bg-destructive/10 px-6 py-4 text-sm text-destructive">
+        <p>Your tools have been deactivated.</p>
         <Button
-          colorScheme="red"
+          variant="destructive"
           onClick={() => navigate({ to: "/proxies/pricing" })}
+          className="rounded-full"
         >
-          Reactivate Now
+          Reactivate now
         </Button>
-      </Flex>
+      </div>
     )
   }
 

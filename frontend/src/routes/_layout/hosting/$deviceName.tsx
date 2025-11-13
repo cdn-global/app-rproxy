@@ -1,392 +1,292 @@
-import { CopyIcon } from "@chakra-ui/icons"
-import {
-  Badge,
-  Box,
-  Button,
-  Container,
-  Flex,
-  HStack,
-  Heading,
-  IconButton,
-  SimpleGrid,
-  Text,
-  VStack,
-  useToast,
-} from "@chakra-ui/react"
-import { Link, createFileRoute, useParams } from "@tanstack/react-router"
+import { useCallback, useEffect, useState } from "react"
+import { Link as RouterLink, createFileRoute, useParams } from "@tanstack/react-router"
+import { FiArrowLeft, FiCheck, FiCopy } from "react-icons/fi"
 
-// Hardcoded servers
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { hostingServers } from "@/data/hosting"
+import useCustomToast from "@/hooks/useCustomToast"
 
-interface Server {
-  name: string
-  email: string
-  ip: string
-  version: string
-  kernel: string
-  status: string
-  type: string
-  os: string
-  username: string
-  password: string
-  monthlyComputePrice: number
-  storageSizeGB: number
-  activeSince: string // YYYY-MM-DD
-  hasRotatingIP?: boolean
-  hasBackup?: boolean
-  hasMonitoring?: boolean
-  hasManagedSupport?: boolean
-  vCPUs?: number
-  ramGB?: number
-}
-
-const servers: Server[] = [
-  {
-    name: "01-NYC-FID-8core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.59",
-    version: "1.82.0",
-    kernel: "Linux 6.8.0-57-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 11.4,
-    storageSizeGB: 120,
-    activeSince: "2025-07-01",
-    hasRotatingIP: false,
-    hasBackup: true,
-    hasMonitoring: true,
-    hasManagedSupport: false,
-    vCPUs: 1,
-    ramGB: 2,
-  },
-  {
-    name: "02-NYC-MTM-16core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.140.50.60",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 449,
-    storageSizeGB: 100,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 16,
-    ramGB: 64,
-  },
-  {
-    name: "03-NYC-BKN-4core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.61",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    storageSizeGB: 468,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 4,
-  },
-  {
-    name: "04-NJ-SEC-4core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.62",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 45.3,
-    storageSizeGB: 110,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 16,
-  },
-  {
-    name: "05-NYC-FID-8core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.63",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 43.1,
-    storageSizeGB: 932,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 8,
-    ramGB: 4,
-  },
-  {
-    name: "06-NYC-MTM-2core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.64",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    storageSizeGB: 240,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 2,
-    ramGB: 8,
-  },
-]
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
 
 function DeviceDetailsPage() {
   const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" })
-  const server = servers.find((s) => s.name === deviceName)
-  const toast = useToast()
+  const server = hostingServers.find((item) => item.name === deviceName)
+  const showToast = useCustomToast()
+  const [copiedKey, setCopiedKey] = useState<string | null>(null)
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
-    toast({
-      title: `${label} copied!`,
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    })
-  }
+  const handleCopy = useCallback(
+    async (value: string, key: string, label: string) => {
+      try {
+        if (typeof navigator === "undefined" || !navigator.clipboard) {
+          throw new Error("Clipboard API unavailable")
+        }
+        await navigator.clipboard.writeText(value)
+        setCopiedKey(key)
+        showToast(`${label} copied`, value, "success")
+      } catch (error) {
+        console.error("Unable to copy value", error)
+        showToast(
+          "Copy failed",
+          "We could not copy that value to your clipboard.",
+          "error",
+        )
+      }
+    },
+    [showToast],
+  )
+
+  useEffect(() => {
+    if (!copiedKey) return
+    const timeout = window.setTimeout(() => setCopiedKey(null), 2000)
+    return () => window.clearTimeout(timeout)
+  }, [copiedKey])
 
   if (!server) {
     return (
-      <Container maxW="container.xl" py={8}>
-        <Text fontSize="xl" color="red.500">
-          Server not found
-        </Text>
-      </Container>
+      <div className="space-y-6 rounded-[32px] border border-amber-400/40 bg-amber-50/70 px-6 py-10 text-center text-amber-600 shadow-[0_30px_80px_-45px_rgba(217,119,6,0.35)] dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+        <h1 className="text-xl font-semibold">Server not found</h1>
+        <p className="text-sm text-amber-700/90 dark:text-amber-100/80">
+          We could not locate that device in your managed fleet.
+        </p>
+        <div className="flex justify-center">
+          <Button
+            asChild
+            variant="outline"
+            className="gap-2 rounded-full border-amber-400/60 px-5 py-2 text-sm font-semibold text-amber-600 hover:border-amber-500 hover:text-amber-700 dark:border-amber-500/60 dark:text-amber-100"
+          >
+            <RouterLink to="..">
+              <FiArrowLeft className="h-4 w-4" />
+              Back to list
+            </RouterLink>
+          </Button>
+        </div>
+      </div>
     )
   }
 
-  const statusColor = server.status === "Connected" ? "green" : "red"
+  const capacityLabel = `${server.vCPUs ?? 0} vCPU · ${server.ramGB} GB RAM · ${server.storageSizeGB} GB storage`
 
   return (
-    <Container maxW="container.xl" py={8}>
-      <Flex align="center" justify="space-between" mb={6}>
-        <HStack>
-          <Heading size="lg">Server: {server.name}</Heading>
-          <Badge colorScheme={statusColor} fontSize="md" px={2} py={1}>
-            {server.status}
-          </Badge>
-        </HStack>
-        <Button
-          as={Link}
-          to=".."
-          colorScheme="blue"
-          variant="outline"
-          size="md"
-          _hover={{ bg: "blue.50" }}
-        >
-          Back to List
-        </Button>
-      </Flex>
+    <div className="space-y-10">
+      <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                {server.name}
+              </h1>
+              <Badge
+                variant={server.status === "Connected" ? "success" : "warning"}
+                className="rounded-full px-3 py-1 text-xs font-semibold"
+              >
+                {server.status}
+              </Badge>
+              {server.isTrial ? (
+                <Badge variant="outline" className="rounded-full border-amber-400/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-500">
+                  Trial
+                </Badge>
+              ) : null}
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Debian footprint powered by RoamingProxy managed compute. Active since {formatDate(server.activeSince)}.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-500">
+              <span>{server.os.toUpperCase()} · Kernel {server.kernel}</span>
+              <span className="hidden h-1 w-1 rounded-full bg-slate-400 sm:inline" />
+              <span>{capacityLabel}</span>
+            </div>
+          </div>
+          <Button
+            asChild
+            variant="outline"
+            className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+          >
+            <RouterLink to="..">
+              <FiArrowLeft className="h-4 w-4" />
+              Back to list
+            </RouterLink>
+          </Button>
+        </div>
+      </div>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        {/* Basic Information */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>
-            Basic Information
-          </Heading>
-          <VStack align="stretch" spacing={3}>
-            <Flex justify="space-between" align="center">
-              <Text fontWeight="medium">Name:</Text>
-              <Text>{server.name}</Text>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <Text fontWeight="medium">Email:</Text>
-              <HStack>
-                <Text>{server.email}</Text>
-                <IconButton
-                  aria-label="Copy email"
-                  icon={<CopyIcon />}
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => copyToClipboard(server.email, "Email")}
-                />
-              </HStack>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <Text fontWeight="medium">IP:</Text>
-              <HStack>
-                <Text>{server.ip}</Text>
-                <IconButton
-                  aria-label="Copy IP"
-                  icon={<CopyIcon />}
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => copyToClipboard(server.ip, "IP")}
-                />
-              </HStack>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Type:</Text>
-              <Text>{server.type}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">OS:</Text>
-              <Text>{server.os}</Text>
-            </Flex>
-          </VStack>
-        </Box>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <InfoCard title="Basic information">
+          <DefinitionList>
+            <DefinitionRow label="Device name">{server.name}</DefinitionRow>
+            <DefinitionRow label="Primary contact">
+              <CopyableValue
+                value={server.email}
+                isCopied={copiedKey === "email"}
+                onCopy={() => handleCopy(server.email, "email", "Email")}
+              />
+            </DefinitionRow>
+            <DefinitionRow label="IP address">
+              <CopyableValue
+                value={server.ip}
+                isCopied={copiedKey === "ip"}
+                onCopy={() => handleCopy(server.ip, "ip", "IP address")}
+              />
+            </DefinitionRow>
+            <DefinitionRow label="Type">{server.type}</DefinitionRow>
+            <DefinitionRow label="Operating system">{server.os.toUpperCase()}</DefinitionRow>
+          </DefinitionList>
+        </InfoCard>
 
-        {/* System Specifications */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>
-            System Specifications
-          </Heading>
-          <VStack align="stretch" spacing={3}>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Version:</Text>
-              <Text>{server.version}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Kernel:</Text>
-              <Text>{server.kernel}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">vCPUs:</Text>
-              <Text>{server.vCPUs ?? "N/A"}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">RAM:</Text>
-              <Text>{server.ramGB ? `${server.ramGB} GB` : "N/A"}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Storage Size:</Text>
-              <Text>{server.storageSizeGB} GB</Text>
-            </Flex>
-          </VStack>
-        </Box>
+        <InfoCard title="System specifications">
+          <DefinitionList>
+            <DefinitionRow label="Version">{server.version}</DefinitionRow>
+            <DefinitionRow label="Kernel">{server.kernel}</DefinitionRow>
+            <DefinitionRow label="vCPU">
+              {server.vCPUs ? `${server.vCPUs}` : "Not specified"}
+            </DefinitionRow>
+            <DefinitionRow label="Memory">{server.ramGB} GB</DefinitionRow>
+            <DefinitionRow label="Storage">{server.storageSizeGB} GB</DefinitionRow>
+          </DefinitionList>
+        </InfoCard>
 
-        {/* Credentials */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>
-            Credentials
-          </Heading>
-          <VStack align="stretch" spacing={3}>
-            <Flex justify="space-between" align="center">
-              <Text fontWeight="medium">Username:</Text>
-              <HStack>
-                <Text>{server.username}</Text>
-                <IconButton
-                  aria-label="Copy username"
-                  icon={<CopyIcon />}
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => copyToClipboard(server.username, "Username")}
-                />
-              </HStack>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <Text fontWeight="medium">Password:</Text>
-              <HStack>
-                <Text>{server.password}</Text>
-                <IconButton
-                  aria-label="Copy password"
-                  icon={<CopyIcon />}
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => copyToClipboard(server.password, "Password")}
-                />
-              </HStack>
-            </Flex>
-          </VStack>
-        </Box>
+        <InfoCard title="Credentials" description="Values rotate alongside your dashboard actions. Copying respects the refreshed UI.">
+          <DefinitionList>
+            <DefinitionRow label="Username">
+              <CopyableValue
+                value={server.username}
+                isCopied={copiedKey === "username"}
+                onCopy={() => handleCopy(server.username, "username", "Username")}
+              />
+            </DefinitionRow>
+            <DefinitionRow label="Password">
+              <CopyableValue
+                value={server.password}
+                isCopied={copiedKey === "password"}
+                onCopy={() => handleCopy(server.password, "password", "Password")}
+              />
+            </DefinitionRow>
+          </DefinitionList>
+        </InfoCard>
 
-        {/* Billing & Features */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          boxShadow="sm"
-          borderWidth="1px"
-        >
-          <Heading size="md" mb={4}>
-            Billing & Features
-          </Heading>
-          <VStack align="stretch" spacing={3}>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Monthly Compute Price:</Text>
-              <Text>${server.monthlyComputePrice.toFixed(2)}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Active Since:</Text>
-              <Text>{server.activeSince}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Rotating IP:</Text>
-              <Text>{server.hasRotatingIP ? "Yes" : "No"}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Backup:</Text>
-              <Text>{server.hasBackup ? "Yes" : "No"}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Monitoring:</Text>
-              <Text>{server.hasMonitoring ? "Yes" : "No"}</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text fontWeight="medium">Managed Support:</Text>
-              <Text>{server.hasManagedSupport ? "Yes" : "No"}</Text>
-            </Flex>
-          </VStack>
-        </Box>
-      </SimpleGrid>
-    </Container>
+        <InfoCard title="Billing & feature flags">
+          <DefinitionList>
+            <DefinitionRow label="Monthly compute charge">
+              {currencyFormatter.format(server.monthlyComputePrice)}
+            </DefinitionRow>
+            <DefinitionRow label="List price">
+              {currencyFormatter.format(server.fullMonthlyComputePrice)}
+            </DefinitionRow>
+            <DefinitionRow label="Active since">{formatDate(server.activeSince)}</DefinitionRow>
+            <DefinitionRow label="Rotating IP">
+              <BooleanBadge value={server.hasRotatingIP} />
+            </DefinitionRow>
+            <DefinitionRow label="Backups">
+              <BooleanBadge value={server.hasBackup} />
+            </DefinitionRow>
+            <DefinitionRow label="Monitoring">
+              <BooleanBadge value={server.hasMonitoring} />
+            </DefinitionRow>
+            <DefinitionRow label="Managed support">
+              <BooleanBadge value={server.hasManagedSupport ?? false} />
+            </DefinitionRow>
+          </DefinitionList>
+        </InfoCard>
+      </div>
+    </div>
   )
+}
+
+const InfoCard = ({
+  title,
+  description,
+  children,
+}: {
+  title: string
+  description?: string
+  children: React.ReactNode
+}) => (
+  <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+    <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+      <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        {title}
+      </CardTitle>
+      {description ? (
+        <p className="text-sm text-slate-600 dark:text-slate-400">{description}</p>
+      ) : null}
+    </CardHeader>
+    <CardContent className="p-6">
+      {children}
+    </CardContent>
+  </Card>
+)
+
+const DefinitionList = ({ children }: { children: React.ReactNode }) => (
+  <dl className="space-y-4">{children}</dl>
+)
+
+const DefinitionRow = ({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) => (
+  <div className="grid gap-2 sm:grid-cols-[160px_1fr] sm:items-center">
+    <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+      {label}
+    </dt>
+    <dd className="flex flex-wrap items-center gap-2 text-sm text-slate-900 dark:text-slate-100">
+      {children}
+    </dd>
+  </div>
+)
+
+const CopyableValue = ({
+  value,
+  isCopied,
+  onCopy,
+}: {
+  value: string
+  isCopied: boolean
+  onCopy: () => void
+}) => (
+  <div className="flex items-center gap-3">
+    <span className="font-medium text-slate-900 dark:text-slate-100">{value}</span>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8 rounded-full border border-transparent text-slate-500 transition hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
+      onClick={onCopy}
+      aria-label="Copy value"
+    >
+      {isCopied ? <FiCheck className="h-4 w-4 text-emerald-500" /> : <FiCopy className="h-4 w-4" />}
+    </Button>
+  </div>
+)
+
+const BooleanBadge = ({ value }: { value: boolean }) => (
+  <Badge
+    variant={value ? "success" : "subtle"}
+    className="rounded-full px-3 py-1 text-xs font-semibold"
+  >
+    {value ? "Enabled" : "Disabled"}
+  </Badge>
+)
+
+const formatDate = (isoDate: string) => {
+  try {
+    const date = new Date(isoDate)
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(date)
+  } catch (error) {
+    return isoDate
+  }
 }
 
 export const Route = createFileRoute("/_layout/hosting/$deviceName")({

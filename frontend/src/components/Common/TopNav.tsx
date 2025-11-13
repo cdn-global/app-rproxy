@@ -117,10 +117,13 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
     ].includes(title)
   }
 
-  const textColor = "text-muted-foreground"
-  const activeClasses = "bg-primary/10 text-primary"
-  const hoverClasses = "hover:bg-muted hover:text-foreground"
-  const disabledClasses = "cursor-not-allowed text-muted-foreground"
+  const textColor = "text-slate-600 dark:text-slate-300"
+  const activeClasses =
+    "border-indigo-200/80 bg-indigo-500/15 text-indigo-700 shadow-sm dark:border-indigo-500/40 dark:text-indigo-100"
+  const hoverClasses =
+    "hover:border-slate-200/80 hover:bg-slate-100/70 hover:text-slate-900 dark:hover:border-slate-700/60 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
+  const disabledClasses =
+    "cursor-not-allowed text-slate-400 dark:text-slate-600"
 
   const handleNavClick = (handler?: () => void) => {
     return () => {
@@ -163,11 +166,11 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
           }
 
           const baseClasses = cn(
-            "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+            "inline-flex items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-colors",
             textColor,
             hoverClasses,
             active ? activeClasses : null,
-            isMobile ? "w-full justify-start" : undefined,
+            isMobile ? "w-full justify-start" : "shadow-[0_10px_30px_-24px_rgba(15,23,42,0.45)] dark:shadow-[0_10px_30px_-20px_rgba(15,23,42,0.8)]",
           )
 
           if (item.onClick) {
@@ -226,21 +229,25 @@ const TopNav = () => {
   }, [location.pathname])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-50 border-b border-transparent bg-gradient-to-b from-white/90 via-white/70 to-transparent px-4 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-white/65 dark:from-slate-950/80 dark:via-slate-950/60">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
-        <Logo
-          src="/assets/images/roaming-proxy-network-logo.png"
-          alt="Roaming Proxy Logo"
-          imgClassName="w-20 md:w-28"
-        />
-        <div className="hidden md:block">
-          <NavItems />
+        <div className="flex items-center gap-3">
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            imgClassName="w-16 md:w-24"
+          />
+        </div>
+        <div className="hidden md:flex">
+          <div className="rounded-full border border-slate-200/70 bg-white/60 px-2 py-1 shadow-[0_14px_50px_-32px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_14px_50px_-28px_rgba(15,23,42,0.85)]">
+            <NavItems />
+          </div>
         </div>
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="h-10 w-10 rounded-full border border-slate-200/70 bg-white/70 shadow-sm transition hover:border-slate-300 hover:bg-white md:hidden dark:border-slate-700/60 dark:bg-slate-900/70 dark:hover:border-slate-600"
           onClick={() => setIsMobileOpen((prev) => !prev)}
           aria-label={isMobileOpen ? "Close menu" : "Open menu"}
         >
@@ -248,8 +255,10 @@ const TopNav = () => {
         </Button>
       </div>
       {isMobileOpen ? (
-        <div className="mt-3 px-1 md:hidden">
-          <NavItems isMobile onClose={() => setIsMobileOpen(false)} />
+        <div className="mt-4 md:hidden">
+          <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-3 shadow-[0_20px_45px_-32px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70">
+            <NavItems isMobile onClose={() => setIsMobileOpen(false)} />
+          </div>
         </div>
       ) : null}
     </header>

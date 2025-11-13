@@ -1,34 +1,32 @@
-import { AddIcon, CopyIcon, DeleteIcon } from "@chakra-ui/icons"
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Button,
-  Code,
-  Divider,
-  Flex,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-  VStack,
-  useToast,
-} from "@chakra-ui/react"
-import type React from "react"
+import { Copy, KeyRound, Plus, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Spinner } from "@/components/ui/spinner"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import useCustomToast from "../../hooks/useCustomToast"
 
 // --- Interfaces ---
 interface ApiKey {
@@ -68,7 +66,7 @@ const truncateApiKey = (
 }
 // --- END: New helper function ---
 
-const ApiKeyModule: React.FC<ApiKeyProps> = ({ token }) => {
+const ApiKeyModule = ({ token }: ApiKeyProps) => {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
   const [loading, setLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -84,7 +82,7 @@ const ApiKeyModule: React.FC<ApiKeyProps> = ({ token }) => {
   const [countdown, setCountdown] = useState(15)
   // --- END: New state ---
 
-  const toast = useToast()
+  const toast = useCustomToast()
 
   // --- START: New handler to close the modal ---
   const handleCloseModal = useCallback(() => {
@@ -235,12 +233,7 @@ const ApiKeyModule: React.FC<ApiKeyProps> = ({ token }) => {
           errorData.detail || `Failed to delete API key: ${response.status}`,
         )
       }
-      toast({
-        title: "API Key Deleted",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      })
+      toast("Key deleted", "The API key was removed successfully.", "success")
       await fetchApiKeys()
     } catch (err) {
       setError(
@@ -255,192 +248,173 @@ const ApiKeyModule: React.FC<ApiKeyProps> = ({ token }) => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast({
-      title: "Copied!",
-      description: "Full API key copied to clipboard.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    })
+    toast("Copied", "Full API key copied to clipboard.", "success")
   }
 
   if (!token) {
     return (
-      <Box p={6} width="100%">
-        <Alert status="warning">
-          <AlertIcon />
-          Please log in to manage your API keys.
-        </Alert>
-      </Box>
+      <Alert variant="destructive" className="border-amber-300/40 bg-amber-100/60 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+        <AlertTitle>Authentication required</AlertTitle>
+        <AlertDescription>
+          Please sign in to manage your API keys.
+        </AlertDescription>
+      </Alert>
     )
   }
 
   return (
-    <Box>
-      {/* --- START: New Key Generated Modal --- */}
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>New Key Generated Successfully!</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4} align="stretch">
-              <Text fontSize="sm">
-                For your security, this key will not be shown again. Copy and
-                store it in a safe place.
-              </Text>
-              <Flex
-                align="center"
-                justify="space-between"
-                p={3}
-                bg="teal.50"
-                borderRadius="md"
-                border="1px solid"
-                borderColor="teal.200"
-                width="100%"
-              >
-                <Code bg="transparent" fontWeight="bold" noOfLines={1}>
-                  {truncateApiKey(fullKey)}
-                </Code>
-                <IconButton
-                  aria-label="Copy full key"
-                  icon={<CopyIcon />}
-                  size="sm"
-                  onClick={() => copyToClipboard(fullKey!)}
-                />
-              </Flex>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Flex justify="space-between" align="center" width="100%">
-              <Text fontSize="sm" color="gray.500">
-                Auto-closing in {countdown}s...
-              </Text>
-            </Flex>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* --- END: New Key Generated Modal --- */}
+    <div className="space-y-6">
+      <Dialog open={isModalOpen} onOpenChange={(next) => (next ? setIsModalOpen(true) : handleCloseModal())}>
+        <DialogContent className="max-w-md rounded-3xl border border-emerald-300/60 bg-white/95 shadow-[0_40px_120px_-60px_rgba(16,185,129,0.35)] backdrop-blur-xl dark:border-emerald-500/40 dark:bg-slate-950/95">
+          <DialogHeader>
+            <DialogTitle className="text-xl">New key generated</DialogTitle>
+            <DialogDescription>
+              Copy this key now. For security reasons it will never be displayed again.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-200/70 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-100">
+            <span className="font-mono text-xs uppercase tracking-[0.25em]">
+              {truncateApiKey(fullKey)}
+            </span>
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-9 w-9 rounded-full"
+              onClick={() => fullKey && copyToClipboard(fullKey)}
+              aria-label="Copy full key"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Window closes automatically in {countdown}s.
+          </p>
+        </DialogContent>
+      </Dialog>
 
-      <VStack spacing={2} align="stretch">
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          justify="space-between"
-          align="center"
-        >
-          <Box>
-            <Text fontSize="lg" mb={2} color="gray.700">
-              Manage and generate API keys for programmatic access
-            </Text>
-            <Text fontSize="lg" mb={4} color="gray.700">
-              Expiration is set to 365 days by default
-            </Text>
-          </Box>
+      <Card className="border border-slate-200/70 bg-white/80 shadow-[0_32px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+              API keys
+            </CardTitle>
+            <CardDescription>
+              Generate and rotate credential tokens for programmatic access. Keys expire after 365 days.
+            </CardDescription>
+          </div>
           <Button
-            leftIcon={<AddIcon />}
-            colorScheme="teal"
+            type="button"
+            className="rounded-full"
             onClick={generateKey}
-            isLoading={isGenerating}
-            loadingText="Generating..."
-            isDisabled={isGenerating || hasProxyApiAccess === false}
+            disabled={isGenerating || hasProxyApiAccess === false}
           >
-            Generate Key
+            {isGenerating ? (
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-indigo-200 border-t-indigo-600" />
+                Generating…
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Generate key
+              </span>
+            )}
           </Button>
-        </Flex>
-        <Divider mb={4} />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {hasProxyApiAccess === false ? (
+            <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+              <AlertTitle>Upgrade required</AlertTitle>
+              <AlertDescription>
+                Your current plan does not include Proxy API features. Upgrade your subscription to enable key management.
+              </AlertDescription>
+            </Alert>
+          ) : null}
 
-        {hasProxyApiAccess === false && (
-          <Alert status="warning" borderRadius="md">
-            <AlertIcon />
-            Your current plan does not include Proxy API features. Please
-            upgrade to use this feature.
-          </Alert>
-        )}
-        {error && (
-          <Alert status="error" borderRadius="md">
-            <AlertIcon />
-            {error}
-          </Alert>
-        )}
+          {error ? (
+            <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+              <AlertTitle>Something went wrong</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
 
-        {/* The old key display block has been removed from here */}
-
-        <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
-          {loading ? (
-            <Flex justify="center" align="center" h="200px">
-              <Spinner size="xl" />
-            </Flex>
-          ) : (
-            <Table variant="simple">
-              <Thead bg="gray.50">
-                <Tr>
-                  <Th color="black">Key Preview</Th>
-                  <Th color="black">Created At</Th>
-                  <Th color="black">Expires At</Th>
-                  <Th color="black">Requests</Th>
-                  <Th color="black">Status</Th>
-                  <Th color="black" isNumeric>
-                    Actions
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {apiKeys.length === 0 && !loading && (
-                  <Tr>
-                    <Td colSpan={6}>
-                      <Text textAlign="center" color="gray.500" py={10}>
-                        No API keys found. Generate one to get started.
-                      </Text>
-                    </Td>
-                  </Tr>
-                )}
-                {apiKeys.map((key) => (
-                  <Tr key={key.key_preview}>
-                    <Td>
-                      <Code fontSize="xs">{key.key_preview}</Code>
-                    </Td>
-                    <Td>{new Date(key.created_at).toLocaleDateString()}</Td>
-                    <Td>{new Date(key.expires_at).toLocaleDateString()}</Td>
-                    <Td>{key.request_count ?? 0}</Td>
-                    <Td>
-                      <Text
-                        color={key.is_active ? "green.500" : "red.500"}
-                        fontWeight="medium"
-                      >
-                        {key.is_active ? "Active" : "Inactive"}
-                      </Text>
-                    </Td>
-                    <Td isNumeric>
-                      <Tooltip
-                        label={
-                          key.request_count && key.request_count > 0
-                            ? "Cannot delete a key with usage."
-                            : "Delete API key"
-                        }
-                        hasArrow
-                      >
-                        <IconButton
-                          aria-label="Delete key"
-                          icon={<DeleteIcon />}
-                          size="sm"
-                          colorScheme="red"
-                          variant="ghost"
-                          onClick={() => deleteApiKey(key)}
-                          isLoading={keyToDelete === key.key_preview}
-                          isDisabled={
-                            key.request_count != null && key.request_count > 0
-                          }
-                        />
-                      </Tooltip>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          )}
-        </Box>
-      </VStack>
-    </Box>
+          <div className="overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-700/60">
+            {loading ? (
+              <div className="flex h-56 items-center justify-center">
+                <Spinner size={32} />
+              </div>
+            ) : apiKeys.length === 0 ? (
+              <div className="flex h-48 items-center justify-center bg-slate-50/60 text-sm text-muted-foreground dark:bg-slate-900/40">
+                No API keys found. Generate one to get started.
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Key preview</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Expires</TableHead>
+                    <TableHead>Requests</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {apiKeys.map((key) => (
+                    <TableRow key={key.key_preview}>
+                      <TableCell>
+                        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                          <KeyRound className="h-4 w-4 text-slate-400" />
+                          {key.key_preview}
+                        </div>
+                      </TableCell>
+                      <TableCell>{new Date(key.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{new Date(key.expires_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{key.request_count ?? 0}</TableCell>
+                      <TableCell>
+                        <span className={key.is_active ? "rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-600" : "rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive"}>
+                          {key.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-9 w-9 rounded-full text-destructive hover:bg-destructive/10"
+                                onClick={() => deleteApiKey(key)}
+                                disabled={
+                                  (key.request_count != null && key.request_count > 0) ||
+                                  keyToDelete === key.key_preview
+                                }
+                                aria-label="Delete key"
+                              >
+                                {keyToDelete === key.key_preview ? (
+                                  <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-destructive/40 border-t-destructive" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {key.request_count && key.request_count > 0
+                                ? "Keys with usage can’t be deleted"
+                                : "Delete API key"}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

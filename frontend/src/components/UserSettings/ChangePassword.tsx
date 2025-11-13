@@ -1,14 +1,3 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-  useColorModeValue,
-} from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
@@ -16,12 +5,16 @@ import { type ApiError, type UpdatePassword, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { confirmPasswordRules, handleError, passwordRules } from "../../utils"
 
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 interface UpdatePasswordForm extends UpdatePassword {
   confirm_password: string
 }
 
 const ChangePassword = () => {
-  const color = useColorModeValue("inherit", "ui.light")
   const showToast = useCustomToast()
   const {
     register,
@@ -50,73 +43,72 @@ const ChangePassword = () => {
     mutation.mutate(data)
   }
 
+  const errorText = (field?: { message?: string }) =>
+    field?.message ? (
+      <p className="text-xs text-destructive">{field.message}</p>
+    ) : null
+
   return (
-    <>
-      <Container maxW="full">
-        <Heading size="sm" py={4}>
-          Change Password
-        </Heading>
-        <Box
-          w={{ sm: "full", md: "50%" }}
-          as="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <FormControl isRequired isInvalid={!!errors.current_password}>
-            <FormLabel color={color} htmlFor="current_password">
-              Current Password
-            </FormLabel>
+    <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
+      <CardHeader className="space-y-2">
+        <CardTitle className="text-xl">Change password</CardTitle>
+        <CardDescription>
+          Update your account password to keep your workspace secure.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-2">
+            <Label htmlFor="current_password" className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              Current password
+            </Label>
             <Input
               id="current_password"
-              {...register("current_password")}
-              placeholder="Password"
               type="password"
-              w="auto"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              {...register("current_password", {
+                required: "Current password is required",
+              })}
             />
-            {errors.current_password && (
-              <FormErrorMessage>
-                {errors.current_password.message}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl mt={4} isRequired isInvalid={!!errors.new_password}>
-            <FormLabel htmlFor="password">Set Password</FormLabel>
+            {errorText(errors.current_password)}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="new_password" className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              New password
+            </Label>
             <Input
-              id="password"
-              {...register("new_password", passwordRules())}
-              placeholder="Password"
+              id="new_password"
               type="password"
-              w="auto"
+              autoComplete="new-password"
+              placeholder="Create a strong password"
+              {...register("new_password", passwordRules())}
             />
-            {errors.new_password && (
-              <FormErrorMessage>{errors.new_password.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl mt={4} isRequired isInvalid={!!errors.confirm_password}>
-            <FormLabel htmlFor="confirm_password">Confirm Password</FormLabel>
+            {errorText(errors.new_password)}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="confirm_password" className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              Confirm password
+            </Label>
             <Input
               id="confirm_password"
-              {...register("confirm_password", confirmPasswordRules(getValues))}
-              placeholder="Password"
               type="password"
-              w="auto"
+              autoComplete="new-password"
+              placeholder="Repeat new password"
+              {...register("confirm_password", confirmPasswordRules(getValues))}
             />
-            {errors.confirm_password && (
-              <FormErrorMessage>
-                {errors.confirm_password.message}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <Button
-            variant="primary"
-            mt={4}
-            type="submit"
-            isLoading={isSubmitting}
-          >
-            Save
+            {errorText(errors.confirm_password)}
+          </div>
+
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting || mutation.isPending ? "Saving…" : "Save password"}
           </Button>
-        </Box>
-      </Container>
-    </>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
+
 export default ChangePassword

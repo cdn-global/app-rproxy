@@ -1,11 +1,12 @@
+import { useState } from "react"
+
+import { Button } from "@/components/ui/button"
 import {
-  Button,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  useDisclosure,
-} from "@chakra-ui/react"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiEdit, FiTrash } from "react-icons/fi"
 
@@ -29,53 +30,66 @@ interface ItemActionsMenuProps {
 type ActionsMenuProps = UserActionsMenuProps | ItemActionsMenuProps
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
-  const editModal = useDisclosure()
-  const deleteModal = useDisclosure()
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   return (
     <>
-      <Menu>
-        <MenuButton
-          isDisabled={disabled}
-          as={Button}
-          rightIcon={<BsThreeDotsVertical />}
-          variant="unstyled"
-        />
-        <MenuList>
-          <MenuItem
-            onClick={editModal.onOpen}
-            icon={<FiEdit fontSize="16px" />}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
+            disabled={disabled}
+            aria-label={`${type} actions`}
           >
+            <BsThreeDotsVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault()
+              setIsEditOpen(true)
+            }}
+            className="gap-2"
+          >
+            <FiEdit className="h-4 w-4" />
             Edit {type}
-          </MenuItem>
-          <MenuItem
-            onClick={deleteModal.onOpen}
-            icon={<FiTrash fontSize="16px" />}
-            color="ui.danger"
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault()
+              setIsDeleteOpen(true)
+            }}
+            className="gap-2 text-destructive focus:text-destructive"
           >
+            <FiTrash className="h-4 w-4" />
             Delete {type}
-          </MenuItem>
-        </MenuList>
-        {type === "User" ? (
-          <EditUser
-            user={value}
-            isOpen={editModal.isOpen}
-            onClose={editModal.onClose}
-          />
-        ) : (
-          <EditItem
-            item={value}
-            isOpen={editModal.isOpen}
-            onClose={editModal.onClose}
-          />
-        )}
-        <Delete
-          type={type}
-          id={value.id}
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.onClose}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {type === "User" ? (
+        <EditUser
+          user={value as UserPublic}
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
         />
-      </Menu>
+      ) : (
+        <EditItem
+          item={value as ItemPublic}
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+        />
+      )}
+      <Delete
+        type={type}
+        id={value.id}
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+      />
     </>
   )
 }

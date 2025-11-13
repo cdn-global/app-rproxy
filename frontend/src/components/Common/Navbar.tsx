@@ -1,7 +1,8 @@
 import type { ComponentType, ElementType } from "react"
+import { useState } from "react"
 
-import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react"
-import { FaPlus } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 
 interface NavbarProps {
   type: string
@@ -9,30 +10,25 @@ interface NavbarProps {
 }
 
 const Navbar = ({ type, addModalAs }: NavbarProps) => {
-  const addModal = useDisclosure()
-
   const AddModal = addModalAs
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleOpen = () => setIsOpen(true)
+  const handleClose = () => setIsOpen(false)
+
   return (
-    <>
-      <Flex py={8} gap={4}>
-        {/* TODO: Complete search functionality */}
-        {/* <InputGroup w={{ base: '100%', md: 'auto' }}>
-                    <InputLeftElement pointerEvents='none'>
-                        <Icon as={FaSearch} color='ui.dim' />
-                    </InputLeftElement>
-                    <Input type='text' placeholder='Search' fontSize={{ base: 'sm', md: 'inherit' }} borderRadius='8px' />
-                </InputGroup> */}
-        <Button
-          variant="primary"
-          gap={1}
-          fontSize={{ base: "sm", md: "inherit" }}
-          onClick={addModal.onOpen}
-        >
-          <Icon as={FaPlus} /> Add {type}
-        </Button>
-        <AddModal isOpen={addModal.isOpen} onClose={addModal.onClose} />
-      </Flex>
-    </>
+    <div className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200/70 bg-white/70 px-5 py-4 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-800/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.75)]">
+      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        <span className="rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 uppercase tracking-[0.2em] text-[0.65rem] text-slate-500 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-400">
+          Quick actions
+        </span>
+        <span>Manage {type.toLowerCase()} records</span>
+      </div>
+      <Button variant="primary" size="sm" className="gap-2" onClick={handleOpen}>
+        <Plus className="h-4 w-4" /> Add {type}
+      </Button>
+      <AddModal isOpen={isOpen} onClose={handleClose} />
+    </div>
   )
 }
 

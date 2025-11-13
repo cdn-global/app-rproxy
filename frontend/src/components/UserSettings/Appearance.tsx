@@ -1,5 +1,4 @@
-// src/components/Appearance.tsx
-import { useColorMode } from "@chakra-ui/react"
+import { useThemeMode } from "@/providers/theme-provider"
 
 const OPTIONS = [
   {
@@ -21,7 +20,7 @@ const helperBadgeClasses =
   "rounded-full bg-secondary/10 px-2 py-0.5 text-xs font-medium text-secondary-foreground"
 
 function Appearance() {
-  const { colorMode, setColorMode } = useColorMode()
+  const { theme, setTheme } = useThemeMode()
 
   return (
     <section
@@ -58,8 +57,8 @@ function Appearance() {
               type="radio"
               name="color-mode"
               value={option.value}
-              checked={colorMode === option.value}
-              onChange={() => setColorMode(option.value)}
+              checked={theme === option.value}
+              onChange={() => setTheme(option.value)}
             />
 
             <div className="rounded-lg border border-border bg-background p-4 shadow-sm transition-colors duration-200 focus-within:border-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background peer-checked:border-primary peer-checked:bg-primary/5">

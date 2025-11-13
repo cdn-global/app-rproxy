@@ -1,157 +1,131 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  VStack,
-  useToast,
-} from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import React from "react"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
 import type { UserPublic } from "../../client"
-import ApiKeyModule from "../../components/ScrapingTools/ApiKey"
-
-// --- User Settings Tab Component ---
-function UserSettingsTab({ user }: { user: UserPublic }) {
-  const toast = useToast()
-
-  // Placeholder for future edit functionality
-  const handleUpdateSettings = () => {
-    toast({
-      title: "Update Settings",
-      description: "User settings update is not yet implemented.",
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    })
-  }
-
-  return (
-    <VStack align="stretch" spacing={6}>
-      <Heading as="h1" size="xl" color="gray.800">
-        User Settings
-      </Heading>
-      <Text color="gray.600">View and manage your account details.</Text>
-      <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
-        <FormControl mb={4}>
-          <FormLabel color="gray.700">Full Name</FormLabel>
-          <Input value={user.full_name || "N/A"} isReadOnly bg="gray.100" />
-        </FormControl>
-        <FormControl mb={4}>
-          <FormLabel color="gray.700">Email</FormLabel>
-          <Input value={user.email || "N/A"} isReadOnly bg="gray.100" />
-        </FormControl>
-        <Button
-          colorScheme="blue"
-          onClick={handleUpdateSettings}
-          isDisabled // Placeholder: disabled until update API is implemented
-        >
-          Update Settings
-        </Button>
-      </Box>
-    </VStack>
-  )
-}
-
-// --- Tab Configuration ---
-const tabsConfig = [
-  {
-    title: "User Settings",
-    component: () => {
-      const queryClient = useQueryClient()
-      const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
-      return currentUser ? <UserSettingsTab user={currentUser} /> : null
-    },
-  },
-]
 
 // --- TanStack Router Route Definition ---
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
 })
 
-// --- Main Settings Page Component ---
 function UserSettings() {
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
 
   if (!currentUser) {
     return (
-      <Container maxW="full" py={6}>
-        <Flex justify="center" align="center" h="50vh">
-          <Spinner size="xl" />
-        </Flex>
-      </Container>
+      <div className="flex h-[60vh] items-center justify-center">
+        <Spinner size={48} />
+      </div>
     )
   }
 
-  const finalTabs = currentUser.is_superuser ? tabsConfig : tabsConfig
+  const roleLabel = currentUser.is_superuser ? "Superuser" : "Member"
+  const statusVariant = currentUser.is_active ? "success" : "destructive"
 
   return (
-    <Container maxW="full" py={9}>
-      <Flex align="center" justify="space-between" py={6}>
-        <Text fontSize="3xl" color="black">
-          Settings
-        </Text>
-        <Flex align="center" gap={4}>
-          <Text fontSize="lg" color="gray.600">
-            Manage your account settings
-          </Text>
-          <Button
-            as={Link}
-            to="/hosting/billing"
-            colorScheme="blue"
-            variant="outline"
-          >
-            Manage Billing
+    <div className="px-4 py-12">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-400">
+              <span>Account</span>
+              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+              <span>Settings</span>
+            </div>
+            <div className="space-y-1">
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Personal Workspace
+              </h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                Review your profile details, confirm account status, and launch into billing when you need to adjust subscriptions.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              <Badge variant="outline">{roleLabel}</Badge>
+              <Badge variant={statusVariant}>
+                {currentUser.is_active ? "Active" : "Suspended"}
+              </Badge>
+            </div>
+          </div>
+          <Button asChild variant="outline" className="h-11 min-w-[160px] justify-center">
+            <Link to="/hosting/billing">Manage Billing</Link>
           </Button>
-        </Flex>
-      </Flex>
+        </header>
 
-      <Tabs isLazy variant="enclosed-colored" colorScheme="red">
-        <TabList>
-          {finalTabs.map((tab, index) => (
-            <Tab
-              key={index}
-              bg="white"
-              fontWeight="semibold"
-              fontSize="lg"
-              color="gray.400"
-              _selected={{
-                bg: "gray.50",
-                color: "red.600",
-                borderColor: "inherit",
-                borderBottomColor: "gray.50",
-                borderTopWidth: "2px",
-                borderTopColor: "red.400",
-                marginTop: "-1px",
-              }}
-            >
-              {tab.title}
-            </Tab>
-          ))}
-        </TabList>
-        <TabPanels bg="gray.50" pt={6} pb={6} borderRadius="0 0 md md">
-          {finalTabs.map((tab, index) => (
-            <TabPanel key={index}>
-              {React.createElement(tab.component)}
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
-    </Container>
+        <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+          <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
+            <CardHeader>
+              <CardTitle className="text-xl">Profile Overview</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Core identity fields mirrored across platform services.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <dl className="grid gap-6 sm:grid-cols-2">
+                <div className="space-y-1">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    Full name
+                  </dt>
+                  <dd className="text-base font-medium text-foreground">
+                    {currentUser.full_name || "N/A"}
+                  </dd>
+                </div>
+                <div className="space-y-1">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    Email address
+                  </dt>
+                  <dd className="text-base font-medium text-foreground">
+                    {currentUser.email}
+                  </dd>
+                </div>
+                <div className="space-y-1">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    User id
+                  </dt>
+                  <dd className="text-base font-medium text-foreground font-mono text-xs uppercase tracking-[0.22em]">
+                    {currentUser.id}
+                  </dd>
+                </div>
+                <div className="space-y-1">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    Access level
+                  </dt>
+                  <dd className="text-base font-medium text-foreground">
+                    {roleLabel}
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="rounded-2xl border border-dashed border-slate-200/70 bg-white/60 p-4 text-xs text-muted-foreground dark:border-slate-700/60 dark:bg-slate-900/60">
+                Profile editing is coming soon. Contact support if you need to adjust ownership or billing contacts today.
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
+            <CardHeader>
+              <CardTitle className="text-xl">Session Health</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Stay signed in across devices with secure rotating tokens.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm text-muted-foreground">
+              <p>
+                You are currently authenticated with a scoped access token linked to your workspace role. If you revoke access, sign back in to regenerate credentials.
+              </p>
+              <Button variant="outline" size="sm" className="w-full" disabled>
+                Update Settings (soon)
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
+    </div>
   )
 }
 

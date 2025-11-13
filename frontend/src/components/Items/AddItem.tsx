@@ -1,20 +1,16 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { type ApiError, type ItemCreate, ItemsService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
@@ -61,53 +57,64 @@ const AddItem = ({ isOpen, onClose }: AddItemProps) => {
     mutation.mutate(data)
   }
 
-  return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size={{ base: "sm", md: "md" }}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Add Item</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl isRequired isInvalid={!!errors.title}>
-              <FormLabel htmlFor="title">Title</FormLabel>
-              <Input
-                id="title"
-                {...register("title", {
-                  required: "Title is required.",
-                })}
-                placeholder="Title"
-                type="text"
-              />
-              {errors.title && (
-                <FormErrorMessage>{errors.title.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="description">Description</FormLabel>
-              <Input
-                id="description"
-                {...register("description")}
-                placeholder="Description"
-                type="text"
-              />
-            </FormControl>
-          </ModalBody>
+  const handleCancel = () => {
+    reset()
+    onClose()
+  }
 
-          <ModalFooter gap={3}>
-            <Button variant="primary" type="submit" isLoading={isSubmitting}>
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => (!open ? handleCancel() : undefined)}>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <DialogHeader>
+            <DialogTitle>Add Item</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              {...register("title", {
+                required: "Title is required.",
+              })}
+              placeholder="Title"
+              type="text"
+              aria-invalid={errors.title ? "true" : "false"}
+              aria-describedby={errors.title ? "title-error" : undefined}
+            />
+            {errors.title ? (
+              <p className="text-sm text-destructive" id="title-error">
+                {errors.title.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              {...register("description")}
+              placeholder="Description"
+              type="text"
+            />
+          </div>
+
+          <DialogFooter className="gap-3">
+            <Button
+              variant="primary"
+              type="submit"
+              isLoading={isSubmitting}
+              loadingText="Saving"
+            >
               Save
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

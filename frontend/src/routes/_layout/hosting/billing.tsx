@@ -1,206 +1,32 @@
+import { useCallback, useMemo, useState } from "react"
+import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
+import { FiArrowLeft, FiArrowUpRight, FiCreditCard, FiExternalLink } from "react-icons/fi"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Alert,
-  AlertIcon,
-  Box,
-  Button,
-  Link as ChakraLink,
-  Container,
-  Divider,
-  Flex,
-  Heading,
-  Icon,
-  List,
-  ListIcon,
-  ListItem,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
   Table,
-  Tabs,
-  Tbody,
-  Td,
-  Text,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-  VStack,
-  useToast,
-} from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
-import { FaCheckCircle, FaCreditCard } from "react-icons/fa"
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  hostingServers,
+  type HostingServer,
+} from "@/data/hosting"
+import useCustomToast from "@/hooks/useCustomToast"
 
-interface Server {
-  name: string
-  email: string
-  ip: string
-  version: string
-  kernel: string
-  status: string
-  type: string
-  os: string
-  username: string
-  password: string
-  monthlyComputePrice: number
-  fullMonthlyComputePrice: number
-  storageSizeGB: number
-  activeSince: string
-  hasRotatingIP: boolean
-  hasBackup: boolean
-  hasMonitoring: boolean
-  hasManagedSupport?: boolean
-  vCPUs: number
-  ramGB: number
-  isTrial: boolean
-}
-
-const servers: Server[] = [
-  {
-    name: "01-NYC-FID-8core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.59",
-    version: "1.82.0",
-    kernel: "Linux 6.8.0-57-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 11.4,
-    fullMonthlyComputePrice: 11.4,
-    storageSizeGB: 120,
-    activeSince: "2025-07-01",
-    hasRotatingIP: false,
-    hasBackup: true,
-    hasMonitoring: true,
-    hasManagedSupport: false,
-    vCPUs: 1,
-    ramGB: 2,
-    isTrial: false,
-  },
-  {
-    name: "02-NYC-MTM-16core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.140.50.60",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 449,
-    fullMonthlyComputePrice: 449,
-    storageSizeGB: 100,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 16,
-    ramGB: 64,
-    isTrial: false,
-  },
-  {
-    name: "03-NYC-BKN-4core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.61",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    fullMonthlyComputePrice: 40.1,
-    storageSizeGB: 468,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 4,
-    isTrial: false,
-  },
-  {
-    name: "04-NJ-SEC-4core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.62",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 45.3,
-    fullMonthlyComputePrice: 45.3,
-    storageSizeGB: 110,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 4,
-    ramGB: 16,
-    isTrial: false,
-  },
-  {
-    name: "05-NYC-FID-8core-hdd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.63",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 43.1,
-    fullMonthlyComputePrice: 43.1,
-    storageSizeGB: 932,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 8,
-    ramGB: 4,
-    isTrial: true,
-  },
-  {
-    name: "06-NYC-MTM-2core-ssd",
-    email: "apis.popov@gmail.com",
-    ip: "100.100.95.64",
-    version: "1.88.0",
-    kernel: "Linux 6.8.0-62-generic",
-    status: "Connected",
-    type: "VPS",
-    os: "debian",
-    username: "user",
-    password: "5660",
-    monthlyComputePrice: 40.1,
-    fullMonthlyComputePrice: 40.1,
-    storageSizeGB: 240,
-    activeSince: "2025-09-01",
-    hasRotatingIP: false,
-    hasBackup: false,
-    hasMonitoring: false,
-    hasManagedSupport: false,
-    vCPUs: 2,
-    ramGB: 8,
-    isTrial: false,
-  },
-]
+const servers: HostingServer[] = hostingServers
 
 const ELASTIC_IP_FEE_PER_MONTH = 5
 const STORAGE_COST_PER_GB_MONTH = 0.2
@@ -210,9 +36,19 @@ const MONITORING_FEE_PER_MONTH = 11.0
 const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0
 const SUBSCRIPTION_COST_PER_MONTH = 299
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
+const percentageFormatter = (value: number) =>
+  `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`
+
 interface Service {
   name: string
-  getMonthlyCost: (server: Server) => number
+  getMonthlyCost: (server: HostingServer) => number
 }
 
 const services: Service[] = [
@@ -278,22 +114,25 @@ const months: Month[] = [
 ]
 
 function calculateTotalsForMonth(month: Month) {
-  const activeServers = servers.filter(
-    (s) => new Date(s.activeSince) <= month.end,
-  )
+  const activeServers = servers.filter((server) => new Date(server.activeSince) <= month.end)
+
   const totals = services.reduce(
     (acc, service) => {
-      const count = activeServers.filter(
-        (server) => !server.isTrial && service.getMonthlyCost(server) > 0,
-      ).length
-      acc[service.name] = {
-        total: activeServers.reduce(
-          (sum, server) =>
-            sum + (server.isTrial ? 0 : service.getMonthlyCost(server)),
-          0,
-        ),
-        count,
-      }
+      const chargedTotal = activeServers.reduce((sum, server) => {
+        if (server.isTrial && service.name === "Compute") {
+          return sum
+        }
+        return sum + service.getMonthlyCost(server)
+      }, 0)
+
+      const count = activeServers.filter((server) => {
+        if (server.isTrial && service.name === "Compute") {
+          return false
+        }
+        return service.getMonthlyCost(server) > 0
+      }).length
+
+      acc[service.name] = { total: chargedTotal, count }
       return acc
     },
     {} as Record<string, { total: number; count: number }>,
@@ -301,17 +140,21 @@ function calculateTotalsForMonth(month: Month) {
 
   const fullPriceTotals = services.reduce(
     (acc, service) => {
-      const getCost = (server: Server) => {
+      const fullTotal = activeServers.reduce((sum, server) => {
         if (service.name === "Compute" && server.isTrial) {
-          return server.fullMonthlyComputePrice
+          return sum + server.fullMonthlyComputePrice
         }
-        return service.getMonthlyCost(server)
-      }
-      const count = activeServers.filter((server) => getCost(server) > 0).length
-      acc[service.name] = {
-        total: activeServers.reduce((sum, server) => sum + getCost(server), 0),
-        count,
-      }
+        return sum + service.getMonthlyCost(server)
+      }, 0)
+
+      const count = activeServers.filter((server) => {
+        if (service.name === "Compute" && server.isTrial) {
+          return server.fullMonthlyComputePrice > 0
+        }
+        return service.getMonthlyCost(server) > 0
+      }).length
+
+      acc[service.name] = { total: fullTotal, count }
       return acc
     },
     {} as Record<string, { total: number; count: number }>,
@@ -319,9 +162,10 @@ function calculateTotalsForMonth(month: Month) {
 
   const perServerTotals = activeServers.reduce(
     (acc, server) => {
-      acc[server.name] = server.isTrial
+      const charged = server.isTrial
         ? 0
-        : services.reduce((sum, svc) => sum + svc.getMonthlyCost(server), 0)
+        : services.reduce((sum, service) => sum + service.getMonthlyCost(server), 0)
+      acc[server.name] = charged
       return acc
     },
     {} as Record<string, number>,
@@ -329,29 +173,25 @@ function calculateTotalsForMonth(month: Month) {
 
   const fullPricePerServerTotals = activeServers.reduce(
     (acc, server) => {
-      acc[server.name] = services.reduce((sum, svc) => {
-        if (svc.name === "Compute" && server.isTrial) {
+      const fullPrice = services.reduce((sum, service) => {
+        if (service.name === "Compute" && server.isTrial) {
           return sum + server.fullMonthlyComputePrice
         }
-        return sum + svc.getMonthlyCost(server)
+        return sum + service.getMonthlyCost(server)
       }, 0)
+      acc[server.name] = fullPrice
       return acc
     },
     {} as Record<string, number>,
   )
 
-  const subscriptionStart = new Date(2025, 3, 1) // April 2025
+  const subscriptionStart = new Date(2025, 3, 1)
   const isSubscriptionActive = month.start >= subscriptionStart
-  const subscriptionCost = isSubscriptionActive
-    ? SUBSCRIPTION_COST_PER_MONTH
-    : 0
+  const subscriptionCost = isSubscriptionActive ? SUBSCRIPTION_COST_PER_MONTH : 0
 
-  const grandTotal =
-    Object.values(totals).reduce((sum, { total }) => sum + total, 0) +
-    subscriptionCost
+  const grandTotal = Object.values(totals).reduce((sum, { total }) => sum + total, 0) + subscriptionCost
   const fullGrandTotal =
-    Object.values(fullPriceTotals).reduce((sum, { total }) => sum + total, 0) +
-    subscriptionCost
+    Object.values(fullPriceTotals).reduce((sum, { total }) => sum + total, 0) + subscriptionCost
 
   return {
     totals,
@@ -386,128 +226,103 @@ const fetchBillingPortal = async (token: string) => {
     }
     return data.portal_url
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error"
-    throw new Error(`Failed to fetch billing portal: ${errorMessage}`)
+    const message = error instanceof Error ? error.message : "Unknown error"
+    throw new Error(`Failed to fetch billing portal: ${message}`)
   }
 }
 
-function PaymentDetailsTab() {
-  const [token] = useState<string | null>(localStorage.getItem("access_token"))
-  const [isLoading, setIsLoading] = useState(false)
-  const toast = useToast()
-
-  const handleBillingClick = async () => {
-    if (!token) {
-      toast({
-        title: "Error",
-        description: "Please log in to manage your billing information.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      })
-      return
-    }
-    setIsLoading(true)
-    try {
-      const portalUrl = await fetchBillingPortal(token)
-      window.location.href = portalUrl
-    } catch (error) {
-      console.error("Error accessing customer portal:", error)
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to access billing portal. Please try again later.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const hasSavedCard = true
-  const cardLast4 = "3007"
-  const cardBrand = "American Express"
-  const cardExp = "11/2027"
-  const billingAddress = {
-    name: "Nik Popov",
-    email: "apispopov@gmail.com",
-    line1: "599 Broadway, floor 3",
-    city: "New York",
-    state: "NY",
-    postalCode: "10012",
-    country: "US",
-    phone: "(212) 595-3915",
-  }
-
-  return (
-    <VStack align="stretch" spacing={6}>
-      <Text color="gray.600">
-        View or update your payment method used for billing.
-      </Text>
-      {hasSavedCard ? (
-        <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
-          <Text fontWeight="bold">
-            {cardBrand} ending in {cardLast4}
-          </Text>
-          <Text>Expires: {cardExp}</Text>
-        </Box>
-      ) : (
-        <Text color="gray.600">
-          No payment method saved. Add a payment method in Stripe to continue.
-        </Text>
-      )}
-      <Button
-        colorScheme="blue"
-        onClick={handleBillingClick}
-        isLoading={isLoading}
-        loadingText="Redirecting..."
-        isDisabled={isLoading}
-        leftIcon={<Icon as={FaCreditCard} />}
-      >
-        Manage Payment Method
-      </Button>
-      <Heading size="md" color="gray.700">
-        Billing Address
-      </Heading>
-      <Text color="gray.600">
-        Manage your billing address for invoices and payments.
-      </Text>
-      <Box borderWidth="1px" borderRadius="lg" p={4} boxShadow="sm">
-        <Text>{billingAddress.name}</Text>
-        <Text>{billingAddress.email}</Text>
-        <Text>{billingAddress.line1}</Text>
-        <Text>
-          {billingAddress.city}, {billingAddress.state}{" "}
-          {billingAddress.postalCode}
-        </Text>
-        <Text>{billingAddress.country}</Text>
-        <Text>{billingAddress.phone}</Text>
-      </Box>
-      <Button
-        colorScheme="blue"
-        onClick={handleBillingClick}
-        isLoading={isLoading}
-        loadingText="Redirecting..."
-        isDisabled={isLoading}
-        leftIcon={<Icon as={FaCreditCard} />}
-      >
-        Manage Billing Address
-      </Button>
-    </VStack>
-  )
+interface PaymentRecord {
+  month: Month
+  total: number
+  invoiceId: string
+  paymentDate: string
+  paymentMethod: string
+  description: string
+  status: "Succeeded" | "Pending" | "Failed"
 }
+
+const paymentHistory: PaymentRecord[] = [
+  {
+    month: months[5],
+    total: 299.0,
+    invoiceId: "28B73F19-0023",
+    paymentDate: "September 15, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "HTTPs Request API - Plus Tier Subscription",
+    status: "Succeeded",
+  },
+  {
+    month: months[5],
+    total: 193.7,
+    invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
+    paymentDate: "September 10, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "Unlimited IP Rotation VPS - Multi-Region",
+    status: "Succeeded",
+  },
+  {
+    month: months[5],
+    total: 449.0,
+    invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
+    paymentDate: "September 9, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "Unlimited IP Rotation VPS - Multi-Region",
+    status: "Succeeded",
+  },
+  {
+    month: months[4],
+    total: 318.81,
+    invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
+    paymentDate: "August 15, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "HTTPs Request API - Plus Tier Subscription",
+    status: "Succeeded",
+  },
+  {
+    month: months[3],
+    total: 318.81,
+    invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
+    paymentDate: "July 15, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "HTTPs Request API - Plus Tier Subscription",
+    status: "Succeeded",
+  },
+  {
+    month: months[2],
+    total: 299.0,
+    invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
+    paymentDate: "June 10, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "HTTPs Request API - Plus Tier Subscription",
+    status: "Succeeded",
+  },
+  {
+    month: months[1],
+    total: 299.0,
+    invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
+    paymentDate: "May 10, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "HTTPs Request API - Plus Tier Subscription",
+    status: "Succeeded",
+  },
+  {
+    month: months[0],
+    total: 322.92,
+    invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
+    paymentDate: "April 10, 2025",
+    paymentMethod: "American Express •••• 3007",
+    description: "HTTPs Request API - Plus Tier Subscription",
+    status: "Succeeded",
+  },
+]
 
 const BillingPage = () => {
-  const currentMonth = months[months.length - 1] || {
+  const currentMonth = months.at(-1) ?? {
     name: "Current Month",
     start: new Date(),
     end: new Date(),
   }
+
   const {
     totals: currentTotals,
     activeServers: currentActiveServers,
@@ -516,132 +331,21 @@ const BillingPage = () => {
     fullPriceTotals,
     fullGrandTotal,
     fullPricePerServerTotals,
-  } = calculateTotalsForMonth(currentMonth)
-  const [token] = useState<string | null>(localStorage.getItem("access_token"))
+  } = useMemo(() => calculateTotalsForMonth(currentMonth), [currentMonth])
+
+  const [token] = useState<string | null>(() =>
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null,
+  )
   const [isLoading, setIsLoading] = useState(false)
-  const toast = useToast()
+  const showToast = useCustomToast()
 
-  interface PaymentRecord {
-    month: Month
-    total: number
-    invoiceId: string
-    paymentDate: string
-    paymentMethod: string
-    description: string
-    status: string
-  }
-
-  const history: PaymentRecord[] = [
-    {
-      month: months[5],
-      total: 299.0,
-      invoiceId: "28B73F19-0023",
-      paymentDate: "September 15, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-      status: "Succeeded",
-    },
-    {
-      month: months[5], // September 2025
-      total: 193.7,
-      invoiceId: "pm_1Rihl8LqozOkbqR8mWtaIvNZ",
-      paymentDate: "September 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "Unlimited IP Rotation VPS - Multi-Region",
-      status: "Succeeded",
-    },
-    {
-      month: months[5],
-      total: 449.0,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FYy",
-      paymentDate: "September 9, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "Unlimited IP Rotation VPS - Multi-Region ",
-      status: "Succeeded",
-    },
-    {
-      month: months[4],
-      total: 318.81,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZa",
-      paymentDate: "August 15, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-      status: "Succeeded",
-    },
-    {
-      month: months[3],
-      total: 318.81,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZb",
-      paymentDate: "July 15, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-      status: "Succeeded",
-    },
-    {
-      month: months[2],
-      total: 299.0,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZc",
-      paymentDate: "June 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-      status: "Succeeded",
-    },
-    {
-      month: months[1],
-      total: 299.0,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZd",
-      paymentDate: "May 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-      status: "Succeeded",
-    },
-    {
-      month: months[0],
-      total: 322.92,
-      invoiceId: "in_1S5MosLqozOkbqR8Bx8H7FZe",
-      paymentDate: "April 10, 2025",
-      paymentMethod: "American Express •••• 3007",
-      description: "HTTPs Request API - Plus Tier Subscription",
-      status: "Succeeded",
-    },
-  ]
-
-  const allTimeTotal =
-    history.reduce((sum, { total }) => sum + total, 0) +
-    SUBSCRIPTION_COST_PER_MONTH * 6 // 6 months (April to September)
-  const averageMonthly = allTimeTotal / months.length
-  const previousMonthTotal =
-    history
-      .filter(({ month }) => month.name === "August 2025")
-      .reduce((sum, { total }) => sum + total, 0) + SUBSCRIPTION_COST_PER_MONTH
-  const monthOverMonthChange = previousMonthTotal
-    ? ((grandTotal - previousMonthTotal) / previousMonthTotal) * 100
-    : 0
-  const invoicedAmount = history
-    .filter(
-      ({ month, status }) =>
-        month.name === "September 2025" && status === "Succeeded",
-    )
-    .reduce((sum, { total }) => sum + total, 0)
-  const outstandingBalance =
-    grandTotal +
-    history
-      .filter(
-        ({ month, status }) =>
-          month.name === "August 2025" && status === "Pending",
-      )
-      .reduce((sum, { total }) => sum + total, 0) -
-    invoicedAmount
-
-  const handleBillingClick = async () => {
+  const handleBillingClick = useCallback(async () => {
     if (!token) {
-      toast({
-        title: "Error",
-        description: "Please log in to manage your billing information.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      })
+      showToast(
+        "Sign in required",
+        "Log in again to open your Stripe customer portal.",
+        "warning",
+      )
       return
     }
     setIsLoading(true)
@@ -649,625 +353,534 @@ const BillingPage = () => {
       const portalUrl = await fetchBillingPortal(token)
       window.location.href = portalUrl
     } catch (error) {
-      console.error("Error accessing customer portal:", error)
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to access billing portal. Please try again later.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
+      console.error("Error accessing customer portal", error)
+      showToast(
+        "Unable to open portal",
+        error instanceof Error
+          ? error.message
+          : "Please try again in a few moments.",
+        "error",
+      )
     } finally {
       setIsLoading(false)
     }
+  }, [token, showToast])
+
+  const succeededInvoices = paymentHistory.filter((item) => item.status === "Succeeded")
+  const invoicedAmount = succeededInvoices
+    .filter(({ month }) => month.name === currentMonth.name)
+    .reduce((sum, { total }) => sum + total, 0)
+  const pendingInvoices = paymentHistory.filter((item) => item.status === "Pending")
+
+  const outstandingBalance = useMemo(() => {
+    const priorPending = paymentHistory
+      .filter(({ month, status }) => month.name !== currentMonth.name && status === "Pending")
+      .reduce((sum, { total }) => sum + total, 0)
+    return grandTotal + priorPending - invoicedAmount
+  }, [grandTotal, invoicedAmount])
+
+  const allTimeTotal = paymentHistory.reduce((sum, { total }) => sum + total, 0)
+  const averageMonthly = allTimeTotal / months.length
+  const previousMonthTotal = paymentHistory
+    .filter(({ month }) => month.name === "August 2025")
+    .reduce((sum, { total }) => sum + total, 0)
+  const monthOverMonthChange = previousMonthTotal
+    ? ((grandTotal - previousMonthTotal) / previousMonthTotal) * 100
+    : 0
+
+  const summaryMetrics = [
+    {
+      label: "Charged total",
+      value: currencyFormatter.format(grandTotal),
+      description: `${currentActiveServers.length} active nodes (trials excluded).`,
+    },
+    {
+      label: "Full-price total",
+      value: currencyFormatter.format(fullGrandTotal),
+      description: "List pricing with trials factored back in.",
+    },
+    {
+      label: "Average monthly",
+      value: currencyFormatter.format(averageMonthly),
+      description: `${months.length} months tracked in this view.`,
+    },
+    {
+      label: "MoM change",
+      value: percentageFormatter(monthOverMonthChange),
+      description: `${currentMonth.name} vs August 2025.`,
+    },
+  ]
+
+  const billingAddress = {
+    name: "Nik Popov",
+    email: "apispopov@gmail.com",
+    line1: "599 Broadway, floor 3",
+    city: "New York",
+    state: "NY",
+    postalCode: "10012",
+    country: "United States",
+    phone: "(212) 595-3915",
   }
 
   return (
-    <Container maxW="container.xl" py={10} as="main">
-      <Flex align="center" justify="space-between" py={6} mb={6}>
-        <Heading size="xl" mb={6} color="red.700">
-          {currentMonth.name} - Billing Cycle
-        </Heading>
-        <Text fontSize="lg" color="red.600">
-          Manage your hosting costs and review billing history
-        </Text>
-      </Flex>
-      <Tabs variant="enclosed" colorScheme="orange" isFitted>
-        <TabList>
-          <Tab
-            fontWeight="semibold"
-            _selected={{ color: "red.600", borderTopColor: "red.400" }}
-          >
-            Current Usage
-          </Tab>
-          <Tab
-            fontWeight="semibold"
-            _selected={{ color: "red.600", borderTopColor: "red.400" }}
-          >
-            Service Details
-          </Tab>
-          <Tab
-            fontWeight="semibold"
-            _selected={{ color: "red.600", borderTopColor: "red.400" }}
-          >
-            Invoices
-          </Tab>
-          <Tab
-            fontWeight="semibold"
-            _selected={{ color: "red.600", borderTopColor: "red.400" }}
-          >
-            Payment Details
-          </Tab>
-        </TabList>
-        <TabPanels bg="red.50" borderRadius="0 0 md md">
-          <TabPanel>
-            <VStack align="stretch" spacing={6}>
-              {outstandingBalance > 0 && (
-                <Box
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  p={4}
-                  bg="red.50"
-                  boxShadow="sm"
-                >
-                  <VStack align="stretch" spacing={2}>
-                    <Text fontWeight="semibold" color="red.800">
-                      Balance
-                    </Text>
+    <div className="space-y-12">
+      <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+        <div className="space-y-4">
+          <Badge className="rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
+            Billing cycle
+          </Badge>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+              {currentMonth.name}
+            </h1>
+            <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
+              Managed hosting + API
+            </Badge>
+          </div>
+          <p className="max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+            Review usage-based charges, subscription run rate, and settlement history with the same glass aesthetic as the dashboard landing page.
+          </p>
+        </div>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {summaryMetrics.map((metric) => (
+            <SummaryMetric
+              key={metric.label}
+              label={metric.label}
+              value={metric.value}
+              description={metric.description}
+            />
+          ))}
+        </div>
+      </div>
 
-                    {/* <Flex justify="space-between">
-                      <Text>Invoiced Amount (September 2025):</Text>
-                      <Text fontWeight="bold">${invoicedAmount.toFixed(2)}</Text>
-                    </Flex> */}
-                    {history
-                      .filter(
-                        ({ month, status }) =>
-                          month.name === "August 2025" && status === "Pending",
-                      )
-                      .map((invoice) => (
-                        <Flex key={invoice.invoiceId} justify="space-between">
-                          <Text>{invoice.description} (August 2025):</Text>
-                          <Text fontWeight="bold">
-                            ${invoice.total.toFixed(2)}
-                          </Text>
-                        </Flex>
-                      ))}
-                    <Flex justify="space-between">
-                      <Text>Outstanding Balance:</Text>
-                      <Text fontWeight="bold" color="red.600">
-                        ${outstandingBalance.toFixed(2)}
-                      </Text>
-                    </Flex>
-                    <Text fontStyle="italic" color="red.600">
-                      Note: The outstanding balance includes unpaid invoices
-                      from previous months, current server costs, and
-                      subscription costs not yet invoiced.
-                    </Text>
-                    <Button
-                      colorScheme="orange"
-                      onClick={handleBillingClick}
-                      isLoading={isLoading}
-                      loadingText="Redirecting..."
-                      isDisabled={isLoading}
-                    >
-                      Manage Billing
-                    </Button>
-                  </VStack>
-                </Box>
-              )}
-              <Box
-                borderWidth="1px"
-                borderRadius="lg"
-                overflow="hidden"
-                boxShadow="sm"
-              >
-                <Table variant="simple" size="md">
-                  <Thead bg="red.100">
-                    <Tr>
-                      <Th color="red.800">Server Name</Th>
-                      <Th color="red.800">IP Address</Th>
-                      <Th color="red.800">Status</Th>
-                      <Th color="red.800" isNumeric>
-                        Charged Cost (USD)
-                      </Th>
-                      <Th color="red.800" isNumeric>
-                        Full Cost (USD)
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {currentActiveServers.map((server) => (
-                      <Tr key={server.name}>
-                        <Td>{server.name}</Td>
-                        <Td>{server.ip}</Td>
-                        <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                        <Td isNumeric>
-                          ${perServerTotals[server.name].toFixed(2)}
-                        </Td>
-                        <Td isNumeric>
-                          ${fullPricePerServerTotals[server.name].toFixed(2)}
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                  <Tfoot bg="red.50">
-                    <Tr>
-                      <Th colSpan={3} color="red.800">
-                        Server Total
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${(grandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(2)}
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        $
-                        {(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH).toFixed(
-                          2,
-                        )}
-                      </Th>
-                    </Tr>
-                    <Tr>
-                      <Th colSpan={3} color="red.800">
-                        Subscription
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}
-                      </Th>
-                    </Tr>
-                    <Tr>
-                      <Th colSpan={3} color="red.800">
-                        Grand Total
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${grandTotal.toFixed(2)}
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${fullGrandTotal.toFixed(2)}
-                      </Th>
-                    </Tr>
-                  </Tfoot>
-                </Table>
-              </Box>
-              <Box
-                borderWidth="1px"
-                borderRadius="lg"
-                overflow="hidden"
-                boxShadow="sm"
-              >
-                <Table variant="simple" size="md">
-                  <Thead bg="red.100">
-                    <Tr>
-                      <Th color="red.800">Service</Th>
-                      <Th color="red.800">Quantity</Th>
-                      <Th color="red.800" isNumeric>
-                        Charged Cost (USD)
-                      </Th>
-                      <Th color="red.800" isNumeric>
-                        Full Cost (USD)
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {services.map((s) => (
-                      <Tr key={s.name}>
-                        <Td>{s.name}</Td>
-                        <Td>x {currentTotals[s.name].count}</Td>
-                        <Td isNumeric>
-                          ${currentTotals[s.name].total.toFixed(2)}
-                        </Td>
-                        <Td isNumeric>
-                          ${fullPriceTotals[s.name].total.toFixed(2)}
-                        </Td>
-                      </Tr>
-                    ))}
-                    <Tr>
-                      <Td>Unlimited HTTPS API Request - Plus Tier</Td>
-                      <Td>x 1</Td>
-                      <Td isNumeric>
-                        ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}
-                      </Td>
-                      <Td isNumeric>
-                        ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                  <Tfoot bg="red.50">
-                    <Tr>
-                      <Th colSpan={2} color="red.800">
-                        Total
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${grandTotal.toFixed(2)}
-                      </Th>
-                      <Th isNumeric color="red.800">
-                        ${fullGrandTotal.toFixed(2)}
-                      </Th>
-                    </Tr>
-                  </Tfoot>
-                </Table>
-              </Box>
-              <Box
-                borderWidth="1px"
-                borderRadius="lg"
-                p={4}
-                bg="red.50"
-                boxShadow="sm"
-              >
-                <VStack align="stretch" spacing={2}>
-                  <Text fontWeight="semibold" color="red.800">
-                    Current Subscription
-                  </Text>
-                  <Text>Unlimited HTTPS API Request - Plus Tier</Text>
-                  <Text fontWeight="bold">
-                    ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} per month
-                  </Text>
-                  <Text>Your subscription renews on September 17, 2025.</Text>
-                  <Button
-                    size="sm"
-                    colorScheme="orange"
-                    onClick={handleBillingClick}
-                    isLoading={isLoading}
-                    loadingText="Redirecting..."
-                    isDisabled={isLoading}
-                  >
-                    View Details
-                  </Button>
-                </VStack>
-              </Box>
-            </VStack>
-          </TabPanel>
-          <TabPanel>
-            <Accordion allowMultiple defaultIndex={[0]}>
-              <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
-                <h2>
-                  <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
-                    <Box
-                      as="span"
-                      flex="1"
-                      textAlign="left"
-                      fontWeight="semibold"
-                      color="red.800"
-                    >
-                      Server Resources
-                    </Box>
-                    <AccordionIcon color="red.600" />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <Table variant="simple" size="sm">
-                    <Thead bg="red.100">
-                      <Tr>
-                        <Th color="red.800">Server Name</Th>
-                        <Th color="red.800">vCPUs</Th>
-                        <Th color="red.800">RAM (GB)</Th>
-                        <Th color="red.800">Storage (GB)</Th>
-                        <Th color="red.800">Floating IPs</Th>
-                        <Th color="red.800">Features</Th>
-                        <Th color="red.800">Status</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {currentActiveServers.map((server) => (
-                        <Tr key={server.name}>
-                          <Td>{server.name}</Td>
-                          <Td>{server.vCPUs}</Td>
-                          <Td>{server.ramGB}</Td>
-                          <Td>{server.storageSizeGB}</Td>
-                          <Td>{server.hasRotatingIP ? 1 : 0}</Td>
-                          <Td>
-                            <List spacing={1}>
-                              {server.hasManagedSupport && (
-                                <ListItem>
-                                  <ListIcon
-                                    as={FaCheckCircle}
-                                    color="green.500"
-                                  />
-                                  Managed Services (OS updates, security,
-                                  backups)
-                                </ListItem>
-                              )}
-                              {server.hasBackup && (
-                                <ListItem>
-                                  <ListIcon
-                                    as={FaCheckCircle}
-                                    color="green.500"
-                                  />
-                                  Backup
-                                </ListItem>
-                              )}
-                              {server.hasMonitoring && (
-                                <ListItem>
-                                  <ListIcon
-                                    as={FaCheckCircle}
-                                    color="green.500"
-                                  />
-                                  Monitoring
-                                </ListItem>
-                              )}
-                            </List>
-                          </Td>
-                          <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </AccordionPanel>
-              </AccordionItem>
-              {services.map((s) => {
-                const relevantServers = currentActiveServers.filter(
-                  (server) =>
-                    s.getMonthlyCost(server) > 0 ||
-                    (s.name === "Compute" && server.isTrial),
-                )
-                const total = currentTotals[s.name].total
-                const fullTotal = fullPriceTotals[s.name].total
-                return (
-                  <AccordionItem
-                    key={s.name}
-                    borderWidth="1px"
-                    borderRadius="md"
-                    mb={4}
-                  >
-                    <h2>
-                      <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
-                        <Box
-                          as="span"
-                          flex="1"
-                          textAlign="left"
-                          fontWeight="semibold"
-                          color="red.800"
-                        >
-                          {s.name} - ${total.toFixed(2)} (x{" "}
-                          {relevantServers.length})
-                        </Box>
-                        <AccordionIcon color="red.600" />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      {relevantServers.length > 0 ? (
-                        <Table variant="simple" size="sm">
-                          <Thead bg="red.100">
-                            <Tr>
-                              <Th color="red.800">Server Name</Th>
-                              <Th color="red.800">Status</Th>
-                              <Th color="red.800" isNumeric>
-                                Charged Cost (USD)
-                              </Th>
-                              <Th color="red.800" isNumeric>
-                                Full Cost (USD)
-                              </Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {relevantServers.map((server) => (
-                              <Tr key={server.name}>
-                                <Td>{server.name}</Td>
-                                <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                                <Td isNumeric>
-                                  $
-                                  {server.isTrial
-                                    ? "0.00"
-                                    : s.getMonthlyCost(server).toFixed(2)}
-                                </Td>
-                                <Td isNumeric>
-                                  $
-                                  {s.name === "Compute" && server.isTrial
-                                    ? server.fullMonthlyComputePrice.toFixed(2)
-                                    : s.getMonthlyCost(server).toFixed(2)}
-                                </Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      ) : (
-                        <Text color="red.600">
-                          No servers using this service.
-                        </Text>
-                      )}
-                    </AccordionPanel>
-                  </AccordionItem>
-                )
-              })}
-              <AccordionItem borderWidth="1px" borderRadius="md" mb={4}>
-                <h2>
-                  <AccordionButton bg="red.50" _hover={{ bg: "red.100" }}>
-                    <Box
-                      as="span"
-                      flex="1"
-                      textAlign="left"
-                      fontWeight="semibold"
-                      color="red.800"
-                    >
-                      Unlimited HTTPS API Request - Plus Tier - $
-                      {SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} (x 1)
-                    </Box>
-                    <AccordionIcon color="red.600" />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <VStack align="stretch" spacing={4}>
-                    <Text>
-                      Subscription for Unlimited HTTPS API Requests (Plus Tier).
-                    </Text>
-                    <Text>
-                      Cost: ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)} per month
-                    </Text>
-                    <Text>Renews on: September 17, 2025</Text>
-                    <Divider />
-                    <Text fontWeight="semibold" color="red.800">
-                      Compute Costs
-                    </Text>
-                    <Table variant="simple" size="sm">
-                      <Thead bg="red.100">
-                        <Tr>
-                          <Th color="red.800">Server Name</Th>
-                          <Th color="red.800">Status</Th>
-                          <Th color="red.800" isNumeric>
-                            Charged Compute Cost (USD)
-                          </Th>
-                          <Th color="red.800" isNumeric>
-                            Full Compute Cost (USD)
-                          </Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {currentActiveServers.map((server) => {
-                          const computeService = services.find(
-                            (s) => s.name === "Compute",
-                          )
-                          const chargedCost = computeService
-                            ? server.isTrial
-                              ? 0
-                              : computeService.getMonthlyCost(server)
-                            : 0
-                          const fullCost = computeService
-                            ? server.isTrial
-                              ? server.fullMonthlyComputePrice
-                              : computeService.getMonthlyCost(server)
-                            : 0
-                          return (
-                            <Tr key={server.name}>
-                              <Td>{server.name}</Td>
-                              <Td>{server.isTrial ? "Trial" : "Active"}</Td>
-                              <Td isNumeric>${chargedCost.toFixed(2)}</Td>
-                              <Td isNumeric>${fullCost.toFixed(2)}</Td>
-                            </Tr>
-                          )
-                        })}
-                      </Tbody>
-                      <Tfoot bg="red.50">
-                        <Tr>
-                          <Th colSpan={2} color="red.800">
-                            Total Compute Cost
-                          </Th>
-                          <Th isNumeric color="red.800">
-                            ${currentTotals.Compute.total.toFixed(2)}
-                          </Th>
-                          <Th isNumeric color="red.800">
-                            ${fullPriceTotals.Compute.total.toFixed(2)}
-                          </Th>
-                        </Tr>
-                        <Tr>
-                          <Th colSpan={2} color="red.800">
-                            Subscription Cost
-                          </Th>
-                          <Th isNumeric color="red.800">
-                            ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}
-                          </Th>
-                          <Th isNumeric color="red.800">
-                            ${SUBSCRIPTION_COST_PER_MONTH.toFixed(2)}
-                          </Th>
-                        </Tr>
-                      </Tfoot>
-                    </Table>
-                  </VStack>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-          </TabPanel>
-          <TabPanel>
-            <Box
-              borderWidth="1px"
-              borderRadius="lg"
-              overflow="hidden"
-              boxShadow="sm"
+      {outstandingBalance > 0 || pendingInvoices.length > 0 ? (
+        <Card className="rounded-[28px] border border-amber-300/70 bg-amber-50/80 shadow-[0_24px_60px_-40px_rgba(217,119,6,0.45)] backdrop-blur-xl dark:border-amber-500/60 dark:bg-amber-500/15">
+          <CardHeader className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <CardTitle className="text-lg font-semibold text-amber-700 dark:text-amber-100">
+                Balance snapshot
+              </CardTitle>
+              <p className="text-sm text-amber-700/90 dark:text-amber-100/80">
+                Outstanding items include uninvoiced usage and any prior pending receipts.
+              </p>
+            </div>
+            <Badge variant="warning" className="rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
+              Action recommended
+            </Badge>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap items-end gap-3 text-slate-900 dark:text-slate-100">
+              <span className="text-3xl font-semibold">
+                {currencyFormatter.format(outstandingBalance)}
+              </span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">
+                Outstanding across current charges
+              </span>
+            </div>
+            {pendingInvoices.length > 0 ? (
+              <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                {pendingInvoices.map((invoice) => (
+                  <li key={invoice.invoiceId} className="flex items-center justify-between rounded-2xl border border-amber-200/70 bg-white/60 px-4 py-2 dark:border-amber-500/40 dark:bg-amber-500/10">
+                    <span>
+                      {invoice.description} ({invoice.month.name})
+                    </span>
+                    <span className="font-semibold">
+                      {currencyFormatter.format(invoice.total)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                All invoices for {currentMonth.name} have settled. The balance reflects usage awaiting billing sync.
+              </p>
+            )}
+          </CardContent>
+          <CardFooter className="flex flex-wrap items-center gap-4 border-t border-amber-200/60 bg-white/60 dark:border-amber-500/40 dark:bg-amber-500/10">
+            <Button
+              variant="outline"
+              className="gap-2 rounded-full border-amber-300/70 px-5 py-2 text-sm font-semibold text-amber-700 hover:border-amber-400 hover:text-amber-800 dark:border-amber-500/60 dark:text-amber-100"
+              onClick={handleBillingClick}
+              isLoading={isLoading}
+              loadingText="Redirecting..."
             >
-              <Table variant="simple" size="md">
-                <Thead bg="red.100">
-                  <Tr>
-                    <Th color="red.800">Month</Th>
-                    <Th color="red.800">Invoice Number</Th>
-                    <Th color="red.800">Payment Date</Th>
-                    <Th color="red.800">Payment Method</Th>
-                    <Th color="red.800">Description</Th>
-                    <Th color="red.800" />
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {history.map(
-                    ({
-                      month,
-                      total,
-                      invoiceId,
-                      paymentDate,
-                      paymentMethod,
-                      description,
-                    }) => (
-                      <Tr key={invoiceId}>
-                        <Td>{month.name}</Td>
-                        <Td>{invoiceId.slice(0, 12)}...</Td>
-                        <Td>{paymentDate}</Td>
-                        <Td>{paymentMethod}</Td>
-                        <Td>{description}</Td>
-                        <Td>
-                          <Flex justify="center" gap={2}>
-                            <Button
-                              size="sm"
-                              colorScheme="blue"
-                              onClick={handleBillingClick}
-                              isLoading={isLoading}
-                              loadingText="Redirecting..."
-                              isDisabled={isLoading}
-                              leftIcon={<Icon as={FaCreditCard} />}
-                            >
-                              View Invoice
-                            </Button>
-                            <Button
-                              size="sm"
-                              colorScheme="blue"
-                              onClick={handleBillingClick}
-                              isLoading={isLoading}
-                              loadingText="Redirecting..."
-                              isDisabled={isLoading}
-                              leftIcon={<Icon as={FaCreditCard} />}
-                            >
-                              View Receipt
-                            </Button>
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ),
-                  )}
-                </Tbody>
-              </Table>
-            </Box>
-            <Box mt={4}>
-              <Button
-                colorScheme="blue"
-                onClick={handleBillingClick}
-                isLoading={isLoading}
-                loadingText="Redirecting..."
-                isDisabled={isLoading}
-                leftIcon={<Icon as={FaCreditCard} />}
-              >
-                Manage Invoices in Stripe
-              </Button>
-            </Box>
-          </TabPanel>
-          <TabPanel>
-            <PaymentDetailsTab />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+              <FiArrowUpRight className="h-4 w-4" />
+              Resolve in Stripe
+            </Button>
+            <span className="text-xs text-amber-700/80 dark:text-amber-100/70">
+              You&apos;ll land directly in the self-service customer portal.
+            </span>
+          </CardFooter>
+        </Card>
+      ) : null}
 
-      <Button
-        as={ChakraLink}
-        href=".."
-        mt={6}
-        colorScheme="red"
-        variant="outline"
-        size="md"
-      >
-        Back to Hosting
-      </Button>
-    </Container>
+      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Server charges
+          </CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Per-server view of charged vs. list pricing for the month.
+          </p>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                  <TableHead>Server</TableHead>
+                  <TableHead>IP</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Charged (USD)</TableHead>
+                  <TableHead className="text-right">Full (USD)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentActiveServers.map((server) => {
+                  const charged = perServerTotals[server.name] ?? 0
+                  const full = fullPricePerServerTotals[server.name] ?? 0
+                  return (
+                    <TableRow
+                      key={server.name}
+                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                    >
+                      <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                        {server.name}
+                      </TableCell>
+                      <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                        {server.ip}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={server.isTrial ? "outline" : "success"}
+                          className="rounded-full px-3 py-1 text-xs font-semibold"
+                        >
+                          {server.isTrial ? "Trial" : "Active"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                        {currencyFormatter.format(charged)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                        {currencyFormatter.format(full)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Server total
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(grandTotal - SUBSCRIPTION_COST_PER_MONTH)}
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Subscription
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Grand total
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(grandTotal)}
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(fullGrandTotal)}
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
+          Charged totals exclude compute trials; full pricing illustrates what you would pay without promotional credits.
+        </CardFooter>
+      </Card>
+
+      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Service breakdown
+          </CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Each managed add-on measured against its full list price.
+          </p>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                  <TableHead>Service</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead className="text-right">Charged (USD)</TableHead>
+                  <TableHead className="text-right">Full (USD)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {services.map((service) => (
+                  <TableRow key={service.name}>
+                    <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                      {service.name}
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                      × {currentTotals[service.name].count}
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                      {currencyFormatter.format(currentTotals[service.name].total)}
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                      {currencyFormatter.format(fullPriceTotals[service.name].total)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow>
+                  <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                    HTTPS API Subscription (Plus)
+                  </TableCell>
+                  <TableCell className="text-sm text-slate-600 dark:text-slate-400">× 1</TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={2} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Total
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(grandTotal)}
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(fullGrandTotal)}
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
+          Storage and elastic IP fees are metered across the active fleet; managed support appears only where enabled.
+        </CardFooter>
+      </Card>
+
+      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <CardHeader className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+          <div>
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Subscription snapshot
+            </CardTitle>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Unlimited HTTPS API Request – Plus Tier · renews September 17, 2025.
+            </p>
+          </div>
+          <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
+            {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)} / month
+          </Badge>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Subscription billing is handled through Stripe; use the portal to adjust plan size, payment method, or invoice recipients.
+          </p>
+          <Button
+            variant="outline"
+            className="gap-2 rounded-full border-slate-200/80 px-5 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+            onClick={handleBillingClick}
+            isLoading={isLoading}
+            loadingText="Redirecting..."
+          >
+            <FiExternalLink className="h-4 w-4" />
+            Manage subscription
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Invoice history
+          </CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Direct links into Stripe for deeper detail or PDF exports.
+          </p>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                  <TableHead>Month</TableHead>
+                  <TableHead>Invoice</TableHead>
+                  <TableHead>Payment date</TableHead>
+                  <TableHead>Method</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paymentHistory.map((record) => (
+                  <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
+                    <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                      {record.month.name}
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                      {record.invoiceId.slice(0, 12)}…
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                      {record.paymentDate}
+                    </TableCell>
+                    <TableCell className="text-xs text-slate-500 dark:text-slate-500">
+                      {record.paymentMethod}
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                      {record.description}
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      {currencyFormatter.format(record.total)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge
+                        variant={record.status === "Succeeded" ? "success" : "warning"}
+                        className="rounded-full px-3 py-1 text-xs font-semibold"
+                      >
+                        {record.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-900/50">
+          <Button
+            variant="outline"
+            className="gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+            onClick={handleBillingClick}
+            isLoading={isLoading}
+            loadingText="Redirecting..."
+          >
+            <FiArrowUpRight className="h-4 w-4" />
+            Manage invoices in Stripe
+          </Button>
+          <span className="text-xs text-slate-500 dark:text-slate-500">
+            Stripe provides PDF exports, receipts, and VAT-compliant billing data.
+          </span>
+        </CardFooter>
+      </Card>
+
+      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Payment method & billing address
+          </CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            The saved card and remit-to details in Stripe today.
+          </p>
+        </CardHeader>
+        <CardContent className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
+              Default payment method
+            </p>
+            <p className="mt-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
+              American Express ending in 3007
+            </p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Expires 11/2027</p>
+            <Button
+              variant="outline"
+              className="mt-4 gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+              onClick={handleBillingClick}
+              isLoading={isLoading}
+              loadingText="Redirecting..."
+            >
+              <FiCreditCard className="h-4 w-4" />
+              Update payment method
+            </Button>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
+              Billing address
+            </p>
+            <div className="mt-3 space-y-1 text-sm text-slate-600 dark:text-slate-400">
+              <p className="font-semibold text-slate-900 dark:text-slate-100">{billingAddress.name}</p>
+              <p>{billingAddress.line1}</p>
+              <p>
+                {billingAddress.city}, {billingAddress.state} {billingAddress.postalCode}
+              </p>
+              <p>{billingAddress.country}</p>
+              <p>{billingAddress.phone}</p>
+              <p>{billingAddress.email}</p>
+            </div>
+            <Button
+              variant="outline"
+              className="mt-4 gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+              onClick={handleBillingClick}
+              isLoading={isLoading}
+              loadingText="Redirecting..."
+            >
+              <FiArrowUpRight className="h-4 w-4" />
+              Manage billing address
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex justify-end">
+        <Button
+          asChild
+          variant="outline"
+          className="gap-2 rounded-full border-slate-200/80 px-5 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+        >
+          <RouterLink to="..">
+            <FiArrowLeft className="h-4 w-4" />
+            Back to hosting
+          </RouterLink>
+        </Button>
+      </div>
+    </div>
   )
 }
+
+const SummaryMetric = ({
+  label,
+  value,
+  description,
+}: {
+  label: string
+  value: string
+  description: string
+}) => (
+  <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
+    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
+      {label}
+    </p>
+    <p className="mt-3 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+      {value}
+    </p>
+    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{description}</p>
+  </div>
+)
 
 export const Route = createFileRoute("/_layout/hosting/billing")({
   component: BillingPage,

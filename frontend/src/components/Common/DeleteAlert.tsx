@@ -1,16 +1,15 @@
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
 
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { ItemsService, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
@@ -24,7 +23,6 @@ interface DeleteProps {
 const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
-  const cancelRef = React.useRef<HTMLButtonElement | null>(null)
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -69,44 +67,43 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
   }
 
   return (
-    <>
-      <AlertDialog
-        isOpen={isOpen}
-        onClose={onClose}
-        leastDestructiveRef={cancelRef}
-        size={{ base: "sm", md: "md" }}
-        isCentered
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Delete {type}</AlertDialogHeader>
-
-            <AlertDialogBody>
-              {type === "User" && (
-                <span>
-                  All items associated with this user will also be{" "}
-                  <strong>permantly deleted. </strong>
-                </span>
-              )}
-              Are you sure? You will not be able to undo this action.
-            </AlertDialogBody>
-
-            <AlertDialogFooter gap={3}>
-              <Button variant="danger" type="submit" isLoading={isSubmitting}>
-                Delete
-              </Button>
-              <Button
-                ref={cancelRef}
-                onClick={onClose}
-                isDisabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </>
+    <Dialog open={isOpen} onOpenChange={(open) => (!open ? onClose() : undefined)}>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-xl font-semibold text-destructive">
+              Delete {type}
+            </DialogTitle>
+            {type === "User" ? (
+              <p className="text-sm text-muted-foreground">
+                All items associated with this user will also be permanently deleted.
+              </p>
+            ) : null}
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to proceed? This action cannot be undone.
+          </p>
+          <DialogFooter className="gap-3">
+            <Button
+              variant="danger"
+              type="submit"
+              isLoading={isSubmitting}
+              loadingText="Deleting"
+            >
+              Delete
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

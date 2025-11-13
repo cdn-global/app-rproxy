@@ -1,21 +1,17 @@
-import {
-  Button,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { Controller, type SubmitHandler, useForm } from "react-hook-form"
+
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 
 import { type UserCreate, UsersService } from "../../client"
 import type { ApiError } from "../../client/core/ApiError"
@@ -39,6 +35,7 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
     handleSubmit,
     reset,
     getValues,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<UserCreateForm>({
     mode: "onBlur",
@@ -70,112 +67,140 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
   })
 
   const onSubmit: SubmitHandler<UserCreateForm> = (data) => {
-    mutation.mutate(data)
+    const { confirm_password: _confirm, ...payload } = data
+    mutation.mutate(payload)
+  }
+
+  const handleCancel = () => {
+    reset()
+    onClose()
   }
 
   return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size={{ base: "sm", md: "md" }}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Add User</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl isRequired isInvalid={!!errors.email}>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <Input
-                id="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: emailPattern,
-                })}
-                placeholder="Email"
-                type="email"
-              />
-              {errors.email && (
-                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+    <Dialog open={isOpen} onOpenChange={(open) => (!open ? handleCancel() : undefined)}>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <DialogHeader>
+            <DialogTitle>Add User</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: emailPattern,
+              })}
+              placeholder="Email"
+              type="email"
+              aria-invalid={errors.email ? "true" : "false"}
+              aria-describedby={errors.email ? "email-error" : undefined}
+            />
+            {errors.email ? (
+              <p className="text-sm text-destructive" id="email-error">
+                {errors.email.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="full_name">Full name</Label>
+            <Input
+              id="full_name"
+              {...register("full_name")}
+              placeholder="Full name"
+              type="text"
+            />
+            {errors.full_name ? (
+              <p className="text-sm text-destructive">{errors.full_name.message}</p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Set Password</Label>
+            <Input
+              id="password"
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+              })}
+              placeholder="Password"
+              type="password"
+              aria-invalid={errors.password ? "true" : "false"}
+              aria-describedby={errors.password ? "password-error" : undefined}
+            />
+            {errors.password ? (
+              <p className="text-sm text-destructive" id="password-error">
+                {errors.password.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="confirm_password">Confirm Password</Label>
+            <Input
+              id="confirm_password"
+              {...register("confirm_password", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === getValues().password || "The passwords do not match",
+              })}
+              placeholder="Password"
+              type="password"
+              aria-invalid={errors.confirm_password ? "true" : "false"}
+              aria-describedby={errors.confirm_password ? "confirm-password-error" : undefined}
+            />
+            {errors.confirm_password ? (
+              <p className="text-sm text-destructive" id="confirm-password-error">
+                {errors.confirm_password.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Controller
+              name="is_superuser"
+              control={control}
+              render={({ field }) => (
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <Checkbox
+                    checked={field.value ?? false}
+                    onCheckedChange={(checked) => field.onChange(Boolean(checked))}
+                  />
+                  <span>Is superuser?</span>
+                </label>
               )}
-            </FormControl>
-            <FormControl mt={4} isInvalid={!!errors.full_name}>
-              <FormLabel htmlFor="name">Full name</FormLabel>
-              <Input
-                id="name"
-                {...register("full_name")}
-                placeholder="Full name"
-                type="text"
-              />
-              {errors.full_name && (
-                <FormErrorMessage>{errors.full_name.message}</FormErrorMessage>
+            />
+            <Controller
+              name="is_active"
+              control={control}
+              render={({ field }) => (
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <Checkbox
+                    checked={field.value ?? false}
+                    onCheckedChange={(checked) => field.onChange(Boolean(checked))}
+                  />
+                  <span>Is active?</span>
+                </label>
               )}
-            </FormControl>
-            <FormControl mt={4} isRequired isInvalid={!!errors.password}>
-              <FormLabel htmlFor="password">Set Password</FormLabel>
-              <Input
-                id="password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters",
-                  },
-                })}
-                placeholder="Password"
-                type="password"
-              />
-              {errors.password && (
-                <FormErrorMessage>{errors.password.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl
-              mt={4}
-              isRequired
-              isInvalid={!!errors.confirm_password}
-            >
-              <FormLabel htmlFor="confirm_password">Confirm Password</FormLabel>
-              <Input
-                id="confirm_password"
-                {...register("confirm_password", {
-                  required: "Please confirm your password",
-                  validate: (value) =>
-                    value === getValues().password ||
-                    "The passwords do not match",
-                })}
-                placeholder="Password"
-                type="password"
-              />
-              {errors.confirm_password && (
-                <FormErrorMessage>
-                  {errors.confirm_password.message}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-            <Flex mt={4}>
-              <FormControl>
-                <Checkbox {...register("is_superuser")} colorScheme="teal">
-                  Is superuser?
-                </Checkbox>
-              </FormControl>
-              <FormControl>
-                <Checkbox {...register("is_active")} colorScheme="teal">
-                  Is active?
-                </Checkbox>
-              </FormControl>
-            </Flex>
-          </ModalBody>
-          <ModalFooter gap={3}>
-            <Button variant="primary" type="submit" isLoading={isSubmitting}>
+            />
+          </div>
+
+          <DialogFooter className="gap-3">
+            <Button variant="primary" type="submit" isLoading={isSubmitting} loadingText="Saving">
               Save
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
