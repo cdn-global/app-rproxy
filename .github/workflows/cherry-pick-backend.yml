@@ -1,0 +1,29 @@
+name: Cherry Pick Backend Changes
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  cherry-pick:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, '[backend]')"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Cherry-pick to main
+        run: |
+          git checkout main
+          git cherry-pick ${{ github.sha }}
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
