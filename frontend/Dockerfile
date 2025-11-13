@@ -16,6 +16,8 @@ RUN npm run build
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:1
 
+RUN apt-get update && apt-get install -y gettext
+
 COPY --from=build-stage /app/dist/ /usr/share/nginx/html
 
 COPY ./nginx.conf.template /etc/nginx/conf.d/default.conf.template
