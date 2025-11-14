@@ -4,19 +4,69 @@ import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { useCallback, useMemo, useState } from "react"
 import {
   FaBook,
+  FaCog,
   FaCreditCard,
   FaGlobe,
   FaSearch,
   FaServer,
 } from "react-icons/fa"
-import { FiArrowUpRight, FiDatabase, FiUserCheck } from "react-icons/fi"
+import {
+  FiArrowUpRight,
+  FiDatabase,
+  FiSettings,
+  FiShield,
+  FiUserCheck,
+} from "react-icons/fi"
 import type { IconType } from "react-icons"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import PageScaffold, {
   PageSection,
   SectionNavigation,
@@ -46,6 +96,16 @@ type FeatureMeta = {
 }
 
 type FeatureKey = "proxy-api" | "vps-hosting" | "serp-api"
+
+type ToolCatalogEntry = {
+  label: string
+  description: string
+  category: string
+  icon: IconType
+  to?: string
+  href?: string
+  featureSlug?: FeatureKey
+}
 
 const defaultFeatureSlugs: FeatureKey[] = [
   "proxy-api",
@@ -85,6 +145,76 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
     period: "Available for activation",
   },
 }
+
+const toolCatalogEntries: ToolCatalogEntry[] = [
+  {
+    label: "HTTPS Proxy API",
+    description:
+      "Inspect live requests, rotate endpoints, and manage credentials.",
+    category: "Web scraping",
+    icon: FaGlobe,
+    to: "/web-scraping-tools/https-api",
+    featureSlug: "proxy-api",
+  },
+  {
+    label: "SERP Intelligence",
+    description:
+      "Replay keyword snapshots, targeting controls, and localized exports.",
+    category: "Web scraping",
+    icon: FaSearch,
+    to: "/web-scraping-tools/serp-api",
+    featureSlug: "serp-api",
+  },
+  {
+    label: "User Agents Library",
+    description:
+      "Curated desktop, mobile, and crawler fingerprints ready to drop in.",
+    category: "Web scraping",
+    icon: FiUserCheck,
+    to: "/web-scraping-tools/user-agents",
+  },
+  {
+    label: "Managed VPS Fleet",
+    description:
+      "Provision, monitor, and snapshot compute capacity across regions.",
+    category: "Infrastructure",
+    icon: FaServer,
+    to: "/hosting",
+    featureSlug: "vps-hosting",
+  },
+  {
+    label: "Items Catalog",
+    description:
+      "Manage internal runbooks, snippets, and ops metadata in one place.",
+    category: "Operations",
+    icon: FiDatabase,
+    to: "/items",
+  },
+  {
+    label: "Workspace Settings",
+    description:
+      "Manage authentication, SSO, API tokens, and role assignments.",
+    category: "Administration",
+    icon: FiSettings,
+    to: "/settings",
+  },
+  {
+    label: "Admin Console",
+    description:
+      "Review user access, invitations, and compliance oversight.",
+    category: "Administration",
+    icon: FiShield,
+    to: "/admin",
+  },
+  {
+    label: "API Reference",
+    description:
+      "Full REST and SDK documentation with live examples and guides.",
+    category: "Reference",
+    icon: FaBook,
+    href: "https://docs.roamingproxy.com/",
+  },
+]
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
@@ -444,7 +574,7 @@ const HomePage = () => {
     return new Date(earliest * 1000)
   }, [activeSubscriptions])
 
-  const displayedFeatures = useMemo<DisplayedFeature[]>(() => {
+  const { displayedFeatures, activeFeatureSlugs } = useMemo(() => {
     const enabled = new Set<FeatureKey>()
     activeSubscriptions.forEach((sub) => {
       sub.enabled_features?.forEach((feature) => {
@@ -456,18 +586,21 @@ const HomePage = () => {
 
     const slugs = enabled.size > 0 ? Array.from(enabled) : defaultFeatureSlugs
 
-    return slugs.map((slug) => {
-      const meta = featureDetails[slug]
-      return {
-        slug,
-        name: meta.name,
-        description: meta.description,
-        icon: meta.icon,
-        path: meta.path,
-        gradient: meta.gradient,
-        period: meta.period,
-      }
-    })
+    return {
+      displayedFeatures: slugs.map((slug) => {
+        const meta = featureDetails[slug]
+        return {
+          slug,
+          name: meta.name,
+          description: meta.description,
+          icon: meta.icon,
+          path: meta.path,
+          gradient: meta.gradient,
+          period: meta.period,
+        }
+      }),
+      activeFeatureSlugs: enabled,
+    }
   }, [activeSubscriptions])
 
   const nextRenewalLabel = nextRenewal
@@ -576,7 +709,64 @@ const HomePage = () => {
       label: "Infrastructure",
       description: "Managed nodes, capacity, and quick deep links.",
     },
+    {
+      id: "component-library",
+      label: "Component style suite",
+      description: "Visual sweep of shadcn/ui primitives in our theme.",
+    },
   ]
+
+  const servicesAndToolsSection = (
+    <PageSection
+      id="services-and-tools"
+      title="Services & tools"
+      description="Enable new datasets, jump into APIs, or open supporting docs."
+      contentClassName="grid gap-10 xl:grid-cols-2 xl:items-start"
+    >
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          Active services
+        </h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Keep tabs on throughput, activation windows, and available feature sets across your workspace.
+        </p>
+        <ActiveServicesGrid features={displayedFeatures} />
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          Quick actions
+        </h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Jump straight into the tools your team relies on most.
+        </p>
+        <QuickActionsGrid actions={quickActions} />
+      </div>
+
+      <div className="space-y-3 xl:col-span-2">
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          Tool directory
+        </h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Explore every workspace module in one place to validate styling and behavior before launch.
+        </p>
+        <ToolDirectory
+          tools={toolCatalogEntries}
+          activeFeatureSlugs={activeFeatureSlugs}
+        />
+      </div>
+    </PageSection>
+  )
+
+  const componentGallerySection = (
+    <PageSection
+      id="component-library"
+      title="Component style suite"
+      description="Spot-check shadcn/ui primitives to ensure consistent theming across pages."
+    >
+      <ComponentGallery />
+    </PageSection>
+  )
 
   const sidebar = (
     <>
@@ -614,14 +804,15 @@ const HomePage = () => {
     </>
   )
 
-  let mainContent: React.ReactNode
+  const sections: React.ReactNode[] = []
 
   if (isLoading) {
-    mainContent = (
+    sections.push(
       <PageSection
         id="workspace-pulse"
         title="Workspace pulse"
         description="Loading the latest billing, usage, and infrastructure details."
+        key="loading"
       >
         <Card className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
           <CardContent className="flex flex-col items-center gap-4 p-10">
@@ -631,14 +822,16 @@ const HomePage = () => {
             </p>
           </CardContent>
         </Card>
-      </PageSection>
+      </PageSection>,
+      servicesAndToolsSection,
     )
   } else if (error) {
-    mainContent = (
+    sections.push(
       <PageSection
         id="workspace-pulse"
         title="Workspace pulse"
         description="We could not retrieve your workspace status."
+        key="error"
       >
         <Alert
           variant="destructive"
@@ -654,14 +847,16 @@ const HomePage = () => {
             </AlertDescription>
           </div>
         </Alert>
-      </PageSection>
+      </PageSection>,
+      servicesAndToolsSection,
     )
   } else if (activeSubscriptions.length === 0) {
-    mainContent = (
+    sections.push(
       <PageSection
         id="workspace-pulse"
         title="Workspace pulse"
         description="No services are active yet. Choose a starting point below."
+        key="empty"
       >
         <Card className="rounded-[28px] border border-indigo-400/30 bg-[linear-gradient(135deg,_rgba(99,102,241,0.14),_rgba(14,165,233,0.12))] text-center text-slate-900 shadow-[0_32px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-indigo-400/40 dark:text-slate-100">
           <CardContent className="space-y-6 p-10">
@@ -697,82 +892,360 @@ const HomePage = () => {
             </div>
           </CardContent>
         </Card>
-      </PageSection>
+      </PageSection>,
+      servicesAndToolsSection,
     )
   } else {
-    mainContent = (
-      <>
-        <PageSection
-          id="workspace-pulse"
-          title="Workspace pulse"
-          description="Subscriptions, average usage, and quick billing actions."
-        >
-          <DashboardHeader
-            servicesCount={displayedFeatures.length}
-            nextRenewalLabel={nextRenewalLabel}
-            apiKeyCount={apiKeyCount}
-            averageRequestsPerKey={averageRequestsPerKey}
-            onBillingClick={handleBillingClick}
-            isBillingLoading={isPortalLoading}
-            apiConsoleTo="/web-scraping-tools/https-api"
-          />
-        </PageSection>
+    sections.push(
+      <PageSection
+        id="workspace-pulse"
+        title="Workspace pulse"
+        description="Subscriptions, average usage, and quick billing actions."
+        key="workspace"
+      >
+        <DashboardHeader
+          servicesCount={displayedFeatures.length}
+          nextRenewalLabel={nextRenewalLabel}
+          apiKeyCount={apiKeyCount}
+          averageRequestsPerKey={averageRequestsPerKey}
+          onBillingClick={handleBillingClick}
+          isBillingLoading={isPortalLoading}
+          apiConsoleTo="/web-scraping-tools/https-api"
+        />
+      </PageSection>,
 
-        <PageSection
-          id="usage-insights"
-          title="Usage insights"
-          description="Key throughput, data transfer, and spend metrics refreshed automatically."
-        >
-          <StatHighlights stats={statHighlights} />
-        </PageSection>
+      <PageSection
+        id="usage-insights"
+        title="Usage insights"
+        description="Key throughput, data transfer, and spend metrics refreshed automatically."
+        key="usage"
+      >
+        <StatHighlights stats={statHighlights} />
+      </PageSection>,
 
-        <PageSection
-          id="services-and-tools"
-          title="Services & tools"
-          description="Enable new datasets, jump into APIs, or open supporting docs."
-          contentClassName="grid gap-10 xl:grid-cols-2 xl:items-start"
-        >
-          <div className="space-y-3">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-              Active services
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Keep tabs on throughput, activation windows, and available feature sets across your workspace.
-            </p>
-            <ActiveServicesGrid features={displayedFeatures} />
-          </div>
+      servicesAndToolsSection,
 
-          <div className="space-y-3">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-              Quick actions
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Jump straight into the tools your team relies on most.
-            </p>
-            <QuickActionsGrid actions={quickActions} />
-          </div>
-        </PageSection>
-
-        <PageSection
-          id="infrastructure"
-          title="Infrastructure"
-          description="Cross-section of managed servers, consumption, and handoff destinations."
-        >
-          <InfrastructureTable
-            servers={servers.slice(0, 6)}
-            totals={infrastructureTotals}
-            formatCurrency={formatCurrency}
-            ctaTo="/hosting"
-          />
-        </PageSection>
-      </>
+      <PageSection
+        id="infrastructure"
+        title="Infrastructure"
+        description="Cross-section of managed servers, consumption, and handoff destinations."
+        key="infrastructure"
+      >
+        <InfrastructureTable
+          servers={servers.slice(0, 6)}
+          totals={infrastructureTotals}
+          formatCurrency={formatCurrency}
+          ctaTo="/hosting"
+        />
+      </PageSection>,
     )
   }
+
+  sections.push(componentGallerySection)
+
+  const mainContent = <>{sections}</>
 
   return (
     <ProtectedComponent>
       <PageScaffold sidebar={sidebar}>{mainContent}</PageScaffold>
     </ProtectedComponent>
+  )
+}
+
+interface ToolDirectoryProps {
+  tools: ToolCatalogEntry[]
+  activeFeatureSlugs: Set<FeatureKey>
+}
+
+const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
+  if (!tools.length) return null
+
+  return (
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {tools.map((tool) => {
+        const Icon = tool.icon
+        const isActive = tool.featureSlug ? activeFeatureSlugs.has(tool.featureSlug) : false
+
+        return (
+          <Card
+            key={tool.label}
+            className="group h-full rounded-[24px] border border-slate-200/70 bg-white/95 shadow-[0_20px_44px_-28px_rgba(15,23,42,0.46)] backdrop-blur-xl transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_32px_60px_-30px_rgba(15,23,42,0.52)] dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_28px_64px_-34px_rgba(15,23,42,0.7)]"
+          >
+            <CardContent className="flex h-full flex-col gap-5 p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <Badge variant="outline" className="rounded-full px-3 py-1 text-[0.65rem] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                  {tool.category}
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                  {tool.label}
+                </h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  {tool.description}
+                </p>
+              </div>
+              {isActive ? (
+                <Badge className="w-fit rounded-full bg-emerald-500/15 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-100">
+                  Active
+                </Badge>
+              ) : null}
+              <div className="mt-auto pt-1">
+                {tool.to ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="gap-2 rounded-full px-5 py-2 text-sm font-semibold"
+                  >
+                    <RouterLink to={tool.to}>
+                      <span>Open</span>
+                      <FiArrowUpRight className="h-4 w-4" />
+                    </RouterLink>
+                  </Button>
+                ) : tool.href ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="gap-2 rounded-full px-5 py-2 text-sm font-semibold"
+                  >
+                    <a href={tool.href} target="_blank" rel="noopener noreferrer">
+                      <span>View docs</span>
+                      <FiArrowUpRight className="h-4 w-4" />
+                    </a>
+                  </Button>
+                ) : null}
+              </div>
+            </CardContent>
+          </Card>
+        )
+      })}
+    </div>
+  )
+}
+
+const ComponentGallery = () => {
+  const [checkboxChecked, setCheckboxChecked] = useState(true)
+  const [selectedEnvironment, setSelectedEnvironment] = useState("production")
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  return (
+    <div className="grid gap-6 xl:grid-cols-2">
+      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
+        <CardHeader>
+          <CardTitle className="text-xl">Feedback & status</CardTitle>
+          <CardDescription>
+            Alert, badge, and button styling checks with live spinner feedback.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <Alert className="border border-emerald-400/40 bg-emerald-500/10 text-emerald-700 backdrop-blur dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-100">
+            <AlertTitle>All systems operational</AlertTitle>
+            <AlertDescription>
+              Proxy routing, billing webhooks, and API key rotation are healthy.
+            </AlertDescription>
+          </Alert>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge>Primary</Badge>
+            <Badge variant="outline">Outline</Badge>
+            <Badge variant="secondary">Secondary</Badge>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button size="sm" className="rounded-full px-4">
+              Primary CTA
+            </Button>
+            <Button size="sm" variant="outline" className="rounded-full px-4">
+              Outline CTA
+            </Button>
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+              <Spinner size={18} />
+              <span>Polling usage...</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
+        <CardHeader>
+          <CardTitle className="text-xl">Form controls</CardTitle>
+          <CardDescription>
+            Validate input, textarea, and checkbox treatments side-by-side.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="gallery-email">Contact email</Label>
+            <Input
+              id="gallery-email"
+              type="email"
+              placeholder="ops@roamingproxy.com"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="gallery-notes">Internal note</Label>
+            <Textarea
+              id="gallery-notes"
+              placeholder="Document crawl windows, axial rotation, or cache notes."
+              rows={3}
+            />
+          </div>
+          <div className="flex items-center gap-2 pt-2">
+            <Checkbox
+              id="gallery-checkbox"
+              checked={checkboxChecked}
+              onCheckedChange={(value) => setCheckboxChecked(Boolean(value))}
+            />
+            <Label htmlFor="gallery-checkbox" className="text-sm font-medium">
+              Enable automatic IP rotation
+            </Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)] xl:col-span-2">
+        <CardHeader>
+          <CardTitle className="text-xl">Menus, overlays & data</CardTitle>
+          <CardDescription>
+            Dropdowns, tooltips, dialogs, and table styling bundled for quick visual regression.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-3">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
+              Tooltip
+            </p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-full px-4">
+                    Hover for status
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  All proxy regions within SLA
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
+              Dropdown menu
+            </p>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-full px-4">
+                  {selectedEnvironment === "production" ? "Production" : "Staging"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                <DropdownMenuLabel>Choose environment</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={selectedEnvironment}
+                  onValueChange={setSelectedEnvironment}
+                >
+                  <DropdownMenuRadioItem value="production">
+                    Production
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="staging">
+                    Staging
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Manage environments</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
+              Dialog
+            </p>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-full px-4">
+                  Open preview
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[420px]">
+                <DialogHeader>
+                  <DialogTitle>Rotate credentials?</DialogTitle>
+                  <DialogDescription>
+                    Confirm to roll proxy credentials across all active regions.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <p>You can download the new key from the API console once generated.</p>
+                  <p className="text-xs uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+                    Last rotation · 3 hours ago
+                  </p>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={() => setIsDialogOpen(false)} className="gap-2">
+                    Rotate now
+                    <FiArrowUpRight className="h-4 w-4" />
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardContent>
+        <CardContent className="pt-0">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+            <Table className="min-w-[480px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Node</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Latency</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">nyc-edge-01</TableCell>
+                  <TableCell>
+                    <Badge className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-100">
+                      Connected
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-sm text-slate-600 dark:text-slate-400">
+                    82 ms
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">fra-edge-04</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="rounded-full px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
+                      Draining
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-sm text-slate-600 dark:text-slate-400">
+                    104 ms
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">sfo-edge-07</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="rounded-full px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
+                      Pending
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-sm text-slate-600 dark:text-slate-400">
+                    96 ms
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

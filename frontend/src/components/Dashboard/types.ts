@@ -1,23 +1,13 @@
 import type { IconType } from "react-icons"
 
-export type AccentTone = "brand" | "success" | "warning" | "ocean"
+type AccentVariant = "brand" | "success" | "warning" | "ocean"
 
 export interface DashboardStat {
   label: string
   value: string
   description: string
   icon: IconType
-  accent: AccentTone
-}
-
-export interface DisplayedFeature {
-  slug: string
-  name: string
-  description: string
-  icon: IconType
-  path: string
-  gradient: string
-  period?: string
+  accent: AccentVariant
 }
 
 export interface QuickActionLink {
@@ -30,7 +20,18 @@ export interface QuickActionLink {
   isLoading?: boolean
 }
 
+export interface DisplayedFeature {
+  slug: string
+  name: string
+  description: string
+  icon: IconType
+  path: string
+  gradient?: string
+  period?: string
+}
+
 export interface ServerNode {
+  refIndex?: number
   name: string
   email: string
   ip: string
@@ -47,8 +48,7 @@ export interface ServerNode {
   hasRotatingIP: boolean
   hasBackup: boolean
   hasMonitoring: boolean
-  hasManagedSupport?: boolean
-  vCPUs?: number
+  hasManagedSupport: boolean
   ramGB: number
-  refIndex?: number
+  vCPUs?: number
 }
