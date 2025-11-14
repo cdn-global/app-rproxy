@@ -408,23 +408,64 @@ const PlaygroundHttps = () => {
 
   return (
     <div className="space-y-10">
-      <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
-        <CardHeader className="space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/70 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-muted-foreground dark:border-slate-700/60 dark:bg-slate-900/70">
-            <span>Roaming Proxy</span>
-            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-            <span>Live Playground</span>
+      <Card className="border border-slate-200/70 bg-gradient-to-br from-white/95 to-indigo-50/60 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/85 dark:via-slate-900/75 dark:to-slate-900/65">
+        <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-2xl space-y-4">
+            <span className="text-sm font-medium text-indigo-600 dark:text-indigo-300">
+              Live HTTPS endpoint tester
+            </span>
+            <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+              HTTPS Fetch Playground
+            </h1>
+            <p className="text-base text-slate-600 dark:text-slate-300">
+              Run live calls against Roaming Proxy, monitor responses as they arrive, and copy production-ready snippets without juggling multiple tools.
+            </p>
+            <div className="flex flex-wrap gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                Live requests
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
+                Response inspector
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <span className="h-1.5 w-1.5 rounded-full bg-sky-500" aria-hidden="true" />
+                Copyable code
+              </span>
+            </div>
           </div>
-          <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-            HTTPS Fetch Playground
-          </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">
-            Prototype requests against the Roaming Proxy HTTPS endpoint, inspect responses in real time, and lift updated code snippets directly into your workflow.
-          </CardDescription>
-        </CardHeader>
+          <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-300">
+            <div>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Get started in three steps
+              </p>
+              <ol className="mt-3 space-y-2 text-sm">
+                <li className="flex gap-2">
+                  <span className="font-medium text-slate-900 dark:text-slate-100">1.</span>
+                  Enter a target URL and API key.
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-medium text-slate-900 dark:text-slate-100">2.</span>
+                  Choose the region that matches your test.
+                </li>
+                <li className="flex gap-2">
+                  <span className="font-medium text-slate-900 dark:text-slate-100">3.</span>
+                  Trigger a live request and inspect every detail.
+                </li>
+              </ol>
+            </div>
+            <Button asChild className="w-fit rounded-full px-6">
+              <a href="#live-test">Begin live test</a>
+            </Button>
+          </div>
+        </CardContent>
       </Card>
 
-      <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.5)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+      <Card
+        id="live-test"
+        className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.5)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70"
+      >
         <CardHeader>
           <CardTitle className="text-xl">Live test</CardTitle>
           <CardDescription>
