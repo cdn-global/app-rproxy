@@ -5,7 +5,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -407,19 +407,22 @@ const PlaygroundHttps = () => {
   const activeCodeSnippet = codeTabs.find((tab) => tab.id === activeCode) ?? codeTabs[0]
 
   return (
-    <div className="space-y-10">
-      <Card className="border border-slate-200/70 bg-gradient-to-br from-white/95 to-indigo-50/60 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/85 dark:via-slate-900/75 dark:to-slate-900/65">
-        <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
+    <div>
+      <Card
+        id="live-test"
+        className="space-y-10 rounded-[36px] border border-slate-200/70 bg-gradient-to-br from-white/95 via-white/92 to-indigo-50/60 shadow-[0_44px_110px_-66px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
+      >
+        <CardHeader className="gap-6 px-8 pt-8 pb-0 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-2xl space-y-4">
             <span className="text-sm font-medium text-indigo-600 dark:text-indigo-300">
               Live HTTPS endpoint tester
             </span>
-            <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
               HTTPS Fetch Playground
-            </h1>
-            <p className="text-base text-slate-600 dark:text-slate-300">
-              Run live calls against Roaming Proxy, monitor responses as they arrive, and copy production-ready snippets without juggling multiple tools.
-            </p>
+            </CardTitle>
+            <CardDescription className="text-base">
+              Configure a live fetch, validate the payload in real time, and copy ready-to-ship snippets without breaking your flow.
+            </CardDescription>
             <div className="flex flex-wrap gap-2 text-sm text-slate-600 dark:text-slate-300">
               <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
@@ -455,174 +458,165 @@ const PlaygroundHttps = () => {
                 </li>
               </ol>
             </div>
-            <Button asChild className="w-fit rounded-full px-6">
-              <a href="#live-test">Begin live test</a>
+            <Button className="w-fit rounded-full px-6" onClick={() => document.getElementById("live-form")?.scrollIntoView({ behavior: "smooth" })}>
+              Begin live test
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card
-        id="live-test"
-        className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.5)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70"
-      >
-        <CardHeader>
-          <CardTitle className="text-xl">Live test</CardTitle>
-          <CardDescription>
-            Provide a target URL, pick a region, and execute a real request against the managed proxy network.
-          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="url">
-              Search URL
-            </label>
-            <Input
-              id="url"
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-              placeholder="https://www.google.com/search?q=flowers&udm=2"
-            />
-          </div>
+        <CardContent className="space-y-10 px-8 pb-0 pt-6">
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label id="live-form" className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="url">
+                  Search URL
+                </label>
+                <Input
+                  id="url"
+                  value={url}
+                  onChange={(event) => setUrl(event.target.value)}
+                  placeholder="https://www.google.com/search?q=flowers&udm=2"
+                />
+              </div>
 
-          <div className="grid gap-4 md:grid-cols-[2fr_1fr_auto]">
-            <div className="space-y-2">
-              <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="api-key">
-                API key
-              </label>
-              <Input
-                id="api-key"
-                type="password"
-                value={apiKey}
-                onChange={(event) => setApiKey(event.target.value)}
-                placeholder="Enter your API key"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="region">
-                Region
-              </label>
-              <select
-                id="region"
-                value={region}
-                onChange={(event) => setRegion(event.target.value)}
-                className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
-              >
-                {REGIONS.map((reg) => (
-                  <option key={reg} value={reg}>
-                    {reg}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-end">
-              <Button
-                type="button"
-                className="w-full rounded-full px-6"
-                onClick={handleTestRequest}
-                disabled={isLoading || !url.trim() || !apiKey.trim()}
-                isLoading={isLoading}
-                loadingText="Testing…"
-              >
-                {!isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <Send className="h-4 w-4" />
-                    Test request
-                  </span>
-                ) : null}
-              </Button>
-            </div>
-          </div>
-
-          {error ? (
-            <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
-              <AlertTitle>Request failed</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : null}
-
-          {resultsData && !error ? (
-            <Alert className="border-emerald-400/40 bg-emerald-500/10">
-              <AlertTitle>Request completed</AlertTitle>
-              <AlertDescription className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <span>
-                  Response time: {responseTime ?? "—"} ms. Open the modal to inspect the payload or dismiss to reset.
-                </span>
-                <div className="flex flex-wrap gap-3">
+              <div className="grid gap-4 md:grid-cols-[2fr_1fr_auto]">
+                <div className="space-y-2">
+                  <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="api-key">
+                    API key
+                  </label>
+                  <Input
+                    id="api-key"
+                    type="password"
+                    value={apiKey}
+                    onChange={(event) => setApiKey(event.target.value)}
+                    placeholder="Enter your API key"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="region">
+                    Region
+                  </label>
+                  <select
+                    id="region"
+                    value={region}
+                    onChange={(event) => setRegion(event.target.value)}
+                    className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
+                  >
+                    {REGIONS.map((reg) => (
+                      <option key={reg} value={reg}>
+                        {reg}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-end">
                   <Button
                     type="button"
-                    variant="secondary"
-                    className="rounded-full"
-                    onClick={() => setResultsData(null)}
+                    className="w-full rounded-full px-6"
+                    onClick={handleTestRequest}
+                    disabled={isLoading || !url.trim() || !apiKey.trim()}
+                    isLoading={isLoading}
+                    loadingText="Testing…"
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Dismiss
-                  </Button>
-                  <Button type="button" className="rounded-full" onClick={() => setDialogOpen(true)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View response
+                    {!isLoading ? (
+                      <span className="flex items-center gap-2">
+                        <Send className="h-4 w-4" />
+                        Test request
+                      </span>
+                    ) : null}
                   </Button>
                 </div>
-              </AlertDescription>
-            </Alert>
-          ) : null}
-        </CardContent>
-      </Card>
+              </div>
 
-      <Card className="border border-slate-200/70 bg-slate-950 text-slate-100 shadow-[0_32px_90px_-58px_rgba(15,23,42,0.75)] dark:border-slate-700/60">
-        <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              {error ? (
+                <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+                  <AlertTitle>Request failed</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              ) : null}
+
+              {resultsData && !error ? (
+                <Alert className="border-emerald-400/40 bg-emerald-500/10">
+                  <AlertTitle>Request completed</AlertTitle>
+                  <AlertDescription className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <span>
+                      Response time: {responseTime ?? "—"} ms. Open the modal to inspect the payload or dismiss to reset.
+                    </span>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="rounded-full"
+                        onClick={() => setResultsData(null)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Dismiss
+                      </Button>
+                      <Button type="button" className="rounded-full" onClick={() => setDialogOpen(true)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View response
+                      </Button>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              ) : null}
+            </div>
+
+            <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/60 bg-slate-950/95 text-slate-100 shadow-[0_26px_70px_-48px_rgba(15,23,42,0.75)] dark:border-slate-700/60">
+              <div className="flex flex-col gap-3 border-b border-slate-800/70 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="text-base font-semibold text-slate-100">Generated code</h3>
+                  <p className="text-xs text-slate-300">
+                    Snippets refresh instantly as parameters change.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {codeTabs.map((tab) => (
+                    <Button
+                      key={tab.id}
+                      variant={activeCode === tab.id ? "default" : "secondary"}
+                      className="rounded-full px-4 py-2 text-xs font-medium uppercase tracking-[0.18em]"
+                      onClick={() => setActiveCode(tab.id)}
+                    >
+                      {tab.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="relative flex-1">
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="absolute right-4 top-4 h-9 w-9 rounded-full"
+                  onClick={() => handleCopy(activeCodeSnippet.code, activeCodeSnippet.label)}
+                  aria-label="Copy code"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <CodeBlock code={activeCodeSnippet.code} language={activeCodeSnippet.language} maxHeight="none" />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between">
           <div>
-            <CardTitle className="text-lg text-slate-100">Generated code</CardTitle>
-            <CardDescription className="text-xs text-slate-300">
-              Snippets update live as you tweak parameters above.
-            </CardDescription>
+            <p className="font-medium text-slate-900 dark:text-slate-100">Need help accelerating integration?</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Dive into detailed docs or connect with support engineers for guided onboarding.
+            </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {codeTabs.map((tab) => (
-              <Button
-                key={tab.id}
-                variant={activeCode === tab.id ? "default" : "secondary"}
-                className="rounded-full bg-white/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-100 hover:bg-white/20"
-                onClick={() => setActiveCode(tab.id)}
-              >
-                {tab.label}
-              </Button>
-            ))}
+          <div className="flex flex-wrap gap-3">
+            <Button asChild variant="outline" className="rounded-full">
+              <a href="/documentation/serp-api" target="_blank" rel="noreferrer">
+                Documentation
+              </a>
+            </Button>
+            <Button asChild className="rounded-full">
+              <a href="/support" target="_blank" rel="noreferrer">
+                Support center
+              </a>
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent className="relative">
-          <Button
-            size="icon"
-            variant="secondary"
-            className="absolute right-4 top-4 h-9 w-9 rounded-full"
-            onClick={() => handleCopy(activeCodeSnippet.code, activeCodeSnippet.label)}
-            aria-label="Copy code"
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-          <CodeBlock code={activeCodeSnippet.code} language={activeCodeSnippet.language} maxHeight="none" />
-        </CardContent>
-      </Card>
-
-      <Card className="border border-slate-200/70 bg-white/80 shadow-[0_24px_80px_-52px_rgba(15,23,42,0.6)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-        <CardHeader>
-          <CardTitle className="text-lg">Need help?</CardTitle>
-          <CardDescription>
-            Explore our API documentation for deeper examples or connect with support for guided onboarding.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-3">
-          <Button asChild variant="outline" className="rounded-full">
-            <a href="/documentation/serp-api" target="_blank" rel="noreferrer">
-              Documentation
-            </a>
-          </Button>
-          <Button asChild className="rounded-full">
-            <a href="/support" target="_blank" rel="noreferrer">
-              Support center
-            </a>
-          </Button>
-        </CardContent>
+        </CardFooter>
       </Card>
 
       <ResultsDialog open={dialogOpen} onOpenChange={setDialogOpen} data={resultsData} />
