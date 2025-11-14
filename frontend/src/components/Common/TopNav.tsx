@@ -229,7 +229,7 @@ const TopNav = () => {
   }, [location.pathname])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-transparent bg-gradient-to-b from-white/90 via-white/70 to-transparent px-4 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-white/65 dark:from-slate-950/80 dark:via-slate-950/60">
+    <header className="z-50 border-b border-transparent bg-gradient-to-b from-white/90 via-white/70 to-transparent px-4 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-white/65 dark:from-slate-950/80 dark:via-slate-950/60">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Logo
