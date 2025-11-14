@@ -1049,13 +1049,13 @@ const ComponentGallery = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/65 px-4 py-3 text-slate-900 shadow-[0_12px_28px_-20px_rgba(15,23,42,0.28)] dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-50">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-indigo-200/70 bg-[linear-gradient(135deg,_rgba(99,102,241,0.22),_rgba(14,165,233,0.18))] px-4 py-4 text-slate-900 shadow-[0_16px_36px_-24px_rgba(79,70,229,0.36)] dark:border-indigo-500/40 dark:bg-[linear-gradient(135deg,_rgba(99,102,241,0.26),_rgba(14,165,233,0.2))] dark:text-slate-50">
             <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-indigo-700 dark:text-indigo-200">
                 Current posture
               </p>
               <p className="mt-1 text-2xl font-semibold">All systems nominal</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-700 dark:text-slate-300">
                 9h 12m since last incident · 100% regional availability
               </p>
             </div>
