@@ -47,7 +47,7 @@ const StatHighlights = ({ stats }: StatHighlightsProps) => {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => {
         const palette = accentVariants[stat.accent]
 
@@ -59,7 +59,7 @@ const StatHighlights = ({ stats }: StatHighlightsProps) => {
               palette.card,
             )}
           >
-            <CardContent className="flex h-full flex-col gap-6 p-6">
+            <CardContent className="flex h-full flex-col gap-4 p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className={cn("flex h-12 w-12 items-center justify-center rounded-full", palette.icon)}>
                   <stat.icon className="h-6 w-6" />

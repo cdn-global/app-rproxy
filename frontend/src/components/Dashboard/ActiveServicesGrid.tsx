@@ -24,18 +24,18 @@ const ActiveServicesGrid = ({ features }: ActiveServicesGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {features.map((feature) => (
         <Card
           key={feature.slug}
           className="group relative h-full overflow-hidden rounded-[24px] border border-white/30 bg-white/80 shadow-[0_24px_60px_-36px_rgba(15,23,42,0.5)] backdrop-blur-2xl transition duration-200 ease-out hover:-translate-y-1.5 hover:shadow-[0_36px_70px_-32px_rgba(15,23,42,0.56)] dark:border-slate-700/60 dark:bg-slate-900/80"
           style={{ background: feature.gradient }}
         >
-          <CardContent className="flex h-full flex-col gap-4 p-6">
+          <CardContent className="flex h-full flex-col gap-3 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white">
               <feature.icon className="h-6 w-6" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                 {feature.name}
               </h3>
@@ -43,7 +43,7 @@ const ActiveServicesGrid = ({ features }: ActiveServicesGridProps) => {
                 {feature.description}
               </p>
             </div>
-            <div className="mt-auto space-y-3">
+            <div className="mt-4 space-y-2">
               {feature.period ? (
                 <Badge className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white">
                   {feature.period}
