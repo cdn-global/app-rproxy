@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { Copy, Download, Eye, Send, Trash2 } from "lucide-react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
@@ -336,6 +336,7 @@ const PlaygroundHttps = () => {
   const [resultsData, setResultsData] = useState<ResultsData | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [activeCode, setActiveCode] = useState<(typeof CODE_TEMPLATES)[number]["id"]>("curl")
+  const [showLiveTest, setShowLiveTest] = useState(false)
 
   const displayApiKey = apiKey.trim() || "YOUR_API_KEY"
 
@@ -406,217 +407,251 @@ const PlaygroundHttps = () => {
 
   const activeCodeSnippet = codeTabs.find((tab) => tab.id === activeCode) ?? codeTabs[0]
 
+  const handleShowLiveTest = useCallback(() => {
+    setShowLiveTest(true)
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        const target = document.getElementById("https-live-test")
+        target?.scrollIntoView({ behavior: "smooth", block: "start" })
+      })
+    }
+  }, [])
+
+  const handleHideLiveTest = useCallback(() => {
+    setShowLiveTest(false)
+    setDialogOpen(false)
+    setResultsData(null)
+    setError("")
+  }, [])
+
+  const cardClassName = showLiveTest
+    ? "rounded-[32px] border border-slate-200/70 bg-white/95 shadow-[0_44px_110px_-66px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-950/85"
+    : "rounded-[32px] border border-slate-200/70 bg-gradient-to-br from-white/95 via-white/92 to-indigo-50/60 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
+
   return (
-    <div>
-      <Card
-        id="live-test"
-        className="space-y-10 rounded-[36px] border border-slate-200/70 bg-gradient-to-br from-white/95 via-white/92 to-indigo-50/60 shadow-[0_44px_110px_-66px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
-      >
-        <CardHeader className="gap-6 px-8 pt-8 pb-0 sm:flex-row sm:items-start sm:justify-between">
-          <div className="max-w-2xl space-y-4">
-            <span className="text-sm font-medium text-indigo-600 dark:text-indigo-300">
-              Live HTTPS endpoint tester
-            </span>
-            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              HTTPS Fetch Playground
-            </CardTitle>
-            <CardDescription className="text-base">
-              Configure a live fetch, validate the payload in real time, and copy ready-to-ship snippets without breaking your flow.
-            </CardDescription>
-            <div className="flex flex-wrap gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
-                Live requests
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
-                <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
-                Response inspector
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
-                <span className="h-1.5 w-1.5 rounded-full bg-sky-500" aria-hidden="true" />
-                Copyable code
-              </span>
-            </div>
-          </div>
-          <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-300">
-            <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                Get started in three steps
-              </p>
-              <ol className="mt-3 space-y-2 text-sm">
-                <li className="flex gap-2">
-                  <span className="font-medium text-slate-900 dark:text-slate-100">1.</span>
-                  Enter a target URL and API key.
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-medium text-slate-900 dark:text-slate-100">2.</span>
-                  Choose the region that matches your test.
-                </li>
-                <li className="flex gap-2">
-                  <span className="font-medium text-slate-900 dark:text-slate-100">3.</span>
-                  Trigger a live request and inspect every detail.
-                </li>
-              </ol>
-            </div>
-            <Button className="w-fit rounded-full px-6" onClick={() => document.getElementById("live-form")?.scrollIntoView({ behavior: "smooth" })}>
-              Begin live test
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-10 px-8 pb-0 pt-6">
-          <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label id="live-form" className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="url">
-                  Search URL
-                </label>
-                <Input
-                  id="url"
-                  value={url}
-                  onChange={(event) => setUrl(event.target.value)}
-                  placeholder="https://www.google.com/search?q=flowers&udm=2"
-                />
+    <div className="space-y-10">
+      <Card id="https-live-test" className={cardClassName}>
+        {showLiveTest ? (
+          <>
+            <CardHeader className="gap-4 px-8 pt-8 pb-0 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-3">
+                <CardTitle className="text-2xl text-slate-900 dark:text-slate-100">Interactive playground</CardTitle>
+                <CardDescription>
+                  Configure a live HTTPS fetch, inspect the structured response, and grab the exact code you need—without leaving this screen.
+                </CardDescription>
               </div>
+              <Button variant="outline" className="rounded-full" onClick={handleHideLiveTest}>
+                Back to overview
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-10 px-8 pb-0 pt-6">
+              <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="url">
+                      Search URL
+                    </label>
+                    <Input
+                      id="url"
+                      value={url}
+                      onChange={(event) => setUrl(event.target.value)}
+                      placeholder="https://www.google.com/search?q=flowers&udm=2"
+                    />
+                  </div>
 
-              <div className="grid gap-4 md:grid-cols-[2fr_1fr_auto]">
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="api-key">
-                    API key
-                  </label>
-                  <Input
-                    id="api-key"
-                    type="password"
-                    value={apiKey}
-                    onChange={(event) => setApiKey(event.target.value)}
-                    placeholder="Enter your API key"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="region">
-                    Region
-                  </label>
-                  <select
-                    id="region"
-                    value={region}
-                    onChange={(event) => setRegion(event.target.value)}
-                    className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
-                  >
-                    {REGIONS.map((reg) => (
-                      <option key={reg} value={reg}>
-                        {reg}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-end">
-                  <Button
-                    type="button"
-                    className="w-full rounded-full px-6"
-                    onClick={handleTestRequest}
-                    disabled={isLoading || !url.trim() || !apiKey.trim()}
-                    isLoading={isLoading}
-                    loadingText="Testing…"
-                  >
-                    {!isLoading ? (
-                      <span className="flex items-center gap-2">
-                        <Send className="h-4 w-4" />
-                        Test request
-                      </span>
-                    ) : null}
-                  </Button>
-                </div>
-              </div>
-
-              {error ? (
-                <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
-                  <AlertTitle>Request failed</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              ) : null}
-
-              {resultsData && !error ? (
-                <Alert className="border-emerald-400/40 bg-emerald-500/10">
-                  <AlertTitle>Request completed</AlertTitle>
-                  <AlertDescription className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <span>
-                      Response time: {responseTime ?? "—"} ms. Open the modal to inspect the payload or dismiss to reset.
-                    </span>
-                    <div className="flex flex-wrap gap-3">
+                  <div className="grid gap-4 md:grid-cols-[2fr_1fr_auto]">
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="api-key">
+                        API key
+                      </label>
+                      <Input
+                        id="api-key"
+                        type="password"
+                        value={apiKey}
+                        onChange={(event) => setApiKey(event.target.value)}
+                        placeholder="Enter your API key"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="region">
+                        Region
+                      </label>
+                      <select
+                        id="region"
+                        value={region}
+                        onChange={(event) => setRegion(event.target.value)}
+                        className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
+                      >
+                        {REGIONS.map((reg) => (
+                          <option key={reg} value={reg}>
+                            {reg}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-end">
                       <Button
                         type="button"
-                        variant="secondary"
-                        className="rounded-full"
-                        onClick={() => setResultsData(null)}
+                        className="w-full rounded-full px-6"
+                        onClick={handleTestRequest}
+                        disabled={isLoading || !url.trim() || !apiKey.trim()}
+                        isLoading={isLoading}
+                        loadingText="Testing…"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Dismiss
-                      </Button>
-                      <Button type="button" className="rounded-full" onClick={() => setDialogOpen(true)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View response
+                        {!isLoading ? (
+                          <span className="flex items-center gap-2">
+                            <Send className="h-4 w-4" />
+                            Test request
+                          </span>
+                        ) : null}
                       </Button>
                     </div>
-                  </AlertDescription>
-                </Alert>
-              ) : null}
-            </div>
+                  </div>
 
-            <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/60 bg-slate-950/95 text-slate-100 shadow-[0_26px_70px_-48px_rgba(15,23,42,0.75)] dark:border-slate-700/60">
-              <div className="flex flex-col gap-3 border-b border-slate-800/70 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h3 className="text-base font-semibold text-slate-100">Generated code</h3>
-                  <p className="text-xs text-slate-300">
-                    Snippets refresh instantly as parameters change.
-                  </p>
+                  {error ? (
+                    <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+                      <AlertTitle>Request failed</AlertTitle>
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  ) : null}
+
+                  {resultsData && !error ? (
+                    <Alert className="border-emerald-400/40 bg-emerald-500/10">
+                      <AlertTitle>Request completed</AlertTitle>
+                      <AlertDescription className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <span>
+                          Response time: {responseTime ?? "—"} ms. Open the modal to inspect the payload or dismiss to reset.
+                        </span>
+                        <div className="flex flex-wrap gap-3">
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="rounded-full"
+                            onClick={() => setResultsData(null)}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Dismiss
+                          </Button>
+                          <Button type="button" className="rounded-full" onClick={() => setDialogOpen(true)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View response
+                          </Button>
+                        </div>
+                      </AlertDescription>
+                    </Alert>
+                  ) : null}
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {codeTabs.map((tab) => (
+
+                <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/60 bg-slate-950/95 text-slate-100 shadow-[0_26px_70px_-48px_rgba(15,23,42,0.75)] dark:border-slate-700/60">
+                  <div className="flex flex-col gap-3 border-b border-slate-800/70 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h3 className="text-base font-semibold text-slate-100">Generated code</h3>
+                      <p className="text-xs text-slate-300">
+                        Snippets refresh instantly as parameters change.
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {codeTabs.map((tab) => (
+                        <Button
+                          key={tab.id}
+                          variant={activeCode === tab.id ? "default" : "secondary"}
+                          className="rounded-full px-4 py-2 text-xs font-medium uppercase tracking-[0.18em]"
+                          onClick={() => setActiveCode(tab.id)}
+                        >
+                          {tab.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative flex-1">
                     <Button
-                      key={tab.id}
-                      variant={activeCode === tab.id ? "default" : "secondary"}
-                      className="rounded-full px-4 py-2 text-xs font-medium uppercase tracking-[0.18em]"
-                      onClick={() => setActiveCode(tab.id)}
+                      size="icon"
+                      variant="secondary"
+                      className="absolute right-4 top-4 h-9 w-9 rounded-full"
+                      onClick={() => handleCopy(activeCodeSnippet.code, activeCodeSnippet.label)}
+                      aria-label="Copy code"
                     >
-                      {tab.label}
+                      <Copy className="h-4 w-4" />
                     </Button>
-                  ))}
+                    <CodeBlock code={activeCodeSnippet.code} language={activeCodeSnippet.language} maxHeight="none" />
+                  </div>
                 </div>
               </div>
-              <div className="relative flex-1">
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="absolute right-4 top-4 h-9 w-9 rounded-full"
-                  onClick={() => handleCopy(activeCodeSnippet.code, activeCodeSnippet.label)}
-                  aria-label="Copy code"
-                >
-                  <Copy className="h-4 w-4" />
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="font-medium text-slate-900 dark:text-slate-100">Need help accelerating integration?</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Dive into detailed docs or connect with support engineers for guided onboarding.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild variant="outline" className="rounded-full">
+                  <a href="/documentation/serp-api" target="_blank" rel="noreferrer">
+                    Documentation
+                  </a>
                 </Button>
-                <CodeBlock code={activeCodeSnippet.code} language={activeCodeSnippet.language} maxHeight="none" />
+                <Button asChild className="rounded-full">
+                  <a href="/support" target="_blank" rel="noreferrer">
+                    Support center
+                  </a>
+                </Button>
+              </div>
+            </CardFooter>
+          </>
+        ) : (
+          <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-2xl space-y-4">
+              <span className="text-sm font-medium text-indigo-600 dark:text-indigo-300">
+                Live HTTPS endpoint tester
+              </span>
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                HTTPS Fetch Playground
+              </h1>
+              <p className="text-base text-slate-600 dark:text-slate-300">
+                Explore the proxy workflow, review generated snippets, and launch a live test whenever you&apos;re ready.
+              </p>
+              <div className="flex flex-wrap gap-2 text-sm text-slate-600 dark:text-slate-300">
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                  Live requests
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
+                  Response inspector
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                  <span className="h-1.5 w-1.5 rounded-full bg-sky-500" aria-hidden="true" />
+                  Copyable code
+                </span>
               </div>
             </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="font-medium text-slate-900 dark:text-slate-100">Need help accelerating integration?</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Dive into detailed docs or connect with support engineers for guided onboarding.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button asChild variant="outline" className="rounded-full">
-              <a href="/documentation/serp-api" target="_blank" rel="noreferrer">
-                Documentation
-              </a>
-            </Button>
-            <Button asChild className="rounded-full">
-              <a href="/support" target="_blank" rel="noreferrer">
-                Support center
-              </a>
-            </Button>
-          </div>
-        </CardFooter>
+            <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-300">
+              <div>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  Get started in three steps
+                </p>
+                <ol className="mt-3 space-y-2 text-sm">
+                  <li className="flex gap-2">
+                    <span className="font-medium text-slate-900 dark:text-slate-100">1.</span>
+                    Enter a target URL and API key.
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-medium text-slate-900 dark:text-slate-100">2.</span>
+                    Choose the region that matches your test.
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-medium text-slate-900 dark:text-slate-100">3.</span>
+                    Trigger a live request and inspect every detail.
+                  </li>
+                </ol>
+              </div>
+              <Button className="w-fit rounded-full px-6" onClick={handleShowLiveTest}>
+                Begin live test
+              </Button>
+            </div>
+          </CardContent>
+        )}
       </Card>
 
       <ResultsDialog open={dialogOpen} onOpenChange={setDialogOpen} data={resultsData} />
