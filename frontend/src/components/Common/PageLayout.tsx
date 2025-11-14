@@ -17,20 +17,20 @@ interface PageScaffoldProps {
   className?: string
 }
 
-export const PageScaffold = ({ sidebar, children, className }: PageScaffoldProps) => {
-  return (
-    <div className={cn("px-4 py-12", className)}>
-      <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(240px,280px)_1fr]">
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+export const PageScaffold = ({ sidebar, children, className }: PageScaffoldProps) => (
+  <div className={cn("px-4 py-12", className)}>
+    <div className="mx-auto w-full max-w-6xl space-y-12">
+      {sidebar ? (
+        <div className="space-y-6">
           {sidebar}
-        </aside>
-        <div className="space-y-16">
-          {children}
         </div>
+      ) : null}
+      <div className="space-y-16">
+        {children}
       </div>
     </div>
-  )
-}
+  </div>
+)
 
 interface SectionNavigationProps {
   items: SectionNavItem[]
@@ -48,27 +48,25 @@ export const SectionNavigation = ({ items, title = "Jump to" }: SectionNavigatio
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">
         {title}
       </p>
-      <ul className="mt-4 space-y-3">
+      <div className="mt-4 flex flex-wrap gap-3">
         {items.map(({ id, label, description, icon: Icon }) => (
-          <li key={id}>
+          <div key={id} className="flex flex-col gap-1">
             <a
               href={`#${id}`}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-transparent px-3 py-2 text-slate-600 transition hover:border-slate-200/70 hover:bg-white/70 hover:text-slate-900 dark:text-slate-400 dark:hover:border-slate-700/60 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
+              className="group inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-4 py-2 font-medium text-slate-600 transition hover:border-indigo-200/80 hover:bg-white hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:border-indigo-500/50 dark:hover:text-slate-100"
             >
-              <span className="flex items-center gap-2 font-medium">
-                {Icon ? <Icon className="h-4 w-4 text-slate-400 group-hover:text-indigo-500" /> : null}
-                {label}
-              </span>
+              {Icon ? <Icon className="h-4 w-4 text-slate-400 transition group-hover:text-indigo-500" /> : null}
+              {label}
               <FiArrowUpRight className="h-4 w-4 text-slate-400 transition group-hover:text-indigo-500" />
             </a>
             {description ? (
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-500">
                 {description}
               </p>
             ) : null}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </nav>
   )
 }
@@ -93,7 +91,7 @@ export const PageSection = ({
   contentClassName,
 }: PageSectionProps) => {
   return (
-    <section id={id} className={cn("scroll-mt-32 space-y-6", className)}>
+    <section id={id} className={cn("scroll-mt-36 space-y-6", className)}>
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
