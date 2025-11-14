@@ -1049,6 +1049,20 @@ const ComponentGallery = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/65 px-4 py-3 text-slate-900 shadow-[0_12px_28px_-20px_rgba(15,23,42,0.28)] dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-50">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                Current posture
+              </p>
+              <p className="mt-1 text-2xl font-semibold">All systems nominal</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                9h 12m since last incident · 100% regional availability
+              </p>
+            </div>
+            <Button size="sm" className="rounded-full px-4">
+              View status page
+            </Button>
+          </div>
           <Alert className="border border-emerald-400/40 bg-emerald-500/10 text-emerald-700 backdrop-blur dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-100">
             <AlertTitle>All systems operational</AlertTitle>
             <AlertDescription>
