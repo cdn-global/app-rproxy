@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { parseApiResponse } from "@/lib/api"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
 import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
 import PlaygroundHttpsProxy from "../../../components/ScrapingTools/PlaygroundHttps"
@@ -36,12 +37,7 @@ async function requestFromApi<T>(endpoint: string, token: string) {
     },
   })
 
-  if (!response.ok) {
-    const payload = await response.json().catch(() => ({}))
-    throw new Error(payload.detail || `Request failed (${response.status})`)
-  }
-
-  return response.json() as Promise<T>
+  return parseApiResponse<T>(response)
 }
 
 const fetchSubscriptions = (token: string) =>

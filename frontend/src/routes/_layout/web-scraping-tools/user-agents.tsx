@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
+import { Textarea } from "@/components/ui/textarea"
 import {
 	Table,
 	TableBody,
@@ -47,6 +48,7 @@ import {
 } from "@/components/ui/table"
 import useCustomToast from "@/hooks/useCustomToast"
 import type { UserPublic } from "@/client/types.gen"
+import { parseApiResponse } from "@/lib/api"
 
 const API_BASE_URL = "https://api.ROAMINGPROXY.com/v2"
 const PAGE_SIZE = 50
@@ -90,19 +92,14 @@ const getAuthToken = () => {
 
 const request = async <T,>(endpoint: string, init?: RequestInit): Promise<T> => {
 	const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+		...(init ?? {}),
 		headers: {
 			"Content-Type": "application/json",
 			...(init?.headers ?? {}),
 		},
-		...init,
 	})
 
-	if (!response.ok) {
-		const payload = await response.json().catch(() => ({}))
-		throw new Error((payload as { detail?: string }).detail ?? `Request failed (${response.status})`)
-	}
-
-	return response.json() as Promise<T>
+	return parseApiResponse<T>(response)
 }
 
 const fetchUserAgents = (page: number) =>
@@ -205,20 +202,19 @@ const AddEditDialog = ({
 				</DialogHeader>
 				<div className="space-y-2">
 					<Label htmlFor="user-agent">User agent</Label>
-					<textarea
+					<Textarea
 						id="user-agent"
-						className="min-h-[140px] w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70"
+						className="min-h-[140px]"
 						value={value}
 						onChange={(event) => setValue(event.target.value)}
 						placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
 					/>
 				</div>
 				<DialogFooter className="gap-3">
-					<Button variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
+					<Button variant="outline" onClick={() => onOpenChange(false)}>
 						Cancel
 					</Button>
 					<Button
-						className="rounded-full"
 						onClick={() => onSubmit(value)}
 						disabled={!value.trim()}
 						isLoading={isSubmitting}
@@ -252,12 +248,11 @@ const DeleteDialog = ({
 				</DialogDescription>
 			</DialogHeader>
 			<DialogFooter className="gap-3">
-				<Button variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
+				<Button variant="outline" onClick={() => onOpenChange(false)}>
 					Cancel
 				</Button>
 				<Button
 					variant="destructive"
-					className="rounded-full"
 					onClick={onConfirm}
 					isLoading={isSubmitting}
 					loadingText="Deleting..."
