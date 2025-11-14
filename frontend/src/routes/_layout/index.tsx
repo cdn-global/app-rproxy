@@ -584,7 +584,7 @@ const HomePage = () => {
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
           Control center
         </div>
-        <div className="mt-4 space-y-2.5">
+        <div className="mt-5 space-y-3">
           <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
             RoamingProxy workspace
           </h1>
@@ -592,7 +592,7 @@ const HomePage = () => {
             Monitor subscriptions, rotate API keys, and coordinate compute capacity without losing context.
           </p>
         </div>
-        <dl className="mt-6 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+        <dl className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
           <div className="flex items-center justify-between">
             <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Next renewal</dt>
             <dd className="font-medium text-slate-900 dark:text-slate-100">{nextRenewalLabel}</dd>
@@ -606,7 +606,7 @@ const HomePage = () => {
             <dd className="font-medium text-slate-900 dark:text-slate-100">{apiKeyCount}</dd>
           </div>
         </dl>
-        <p className="mt-5 text-xs text-slate-500 dark:text-slate-500">
+        <p className="mt-6 text-xs text-slate-500 dark:text-slate-500">
           Usage alerts, billing, and infrastructure rollups stay synchronized so you can pivot from experimentation to scale in seconds.
         </p>
       </div>
@@ -624,7 +624,7 @@ const HomePage = () => {
         description="Loading the latest billing, usage, and infrastructure details."
       >
         <Card className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
-          <CardContent className="flex flex-col items-center gap-3 p-8">
+          <CardContent className="flex flex-col items-center gap-4 p-10">
             <Spinner size={40} />
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Loading your dashboard...
@@ -664,7 +664,7 @@ const HomePage = () => {
         description="No services are active yet. Choose a starting point below."
       >
         <Card className="rounded-[28px] border border-indigo-400/30 bg-[linear-gradient(135deg,_rgba(99,102,241,0.14),_rgba(14,165,233,0.12))] text-center text-slate-900 shadow-[0_32px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-indigo-400/40 dark:text-slate-100">
-          <CardContent className="space-y-5 p-8">
+          <CardContent className="space-y-6 p-10">
             <Badge className="mx-auto inline-flex items-center rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-indigo-700 dark:bg-white/10 dark:text-indigo-100">
               No active subscriptions yet
             </Badge>
@@ -674,7 +674,7 @@ const HomePage = () => {
             <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-700/90 dark:text-slate-200/90">
               Provision global rotating proxies, managed VPS infrastructure, and SERP datasets in minutes. Choose a plan that matches your throughput and scale instantly when workloads spike.
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-4">
               <Button
                 asChild
                 className="gap-2 rounded-full px-6 py-2 text-base font-semibold"
@@ -730,9 +730,9 @@ const HomePage = () => {
           id="services-and-tools"
           title="Services & tools"
           description="Enable new datasets, jump into APIs, or open supporting docs."
-          contentClassName="grid gap-8 xl:grid-cols-2 xl:items-start"
+          contentClassName="grid gap-10 xl:grid-cols-2 xl:items-start"
         >
-          <div className="space-y-2">
+          <div className="space-y-3">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
               Active services
             </h3>
@@ -742,7 +742,7 @@ const HomePage = () => {
             <ActiveServicesGrid features={displayedFeatures} />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
               Quick actions
             </h3>

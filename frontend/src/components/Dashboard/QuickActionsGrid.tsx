@@ -23,13 +23,13 @@ const QuickActionsGrid = ({ actions }: QuickActionsGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {actions.map((action) => (
         <Card
           key={action.label}
           className="group h-full rounded-[24px] border border-slate-200/70 bg-white/95 shadow-[0_20px_44px_-28px_rgba(15,23,42,0.46)] backdrop-blur-xl transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_32px_60px_-30px_rgba(15,23,42,0.52)] dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_28px_64px_-34px_rgba(15,23,42,0.7)]"
         >
-          <CardContent className="flex h-full flex-col gap-3 p-6">
+          <CardContent className="flex h-full flex-col gap-4 p-6">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary">
               <action.icon className="h-5 w-5" />
             </div>
@@ -41,7 +41,7 @@ const QuickActionsGrid = ({ actions }: QuickActionsGridProps) => {
                 {action.description}
               </p>
             </div>
-            <div className="mt-4">{renderActionButton(action)}</div>
+            <div className="mt-auto">{renderActionButton(action)}</div>
           </CardContent>
         </Card>
       ))}

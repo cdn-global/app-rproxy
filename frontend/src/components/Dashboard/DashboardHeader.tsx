@@ -27,12 +27,12 @@ const DashboardHeader = ({
   return (
     <Card className="relative overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl transition-shadow dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
       <BackgroundAura />
-      <CardContent className="relative z-[1] space-y-8 p-8 md:p-10">
-        <div className="space-y-4 xl:max-w-2xl">
+      <CardContent className="relative z-[1] space-y-10 p-8 md:p-10">
+        <div className="space-y-5 xl:max-w-2xl">
           <Badge className="inline-flex items-center rounded-full bg-primary/15 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-primary/80 dark:bg-primary/25 dark:text-primary-foreground/80">
             {servicesCount} active services · next renewal {nextRenewalLabel}
           </Badge>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <h1 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-slate-100">
               Welcome back. Everything is synced and ready for your next crawl.
             </h1>
@@ -52,7 +52,7 @@ const DashboardHeader = ({
           <StatBadge label="Next renewal" value={nextRenewalLabel} />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           <Button
             asChild
             size="lg"

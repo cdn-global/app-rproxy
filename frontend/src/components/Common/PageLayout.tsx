@@ -18,14 +18,14 @@ interface PageScaffoldProps {
 }
 
 export const PageScaffold = ({ sidebar, children, className }: PageScaffoldProps) => (
-  <div className={cn("px-4 py-8", className)}>
-    <div className="mx-auto w-full max-w-6xl space-y-10">
+  <div className={cn("px-4 py-12", className)}>
+    <div className="mx-auto w-full max-w-6xl space-y-12">
       {sidebar ? (
         <div className="space-y-6">
           {sidebar}
         </div>
       ) : null}
-      <div className="space-y-10">
+      <div className="space-y-16">
         {children}
       </div>
     </div>
@@ -91,8 +91,8 @@ export const PageSection = ({
   contentClassName,
 }: PageSectionProps) => {
   return (
-    <section id={id} className={cn("scroll-mt-36 space-y-4", className)}>
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+    <section id={id} className={cn("scroll-mt-36 space-y-6", className)}>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             {title}
@@ -105,7 +105,7 @@ export const PageSection = ({
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
       </div>
-      <div className={cn("space-y-4", contentClassName)}>
+      <div className={cn("space-y-6", contentClassName)}>
         {children}
       </div>
     </section>
