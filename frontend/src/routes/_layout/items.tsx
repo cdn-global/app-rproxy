@@ -15,6 +15,12 @@ import {
 } from "@/components/ui/table"
 import { ItemsService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
+import {
+  PageScaffold,
+  PageSection,
+  SectionNavigation,
+  type SectionNavItem,
+} from "../../components/Common/PageLayout"
 import Navbar from "../../components/Common/Navbar"
 import { PaginationFooter } from "../../components/Common/PaginationFooter"
 import AddItem from "../../components/Items/AddItem"
@@ -147,25 +153,65 @@ function ItemsTable() {
 }
 
 function Items() {
+  const navigation: SectionNavItem[] = [
+    {
+      id: "actions",
+      label: "Item toolkit",
+      description: "Launch quick create flows and manage catalog inputs.",
+    },
+    {
+      id: "inventory",
+      label: "Catalog records",
+      description: "Review every stored item, status, and available actions.",
+    },
+  ]
+
   return (
-    <div className="px-4 py-12">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-        <header className="space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-400">
-            <span>Operations</span>
-            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-            <span>Items</span>
+    <PageScaffold
+      sidebar={
+        <>
+          <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-400">
+              <span>Operations</span>
+              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+              <span>Items</span>
+            </div>
+            <div className="mt-5 space-y-3">
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Item Catalog
+              </h1>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Keep the knowledge base synchronized across crawler tooling, API guides, and inline helpers.
+              </p>
+            </div>
+            <div className="mt-6 space-y-3 text-xs text-slate-500 dark:text-slate-500">
+              <p>
+                Use the toolkit to add or retire entries, then audit their metadata and linked snippets from the catalog section.
+              </p>
+              <p>
+                Pagination keeps results fast; filters and ownership metadata arrive in a coming release.
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-            Item Catalog
-          </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            Review, update, and curate note records that power downstream tools across the platform.
-          </p>
-        </header>
+          <SectionNavigation items={navigation} />
+        </>
+      }
+    >
+      <PageSection
+        id="actions"
+        title="Catalog toolkit"
+        description="Trigger creation flows and manage collaborative actions."
+      >
         <Navbar type="Item" addModalAs={AddItem} />
+      </PageSection>
+
+      <PageSection
+        id="inventory"
+        title="Catalog inventory"
+        description="Inspect every stored item, edit inline, or hand off for automation."
+      >
         <ItemsTable />
-      </div>
-    </div>
+      </PageSection>
+    </PageScaffold>
   )
 }

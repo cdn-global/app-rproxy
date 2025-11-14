@@ -17,6 +17,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import PageScaffold, {
+  PageSection,
+  SectionNavigation,
+  type SectionNavItem,
+} from "@/components/Common/PageLayout"
 import ActiveServicesGrid from "@/components/Dashboard/ActiveServicesGrid"
 import DashboardHeader from "@/components/Dashboard/DashboardHeader"
 import InfrastructureTable from "@/components/Dashboard/InfrastructureTable"
@@ -449,7 +454,7 @@ const HomePage = () => {
       })
     })
 
-  const slugs = enabled.size > 0 ? Array.from(enabled) : defaultFeatureSlugs
+    const slugs = enabled.size > 0 ? Array.from(enabled) : defaultFeatureSlugs
 
     return slugs.map((slug) => {
       const meta = featureDetails[slug]
@@ -550,93 +555,187 @@ const HomePage = () => {
   const isLoading = isSubscriptionsLoading || isApiKeysLoading
   const error = subscriptionsError || apiKeysError
 
-  let content: JSX.Element
+  const navigation: SectionNavItem[] = [
+    {
+      id: "workspace-pulse",
+      label: "Workspace pulse",
+      description: "Renewals, keys, and account health in a glance.",
+    },
+    {
+      id: "usage-insights",
+      label: "Usage insights",
+      description: "Traffic, spend, and throughput metrics.",
+    },
+    {
+      id: "services-and-tools",
+      label: "Services & tools",
+      description: "Active bundles plus the shortcuts your team uses most.",
+    },
+    {
+      id: "infrastructure",
+      label: "Infrastructure",
+      description: "Managed nodes, capacity, and quick deep links.",
+    },
+  ]
+
+  const sidebar = (
+    <>
+      <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
+          Control center
+        </div>
+        <div className="mt-5 space-y-3">
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+            RoamingProxy workspace
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Monitor subscriptions, rotate API keys, and coordinate compute capacity without losing context.
+          </p>
+        </div>
+        <dl className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+          <div className="flex items-center justify-between">
+            <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Next renewal</dt>
+            <dd className="font-medium text-slate-900 dark:text-slate-100">{nextRenewalLabel}</dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Active services</dt>
+            <dd className="font-medium text-slate-900 dark:text-slate-100">{displayedFeatures.length}</dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">API keys</dt>
+            <dd className="font-medium text-slate-900 dark:text-slate-100">{apiKeyCount}</dd>
+          </div>
+        </dl>
+        <p className="mt-6 text-xs text-slate-500 dark:text-slate-500">
+          Usage alerts, billing, and infrastructure rollups stay synchronized so you can pivot from experimentation to scale in seconds.
+        </p>
+      </div>
+      <SectionNavigation items={navigation} />
+    </>
+  )
+
+  let mainContent: React.ReactNode
 
   if (isLoading) {
-    content = (
-      <Card className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
-        <CardContent className="flex flex-col items-center gap-4 p-10">
-          <Spinner size={40} />
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Loading your dashboard...
-          </p>
-        </CardContent>
-      </Card>
+    mainContent = (
+      <PageSection
+        id="workspace-pulse"
+        title="Workspace pulse"
+        description="Loading the latest billing, usage, and infrastructure details."
+      >
+        <Card className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
+          <CardContent className="flex flex-col items-center gap-4 p-10">
+            <Spinner size={40} />
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Loading your dashboard...
+            </p>
+          </CardContent>
+        </Card>
+      </PageSection>
     )
   } else if (error) {
-    content = (
-      <Alert
-        variant="destructive"
-        className="rounded-[24px] border border-red-500/40 bg-red-500/10 text-red-700 backdrop-blur dark:text-red-200"
+    mainContent = (
+      <PageSection
+        id="workspace-pulse"
+        title="Workspace pulse"
+        description="We could not retrieve your workspace status."
       >
-        <AlertCircle className="h-5 w-5" />
-        <div>
-          <AlertTitle>We couldn&apos;t load your workspace</AlertTitle>
-          <AlertDescription>
-            {error instanceof Error
-              ? error.message
-              : "Unexpected error loading subscriptions. Please refresh and try again."}
-          </AlertDescription>
-        </div>
-      </Alert>
+        <Alert
+          variant="destructive"
+          className="rounded-[24px] border border-red-500/40 bg-red-500/10 text-red-700 backdrop-blur dark:text-red-200"
+        >
+          <AlertCircle className="h-5 w-5" />
+          <div>
+            <AlertTitle>We couldn&apos;t load your workspace</AlertTitle>
+            <AlertDescription>
+              {error instanceof Error
+                ? error.message
+                : "Unexpected error loading subscriptions. Please refresh and try again."}
+            </AlertDescription>
+          </div>
+        </Alert>
+      </PageSection>
     )
   } else if (activeSubscriptions.length === 0) {
-    content = (
-      <Card className="rounded-[28px] border border-indigo-400/30 bg-[linear-gradient(135deg,_rgba(99,102,241,0.14),_rgba(14,165,233,0.12))] text-center text-slate-900 shadow-[0_32px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-indigo-400/40 dark:text-slate-100">
-        <CardContent className="space-y-6 p-10">
-          <Badge className="mx-auto inline-flex items-center rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-indigo-700 dark:bg-white/10 dark:text-indigo-100">
-            No active subscriptions yet
-          </Badge>
-          <h2 className="text-2xl font-semibold">
-            Activate your first service
-          </h2>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-700/90 dark:text-slate-200/90">
-            Provision global rotating proxies, managed VPS infrastructure, and SERP datasets in minutes. Choose a plan that matches your throughput and scale instantly when workloads spike.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button
-              asChild
-              className="gap-2 rounded-full px-6 py-2 text-base font-semibold"
-            >
-              <RouterLink to="/pricing">
-                <span>Explore plans</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </RouterLink>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="gap-2 rounded-full px-6 py-2 text-base font-medium"
-            >
-              <RouterLink to="/contact">
-                <span>Talk with sales</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </RouterLink>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    mainContent = (
+      <PageSection
+        id="workspace-pulse"
+        title="Workspace pulse"
+        description="No services are active yet. Choose a starting point below."
+      >
+        <Card className="rounded-[28px] border border-indigo-400/30 bg-[linear-gradient(135deg,_rgba(99,102,241,0.14),_rgba(14,165,233,0.12))] text-center text-slate-900 shadow-[0_32px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-indigo-400/40 dark:text-slate-100">
+          <CardContent className="space-y-6 p-10">
+            <Badge className="mx-auto inline-flex items-center rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-indigo-700 dark:bg-white/10 dark:text-indigo-100">
+              No active subscriptions yet
+            </Badge>
+            <h2 className="text-2xl font-semibold">
+              Activate your first service
+            </h2>
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-700/90 dark:text-slate-200/90">
+              Provision global rotating proxies, managed VPS infrastructure, and SERP datasets in minutes. Choose a plan that matches your throughput and scale instantly when workloads spike.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button
+                asChild
+                className="gap-2 rounded-full px-6 py-2 text-base font-semibold"
+              >
+                <RouterLink to="/pricing">
+                  <span>Explore plans</span>
+                  <FiArrowUpRight className="h-4 w-4" />
+                </RouterLink>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="gap-2 rounded-full px-6 py-2 text-base font-medium"
+              >
+                <RouterLink to="/contact">
+                  <span>Talk with sales</span>
+                  <FiArrowUpRight className="h-4 w-4" />
+                </RouterLink>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </PageSection>
     )
   } else {
-    content = (
-      <div className="space-y-12">
-        <DashboardHeader
-          servicesCount={displayedFeatures.length}
-          nextRenewalLabel={nextRenewalLabel}
-          apiKeyCount={apiKeyCount}
-          averageRequestsPerKey={averageRequestsPerKey}
-          onBillingClick={handleBillingClick}
-          isBillingLoading={isPortalLoading}
-          apiConsoleTo="/web-scraping-tools/https-api"
-        />
+    mainContent = (
+      <>
+        <PageSection
+          id="workspace-pulse"
+          title="Workspace pulse"
+          description="Subscriptions, average usage, and quick billing actions."
+        >
+          <DashboardHeader
+            servicesCount={displayedFeatures.length}
+            nextRenewalLabel={nextRenewalLabel}
+            apiKeyCount={apiKeyCount}
+            averageRequestsPerKey={averageRequestsPerKey}
+            onBillingClick={handleBillingClick}
+            isBillingLoading={isPortalLoading}
+            apiConsoleTo="/web-scraping-tools/https-api"
+          />
+        </PageSection>
 
-        <StatHighlights stats={statHighlights} />
+        <PageSection
+          id="usage-insights"
+          title="Usage insights"
+          description="Key throughput, data transfer, and spend metrics refreshed automatically."
+        >
+          <StatHighlights stats={statHighlights} />
+        </PageSection>
 
-        <div className="grid gap-10 xl:grid-cols-2 xl:items-start">
+        <PageSection
+          id="services-and-tools"
+          title="Services & tools"
+          description="Enable new datasets, jump into APIs, or open supporting docs."
+          contentClassName="grid gap-10 xl:grid-cols-2 xl:items-start"
+        >
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
               Active services
-            </h2>
+            </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Keep tabs on throughput, activation windows, and available feature sets across your workspace.
             </p>
@@ -644,29 +743,35 @@ const HomePage = () => {
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
               Quick actions
-            </h2>
+            </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Jump straight into the tools your team relies on most.
             </p>
             <QuickActionsGrid actions={quickActions} />
           </div>
-        </div>
+        </PageSection>
 
-        <InfrastructureTable
-          servers={servers.slice(0, 6)}
-          totals={infrastructureTotals}
-          formatCurrency={formatCurrency}
-          ctaTo="/hosting"
-        />
-      </div>
+        <PageSection
+          id="infrastructure"
+          title="Infrastructure"
+          description="Cross-section of managed servers, consumption, and handoff destinations."
+        >
+          <InfrastructureTable
+            servers={servers.slice(0, 6)}
+            totals={infrastructureTotals}
+            formatCurrency={formatCurrency}
+            ctaTo="/hosting"
+          />
+        </PageSection>
+      </>
     )
   }
 
   return (
     <ProtectedComponent>
-      <div className="mb-10 space-y-10">{content}</div>
+      <PageScaffold sidebar={sidebar}>{mainContent}</PageScaffold>
     </ProtectedComponent>
   )
 }

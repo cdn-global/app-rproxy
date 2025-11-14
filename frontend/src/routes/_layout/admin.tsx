@@ -16,6 +16,12 @@ import {
 import { type UserPublic, UsersService } from "../../client"
 import AddUser from "../../components/Admin/AddUser"
 import ActionsMenu from "../../components/Common/ActionsMenu"
+import {
+  PageScaffold,
+  PageSection,
+  SectionNavigation,
+  type SectionNavItem,
+} from "../../components/Common/PageLayout"
 import Navbar from "../../components/Common/Navbar"
 import { PaginationFooter } from "../../components/Common/PaginationFooter"
 
@@ -170,25 +176,65 @@ function UsersTable() {
 }
 
 function Admin() {
+  const navigation: SectionNavItem[] = [
+    {
+      id: "team-actions",
+      label: "Team toolkit",
+      description: "Invite, elevate, or retire operator access in one place.",
+    },
+    {
+      id: "directory",
+      label: "Account directory",
+      description: "Browse every workspace identity and audit their status.",
+    },
+  ]
+
   return (
-    <div className="px-4 py-12">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-        <header className="space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-400">
-            <span>Operations</span>
-            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-            <span>Admin</span>
+    <PageScaffold
+      sidebar={
+        <>
+          <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-400">
+              <span>Operations</span>
+              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+              <span>Admin</span>
+            </div>
+            <div className="mt-5 space-y-3">
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Team Administration
+              </h1>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Direct operator permissions and remove blockers before they impact production traffic.
+              </p>
+            </div>
+            <div className="mt-6 space-y-3 text-xs text-slate-500 dark:text-slate-500">
+              <p>
+                Promote superusers for elevated tooling, archive dormant accounts, and confirm billing contacts without leaving this workspace.
+              </p>
+              <p>
+                Activity logs and SCIM provisioning integrate next, mirroring updates across dashboards and audit trails.
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-            Team Administration
-          </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            Control access, promote superusers, and monitor account activity across the organization.
-          </p>
-        </header>
+          <SectionNavigation items={navigation} />
+        </>
+      }
+    >
+      <PageSection
+        id="team-actions"
+        title="Administration toolkit"
+        description="Spin up invites, issue privileges, and coordinate billing ownership."
+      >
         <Navbar type="User" addModalAs={AddUser} />
+      </PageSection>
+
+      <PageSection
+        id="directory"
+        title="Account directory"
+        description="Audit the full roster, confirm access scopes, and hand off follow-up tasks."
+      >
         <UsersTable />
-      </div>
-    </div>
+      </PageSection>
+    </PageScaffold>
   )
 }
