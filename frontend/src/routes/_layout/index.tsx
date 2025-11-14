@@ -1030,6 +1030,14 @@ const ComponentGallery = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(true)
   const [selectedEnvironment, setSelectedEnvironment] = useState("production")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const analyticsPoints = [38, 62, 54, 78, 92, 66, 105, 98]
+  const sparkPath = analyticsPoints
+    .map((point, index) => {
+      const x = (index / (analyticsPoints.length - 1)) * 180
+      const y = 110 - point
+      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+    })
+    .join(" ")
 
   return (
     <div className="grid gap-6 xl:grid-cols-2">
@@ -1100,6 +1108,117 @@ const ComponentGallery = () => {
             <Label htmlFor="gallery-checkbox" className="text-sm font-medium">
               Enable automatic IP rotation
             </Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
+        <CardHeader>
+          <CardTitle className="text-xl">Analytics & charts</CardTitle>
+          <CardDescription>
+            Metric cards, sparkline trends, and breakdown tags for throughput reviews.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200/70 bg-[linear-gradient(135deg,_rgba(14,165,233,0.2),_rgba(99,102,241,0.16))] p-5 text-slate-900 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-[linear-gradient(135deg,_rgba(56,189,248,0.28),_rgba(129,140,248,0.22))] dark:text-slate-50">
+              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+                Requests
+              </div>
+              <div className="mt-2 text-2xl font-semibold">4.8M</div>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+                +12.4% vs last 7 days
+              </p>
+              <div className="mt-4">
+                <svg viewBox="0 0 180 110" className="h-24 w-full">
+                  <defs>
+                    <linearGradient id="sparkGradient" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(14,165,233,0.5)" />
+                      <stop offset="100%" stopColor="rgba(14,165,233,0)" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d={`${sparkPath} L 180 110 L 0 110 Z`}
+                    fill="url(#sparkGradient)"
+                    className="stroke-none"
+                  />
+                  <path
+                    d={sparkPath}
+                    stroke="rgba(56,189,248,0.9)"
+                    strokeWidth={3}
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_16px_36px_-24px_rgba(15,23,42,0.35)] dark:border-slate-700/60 dark:bg-slate-900/60">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                  Network mix
+                </p>
+                <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">
+                  64%
+                  <span className="text-xs font-medium text-emerald-500">target proximity</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
+                  <span>Datacenter</span>
+                  <Badge className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-100">
+                    42%
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
+                  <span>Residential</span>
+                  <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
+                    38%
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
+                  <span>ISP</span>
+                  <Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
+                    20%
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
+        <CardHeader>
+          <CardTitle className="text-xl">Tags & pill states</CardTitle>
+          <CardDescription>
+            Review metadata badges, access labels, and contextual status chips.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-3">
+            <Badge className="rounded-full bg-indigo-500/20 px-4 py-1 text-sm font-semibold text-indigo-700 dark:bg-indigo-500/25 dark:text-indigo-100">
+              Workspace owner
+            </Badge>
+            <Badge variant="outline" className="rounded-full px-4 py-1 text-sm">
+              Billing admin
+            </Badge>
+            <Badge variant="secondary" className="rounded-full px-4 py-1 text-sm">
+              Read-only
+            </Badge>
+            <Badge className="rounded-full bg-rose-500/15 px-4 py-1 text-sm font-semibold text-rose-600 dark:bg-rose-500/25 dark:text-rose-200">
+              Needs review
+            </Badge>
+          </div>
+          <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+            <Badge variant="outline" className="rounded-full px-3 py-1">
+              GDPR ready
+            </Badge>
+            <Badge variant="outline" className="rounded-full px-3 py-1">
+              SOC 2
+            </Badge>
+            <Badge variant="outline" className="rounded-full px-3 py-1">
+              HIPAA
+            </Badge>
           </div>
         </CardContent>
       </Card>
