@@ -76,75 +76,73 @@ function ResetPassword() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-8">
-      <div className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-background shadow-lg md:grid-cols-[1fr,1fr]">
-        <div className="flex flex-col gap-4 bg-muted/30 p-8 md:p-12">
-          <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
-            Reset Your Password
-          </h1>
-          <p className="text-base text-muted-foreground md:text-lg">
-            Set a new password to regain access and continue managing your data
-            with ease.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Need help? Our support team and documentation are ready to assist
-            you.
-          </p>
+    <div className="container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+        <div className="absolute inset-0 bg-zinc-900" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          <Logo />
         </div>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-6 p-8 md:p-12"
-        >
-          <Logo
-            src="/assets/images/roaming-proxy-network-logo.png"
-            alt="Roaming Proxy Logo"
-            imgClassName="w-24 md:w-28"
-            className="self-start"
-          />
-
-          <div className="w-full space-y-2">
-            <Label htmlFor="new_password">Set Password</Label>
-            <Input
-              id="new_password"
-              {...register("new_password", passwordRules())}
-              type="password"
-              placeholder="Password"
-              className="h-12 text-base"
-            />
-            {errors.new_password ? (
-              <p className="text-sm text-destructive">
-                {errors.new_password.message}
-              </p>
-            ) : null}
+        <div className="relative z-20 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              “This library has saved me countless hours of work and helped me
+              deliver stunning designs to my clients faster than ever before.”
+            </p>
+            <footer className="text-sm">Sofia Davis</footer>
+          </blockquote>
+        </div>
+      </div>
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Reset your password
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your new password below.
+            </p>
           </div>
-
-          <div className="w-full space-y-2">
-            <Label htmlFor="confirm_password">Confirm Password</Label>
-            <Input
-              id="confirm_password"
-              {...register("confirm_password", confirmPasswordRules(getValues))}
-              type="password"
-              placeholder="Confirm Password"
-              className="h-12 text-base"
-            />
-            {errors.confirm_password ? (
-              <p className="text-sm text-destructive">
-                {errors.confirm_password.message}
-              </p>
-            ) : null}
+          <div className="grid gap-6">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="new_password">New Password</Label>
+                  <Input
+                    id="new_password"
+                    type="password"
+                    {...register("new_password", passwordRules())}
+                    autoComplete="new-password"
+                  />
+                  {errors.new_password && (
+                    <p className="text-sm text-red-500">
+                      {errors.new_password.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="confirm_password">Confirm Password</Label>
+                  <Input
+                    id="confirm_password"
+                    type="password"
+                    {...register(
+                      "confirm_password",
+                      confirmPasswordRules(getValues),
+                    )}
+                    autoComplete="new-password"
+                  />
+                  {errors.confirm_password && (
+                    <p className="text-sm text-red-500">
+                      {errors.confirm_password.message}
+                    </p>
+                  )}
+                </div>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Resetting..." : "Reset password"}
+                </Button>
+              </div>
+            </form>
           </div>
-
-          <Button
-            type="submit"
-            isLoading={isSubmitting}
-            loadingText="Resetting"
-            className="h-12 w-full text-base"
-            variant="primary"
-          >
-            Reset Password
-          </Button>
-        </form>
+        </div>
       </div>
     </div>
   )

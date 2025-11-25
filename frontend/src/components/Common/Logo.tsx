@@ -4,7 +4,7 @@ import type React from "react"
 import { cn } from "@/lib/utils"
 
 interface LogoProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  src: string
+  src?: string
   alt?: string
   to?: string
   imgClassName?: string
@@ -12,7 +12,7 @@ interface LogoProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
 
 const Logo: React.FC<LogoProps> = ({
   to = "/",
-  src,
+  src = "/assets/images/roaming-proxy-network-logo.png",
   alt = "Company Logo",
   className,
   imgClassName,

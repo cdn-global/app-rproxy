@@ -47,153 +47,120 @@ function Login() {
     }
   }
 
-  // Social media logo components
-  const GitHubLogo = () => (
-    <a
-      href="https://github.com/CobaltDataNet"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex"
-    >
-      <img
-        src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-        alt="GitHub Logo"
-        className="h-7 w-7 md:h-8 md:w-8"
-      />
-    </a>
-  )
-
-  const LinkedInLogo = () => (
-    <a
-      href="https://www.linkedin.com/company/CobaltDataNet"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex"
-    >
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
-        alt="LinkedIn Logo"
-        className="h-7 w-7 md:h-8 md:w-8"
-      />
-    </a>
-  )
-
-  const XLogo = () => (
-    <a
-      href="https://twitter.com/cobaltdata"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex"
-    >
-      <img
-        src="https://images.freeimages.com/image/large-previews/f35/x-twitter-logo-on-black-circle-5694247.png"
-        alt="X Logo"
-        className="h-7 w-7 md:h-8 md:w-8"
-      />
-    </a>
-  )
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-8">
-      <div className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-background shadow-lg md:grid-cols-[1fr,1fr]">
-        <div className="flex flex-col gap-4 bg-muted/30 p-8 md:p-12">
-          <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
-            Web Scraping, Made Easy
-          </h1>
-          <p className="text-base text-muted-foreground md:text-lg">
-            Sign in to experience seamless data management and take control
-            with confidence.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Need a boost? Our expert support team and comprehensive
-            documentation are here to fuel your success.
+    <div className="container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+        <div className="absolute inset-0 bg-zinc-900" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          <Logo />
+        </div>
+        <div className="relative z-20 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              “This library has saved me countless hours of work and helped me
+              deliver stunning designs to my clients faster than ever before.”
+            </p>
+            <footer className="text-sm">Sofia Davis</footer>
+          </blockquote>
+        </div>
+      </div>
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Welcome back
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your email below to log into your account
+            </p>
+          </div>
+          <div className="grid gap-6">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="username">Email</Label>
+                  <Input
+                    id="username"
+                    {...register("username", {
+                      required: "Email is required.",
+                      pattern: emailPattern,
+                    })}
+                    placeholder="name@example.com"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    autoCorrect="off"
+                  />
+                  {errors.username && (
+                    <p className="text-sm text-red-500">
+                      {errors.username.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                    <RouterLink
+                      to="/recover-password"
+                      className="ml-auto inline-block text-sm underline"
+                    >
+                      Forgot your password?
+                    </RouterLink>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      {...register("password", {
+                        required: "Password is required.",
+                      })}
+                      autoComplete="current-password"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 transform"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+                {error && (
+                  <p className="text-sm text-red-500">{String(error)}</p>
+                )}
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Logging in..." : "Login"}
+                </Button>
+              </div>
+            </form>
+          </div>
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            By clicking continue, you agree to our{" "}
+            <RouterLink
+              to="/terms"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Terms of Service
+            </RouterLink>{" "}
+            and{" "}
+            <RouterLink
+              to="/privacy"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Privacy Policy
+            </RouterLink>
+            .
           </p>
         </div>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-6 p-8 md:p-12"
-        >
-          <Logo
-            src="/assets/images/roaming-proxy-network-logo.png"
-            alt="Roaming Proxy Logo"
-            imgClassName="w-24 md:w-28"
-            className="self-start"
-          />
-
-          <div className="w-full space-y-2">
-            <Label htmlFor="username">Email</Label>
-            <Input
-              id="username"
-              {...register("username", {
-                required: "Username is required",
-                pattern: emailPattern,
-              })}
-              type="email"
-              placeholder="you@example.com"
-              className="h-12 text-base"
-              required
-            />
-            {errors.username ? (
-              <p className="text-sm text-destructive">
-                {errors.username.message}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="w-full space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                {...register("password", { required: "Password is required" })}
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                className="h-12 pr-12 text-base"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-3 inline-flex items-center text-muted-foreground transition hover:text-foreground"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          </div>
-
-          <RouterLink
-            to="/recover-password"
-            className="self-start text-sm font-medium text-primary hover:underline"
-          >
-            Forgot password?
-          </RouterLink>
-
-          <Button
-            type="submit"
-            isLoading={isSubmitting}
-            loadingText="Logging in"
-            className="h-12 w-full text-base"
-            variant="primary"
-          >
-            Log In
-          </Button>
-
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <RouterLink to="/signup" className="font-medium text-primary hover:underline">
-              Sign up
-            </RouterLink>
-          </p>
-
-          <div className="mt-2 flex flex-col items-center gap-3 md:flex-row">
-            <GitHubLogo />
-            <LinkedInLogo />
-            <XLogo />
-          </div>
-        </form>
       </div>
     </div>
   )

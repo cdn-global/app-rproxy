@@ -67,60 +67,62 @@ function RecoverPassword() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-8">
-      <div className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-background shadow-lg md:grid-cols-[1fr,1fr]">
-        <div className="flex flex-col gap-4 bg-muted/30 p-8 md:p-12">
-          <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
-            Recover Your Password
-          </h1>
-          <p className="text-base text-muted-foreground md:text-lg">
-            Enter your email to receive a link to reset your password and regain
-            access.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Need assistance? Our support team and documentation are here to
-            help.
-          </p>
+    <div className="container relative grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+        <div className="absolute inset-0 bg-zinc-900" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          <Logo />
         </div>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-6 p-8 md:p-12"
-        >
-          <Logo
-            src="/assets/images/roaming-proxy-network-logo.png"
-            alt="Roaming Proxy Logo"
-            imgClassName="w-24 md:w-28"
-            className="self-start"
-          />
-
-          <div className="w-full space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: emailPattern,
-              })}
-              placeholder="Email"
-              type="email"
-              className="h-12 text-base"
-            />
-            {errors.email ? (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            ) : null}
+        <div className="relative z-20 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              “This library has saved me countless hours of work and helped me
+              deliver stunning designs to my clients faster than ever before.”
+            </p>
+            <footer className="text-sm">Sofia Davis</footer>
+          </blockquote>
+        </div>
+      </div>
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Forgot your password?
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your email and we'll send you a link to reset your
+              password.
+            </p>
           </div>
-
-          <Button
-            type="submit"
-            isLoading={isSubmitting}
-            loadingText="Sending"
-            className="h-12 w-full text-base"
-            variant="primary"
-          >
-            Continue
-          </Button>
-        </form>
+          <div className="grid gap-6">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    {...register("email", {
+                        required: "Email is required.",
+                        pattern: emailPattern,
+                      })}
+                    placeholder="name@example.com"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    autoCorrect="off"
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send reset link"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   )

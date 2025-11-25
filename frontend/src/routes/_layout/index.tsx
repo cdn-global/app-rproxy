@@ -1,27 +1,14 @@
+import { FaBook, FaCreditCard, FaGlobe, FaSearch, FaServer } from "react-icons/fa"
+import type { IconType } from "react-icons"
+import { FiUserCheck, FiDatabase, FiSettings, FiShield, FiArrowUpRight } from "react-icons/fi"
 import { AlertCircle } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { useQuery } from "@tanstack/react-query"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { useCallback, useMemo, useState } from "react"
-import {
-  FaBook,
-  FaCog,
-  FaCreditCard,
-  FaGlobe,
-  FaSearch,
-  FaServer,
-} from "react-icons/fa"
-import {
-  FiArrowUpRight,
-  FiDatabase,
-  FiSettings,
-  FiShield,
-  FiUserCheck,
-} from "react-icons/fi"
-import type { IconType } from "react-icons"
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -29,44 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import PageScaffold, {
   PageSection,
   SectionNavigation,
@@ -452,7 +401,7 @@ async function fetchApiKeys(token: string): Promise<ApiKey[]> {
   }))
 }
 
-const HomePage = () => {
+const Dashboard = () => {
   const showToast = useCustomToast()
 
   const {
@@ -987,5 +936,7 @@ const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
   )
 }
 
-export const Route = createFileRoute("/_layout/")({ component: HomePage })
-export default HomePage
+export const Route = createFileRoute("/_layout/")({
+  component: Dashboard,
+})
+export default Dashboard
