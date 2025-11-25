@@ -105,11 +105,6 @@ function HostingIndexPage() {
       label: "Access credentials",
       description: "Copy usernames, rotate secrets, or view details quick.",
     },
-    {
-      id: "feature-coverage",
-      label: "Feature coverage",
-      description: "Monitor add-ons enabled across the managed fleet.",
-    },
   ]
 
   return (
@@ -312,44 +307,7 @@ function HostingIndexPage() {
         </Card>
       </PageSection>
 
-      <PageSection
-        id="feature-coverage"
-        title="Feature coverage"
-        description="Visualize optional add-ons and their adoption across devices."
-      >
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Feature coverage
-            </CardTitle>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              A quick glance at optional capabilities enabled across the fleet.
-            </p>
-          </CardHeader>
-          <CardContent className="grid gap-5 p-6 sm:grid-cols-2">
-            <FeatureHighlight
-              label="Rotating IPs"
-              value={fleetSummary.rotating}
-              description="Elastic IP pools for geo-targeting and session replays."
-            />
-            <FeatureHighlight
-              label="Backups"
-              value={fleetSummary.backup}
-              description="Automated snapshots with 7-day retention for recovery."
-            />
-            <FeatureHighlight
-              label="Monitoring"
-              value={fleetSummary.monitoring}
-              description="Continuous health telemetry with proactive alerts."
-            />
-            <FeatureHighlight
-              label="Managed support"
-              value={fleetSummary.managed}
-              description="Hands-on OS patching and incident response coverage."
-            />
-          </CardContent>
-        </Card>
-      </PageSection>
+      
     </PageScaffold>
   )
 }
