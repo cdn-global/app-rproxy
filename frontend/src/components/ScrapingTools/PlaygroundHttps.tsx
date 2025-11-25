@@ -77,7 +77,7 @@ const CODE_TEMPLATES = [
     label: "Node.js",
     language: "javascript",
     build: ({ url, region, apiKey }: { url: string; region: string; apiKey: string }) =>
-      `const axios = require('axios');\n\nconst apiKey = '${apiKey}';\nconst region = '${region}';\nconst searchUrl = '${url}';\n\nconst apiUrl = '${API_URL}/fetch?region=${region}';\n\nconst headers = {\n  'Content-Type': 'application/json',\n  'x-api-key': apiKey\n};\nconst payload = { url: searchUrl };\n\naxios.post(apiUrl, payload, { headers })\n  .then(response => {\n    console.log(JSON.stringify(response.data, null, 2));\n  })\n  .catch(error => {\n    console.error('Error:', error.response ? error.response.data : error.message);\n  });`,
+      `import axios from 'axios';\n\n// Use a modern runtime or bundler that supports ESM imports.\nconst apiKey = '${apiKey}';\nconst region = '${region}';\nconst searchUrl = '${url}';\n\nconst apiUrl = '${API_URL}/fetch?region=${region}';\n\nconst headers = {\n  'Content-Type': 'application/json',\n  'x-api-key': apiKey\n};\nconst payload = { url: searchUrl };\n\naxios.post(apiUrl, payload, { headers })\n  .then(response => {\n    console.log(JSON.stringify(response.data, null, 2));\n  })\n  .catch(error => {\n    console.error('Error:', error.response ? error.response.data : error.message);\n  });`,
   },
 ] as const
 
