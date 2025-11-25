@@ -60,7 +60,7 @@ function Login() {
               “This library has saved me countless hours of work and helped me
               deliver stunning designs to my clients faster than ever before.”
             </p>
-            <footer className="text-sm">Sofia Davis</footer>
+            <footer className="text-sm">Roaming Proxy</footer>
           </blockquote>
         </div>
       </div>
