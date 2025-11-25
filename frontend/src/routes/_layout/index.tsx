@@ -850,49 +850,47 @@ const Dashboard = () => {
       toolDirectorySection,
     )
   } else if (activeSubscriptions.length === 0) {
+    // If the workspace has no active subscriptions, still render key analytics
+    // and tool directory so the homepage remains useful for onboarding and QA.
     sections.push(
       <PageSection
         id="workspace-pulse"
         title="Workspace"
-        description="No services are active yet. Choose a starting point below."
-        key="empty"
+        description="No services are active yet. Preview usage insights and available tools."
+        key="workspace-empty"
       >
-        <Card className="rounded-[28px] border border-indigo-400/30 bg-[linear-gradient(135deg,_rgba(99,102,241,0.14),_rgba(14,165,233,0.12))] text-center text-slate-900 shadow-[0_32px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-indigo-400/40 dark:text-slate-100">
-          <CardContent className="space-y-6 p-10">
-            <Badge className="mx-auto inline-flex items-center rounded-full bg-white/20 px-4 py-1.5 text-xs font-semibold tracking-[0.08em] text-indigo-700 dark:bg-white/10 dark:text-indigo-100">
-              No active subscriptions yet
-            </Badge>
-            <h2 className="text-2xl font-semibold">
-              Activate your first service
-            </h2>
-            <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-700/90 dark:text-slate-200/90">
-              Provision global rotating proxies, managed VPS infrastructure, and SERP datasets in minutes. Choose a plan that matches your throughput and scale instantly when workloads spike.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button
-                asChild
-                className="gap-2 rounded-full px-6 py-2 text-base font-semibold"
-              >
-                <RouterLink to="/pricing">
-                  <span>Explore plans</span>
-                  <FiArrowUpRight className="h-4 w-4" />
-                </RouterLink>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="gap-2 rounded-full px-6 py-2 text-base font-medium"
-              >
-                <RouterLink to="/contact">
-                  <span>Talk with sales</span>
-                  <FiArrowUpRight className="h-4 w-4" />
-                </RouterLink>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <DashboardHeader
+          servicesCount={displayedFeatures.length}
+          nextRenewalLabel={nextRenewalLabel}
+          apiKeyCount={apiKeyCount}
+          averageRequestsPerKey={averageRequestsPerKey}
+          onBillingClick={handleBillingClick}
+          isBillingLoading={isPortalLoading}
+          apiConsoleTo="/web-scraping-tools/https-api"
+        />
+      </PageSection>,
+      <PageSection
+        id="usage-insights"
+        title="Usage insights"
+        description="Key throughput, data transfer, and spend metrics (preview)."
+        key="usage-empty"
+      >
+        <StatHighlights stats={statHighlights} />
       </PageSection>,
       toolDirectorySection,
+      <PageSection
+        id="infrastructure"
+        title="Infrastructure"
+        description="Cross-section of managed servers, consumption, and handoff destinations."
+        key="infrastructure-empty"
+      >
+        <InfrastructureTable
+          servers={servers.slice(0, 6)}
+          totals={infrastructureTotals}
+          formatCurrency={formatCurrency}
+          ctaTo="/hosting"
+        />
+      </PageSection>,
     )
   } else {
     sections.push(
