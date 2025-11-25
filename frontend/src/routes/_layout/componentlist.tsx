@@ -114,7 +114,7 @@ const WorkspacePulsePage = () => {
     <PageScaffold className="py-8" sidebar={null}>
       <div className="space-y-6">
         <div className="mx-auto w-full max-w-4xl space-y-4 text-center">
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Workspace pulse</h1>
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Workspace</h1>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             Subscriptions, average usage, and quick billing actions.
           </p>

@@ -691,7 +691,7 @@ const HomePage = () => {
   const navigation: SectionNavItem[] = [
     {
       id: "workspace-pulse",
-      label: "Workspace pulse",
+      label: "Workspace",
       description: "Subscriptions, average usage, and quick billing actions.",
     },
     {
@@ -765,7 +765,7 @@ const HomePage = () => {
     sections.push(
       <PageSection
         id="workspace-pulse"
-        title="Workspace pulse"
+        title="Workspace"
         description="Loading the latest billing, usage, and infrastructure details."
         key="loading"
       >
@@ -784,7 +784,7 @@ const HomePage = () => {
     sections.push(
       <PageSection
         id="workspace-pulse"
-        title="Workspace pulse"
+        title="Workspace"
         description="We could not retrieve your workspace status."
         key="error"
       >
@@ -809,7 +809,7 @@ const HomePage = () => {
     sections.push(
       <PageSection
         id="workspace-pulse"
-        title="Workspace pulse"
+        title="Workspace"
         description="No services are active yet. Choose a starting point below."
         key="empty"
       >
@@ -854,7 +854,7 @@ const HomePage = () => {
     sections.push(
       <PageSection
         id="workspace-pulse"
-        title="Workspace pulse"
+        title="Workspace"
         description="Subscriptions, average usage, and quick billing actions."
         key="workspace"
       >
