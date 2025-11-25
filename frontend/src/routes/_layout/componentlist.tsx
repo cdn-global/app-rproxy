@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
-import { AreaChart, BarChart } from "@tremor/react"
+// Replaced Tremor charts with lightweight placeholders to avoid extra dependency
 import { DollarSign, ExternalLink, Globe, HardDrive, Zap } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+// Use native select instead of missing UI select component
 import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
@@ -187,26 +187,19 @@ const WorkspacePulsePage = () => {
                   <CardTitle>Regional usage</CardTitle>
                   <CardDescription>A breakdown of usage by region.</CardDescription>
                 </div>
-                <Select defaultValue="requests">
-                  <SelectTrigger className="w-48 rounded-full">
-                    <SelectValue placeholder="Select a metric" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="requests">Requests</SelectItem>
-                    <SelectItem value="latency">Latency</SelectItem>
-                    <SelectItem value="errors">Errors</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div>
+                  <label htmlFor="metric-select" className="sr-only">Select metric</label>
+                  <select id="metric-select" defaultValue="requests" className="w-48 rounded-full border px-3 py-1 text-sm">
+                    <option value="requests">Requests</option>
+                    <option value="latency">Latency</option>
+                    <option value="errors">Errors</option>
+                  </select>
+                </div>
               </CardHeader>
               <CardContent>
-                <BarChart
-                  data={chartData}
-                  index="date"
-                  categories={["New York", "London"]}
-                  colors={["blue", "cyan"]}
-                  valueFormatter={valueFormatter}
-                  yAxisWidth={48}
-                />
+                <div className="h-48 w-full flex items-center justify-center text-sm text-slate-500">
+                  <div className="text-center">Bar chart placeholder (install @tremor/react for full charts)</div>
+                </div>
               </CardContent>
             </Card>
             <Card className="rounded-2xl">
@@ -250,14 +243,9 @@ const WorkspacePulsePage = () => {
                 <CardDescription>A snapshot of your workspace's usage patterns over time.</CardDescription>
               </CardHeader>
               <CardContent>
-                <AreaChart
-                  className="h-72"
-                  data={usageData}
-                  index="date"
-                  categories={["Total requests", "Avg. response time"]}
-                  colors={["blue", "cyan"]}
-                  yAxisWidth={60}
-                />
+                <div className="h-72 w-full flex items-center justify-center text-sm text-slate-500">
+                  <div className="text-center">Area chart placeholder (install @tremor/react for full charts)</div>
+                </div>
               </CardContent>
             </Card>
           </div>

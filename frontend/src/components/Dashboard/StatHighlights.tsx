@@ -61,9 +61,9 @@ const StatHighlights = ({ stats }: StatHighlightsProps) => {
           >
             <CardContent className="flex h-full flex-col gap-6 p-6">
               <div className="flex items-start justify-between gap-4">
-                <div className={cn("flex h-12 w-12 items-center justify-center rounded-full", palette.icon)}>
-                  <stat.icon className="h-6 w-6" />
-                </div>
+                <div className={cn("flex aspect-square h-12 items-center justify-center rounded-full", palette.icon)}>
+                    <stat.icon className="h-6 w-6" />
+                  </div>
                 <span className="text-[0.7rem] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                   {stat.description}
                 </span>

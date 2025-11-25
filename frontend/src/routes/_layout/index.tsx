@@ -692,7 +692,7 @@ const HomePage = () => {
     {
       id: "workspace-pulse",
       label: "Workspace pulse",
-      description: "Renewals, keys, and account health in a glance.",
+      description: "Subscriptions, average usage, and quick billing actions.",
     },
     {
       id: "usage-insights",
@@ -700,114 +700,32 @@ const HomePage = () => {
       description: "Traffic, spend, and throughput metrics.",
     },
     {
-      id: "services-and-tools",
-      label: "Services & tools",
-      description: "Active bundles plus the shortcuts your team uses most.",
+      id: "tool-directory",
+      label: "Tool directory",
+      description: "Explore every workspace module in one place.",
     },
     {
       id: "infrastructure",
       label: "Infrastructure",
       description: "Managed nodes, capacity, and quick deep links.",
     },
-    {
-      id: "component-library",
-      label: "Component style suite",
-      description: "Visual sweep of shadcn/ui primitives in our theme.",
-    },
   ]
 
-  const servicesAndToolsSection = (
+  const toolDirectorySection = (
     <PageSection
-      id="services-and-tools"
-      title="Services & tools"
-      description="Enable new datasets, jump into APIs, or open supporting docs."
-      contentClassName="grid gap-10 xl:grid-cols-2 xl:items-start"
+      id="tool-directory"
+      title="Tool directory"
+      description="Explore every workspace module in one place to validate styling and behavior before launch."
     >
-      <div className="space-y-3">
-        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-          Active services
-        </h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          Keep tabs on throughput, activation windows, and available feature sets across your workspace.
-        </p>
-        <ActiveServicesGrid features={displayedFeatures} />
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-          Quick actions
-        </h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          Jump straight into the tools your team relies on most.
-        </p>
-        <QuickActionsGrid actions={quickActions} />
-      </div>
-
-      <div className="space-y-3 xl:col-span-2">
-        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-          Tool directory
-        </h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
-          Explore every workspace module in one place to validate styling and behavior before launch.
-        </p>
-        <ToolDirectory
-          tools={toolCatalogEntries}
-          activeFeatureSlugs={activeFeatureSlugs}
-        />
-      </div>
+      <ToolDirectory
+        tools={toolCatalogEntries}
+        activeFeatureSlugs={activeFeatureSlugs}
+      />
     </PageSection>
   )
 
-  const componentGallerySection = (
-    <PageSection
-      id="component-library"
-      title="Component style suite"
-      description="Spot-check our UI primitives — quick preview here, full dev page available for deeper validation."
-      actions={
-        <div className="flex items-center gap-2">
-          <Button asChild size="sm" variant="outline" className="rounded-full px-3">
-            <RouterLink to="/_layout/componentlist">Open dev component list</RouterLink>
-          </Button>
-        </div>
-      }
-    >
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        <Card className="rounded-xl border border-slate-200/60 p-4 shadow-sm dark:border-slate-700/40">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Form controls</h4>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Inputs, textareas and checkbox states.</p>
-            </div>
-            <div className="text-slate-500 dark:text-slate-400 text-xs">Preview</div>
-          </div>
-        </Card>
-
-        <Card className="rounded-xl border border-slate-200/60 p-4 shadow-sm dark:border-slate-700/40">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Messages & tags</h4>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Alerts, badges and inline status chips.</p>
-            </div>
-            <div className="text-slate-500 dark:text-slate-400 text-xs">Preview</div>
-          </div>
-        </Card>
-
-        <Card className="rounded-xl border border-slate-200/60 p-4 shadow-sm dark:border-slate-700/40">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Menus & overlays</h4>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Tooltips, dropdowns and dialogs.</p>
-            </div>
-            <div className="text-slate-500 dark:text-slate-400 text-xs">Preview</div>
-          </div>
-        </Card>
-      </div>
-    </PageSection>
-  )
-
-  const sidebar = (
-    <>
-      <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+  const linksCard = (
+    <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
           Control center
         </div>
@@ -837,10 +755,14 @@ const HomePage = () => {
           Usage alerts, billing, and infrastructure rollups stay synchronized so you can pivot from experimentation to scale in seconds.
         </p>
       </div>
+  )
+
+  const sidebar = (
+    <>
       <SectionNavigation items={navigation} />
     </>
   )
-
+  
   const sections: React.ReactNode[] = []
 
   if (isLoading) {
@@ -860,7 +782,7 @@ const HomePage = () => {
           </CardContent>
         </Card>
       </PageSection>,
-      servicesAndToolsSection,
+      toolDirectorySection,
     )
   } else if (error) {
     sections.push(
@@ -885,7 +807,7 @@ const HomePage = () => {
           </div>
         </Alert>
       </PageSection>,
-      servicesAndToolsSection,
+      toolDirectorySection,
     )
   } else if (activeSubscriptions.length === 0) {
     sections.push(
@@ -930,7 +852,7 @@ const HomePage = () => {
           </CardContent>
         </Card>
       </PageSection>,
-      servicesAndToolsSection,
+      toolDirectorySection,
     )
   } else {
     sections.push(
@@ -960,7 +882,7 @@ const HomePage = () => {
         <StatHighlights stats={statHighlights} />
       </PageSection>,
 
-      servicesAndToolsSection,
+      toolDirectorySection,
 
       <PageSection
         id="infrastructure"
@@ -977,8 +899,8 @@ const HomePage = () => {
       </PageSection>,
     )
   }
-
-  sections.push(componentGallerySection)
+  
+  sections.push(linksCard)
 
   const mainContent = <>{sections}</>
 
@@ -988,7 +910,6 @@ const HomePage = () => {
     </ProtectedComponent>
   )
 }
-
 interface ToolDirectoryProps {
   tools: ToolCatalogEntry[]
   activeFeatureSlugs: Set<FeatureKey>
@@ -1010,7 +931,7 @@ const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
           >
             <CardContent className="flex h-full flex-col gap-5 p-6">
               <div className="flex items-start justify-between gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 text-primary">
+                <div className="flex aspect-square h-11 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
                 <Badge variant="outline" className="rounded-full px-3 py-1 text-[0.65rem] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
@@ -1059,362 +980,6 @@ const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
           </Card>
         )
       })}
-    </div>
-  )
-}
-
-const ComponentGallery = () => {
-  const [checkboxChecked, setCheckboxChecked] = useState(true)
-  const [selectedEnvironment, setSelectedEnvironment] = useState("production")
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const analyticsPoints = [38, 62, 54, 78, 92, 66, 105, 98]
-  const sparkPath = analyticsPoints
-    .map((point, index) => {
-      const x = (index / (analyticsPoints.length - 1)) * 180
-      const y = 110 - point
-      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
-    })
-    .join(" ")
-
-  return (
-    <div className="grid gap-6 xl:grid-cols-2">
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
-        <CardHeader>
-          <CardTitle className="text-xl">Feedback & status</CardTitle>
-          <CardDescription>
-            Alert, badge, and button styling checks with live spinner feedback.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-indigo-200/70 bg-[linear-gradient(135deg,_rgba(99,102,241,0.22),_rgba(14,165,233,0.18))] px-4 py-4 text-slate-900 shadow-[0_16px_36px_-24px_rgba(79,70,229,0.36)] dark:border-indigo-500/40 dark:bg-[linear-gradient(135deg,_rgba(99,102,241,0.26),_rgba(14,165,233,0.2))] dark:text-slate-50">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-indigo-700 dark:text-indigo-200">
-                Current posture
-              </p>
-              <p className="mt-1 text-2xl font-semibold">All systems nominal</p>
-              <p className="text-xs text-slate-700 dark:text-slate-300">
-                9h 12m since last incident · 100% regional availability
-              </p>
-            </div>
-            <Button size="sm" className="rounded-full px-4">
-              View status page
-            </Button>
-          </div>
-          <Alert className="border border-emerald-400/40 bg-emerald-500/10 text-emerald-700 backdrop-blur dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-100">
-            <AlertTitle>All systems operational</AlertTitle>
-            <AlertDescription>
-              Proxy routing, billing webhooks, and API key rotation are healthy.
-            </AlertDescription>
-          </Alert>
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>Primary</Badge>
-            <Badge variant="outline">Outline</Badge>
-            <Badge variant="secondary">Secondary</Badge>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button size="sm" className="rounded-full px-4">
-              Primary CTA
-            </Button>
-            <Button size="sm" variant="outline" className="rounded-full px-4">
-              Outline CTA
-            </Button>
-            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <Spinner size={18} />
-              <span>Polling usage...</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
-        <CardHeader>
-          <CardTitle className="text-xl">Form controls</CardTitle>
-          <CardDescription>
-            Validate input, textarea, and checkbox treatments side-by-side.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="gallery-email">Contact email</Label>
-            <Input
-              id="gallery-email"
-              type="email"
-              placeholder="ops@roamingproxy.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="gallery-notes">Internal note</Label>
-            <Textarea
-              id="gallery-notes"
-              placeholder="Document crawl windows, axial rotation, or cache notes."
-              rows={3}
-            />
-          </div>
-          <div className="flex items-center gap-2 pt-2">
-            <Checkbox
-              id="gallery-checkbox"
-              checked={checkboxChecked}
-              onCheckedChange={(value) => setCheckboxChecked(Boolean(value))}
-            />
-            <Label htmlFor="gallery-checkbox" className="text-sm font-medium">
-              Enable automatic IP rotation
-            </Label>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
-        <CardHeader>
-          <CardTitle className="text-xl">Analytics & charts</CardTitle>
-          <CardDescription>
-            Metric cards, sparkline trends, and breakdown tags for throughput reviews.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200/70 bg-[linear-gradient(135deg,_rgba(14,165,233,0.2),_rgba(99,102,241,0.16))] p-5 text-slate-900 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-[linear-gradient(135deg,_rgba(56,189,248,0.28),_rgba(129,140,248,0.22))] dark:text-slate-50">
-              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
-                Requests
-              </div>
-              <div className="mt-2 text-2xl font-semibold">4.8M</div>
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                +12.4% vs last 7 days
-              </p>
-              <div className="mt-4">
-                <svg viewBox="0 0 180 110" className="h-24 w-full">
-                  <defs>
-                    <linearGradient id="sparkGradient" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(14,165,233,0.5)" />
-                      <stop offset="100%" stopColor="rgba(14,165,233,0)" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d={`${sparkPath} L 180 110 L 0 110 Z`}
-                    fill="url(#sparkGradient)"
-                    className="stroke-none"
-                  />
-                  <path
-                    d={sparkPath}
-                    stroke="rgba(56,189,248,0.9)"
-                    strokeWidth={3}
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_16px_36px_-24px_rgba(15,23,42,0.35)] dark:border-slate-700/60 dark:bg-slate-900/60">
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                  Network mix
-                </p>
-                <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">
-                  64%
-                  <span className="text-xs font-medium text-emerald-500">target proximity</span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
-                  <span>Datacenter</span>
-                  <Badge className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-100">
-                    42%
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
-                  <span>Residential</span>
-                  <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
-                    38%
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
-                  <span>ISP</span>
-                  <Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
-                    20%
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
-        <CardHeader>
-          <CardTitle className="text-xl">Tags & pill states</CardTitle>
-          <CardDescription>
-            Review metadata badges, access labels, and contextual status chips.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-wrap gap-3">
-            <Badge className="rounded-full bg-indigo-500/20 px-4 py-1 text-sm font-semibold text-indigo-700 dark:bg-indigo-500/25 dark:text-indigo-100">
-              Workspace owner
-            </Badge>
-            <Badge variant="outline" className="rounded-full px-4 py-1 text-sm">
-              Billing admin
-            </Badge>
-            <Badge variant="secondary" className="rounded-full px-4 py-1 text-sm">
-              Read-only
-            </Badge>
-            <Badge className="rounded-full bg-rose-500/15 px-4 py-1 text-sm font-semibold text-rose-600 dark:bg-rose-500/25 dark:text-rose-200">
-              Needs review
-            </Badge>
-          </div>
-          <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-            <Badge variant="outline" className="rounded-full px-3 py-1">
-              GDPR ready
-            </Badge>
-            <Badge variant="outline" className="rounded-full px-3 py-1">
-              SOC 2
-            </Badge>
-            <Badge variant="outline" className="rounded-full px-3 py-1">
-              HIPAA
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)] xl:col-span-2">
-        <CardHeader>
-          <CardTitle className="text-xl">Menus, overlays & data</CardTitle>
-          <CardDescription>
-            Dropdowns, tooltips, dialogs, and table styling bundled for quick visual regression.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
-              Tooltip
-            </p>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-full px-4">
-                    Hover for status
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  All proxy regions within SLA
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
-              Dropdown menu
-            </p>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-full px-4">
-                  {selectedEnvironment === "production" ? "Production" : "Staging"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-48">
-                <DropdownMenuLabel>Choose environment</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={selectedEnvironment}
-                  onValueChange={setSelectedEnvironment}
-                >
-                  <DropdownMenuRadioItem value="production">
-                    Production
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="staging">
-                    Staging
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Manage environments</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-500">
-              Dialog
-            </p>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-full px-4">
-                  Open preview
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[420px]">
-                <DialogHeader>
-                  <DialogTitle>Rotate credentials?</DialogTitle>
-                  <DialogDescription>
-                    Confirm to roll proxy credentials across all active regions.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                  <p>You can download the new key from the API console once generated.</p>
-                  <p className="text-xs uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
-                    Last rotation · 3 hours ago
-                  </p>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => setIsDialogOpen(false)} className="gap-2">
-                    Rotate now
-                    <FiArrowUpRight className="h-4 w-4" />
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardContent>
-        <CardContent className="pt-0">
-          <div className="overflow-x-auto rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-            <Table className="min-w-[480px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Node</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Latency</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">nyc-edge-01</TableCell>
-                  <TableCell>
-                    <Badge className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-100">
-                      Connected
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-sm text-slate-600 dark:text-slate-400">
-                    82 ms
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">fra-edge-04</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="rounded-full px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
-                      Draining
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-sm text-slate-600 dark:text-slate-400">
-                    104 ms
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">sfo-edge-07</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="rounded-full px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">
-                      Pending
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-sm text-slate-600 dark:text-slate-400">
-                    96 ms
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
 import { Menu, X } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { FaGlobe, FaServer } from "react-icons/fa"
-import { FiLogOut, FiUsers } from "react-icons/fi"
+import { FiLogOut, FiUsers, FiSettings } from "react-icons/fi"
 import type { IconType } from "react-icons"
 
 import { Button } from "@/components/ui/button"
@@ -50,6 +50,12 @@ const navStructure: NavItem[] = [
     path: "https://cloud.ROAMINGPROXY.com/hosting",
     description: "Fully managed virtual private servers for your needs.",
     icon: FaServer,
+  },
+  {
+    title: "Settings",
+    path: "/settings",
+    description: "Manage your workspace settings.",
+    icon: FiSettings,
   },
 ]
 
