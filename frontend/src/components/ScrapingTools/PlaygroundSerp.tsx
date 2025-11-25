@@ -110,10 +110,9 @@ print(response.json())
 
   const generateJsCode = () => {
     const displayKey = apiKey.trim() || "YOUR_API_KEY"
-    return `// Use the standard fetch API (browser or Node 18+).
-  // For older Node versions, install node-fetch and import it in your runtime.
+    return `const fetch = require('node-fetch');
 
-  const url = new URL("${API_URL}");
+const url = new URL("${API_URL}");
 url.searchParams.append('q', '${query}');
 url.searchParams.append('region', '${region}');
 url.searchParams.append('engine', '${searchEngine}');
