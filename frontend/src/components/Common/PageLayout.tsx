@@ -18,8 +18,8 @@ interface PageScaffoldProps {
 }
 
 export const PageScaffold = ({ sidebar, children, className }: PageScaffoldProps) => (
-  <div className={cn("px-4 py-12", className)}>
-    <div className="mx-auto w-full max-w-6xl space-y-12">
+  <div className={cn("px-4 py-12 sm:px-6 lg:px-8", className)}>
+    <div className="mx-auto w-full max-w-7xl space-y-12">
       {sidebar ? (
         <div className="space-y-6">
           {sidebar}

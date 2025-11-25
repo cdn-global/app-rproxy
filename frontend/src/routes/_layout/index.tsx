@@ -762,9 +762,46 @@ const HomePage = () => {
     <PageSection
       id="component-library"
       title="Component style suite"
-      description="Spot-check shadcn/ui primitives to ensure consistent theming across pages."
+      description="Spot-check our UI primitives — quick preview here, full dev page available for deeper validation."
+      actions={
+        <div className="flex items-center gap-2">
+          <Button asChild size="sm" variant="outline" className="rounded-full px-3">
+            <RouterLink to="/_layout/componentlist">Open dev component list</RouterLink>
+          </Button>
+        </div>
+      }
     >
-      <ComponentGallery />
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <Card className="rounded-xl border border-slate-200/60 p-4 shadow-sm dark:border-slate-700/40">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Form controls</h4>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Inputs, textareas and checkbox states.</p>
+            </div>
+            <div className="text-slate-500 dark:text-slate-400 text-xs">Preview</div>
+          </div>
+        </Card>
+
+        <Card className="rounded-xl border border-slate-200/60 p-4 shadow-sm dark:border-slate-700/40">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Messages & tags</h4>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Alerts, badges and inline status chips.</p>
+            </div>
+            <div className="text-slate-500 dark:text-slate-400 text-xs">Preview</div>
+          </div>
+        </Card>
+
+        <Card className="rounded-xl border border-slate-200/60 p-4 shadow-sm dark:border-slate-700/40">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Menus & overlays</h4>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Tooltips, dropdowns and dialogs.</p>
+            </div>
+            <div className="text-slate-500 dark:text-slate-400 text-xs">Preview</div>
+          </div>
+        </Card>
+      </div>
     </PageSection>
   )
 
