@@ -744,6 +744,40 @@ const Dashboard = () => {
     </div>
   )
 
+  const fleetIntelCard = (
+    <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+      <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
+        Fleet intelligence
+      </div>
+      <div className="mt-5 space-y-3">
+        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Fleet intelligence</h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400">Top-level summary of managed VPS health, capacity, and billing.</p>
+      </div>
+      <dl className="mt-6 grid gap-3 text-sm text-slate-600 dark:text-slate-400 sm:grid-cols-3">
+        <div>
+          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Servers</dt>
+          <dd className="font-medium text-slate-900 dark:text-slate-100">{numberFormatter.format(servers.length)}</dd>
+        </div>
+        <div>
+          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Connected</dt>
+          <dd className="font-medium text-slate-900 dark:text-slate-100">{numberFormatter.format(connectedServers)}</dd>
+        </div>
+        <div>
+          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Monthly</dt>
+          <dd className="font-medium text-slate-900 dark:text-slate-100">{currencyFormatter.format(totalMonthlySpend)}</dd>
+        </div>
+      </dl>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Button asChild className="gap-2 rounded-full px-5 py-2 text-sm font-semibold">
+          <RouterLink to="/hosting">Open Fleet</RouterLink>
+        </Button>
+        <Button asChild variant="outline" className="gap-2 rounded-full px-5 py-2 text-sm font-semibold">
+          <RouterLink to="/web-scraping-tools/https-api">Proxy overview</RouterLink>
+        </Button>
+      </div>
+    </div>
+  )
+
   const chartsSection = (
     <PageSection id="charts" title="Charts" description="Quick visualizations of throughput and capacity." key="charts">
       <div className="grid gap-6 md:grid-cols-2">
@@ -906,10 +940,11 @@ const Dashboard = () => {
     )
   }
   
+  // Insert Fleet intelligence and VPS overview lower in the page
   sections.push(linksCard)
+  sections.push(fleetIntelCard)
   // Push VPS overview card so it's the penultimate section before the jump
   sections.push(vpsOverviewCard)
-
   // Add the Charts section (lightweight placeholders)
   sections.push(chartsSection)
 
@@ -920,28 +955,7 @@ const Dashboard = () => {
     </PageSection>,
   )
 
-  // Treat Fleet intelligence as a hero component at the top
-  const fleetHero = (
-    <PageSection
-      id="fleet-hero"
-      title="Fleet intelligence"
-      description="Top-level summary of managed VPS health and capacity."
-      key="fleet-hero"
-    >
-      <div className="rounded-[32px] border border-slate-200/70 bg-white/90 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75">
-        <h3 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Fleet intelligence</h3>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Capacity, health, and billing quick glance for operators and SREs.</p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl bg-white/80 p-4 text-center">Servers<br/><span className="font-semibold">{numberFormatter.format(servers.length)}</span></div>
-          <div className="rounded-2xl bg-white/80 p-4 text-center">Connected<br/><span className="font-semibold">{numberFormatter.format(connectedServers)}</span></div>
-          <div className="rounded-2xl bg-white/80 p-4 text-center">vCPU<br/><span className="font-semibold">{numberFormatter.format(totalVCPUs)}</span></div>
-          <div className="rounded-2xl bg-white/80 p-4 text-center">Monthly<br/><span className="font-semibold">{currencyFormatter.format(totalMonthlySpend)}</span></div>
-        </div>
-      </div>
-    </PageSection>
-  )
-
-  const mainContent = <>{[fleetHero, ...sections]}</>
+  const mainContent = <>{sections}</>
 
   return (
     <ProtectedComponent>
