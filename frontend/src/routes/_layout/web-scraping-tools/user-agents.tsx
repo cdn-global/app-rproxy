@@ -1,565 +1,645 @@
-import { useState, useRef, useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react"
 import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Table,
-  Thead,
-  Heading,
-  Tbody,
-  Tr,
-  SimpleGrid,
-  TableContainer,
-  Th,
-  Td,
-  IconButton,
-  Spinner,
-  Alert,
-  AlertIcon,
-  useToast,
-  HStack,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  useClipboard,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Textarea,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  useDisclosure,
-  Divider,
-  Tabs,
-  TabList,
-  Tab,
-  Badge,
-  VStack,
-} from "@chakra-ui/react";
-import { CopyIcon, ChevronDownIcon, EditIcon, DeleteIcon, AddIcon, RepeatIcon } from "@chakra-ui/icons";
-import type { UserPublic } from "../../../client";
+	keepPreviousData,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import {
+	Copy,
+	DownloadCloud,
+	Edit,
+	MoreHorizontal,
+	Plus,
+	RefreshCcw,
+	Trash2,
+} from "lucide-react"
 
-// --- API Configuration & Types (No changes) ---
-const API_BASE_URL = "https://api.ROAMINGPROXY.com/v2";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog"
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
+import { Textarea } from "@/components/ui/textarea"
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table"
+import useCustomToast from "@/hooks/useCustomToast"
+import type { UserPublic } from "@/client/types.gen"
+import { parseApiResponse } from "@/lib/api"
+
+const API_BASE_URL = "https://api.ROAMINGPROXY.com/v2"
+const PAGE_SIZE = 50
+
+type DeviceCategory = "all" | "desktop" | "mobile" | "other"
 
 interface UserAgentPublic {
-  id: string;
-  user_agent: string;
-  created_at: string;
-  device?: string;
-  browser?: string;
-  os?: string;
+	id: string
+	user_agent: string
+	created_at: string
+	device?: string | null
+	browser?: string | null
+	os?: string | null
 }
 
-interface UserAgentsPublic {
-  data: UserAgentPublic[];
-  count: number;
-}
-
-interface UserAgentCreate {
-    user_agent: string;
-}
-
-interface UserAgentUpdate {
-    user_agent?: string;
+interface UserAgentsResponse {
+	data: UserAgentPublic[]
+	count: number
 }
 
 interface UpdateSourceResponse {
-    status: string;
-    new_agents_added: number;
-    [key: string]: any;
+	status: string
+	new_agents_added: number
 }
 
-// --- Utility & API Functions (No changes) ---
-function convertToCSV(data: UserAgentPublic[]): string {
-    if (data.length === 0) return "";
-    const headers = "id,user_agent,created_at,device,browser,os";
-    const rows = data.map(row => {
-        const id = `"${row.id}"`;
-        const userAgent = `"${row.user_agent.replace(/"/g, '""')}"`;
-        const createdAt = `"${row.created_at}"`;
-        const device = `"${row.device ?? ''}"`;
-        const browser = `"${row.browser ?? ''}"`;
-        const os = `"${row.os ?? ''}"`;
-        return [id, userAgent, createdAt, device, browser, os].join(',');
-    });
-    return [headers, ...rows].join('\n');
-}
-
-function downloadFile(content: string, filename: string, mimeType: string) {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
+const TAB_CONFIG: Array<{
+	id: DeviceCategory
+	label: string
+	badgeVariant?: "default" | "secondary"
+}> = [
+	{ id: "all", label: "All" },
+	{ id: "desktop", label: "Desktop" },
+	{ id: "mobile", label: "Mobile" },
+	{ id: "other", label: "Other" },
+]
 
 const getAuthToken = () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-        console.warn("No access token found. Using a mock token for demonstration. Please log in for a real application.")
-        return "mock-jwt-token-for-testing";
-    }
-    return token;
-};
-
-async function fetchPaginatedUserAgents(skip: number, limit: number): Promise<UserAgentsPublic> {
-    const response = await fetch(`${API_BASE_URL}/user-agents/?skip=${skip}&limit=${limit}`);
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: "Failed to fetch user agents" }));
-        throw new Error(errorData.detail);
-    }
-    return response.json();
+	const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null
+	return token ?? ""
 }
 
-async function fetchAllUserAgents(): Promise<UserAgentPublic[]> {
-    const response = await fetch(`${API_BASE_URL}/user-agents/?limit=10000`);
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: "Failed to fetch all user agents" }));
-        throw new Error(errorData.detail);
-    }
-    const result: UserAgentsPublic = await response.json();
-    return result.data;
+const request = async <T,>(endpoint: string, init?: RequestInit): Promise<T> => {
+	const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+		...(init ?? {}),
+		headers: {
+			"Content-Type": "application/json",
+			...(init?.headers ?? {}),
+		},
+	})
+
+	return parseApiResponse<T>(response)
 }
 
-async function updateUserAgentsFromSource(): Promise<UpdateSourceResponse> {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/user-agents/update-from-source/`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: "Failed to update from source" }));
-        throw new Error(errorData.detail);
-    }
-    return response.json();
+const fetchUserAgents = (page: number) =>
+	request<UserAgentsResponse>(`/user-agents/?skip=${page * PAGE_SIZE}&limit=${PAGE_SIZE}`)
+
+const fetchAllUserAgents = () => request<UserAgentsResponse>(`/user-agents/?limit=10000`)
+
+const updateFromSource = () =>
+	request<UpdateSourceResponse>("/user-agents/update-from-source/", {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${getAuthToken()}`,
+		},
+	})
+
+const createUserAgent = (payload: { user_agent: string }) =>
+	request<UserAgentPublic>("/user-agents/", {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${getAuthToken()}`,
+		},
+		body: JSON.stringify(payload),
+	})
+
+const updateUserAgent = (id: string, payload: { user_agent: string }) =>
+	request<UserAgentPublic>(`/user-agents/${id}`, {
+		method: "PUT",
+		headers: {
+			Authorization: `Bearer ${getAuthToken()}`,
+		},
+		body: JSON.stringify(payload),
+	})
+
+const deleteUserAgent = (id: string) =>
+	request<void>(`/user-agents/${id}`, {
+		method: "DELETE",
+		headers: {
+			Authorization: `Bearer ${getAuthToken()}`,
+		},
+	})
+
+const downloadFile = (content: string, filename: string, mimeType: string) => {
+	const blob = new Blob([content], { type: mimeType })
+	const url = URL.createObjectURL(blob)
+	const anchor = document.createElement("a")
+	anchor.href = url
+	anchor.download = filename
+	document.body.appendChild(anchor)
+	anchor.click()
+	document.body.removeChild(anchor)
+	URL.revokeObjectURL(url)
 }
 
-async function createUserAgent(data: UserAgentCreate): Promise<UserAgentPublic> {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/user-agents/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: "Failed to create user agent" }));
-        throw new Error(errorData.detail);
-    }
-    return response.json();
+const formatDeviceLabel = (device?: string | null) => {
+	if (!device) return "Unknown"
+	return device.charAt(0).toUpperCase() + device.slice(1)
 }
 
-async function updateUserAgent({ id, data }: { id: string, data: UserAgentUpdate }): Promise<UserAgentPublic> {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/user-agents/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(data),
-    });
-     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: "Failed to update user agent" }));
-        throw new Error(errorData.detail);
-    }
-    return response.json();
-}
-
-async function deleteUserAgent(id: string): Promise<void> {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/user-agents/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok && response.status !== 204) {
-         const errorData = await response.json().catch(() => ({ detail: "Failed to delete user agent" }));
-        throw new Error(errorData.detail);
-    }
-}
-
-// --- Reusable Components ---
-const CopyCell = ({ textToCopy }: { textToCopy: string }) => {
-    const { onCopy } = useClipboard(textToCopy);
-    const toast = useToast();
-    const handleCopy = () => {
-        onCopy();
-        toast({ title: "Copied to clipboard!", status: "success", duration: 2000, isClosable: true });
-    };
-    return (<IconButton aria-label="Copy user agent" icon={<CopyIcon />} size="sm" onClick={handleCopy} />);
-};
-
-const AddEditUserAgentModal = ({ isOpen, onClose, onSubmit, initialData, isLoading }: { isOpen: boolean; onClose: () => void; onSubmit: (data: UserAgentCreate | UserAgentUpdate) => void; initialData?: UserAgentPublic | null; isLoading: boolean; }) => {
-  const [userAgent, setUserAgent] = useState(initialData?.user_agent || "");
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSubmit({ user_agent: userAgent }); };
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent as="form" onSubmit={handleSubmit}>
-        <ModalHeader>{initialData ? 'Edit User Agent' : 'Add New User Agent'}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <FormControl isRequired>
-            <FormLabel>User Agent String</FormLabel>
-            <Textarea defaultValue={initialData?.user_agent} onChange={(e) => setUserAgent(e.target.value)} placeholder="e.g. Mozilla/5.0 (Windows NT 10.0; Win64; x64)..." rows={5} />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>Cancel</Button>
-          <Button colorScheme="teal" type="submit" isLoading={isLoading}>{initialData ? 'Save Changes' : 'Create'}</Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
-};
-
-const DeleteConfirmationDialog = ({ isOpen, onClose, onConfirm, isLoading }: { isOpen: boolean, onClose: () => void, onConfirm: () => void, isLoading: boolean, }) => {
-    const cancelRef = useRef<HTMLButtonElement>(null);
-    return (
-        <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
-            <AlertDialogOverlay>
-                <AlertDialogContent>
-                    <AlertDialogHeader fontSize="lg" fontWeight="bold">Delete User Agent</AlertDialogHeader>
-                    <AlertDialogBody>Are you sure you want to delete this user agent? This action cannot be undone.</AlertDialogBody>
-                    <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={onClose}>Cancel</Button>
-                        <Button colorScheme="red" onClick={onConfirm} ml={3} isLoading={isLoading}>Delete</Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialogOverlay>
-        </AlertDialog>
-    );
-};
-
-const UserAgentTable = ({
-  agents,
-  isSuperuser,
-  handleOpenEditModal,
-  handleOpenDeleteAlert,
-  isPlaceholderData,
+const AddEditDialog = ({
+	mode,
+	open,
+	onOpenChange,
+	onSubmit,
+	isSubmitting,
+	initialValue,
 }: {
-  agents: UserAgentPublic[];
-  isSuperuser: boolean;
-  handleOpenEditModal: (agent: UserAgentPublic) => void;
-  handleOpenDeleteAlert: (id: string) => void;
-  isPlaceholderData: boolean;
+	mode: "create" | "edit"
+	open: boolean
+	onOpenChange: (open: boolean) => void
+	onSubmit: (value: string) => void
+	isSubmitting: boolean
+	initialValue?: string
 }) => {
-  if (agents.length === 0) {
-    return (
-      <Flex justify="center" align="center" p={10}>
-        <Text color="gray.500">No user agents to display in this category on this page.</Text>
-      </Flex>
-    );
-  }
+	const [value, setValue] = useState(initialValue ?? "")
 
-  return (
-    <TableContainer>
-      <Table variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th color="black">User Agent String</Th>
-            {/* START: UPDATED HEADERS */}
-            <Th color="black">Device</Th>
-            <Th color="black">OS</Th>
-            <Th color="black">Browser</Th>
-            {/* END: UPDATED HEADERS */}
-            <Th color="black" isNumeric>Actions</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {agents.map((agent) => (
-            <Tr key={agent.id} opacity={isPlaceholderData ? 0.5 : 1}>
-              <Td maxW="500px" whiteSpace="normal" wordBreak="break-all">{agent.user_agent}</Td>
-              {/* START: UPDATED CELLS */}
-              <Td>
-                {agent.device ? (
-                  <Badge colorScheme={
-                    agent.device.toLowerCase() === 'desktop' ? 'green' : 
-                    agent.device.toLowerCase() === 'mobile' ? 'orange' : 'gray'
-                  }>
-                    {agent.device}
-                  </Badge>
-                ) : (
-                  '-'
-                )}
-              </Td>
-              <Td>{agent.os || '-'}</Td>
-              <Td>{agent.browser || '-'}</Td>
-              {/* END: UPDATED CELLS */}
-              <Td isNumeric>
-                <HStack spacing={1} justify="flex-end">
-                  <CopyCell textToCopy={agent.user_agent} />
-                  {isSuperuser && (
-                    <>
-                      <IconButton aria-label="Edit" icon={<EditIcon />} size="sm" onClick={() => handleOpenEditModal(agent)} />
-                      <IconButton aria-label="Delete" icon={<DeleteIcon />} colorScheme="red" size="sm" onClick={() => handleOpenDeleteAlert(agent.id)} />
-                    </>
-                  )}
-                </HStack>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
-  );
-};
+	useEffect(() => {
+		if (open) {
+			setValue(initialValue ?? "")
+		}
+	}, [open, initialValue])
 
-// --- Main Page Component ---
-function UserAgentsPage() {
-  const [page, setPage] = useState(0);
-  const [limit] = useState(50);
-  const [editingAgent, setEditingAgent] = useState<UserAgentPublic | null>(null);
-  const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null);
-  const [tabIndex, setTabIndex] = useState(0);
+	const title = mode === "create" ? "Add user agent" : "Edit user agent"
 
-  const { isOpen: isAddEditModalOpen, onOpen: onAddEditModalOpen, onClose: onAddEditModalClose } = useDisclosure();
-  const { isOpen: isDeleteAlertOpen, onOpen: onDeleteAlertOpen, onClose: onDeleteAlertClose } = useDisclosure();
-
-  const toast = useToast();
-  const queryClient = useQueryClient()
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
-
-
-  const { data, isLoading, error, isPlaceholderData } = useQuery({
-    queryKey: ["userAgents", page, limit],
-    queryFn: () => fetchPaginatedUserAgents(page * limit, limit),
-    placeholderData: keepPreviousData,
-  });
-
-  const totalPages = data ? Math.ceil(data.count / limit) : 0;
-
-  // --- Mutations ---
-  const handleMutationError = (e: Error) => {
-    toast({ title: "An error occurred", description: e.message, status: "error", duration: 5000, isClosable: true });
-  };
-  const handleCRUDSuccess = (message: string) => {
-    toast({ title: message, status: "success", duration: 3000, isClosable: true });
-    queryClient.invalidateQueries({ queryKey: ["userAgents"] });
-    onAddEditModalClose();
-    onDeleteAlertClose();
-  };
-  const createMutation = useMutation({ mutationFn: createUserAgent, onSuccess: () => handleCRUDSuccess("User agent created."), onError: handleMutationError });
-  const updateMutation = useMutation({ mutationFn: updateUserAgent, onSuccess: () => handleCRUDSuccess("User agent updated."), onError: handleMutationError });
-  const deleteMutation = useMutation({ mutationFn: deleteUserAgent, onSuccess: () => handleCRUDSuccess("User agent deleted."), onError: handleMutationError });
-  const updateFromSourceMutation = useMutation({
-    mutationFn: updateUserAgentsFromSource,
-    onSuccess: (res) => {
-        toast({
-            title: "Update from source complete",
-            description: `${res.new_agents_added} new agents were added.`,
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-        });
-        queryClient.invalidateQueries({ queryKey: ["userAgents"] });
-    },
-    onError: handleMutationError,
-  });
-  const exportMutation = useMutation({
-    mutationFn: async (format: 'csv' | 'json') => {
-        const allAgents = await fetchAllUserAgents();
-        if (format === 'csv') {
-            const csvContent = convertToCSV(allAgents);
-            downloadFile(csvContent, 'user-agents.csv', 'text/csv');
-        } else {
-            const jsonContent = JSON.stringify(allAgents, null, 2);
-            downloadFile(jsonContent, 'user-agents.json', 'application/json');
-        }
-    },
-    onSuccess: () => { toast({ title: "Export started.", description: "Your file is downloading.", status: "success", duration: 3000, isClosable: true, }); },
-    onError: (e: Error) => { toast({ title: "Export Failed", description: e.message, status: "error", duration: 5000, isClosable: true, }); }
-  });
-
-  // --- Event Handlers ---
-  const handleOpenAddModal = () => { setEditingAgent(null); onAddEditModalOpen(); };
-  const handleOpenEditModal = (agent: UserAgentPublic) => { setEditingAgent(agent); onAddEditModalOpen(); };
-  const handleOpenDeleteAlert = (id: string) => { setDeletingAgentId(id); onDeleteAlertOpen(); }
-  const handleFormSubmit = (formData: UserAgentCreate | UserAgentUpdate) => {
-    if (editingAgent) { updateMutation.mutate({ id: editingAgent.id, data: formData }); }
-    else { createMutation.mutate(formData as UserAgentCreate); }
-  };
-  const handleDeleteConfirm = () => { if(deletingAgentId) { deleteMutation.mutate(deletingAgentId); } }
-
-  // --- Data filtering logic ---
-  const allAgents = data?.data ?? [];
-  const desktopAgents = useMemo(() => allAgents.filter(agent => agent.device?.toLowerCase() === 'desktop'), [allAgents]);
-  const mobileAgents = useMemo(() => allAgents.filter(agent => agent.device?.toLowerCase() === 'mobile'), [allAgents]);
-  const otherAgents = useMemo(() => allAgents.filter(agent => !['desktop', 'mobile'].includes(agent.device?.toLowerCase() ?? '')), [allAgents]);
-
-  const displayedAgents = useMemo(() => {
-    switch (tabIndex) {
-      case 1: return desktopAgents;
-      case 2: return mobileAgents;
-      case 3: return otherAgents;
-      default: return allAgents;
-    }
-  }, [tabIndex, allAgents, desktopAgents, mobileAgents, otherAgents]);
-
-
-  return (
-    <>
-      <Container maxW="full" py={9}>
-        <Flex align="center" justify="space-between" py={6}>
-           <Heading as="h1" size="xl" color="gray.800">User Agents</Heading>
-            <Text fontSize="lg" color="gray.600">A dynamic list of user agents for web scraping</Text>
-        </Flex>
-
-        <Tabs isLazy variant="enclosed-colored" colorScheme="red" onChange={(index) => setTabIndex(index)}>
-            <TabList>
-                {[
-                  { label: "All", count: allAgents.length, color: "red" },
-                  { label: "Desktop", count: desktopAgents.length, color: "red" },
-                  { label: "Mobile", count: mobileAgents.length, color: "red" },
-                  { label: "Other", count: otherAgents.length, color: "gray" },
-                ].map((tab, idx) => (
-                    <Tab
-                      key={idx}
-                      bg="white"
-                      fontWeight="semibold"
-                      fontSize="lg"
-                      color="gray.400"
-                      _selected={{
-                        bg: "gray.50",
-                        color: "red.600",
-                        borderColor: "inherit",
-                        borderBottomColor: "gray.50",
-                        borderTopWidth: "2px",
-                        borderTopColor: "red.400",
-                        marginTop: "-1px",
-                      }}
-                    >
-                      {tab.label} 
-                      <Badge ml='2' colorScheme={tab.color}>{tab.count}</Badge>
-                    </Tab>
-                ))}
-            </TabList>
-        </Tabs>
-
-        <Flex
-            direction={{ base: "column", md: "row" }}
-            justify="space-between"
-            align="center"
-            py={6}
-        >
-            <Box p={4} mb={{ base: 4, md: 0 }}>
-                <Text fontSize="lg" mb={2} color="gray.700">
-                  Reflect the most prevalent browsers and devices.
-                </Text>
-                <Text fontSize="lg" mb={4} color="gray.700">
-                Updated Daily
-                </Text>
-            </Box>
-
-            <VStack
-                spacing={3}
-                align={{ base: "stretch", md: "flex-end" }}
-                w={{ base: "full", md: "auto" }}
-            >
-               {currentUser?.is_superuser && (
-                    <SimpleGrid
-                        columns={{ base: 1, sm: 2 }}
-                        spacing={3}
-                        w="full"
-                    >
-                        <Button
-                            leftIcon={<RepeatIcon />}
-                            onClick={() => updateFromSourceMutation.mutate()}
-                            isLoading={updateFromSourceMutation.isPending}
-                            loadingText="Updating..."
-                        >
-                            Refresh Source
-                        </Button>
-                        <Button
-                            leftIcon={<AddIcon />}
-                            colorScheme="teal"
-                            onClick={handleOpenAddModal}
-                        >
-                            Add New
-                        </Button>
-                    </SimpleGrid>
-                )}
-                <Menu>
-                    <MenuButton
-                        as={Button}
-                        rightIcon={<ChevronDownIcon />}
-                        isLoading={exportMutation.isPending}
-                        loadingText="Exporting"
-                        w="full"
-                    >
-                        Export All
-                    </MenuButton>
-                    <MenuList>
-                        <MenuItem onClick={() => exportMutation.mutate('csv')}>Export as CSV</MenuItem>
-                        <MenuItem onClick={() => exportMutation.mutate('json')}>Export as JSON</MenuItem>
-                    </MenuList>
-                </Menu>
-            </VStack>
-        </Flex>
-
-        <Divider mb={4} />
-
-
-        {isLoading && !data && (
-          <Flex justify="center" align="center" height="300px"><Spinner size="xl" /></Flex>
-        )}
-        {error && (
-          <Alert status="error" borderRadius="md"><AlertIcon />{error.message}</Alert>
-        )}
-        {data && (
-          <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
-            <UserAgentTable
-                agents={displayedAgents}
-                isSuperuser={currentUser?.is_superuser || false}
-                handleOpenEditModal={handleOpenEditModal}
-                handleOpenDeleteAlert={handleOpenDeleteAlert}
-                isPlaceholderData={isPlaceholderData}
-            />
-            <Flex justify="space-between" p={4} align="center" borderTopWidth="1px" bg="gray.50">
-                <Text fontSize="sm" color="gray.600">
-                    Showing <strong>{displayedAgents.length}</strong> results on this page
-                </Text>
-                <HStack>
-                    <Button onClick={() => setPage(p => Math.max(0, p - 1))} isDisabled={page === 0}>
-                        Previous
-                    </Button>
-                    <Text fontSize="sm" mx={4} whiteSpace="nowrap">Page {page + 1} of {totalPages || 1}</Text>
-                    <Button onClick={() => setPage(p => p + 1)} isDisabled={page + 1 >= totalPages || isPlaceholderData}>
-                        Next
-                    </Button>
-                </HStack>
-            </Flex>
-          </Box>
-        )}
-      </Container>
-
-      {currentUser?.is_superuser && (
-        <>
-            <AddEditUserAgentModal isOpen={isAddEditModalOpen} onClose={onAddEditModalClose} onSubmit={handleFormSubmit} initialData={editingAgent} isLoading={createMutation.isPending || updateMutation.isPending}/>
-            <DeleteConfirmationDialog isOpen={isDeleteAlertOpen} onClose={onDeleteAlertClose} onConfirm={handleDeleteConfirm} isLoading={deleteMutation.isPending} />
-        </>
-      )}
-    </>
-  );
+	return (
+		<Dialog
+			open={open}
+			onOpenChange={(next) => {
+				if (!next) {
+					setValue(initialValue ?? "")
+				}
+				onOpenChange(next)
+			}}
+		>
+			<DialogContent className="max-w-lg">
+				<DialogHeader>
+					<DialogTitle>{title}</DialogTitle>
+					<DialogDescription>
+						Provide a full user agent string. We automatically capture device, OS, and browser metadata.
+					</DialogDescription>
+				</DialogHeader>
+				<div className="space-y-2">
+					<Label htmlFor="user-agent">User agent</Label>
+					<Textarea
+						id="user-agent"
+						className="min-h-[140px]"
+						value={value}
+						onChange={(event) => setValue(event.target.value)}
+						placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
+					/>
+				</div>
+				<DialogFooter className="gap-3">
+					<Button variant="outline" onClick={() => onOpenChange(false)}>
+						Cancel
+					</Button>
+					<Button
+						onClick={() => onSubmit(value)}
+						disabled={!value.trim()}
+						isLoading={isSubmitting}
+						loadingText="Saving..."
+					>
+						Save changes
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	)
 }
 
-// --- Route Definition ---
+const DeleteDialog = ({
+	open,
+	onOpenChange,
+	onConfirm,
+	isSubmitting,
+}: {
+	open: boolean
+	onOpenChange: (open: boolean) => void
+	onConfirm: () => void
+	isSubmitting: boolean
+}) => (
+	<Dialog open={open} onOpenChange={onOpenChange}>
+		<DialogContent className="max-w-sm">
+			<DialogHeader>
+				<DialogTitle>Delete user agent</DialogTitle>
+				<DialogDescription>
+					This action cannot be undone. The string will be permanently removed from your workspace catalogue.
+				</DialogDescription>
+			</DialogHeader>
+			<DialogFooter className="gap-3">
+				<Button variant="outline" onClick={() => onOpenChange(false)}>
+					Cancel
+				</Button>
+				<Button
+					variant="destructive"
+					onClick={onConfirm}
+					isLoading={isSubmitting}
+					loadingText="Deleting..."
+				>
+					Delete
+				</Button>
+			</DialogFooter>
+		</DialogContent>
+	</Dialog>
+)
+
+const UserAgentsPage = () => {
+	const toast = useCustomToast()
+	const queryClient = useQueryClient()
+	const [page, setPage] = useState(0)
+	const [activeTab, setActiveTab] = useState<DeviceCategory>("all")
+	const [dialogState, setDialogState] = useState<{
+		mode: "create" | "edit"
+		target?: UserAgentPublic
+		open: boolean
+	}>({ mode: "create", open: false })
+	const [deleteTarget, setDeleteTarget] = useState<UserAgentPublic | null>(null)
+
+	const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+
+	const { data, isLoading, error, isPlaceholderData } = useQuery({
+		queryKey: ["userAgents", page],
+		queryFn: () => fetchUserAgents(page),
+		placeholderData: keepPreviousData,
+		staleTime: 60_000,
+	})
+
+	const createMutation = useMutation({
+		mutationFn: createUserAgent,
+		onSuccess: () => {
+			toast("User agent added", "The new agent has been saved to your library.", "success")
+			queryClient.invalidateQueries({ queryKey: ["userAgents"] })
+			setDialogState((state) => ({ ...state, open: false }))
+		},
+		onError: (err: Error) => {
+			toast("Unable to add", err.message, "error")
+		},
+	})
+
+	const updateMutation = useMutation({
+		mutationFn: ({ id, value }: { id: string; value: string }) => updateUserAgent(id, { user_agent: value }),
+		onSuccess: () => {
+			toast("User agent updated", "Changes were applied successfully.", "success")
+			queryClient.invalidateQueries({ queryKey: ["userAgents"] })
+			setDialogState((state) => ({ ...state, open: false }))
+		},
+		onError: (err: Error) => {
+			toast("Update failed", err.message, "error")
+		},
+	})
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => deleteUserAgent(id),
+		onSuccess: () => {
+			toast("User agent removed", "The entry was deleted from your workspace.", "success")
+			queryClient.invalidateQueries({ queryKey: ["userAgents"] })
+			setDeleteTarget(null)
+		},
+		onError: (err: Error) => {
+			toast("Delete failed", err.message, "error")
+		},
+	})
+
+	const refreshMutation = useMutation({
+		mutationFn: updateFromSource,
+		onSuccess: (result) => {
+			toast("Source refreshed", `${result.new_agents_added} new agents were added.`, "success")
+			queryClient.invalidateQueries({ queryKey: ["userAgents"] })
+		},
+		onError: (err: Error) => {
+			toast("Refresh failed", err.message, "error")
+		},
+	})
+
+	const exportMutation = useMutation({
+		mutationFn: async (format: "csv" | "json") => {
+			const response = await fetchAllUserAgents()
+			if (format === "csv") {
+				const headers = "id,user_agent,created_at,device,browser,os"
+				const rows = response.data.map((agent) => {
+					const values = [
+						agent.id,
+						agent.user_agent.replace(/"/g, '""'),
+						agent.created_at,
+						agent.device ?? "",
+						agent.browser ?? "",
+						agent.os ?? "",
+					]
+					return values.map((value) => `"${value}"`).join(",")
+				})
+				downloadFile([headers, ...rows].join("\n"), "user-agents.csv", "text/csv")
+			} else {
+				downloadFile(JSON.stringify(response.data, null, 2), "user-agents.json", "application/json")
+			}
+		},
+		onSuccess: () => {
+			toast("Export started", "Your download should begin momentarily.", "success")
+		},
+		onError: (err: Error) => {
+			toast("Export failed", err.message, "error")
+		},
+	})
+
+	const agents = data?.data ?? []
+	const totalCount = data?.count ?? 0
+	const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+	const filteredAgents = useMemo(() => {
+		switch (activeTab) {
+			case "desktop":
+				return agents.filter((agent) => agent.device?.toLowerCase() === "desktop")
+			case "mobile":
+				return agents.filter((agent) => agent.device?.toLowerCase() === "mobile")
+			case "other":
+				return agents.filter((agent) => {
+					const device = agent.device?.toLowerCase()
+					return device !== "desktop" && device !== "mobile"
+				})
+			default:
+				return agents
+		}
+	}, [agents, activeTab])
+
+	const canManage = currentUser?.is_superuser ?? false
+
+	const openCreateDialog = () => setDialogState({ mode: "create", open: true })
+	const openEditDialog = (agent: UserAgentPublic) => setDialogState({ mode: "edit", target: agent, open: true })
+
+	const handleSubmitDialog = (value: string) => {
+		if (dialogState.mode === "edit" && dialogState.target) {
+			updateMutation.mutate({ id: dialogState.target.id, value })
+			return
+		}
+
+		createMutation.mutate({ user_agent: value })
+	}
+
+	const handleCopy = (value: string) => {
+		if (typeof navigator === "undefined" || !navigator.clipboard) {
+			toast("Copy unavailable", "Clipboard access is not available in this environment.", "error")
+			return
+		}
+
+		navigator.clipboard.writeText(value).then(() => {
+			toast("Copied", "The user agent has been copied to your clipboard.", "success")
+		})
+	}
+
+	return (
+		<div className="space-y-10 py-10">
+			<Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(16,185,129,0.62)] dark:text-slate-100">
+				<div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.65),_transparent_52%),_radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.5),_transparent_58%)]" />
+				<div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/78 via-white/52 to-white/30 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/38" />
+				<CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+					<div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
+						<span>Web scraping</span>
+						<span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+						<span>User agents</span>
+					</div>
+					<div className="space-y-2">
+						<CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+							User agent catalogue
+						</CardTitle>
+						<CardDescription>
+							Curate and rotate trusted user agents for your scraping workloads. Track source refreshes and manage overrides in one place.
+						</CardDescription>
+					</div>
+				</CardHeader>
+			</Card>
+
+			<Card className="border border-slate-200/70 bg-white/85 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur-lg dark:border-slate-700/60 dark:bg-slate-900/70">
+				<CardHeader className="gap-6">
+					<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+						<div className="flex flex-wrap items-center gap-2">
+							{TAB_CONFIG.map((tab) => (
+								<Button
+									key={tab.id}
+									variant={activeTab === tab.id ? "default" : "secondary"}
+									className="rounded-full"
+									onClick={() => setActiveTab(tab.id)}
+								>
+									<span>{tab.label}</span>
+									<Badge variant="outline" className="ml-2 rounded-full px-2 py-0 text-[0.65rem]">
+										{tab.id === "all" ? agents.length : filteredAgents.length}
+									</Badge>
+								</Button>
+							))}
+						</div>
+						<div className="flex flex-wrap gap-3">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="outline"
+										className="rounded-full"
+										disabled={exportMutation.isPending}
+									>
+										<DownloadCloud className="mr-2 h-4 w-4" />
+										{exportMutation.isPending ? "Exporting" : "Export"}
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end" className="w-40">
+									<DropdownMenuItem onClick={() => exportMutation.mutate("csv")}>
+										CSV
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => exportMutation.mutate("json")}>
+										JSON
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+							{canManage ? (
+								<>
+									<Button
+										variant="secondary"
+										className="rounded-full"
+										onClick={() => refreshMutation.mutate()}
+										isLoading={refreshMutation.isPending}
+										loadingText="Refreshing..."
+									>
+										<RefreshCcw className="mr-2 h-4 w-4" />
+										Refresh source
+									</Button>
+									<Button className="rounded-full" onClick={openCreateDialog}>
+										<Plus className="mr-2 h-4 w-4" />
+										Add user agent
+									</Button>
+								</>
+							) : null}
+						</div>
+					</div>
+				</CardHeader>
+				<CardContent className="space-y-6">
+					<div className="rounded-2xl border border-slate-200/70 bg-white/90 px-4 py-3 text-sm text-slate-600 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-300">
+						{totalCount > 0 ? (
+							<span>{totalCount.toLocaleString()} total user agents indexed across your workspace.</span>
+						) : (
+							<span>The catalogue is empty. Refresh the source or add your first override.</span>
+						)}
+					</div>
+
+					{isLoading && !data ? (
+						<div className="flex h-[320px] items-center justify-center">
+							<Spinner size={48} />
+						</div>
+					) : error ? (
+						<Alert variant="destructive" className="border-destructive/50 bg-destructive/10">
+							<AlertTitle>Unable to load user agents</AlertTitle>
+							<AlertDescription>{error instanceof Error ? error.message : "Unexpected error"}</AlertDescription>
+						</Alert>
+					) : (
+						<div className="overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm dark:border-slate-700/60">
+							<Table>
+								<TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+									<TableRow className="border-slate-200/70 dark:border-slate-700/60">
+										<TableHead>User agent</TableHead>
+										<TableHead className="w-[120px]">Device</TableHead>
+										<TableHead className="w-[140px]">OS</TableHead>
+										<TableHead className="w-[140px]">Browser</TableHead>
+										<TableHead className="w-[100px] text-right">Actions</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{filteredAgents.length === 0 ? (
+										<TableRow>
+											<TableCell colSpan={5} className="py-16 text-center text-sm text-muted-foreground">
+												No user agents match this filter.
+											</TableCell>
+										</TableRow>
+									) : (
+										filteredAgents.map((agent) => (
+											<TableRow key={agent.id} className="border-slate-200/70 dark:border-slate-700/60">
+												<TableCell className="max-w-[520px] whitespace-pre-wrap font-mono text-sm">
+													{agent.user_agent}
+												</TableCell>
+												<TableCell>
+													<Badge variant="outline" className="rounded-full px-3 py-0.5 text-xs">
+														{formatDeviceLabel(agent.device)}
+													</Badge>
+												</TableCell>
+												<TableCell className="text-sm text-slate-600 dark:text-slate-300">
+													{agent.os ?? "—"}
+												</TableCell>
+												<TableCell className="text-sm text-slate-600 dark:text-slate-300">
+													{agent.browser ?? "—"}
+												</TableCell>
+												<TableCell className="text-right">
+													<div className="flex justify-end gap-2">
+														<Button
+															size="icon"
+															variant="ghost"
+															className="rounded-full"
+															onClick={() => handleCopy(agent.user_agent)}
+															aria-label="Copy user agent"
+														>
+															<Copy className="h-4 w-4" />
+														</Button>
+														{canManage ? (
+															<DropdownMenu>
+																<DropdownMenuTrigger asChild>
+																	<Button size="icon" variant="ghost" className="rounded-full">
+																		<MoreHorizontal className="h-4 w-4" />
+																	</Button>
+																</DropdownMenuTrigger>
+																<DropdownMenuContent align="end">
+																	<DropdownMenuItem onClick={() => openEditDialog(agent)}>
+																		<Edit className="mr-2 h-4 w-4" />
+																		Edit
+																	</DropdownMenuItem>
+																	<DropdownMenuItem onClick={() => setDeleteTarget(agent)}>
+																		<Trash2 className="mr-2 h-4 w-4" />
+																		Delete
+																	</DropdownMenuItem>
+																</DropdownMenuContent>
+															</DropdownMenu>
+														) : null}
+													</div>
+												</TableCell>
+											</TableRow>
+										))
+									)}
+								</TableBody>
+								<TableFooter>
+									<TableRow>
+										<TableCell colSpan={5} className="text-right text-sm text-muted-foreground">
+											Page {page + 1} of {totalPages}
+										</TableCell>
+									</TableRow>
+								</TableFooter>
+							</Table>
+						</div>
+					)}
+
+					<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+						<div className="text-sm text-muted-foreground">
+							Showing {filteredAgents.length} result{filteredAgents.length === 1 ? "" : "s"} on this page.
+						</div>
+						<div className="flex gap-2">
+							<Button
+								variant="outline"
+								className="rounded-full"
+								onClick={() => setPage((current) => Math.max(0, current - 1))}
+								disabled={page === 0 || isLoading}
+							>
+								Previous
+							</Button>
+							<Button
+								variant="outline"
+								className="rounded-full"
+								onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))}
+								disabled={page + 1 >= totalPages || isPlaceholderData}
+							>
+								Next
+							</Button>
+						</div>
+					</div>
+				</CardContent>
+			</Card>
+
+			<AddEditDialog
+				mode={dialogState.mode}
+				open={dialogState.open}
+				onOpenChange={(open) => setDialogState((state) => ({ ...state, open }))}
+				onSubmit={handleSubmitDialog}
+				isSubmitting={createMutation.isPending || updateMutation.isPending}
+				initialValue={dialogState.target?.user_agent}
+			/>
+
+			<DeleteDialog
+				open={Boolean(deleteTarget)}
+				onOpenChange={(open) => {
+					if (!open) {
+						setDeleteTarget(null)
+					}
+				}}
+				onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+				isSubmitting={deleteMutation.isPending}
+			/>
+		</div>
+	)
+}
+
 export const Route = createFileRoute("/_layout/web-scraping-tools/user-agents")({
-  component: UserAgentsPage,
-});
+	component: UserAgentsPage,
+})
+
+export default UserAgentsPage

@@ -1,25 +1,29 @@
-import {
-  Container,
-  Heading,
-  SkeletonText,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { z } from "zod"
 
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { ItemsService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
+import {
+  PageScaffold,
+  PageSection,
+  SectionNavigation,
+  type SectionNavItem,
+} from "../../components/Common/PageLayout"
 import Navbar from "../../components/Common/Navbar"
-import AddItem from "../../components/Items/AddItem"
 import { PaginationFooter } from "../../components/Common/PaginationFooter"
+import AddItem from "../../components/Items/AddItem"
 const itemsSearchSchema = z.object({
   page: z.number().catch(1),
 })
@@ -46,12 +50,10 @@ function ItemsTable() {
   const { page } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
 
-  type ItemsSearch = z.infer<typeof itemsSearchSchema>; // { page: number }
-
-  const setPage = (page: number) =>
+  const setPage = (nextPage: number) =>
     navigate({
-      search: (prev: ItemsSearch) => ({ ...prev, page }),
-    });
+      search: (prev: ItemsSearch) => ({ ...prev, page: nextPage }),
+    })
   const {
     data: items,
     isPending,
@@ -61,8 +63,9 @@ function ItemsTable() {
     placeholderData: (prevData) => prevData,
   })
 
-  const hasNextPage = !isPlaceholderData && items?.data.length === PER_PAGE
+  const hasNextPage = !isPlaceholderData && (items?.data.length ?? 0) === PER_PAGE
   const hasPreviousPage = page > 1
+  const totalItems = items?.count ?? items?.data.length ?? 0
 
   useEffect(() => {
     if (hasNextPage) {
@@ -70,70 +73,145 @@ function ItemsTable() {
     }
   }, [page, queryClient, hasNextPage])
 
+  const skeletonRows = Array.from({ length: 5 })
+  const showEmptyState = !isPending && (items?.data.length ?? 0) === 0
+
   return (
-    <>
-      <TableContainer>
-        <Table size={{ base: "sm", md: "md" }}>
-          <Thead>
-            <Tr>
-              <Th>ID</Th>
-              <Th>Title</Th>
-              <Th>Description</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          {isPending ? (
-            <Tbody>
-              <Tr>
-                {new Array(4).fill(null).map((_, index) => (
-                  <Td key={index}>
-                    <SkeletonText noOfLines={1} paddingBlock="16px" />
-                  </Td>
-                ))}
-              </Tr>
-            </Tbody>
-          ) : (
-            <Tbody>
-              {items?.data.map((item) => (
-                <Tr key={item.id} opacity={isPlaceholderData ? 0.5 : 1}>
-                  <Td>{item.id}</Td>
-                  <Td isTruncated maxWidth="150px">
-                    {item.title}
-                  </Td>
-                  <Td
-                    color={!item.description ? "ui.dim" : "inherit"}
-                    isTruncated
-                    maxWidth="150px"
-                  >
-                    {item.description || "N/A"}
-                  </Td>
-                  <Td>
-                    <ActionsMenu type={"Item"} value={item} />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          )}
-        </Table>
-      </TableContainer>
-      <PaginationFooter
-        page={page}
-        onChangePage={setPage}
-        hasNextPage={hasNextPage}
-        hasPreviousPage={hasPreviousPage}
-      />
-    </>
+    <Card className="border border-slate-200/70 bg-white/75 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
+      <CardHeader className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <CardTitle className="text-xl">Items Inventory</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Track knowledge base entries and inline tooling snippets.
+          </p>
+        </div>
+        <Badge variant="subtle" className="rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.2em]">
+          {totalItems} total
+        </Badge>
+      </CardHeader>
+      <CardContent className="px-6 pb-6">
+        <div className="overflow-x-auto">
+          <Table className="min-w-[680px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[110px]">ID</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead className="w-[120px] text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isPending
+                ? skeletonRows.map((_, index) => (
+                    <TableRow key={`skeleton-${index}`} className="animate-pulse">
+                      {[0, 1, 2, 3].map((cell) => (
+                        <TableCell key={cell}>
+                          <div className="h-4 w-full rounded bg-muted" />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                : showEmptyState
+                  ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
+                        No items found. Use the quick action above to add your first record.
+                      </TableCell>
+                    </TableRow>
+                  )
+                  : items?.data.map((item) => (
+                      <TableRow
+                        key={item.id}
+                        className={isPlaceholderData ? "opacity-60" : undefined}
+                      >
+                        <TableCell className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                          {item.id}
+                        </TableCell>
+                        <TableCell className="max-w-[240px] truncate font-medium">
+                          {item.title}
+                        </TableCell>
+                        <TableCell className="max-w-[320px] truncate text-muted-foreground">
+                          {item.description || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <ActionsMenu type="Item" value={item} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+            </TableBody>
+          </Table>
+        </div>
+        <PaginationFooter
+          page={page}
+          onChangePage={setPage}
+          hasNextPage={hasNextPage}
+          hasPreviousPage={hasPreviousPage}
+        />
+      </CardContent>
+    </Card>
   )
 }
 
 function Items() {
+  const navigation: SectionNavItem[] = [
+    {
+      id: "actions",
+      label: "Item toolkit",
+      description: "Launch quick create flows and manage catalog inputs.",
+    },
+    {
+      id: "inventory",
+      label: "Catalog records",
+      description: "Review every stored item, status, and available actions.",
+    },
+  ]
+
   return (
-    <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Note Management
-      </Heading>
-      <Navbar type={"Item"} addModalAs={AddItem} />
-      <ItemsTable />
-    </Container>
+    <PageScaffold
+      sidebar={
+        <>
+          <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-400">
+              <span>Operations</span>
+              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+              <span>Items</span>
+            </div>
+            <div className="mt-5 space-y-3">
+              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Item Catalog
+              </h1>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Keep the knowledge base synchronized across crawler tooling, API guides, and inline helpers.
+              </p>
+            </div>
+            <div className="mt-6 space-y-3 text-xs text-slate-500 dark:text-slate-500">
+              <p>
+                Use the toolkit to add or retire entries, then audit their metadata and linked snippets from the catalog section.
+              </p>
+              <p>
+                Pagination keeps results fast; filters and ownership metadata arrive in a coming release.
+              </p>
+            </div>
+          </div>
+          <SectionNavigation items={navigation} />
+        </>
+      }
+    >
+      <PageSection
+        id="actions"
+        title="Catalog toolkit"
+        description="Trigger creation flows and manage collaborative actions."
+      >
+        <Navbar type="Item" addModalAs={AddItem} />
+      </PageSection>
+
+      <PageSection
+        id="inventory"
+        title="Catalog inventory"
+        description="Inspect every stored item, edit inline, or hand off for automation."
+      >
+        <ItemsTable />
+      </PageSection>
+    </PageScaffold>
   )
 }

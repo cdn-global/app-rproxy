@@ -1,25 +1,14 @@
 import {
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Image,
-  Input,
-  Link,
-  Text,
-  Box,
-  Heading,
-} from "@chakra-ui/react"
-import {
   Link as RouterLink,
   createFileRoute,
   redirect,
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import Logo from "../components/Common/Logo"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import type { UserRegister } from "../client"
+import Logo from "../components/Common/Logo"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { confirmPasswordRules, emailPattern, passwordRules } from "../utils"
 
@@ -61,96 +50,56 @@ function SignUp() {
   }
 
   return (
-    <Container 
-      maxW="container.xl" 
-      p={{ base: 4, md: 0 }} 
-      minH="100vh" 
-      display="flex" 
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
-        width="100%"
-        maxW={{ base: "100%", md: "container.xl" }}
-        bg="white"
-        boxShadow={{ base: "sm", md: "md" }}
-        borderRadius={{ base: "lg", md: "md" }}
-        overflow="hidden"
-      >
-        {/* Left Column - Text Section */}
-        <Box
-          flex={{ md: 1 }}
-          bg="gray.50"
-          p={{ base: 6, md: 10 }}
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start"
-          borderRadius={{ base: "lg lg 0 0", md: "md 0 0 md" }}
-        >
-          <Heading 
-            as="h1" 
-            size={{ base: "lg", md: "xl" }} 
-            mb={{ base: 4, md: 6 }} 
-            color="gray.800"
-          >
+    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-8">
+      <div className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-background shadow-lg md:grid-cols-[1fr,1fr]">
+        <div className="flex flex-col gap-4 bg-muted/30 p-8 md:p-12">
+          <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
             Access Your Data Needs
-          </Heading>
-          <Text 
-            fontSize={{ base: "md", md: "lg" }} 
-            color="gray.600" 
-            mb={{ base: 3, md: 4 }}
-          >
-            Sign up to wield cutting-edge tools and transform your data into pure power.
-          </Text>
-          <Text 
-            fontSize={{ base: "sm", md: "md" }} 
-            color="gray.500"
-          >
-            Curious how far you can go? Our expert crew and secret knowledge base are your launchpad to greatness.
-          </Text>
-        </Box>
+          </h1>
+          <p className="text-base text-muted-foreground md:text-lg">
+            Sign up to wield cutting-edge tools and transform your data into
+            pure power.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Curious how far you can go? Our expert crew and knowledge base are
+            your launchpad to greatness.
+          </p>
+        </div>
 
-        {/* Right Column - Form Section */}
-        <Box
-          flex={{ md: 1 }}
-          as="form"
+        <form
           onSubmit={handleSubmit(onSubmit)}
-          p={{ base: 6, md: 10 }}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          gap={{ base: 4, md: 6 }}
-          width={{ base: "100%", md: "auto" }}
+          className="flex flex-col items-center gap-6 p-8 md:p-12"
         >
-      <Logo
-      src="/assets/images/roaming-proxy-network-logo.png"
-      alt="Roaming Proxy Logo"
-      to="/"
-      width="110px"
-    />
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            imgClassName="w-24 md:w-28"
+            className="self-start"
+          />
 
-          <FormControl id="full_name" isInvalid={!!errors.full_name} width="100%">
-            <FormLabel htmlFor="full_name" srOnly>
+          <div className="w-full space-y-2">
+            <Label htmlFor="full_name" className="sr-only">
               Full Name
-            </FormLabel>
+            </Label>
             <Input
               id="full_name"
               minLength={3}
               {...register("full_name", { required: "Full Name is required" })}
               placeholder="Full Name"
               type="text"
-              size={{ base: "md", md: "lg" }}
+              className="h-12 text-base"
             />
-            {errors.full_name && (
-              <FormErrorMessage>{errors.full_name.message}</FormErrorMessage>
-            )}
-          </FormControl>
+            {errors.full_name ? (
+              <p className="text-sm text-destructive">
+                {errors.full_name.message}
+              </p>
+            ) : null}
+          </div>
 
-          <FormControl id="email" isInvalid={!!errors.email} width="100%">
-            <FormLabel htmlFor="email" srOnly>
+          <div className="w-full space-y-2">
+            <Label htmlFor="email" className="sr-only">
               Email
-            </FormLabel>
+            </Label>
             <Input
               id="email"
               {...register("email", {
@@ -159,68 +108,68 @@ function SignUp() {
               })}
               placeholder="Email"
               type="email"
-              size={{ base: "md", md: "lg" }}
+              className="h-12 text-base"
             />
-            {errors.email && (
-              <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-            )}
-          </FormControl>
+            {errors.email ? (
+              <p className="text-sm text-destructive">{errors.email.message}</p>
+            ) : null}
+          </div>
 
-          <FormControl id="password" isInvalid={!!errors.password} width="100%">
-            <FormLabel htmlFor="password" srOnly>
+          <div className="w-full space-y-2">
+            <Label htmlFor="password" className="sr-only">
               Password
-            </FormLabel>
+            </Label>
             <Input
               id="password"
               {...register("password", passwordRules())}
               placeholder="Password"
               type="password"
-              size={{ base: "md", md: "lg" }}
+              className="h-12 text-base"
             />
-            {errors.password && (
-              <FormErrorMessage>{errors.password.message}</FormErrorMessage>
-            )}
-          </FormControl>
+            {errors.password ? (
+              <p className="text-sm text-destructive">
+                {errors.password.message}
+              </p>
+            ) : null}
+          </div>
 
-          <FormControl id="confirm_password" isInvalid={!!errors.confirm_password} width="100%">
-            <FormLabel htmlFor="confirm_password" srOnly>
+          <div className="w-full space-y-2">
+            <Label htmlFor="confirm_password" className="sr-only">
               Confirm Password
-            </FormLabel>
+            </Label>
             <Input
               id="confirm_password"
               {...register("confirm_password", confirmPasswordRules(getValues))}
               placeholder="Repeat Password"
               type="password"
-              size={{ base: "md", md: "lg" }}
+              className="h-12 text-base"
             />
-            {errors.confirm_password && (
-              <FormErrorMessage>{errors.confirm_password.message}</FormErrorMessage>
-            )}
-          </FormControl>
+            {errors.confirm_password ? (
+              <p className="text-sm text-destructive">
+                {errors.confirm_password.message}
+              </p>
+            ) : null}
+          </div>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
-            isLoading={isSubmitting} 
-            width="100%"
-            size={{ base: "md", md: "lg" }}
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            loadingText="Creating account"
+            className="h-12 w-full text-base"
+            variant="primary"
           >
             Sign Up
           </Button>
 
-          <Text fontSize={{ base: "sm", md: "md" }}>
+          <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link 
-              as={RouterLink} 
-              to="/login" 
-              color="red.500"
-            >
+            <RouterLink to="/login" className="font-medium text-primary hover:underline">
               Log In
-            </Link>
-          </Text>
-        </Box>
-      </Flex>
-    </Container>
+            </RouterLink>
+          </p>
+        </form>
+      </div>
+    </div>
   )
 }
 

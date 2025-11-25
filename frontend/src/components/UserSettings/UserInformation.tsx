@@ -1,157 +1,152 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { type SubmitHandler, useForm } from "react-hook-form"
+
 import {
-    Box,
-    Button,
-    Container,
-    Flex,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Heading,
-    Input,
-    Text,
-    useColorModeValue,
-  } from "@chakra-ui/react"
-  import { useMutation, useQueryClient } from "@tanstack/react-query"
-  import { useState } from "react"
-  import { type SubmitHandler, useForm } from "react-hook-form"
-  
-  import {
-    type ApiError,
-    type UserPublic,
-    type UserUpdateMe,
-    UsersService,
-  } from "../../client"
-  import useAuth from "../../hooks/useAuth"
-  import useCustomToast from "../../hooks/useCustomToast"
-  import { emailPattern, handleError } from "../../utils"
-  
-  const UserInformation = () => {
-    const queryClient = useQueryClient()
-    const color = useColorModeValue("inherit", "ui.light")
-    const showToast = useCustomToast()
-    const [editMode, setEditMode] = useState(false)
-    const { user: currentUser } = useAuth()
-    const {
-      register,
-      handleSubmit,
-      reset,
-      getValues,
-      formState: { isSubmitting, errors, isDirty },
-    } = useForm<UserPublic>({
-      mode: "onBlur",
-      criteriaMode: "all",
-      defaultValues: {
-        full_name: currentUser?.full_name,
-        email: currentUser?.email,
-      },
-    })
-  
-    const toggleEditMode = () => {
-      setEditMode(!editMode)
-    }
-  
-    const mutation = useMutation({
-      mutationFn: (data: UserUpdateMe) =>
-        UsersService.updateUserMe({ requestBody: data }),
+  type ApiError,
+  type UserPublic,
+  type UserUpdateMe,
+  UsersService,
+} from "../../client"
+import useAuth from "../../hooks/useAuth"
+import useCustomToast from "../../hooks/useCustomToast"
+import { emailPattern, handleError } from "../../utils"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+const UserInformation = () => {
+  const queryClient = useQueryClient()
+  const showToast = useCustomToast()
+  const [isEditing, setIsEditing] = useState(false)
+  const { user: currentUser } = useAuth()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { isSubmitting, errors, isDirty },
+  } = useForm<UserPublic>({
+    mode: "onBlur",
+    criteriaMode: "all",
+    defaultValues: {
+      full_name: currentUser?.full_name,
+      email: currentUser?.email,
+    },
+  })
+
+  const mutation = useMutation({
+    mutationFn: (data: UserUpdateMe) =>
+      UsersService.updateUserMe({ requestBody: data }),
+    onSuccess: () => {
+      showToast("Success!", "User updated successfully.", "success")
+      setIsEditing(false)
+    },
+    onError: (err: ApiError) => {
+      handleError(err, showToast)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries()
+    },
+  })
+
+  const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
+    mutation.mutate(data, {
       onSuccess: () => {
-        showToast("Success!", "User updated successfully.", "success")
-      },
-      onError: (err: ApiError) => {
-        handleError(err, showToast)
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries()
+        reset({
+          full_name: data.full_name ?? "",
+          email: data.email ?? currentUser?.email ?? "",
+        })
       },
     })
-  
-    const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
-      mutation.mutate(data)
-    }
-  
-    const onCancel = () => {
-      reset()
-      toggleEditMode()
-    }
-  
-    return (
-      <>
-        <Container maxW="full">
-          <Heading size="sm" py={4}>
-            User Information
-          </Heading>
-          <Box
-            w={{ sm: "full", md: "50%" }}
-            as="form"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <FormControl>
-              <FormLabel color={color} htmlFor="name">
-                Full name
-              </FormLabel>
-              {editMode ? (
-                <Input
-                  id="name"
-                  {...register("full_name", { maxLength: 30 })}
-                  type="text"
-                  size="md"
-                  w="auto"
-                />
-              ) : (
-                <Text
-                  size="md"
-                  py={2}
-                  color={!currentUser?.full_name ? "ui.dim" : "inherit"}
-                  isTruncated
-                  maxWidth="250px"
-                >
-                  {currentUser?.full_name || "N/A"}
-                </Text>
-              )}
-            </FormControl>
-            <FormControl mt={4} isInvalid={!!errors.email}>
-              <FormLabel color={color} htmlFor="email">
-                Email
-              </FormLabel>
-              {editMode ? (
+  }
+
+  const onCancel = () => {
+    reset()
+    setIsEditing(false)
+  }
+
+  return (
+    <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-xl">Profile details</CardTitle>
+        <CardDescription>
+          Keep your personal information up to date so we can reach you when it matters.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-2">
+            <Label htmlFor="full_name" className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              Full name
+            </Label>
+            {isEditing ? (
+              <Input
+                id="full_name"
+                {...register("full_name", { maxLength: 64 })}
+                placeholder="Enter your full name"
+                autoComplete="name"
+              />
+            ) : (
+              <p className="text-sm font-medium text-foreground">
+                {currentUser?.full_name || "Not provided"}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              Email address
+            </Label>
+            {isEditing ? (
+              <div className="space-y-2">
                 <Input
                   id="email"
+                  type="email"
                   {...register("email", {
                     required: "Email is required",
                     pattern: emailPattern,
                   })}
-                  type="email"
-                  size="md"
-                  w="auto"
+                  placeholder="you@example.com"
+                  autoComplete="email"
                 />
-              ) : (
-                <Text size="md" py={2} isTruncated maxWidth="250px">
-                  {currentUser?.email}
-                </Text>
-              )}
-              {errors.email && (
-                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <Flex mt={4} gap={3}>
+                {errors.email ? (
+                  <p className="text-xs text-destructive">{errors.email.message}</p>
+                ) : null}
+              </div>
+            ) : (
+              <p className="text-sm font-medium text-foreground">{currentUser?.email}</p>
+            )}
+          </div>
+
+          {isEditing ? (
+            <div className="flex flex-wrap items-center gap-3">
               <Button
-                variant="primary"
-                onClick={toggleEditMode}
-                type={editMode ? "button" : "submit"}
-                isLoading={editMode ? isSubmitting : false}
-                isDisabled={editMode ? !isDirty || !getValues("email") : false}
+                type="submit"
+                disabled={isSubmitting || !isDirty || !getValues("email")}
               >
-                {editMode ? "Save" : "Edit"}
+                {isSubmitting ? "Saving…" : "Save changes"}
               </Button>
-              {editMode && (
-                <Button onClick={onCancel} isDisabled={isSubmitting}>
-                  Cancel
-                </Button>
-              )}
-            </Flex>
-          </Box>
-        </Container>
-      </>
-    )
-  }
-  
-  export default UserInformation
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+            </div>
+          ) : (
+            <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
+              Edit profile
+            </Button>
+          )}
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default UserInformation

@@ -61,7 +61,7 @@
 
 // const UsageCharts: React.FC<UsageChartsProps> = ({ periodStart, totalRequests, totalDataGB }) => {
 //   // The useRef type is fine as `any[]` since the library has no official types.
-//   const chartInstances = useRef<any[]>([]); 
+//   const chartInstances = useRef<any[]>([]);
 //   const { requestsDps, inboundDps, outboundDps } = useMemo(() => generateCanvasJSData(periodStart || null, totalRequests, totalDataGB), [periodStart, totalRequests, totalDataGB]);
 
 //   useEffect(() => {
@@ -69,7 +69,6 @@
 //       syncCharts(chartInstances.current, true, true, false);
 //     }
 //   }, [requestsDps]);
-
 
 //   const commonAxisXOptions = {
 //     valueFormatString: "DD MMM",

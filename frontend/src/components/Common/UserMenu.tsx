@@ -1,30 +1,31 @@
-import {
-  Box,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  useToast,
-} from "@chakra-ui/react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { FaUserSecret } from "react-icons/fa";
-import { FiLogOut, FiUser, FiCreditCard } from "react-icons/fi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { FaUserSecret } from "react-icons/fa"
+import { FiCreditCard, FiLogOut, FiUser } from "react-icons/fi"
 
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth"
+import useCustomToast from "../../hooks/useCustomToast"
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 // Define SubscriptionStatus interface (copied from ProtectedComponent)
 interface SubscriptionStatus {
-  hasSubscription: boolean;
-  isTrial: boolean;
-  isDeactivated: boolean;
+  hasSubscription: boolean
+  isTrial: boolean
+  isDeactivated: boolean
 }
 
 // Fetch subscription status (copied from ProtectedComponent)
 async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {
   try {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token")
     const response = await fetch(
       "https://api.ROAMINGPROXY.com/v2/subscription-status",
       {
@@ -33,37 +34,37 @@ async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-      }
-    );
+      },
+    )
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
-        throw new Error("Unauthorized: Invalid or expired session.");
+        throw new Error("Unauthorized: Invalid or expired session.")
       }
-      throw new Error(`Failed to fetch subscription status: ${response.status}`);
+      throw new Error(`Failed to fetch subscription status: ${response.status}`)
     }
 
-    const data = await response.json();
+    const data = await response.json()
     if (
       typeof data.hasSubscription !== "boolean" ||
       typeof data.isTrial !== "boolean" ||
       typeof data.isDeactivated !== "boolean"
     ) {
-      throw new Error("Invalid subscription status response");
+      throw new Error("Invalid subscription status response")
     }
 
-    return data;
+    return data
   } catch (error) {
     throw error instanceof Error
       ? error
-      : new Error("Network error occurred while fetching subscription status");
+      : new Error("Network error occurred while fetching subscription status")
   }
 }
 
 const UserMenu = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const toast = useToast();
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+  const toast = useCustomToast()
 
   // Fetch subscription status (optional, remove if not needed)
   const { data: subscriptionStatus, error } = useQuery({
@@ -76,180 +77,93 @@ const UserMenu = () => {
         (error.message.includes("Unauthorized") ||
           error.message.includes("Invalid subscription status"))
       ) {
-        return false;
+        return false
       }
-      return failureCount < 2;
+      return failureCount < 2
     },
-  });
+  })
 
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate({ to: "/login" });
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      await logout()
+      navigate({ to: "/login" })
+      toast("Logged out", "You have been successfully logged out.", "success")
     } catch (error) {
-      toast({
-        title: "Logout failed",
-        description: "An error occurred while logging out. Please try again.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast(
+        "Logout failed",
+        "An error occurred while logging out. Please try again.",
+        "error",
+      )
     }
-  };
+  }
 
   // Handle unauthorized error (e.g., session expired)
   if (error?.message.includes("Unauthorized")) {
     return (
-      <Box position="fixed" top={4} right={4}>
-        <IconButton
-          aria-label="Log in"
-          icon={<FaUserSecret color="gray.800" fontSize="18px" />}
-          bg="gray.50"
-          border="1px solid"
-          borderColor="red.300"
-          _hover={{ bg: "red.100", borderColor: "red.400" }}
-          _active={{ bg: "red.200", borderColor: "red.500" }}
-          isRound
+      <div className="fixed right-4 top-4">
+        <Button
+          type="button"
+          size="icon"
+          variant="secondary"
+          className="h-10 w-10 rounded-full border border-destructive/40 bg-destructive/10 text-destructive hover:border-destructive/60 hover:bg-destructive/15"
           onClick={() => navigate({ to: "/login" })}
+          aria-label="Log in"
           data-testid="login-button"
-        />
-      </Box>
-    );
+        >
+          <FaUserSecret className="h-4 w-4" />
+        </Button>
+      </div>
+    )
   }
 
   return (
-    <>
-    {/* Desktop */}
-<Box
-  display={{ base: "none", md: "block" }}
-  position="fixed"
-  top={4}
-  right={4}
->
-  <Menu>
-    <MenuButton
-      as={IconButton}
-      aria-label="User menu"
-      icon={<FaUserSecret color="gray.800" fontSize="18px" />}
-      bg="gray.50"
-      border="1px solid"
-      borderColor="red.300" /* <-- FIX 1 */
-      _hover={{ bg: "red.100", borderColor: "red.400" }} /* <-- FIX 2 */
-      _active={{ bg: "red.200", borderColor: "red.500" }}
-      isRound
-      data-testid="user-menu-button"
-    />
-    <MenuList
-      bg="gray.50"
-      borderColor="gray.200"
-      color="gray.800"
-      boxShadow="md"
-    >
-      {/* ... rest of the component is fine */}
-            <MenuItem
-              as={Link}
-              to="/settings"
-              icon={<FiUser fontSize="18px" color="gray.600" />}
-              _hover={{ bg: "red.100", color: "red.500" }}
-              data-testid="settings-menu-item"
-            >
-              Settings
-            </MenuItem>
-            {/* Show subscription management for subscribed or trial users */}
-            {subscriptionStatus && (subscriptionStatus.hasSubscription || subscriptionStatus.isTrial) && (
-              <MenuItem
-                as={Link}
-                to="/proxies/pricing"
-                icon={<FiCreditCard fontSize="18px" color="gray.600" />}
-                _hover={{ bg: "red.100", color: "red.500" }}
-                data-testid="subscription-menu-item"
-              >
-                Manage Subscription
-              </MenuItem>
-            )}
-            <MenuItem
-              icon={<FiLogOut fontSize="18px" color="red.500" />}
-              onClick={handleLogout}
-              color="red.500"
-              fontWeight="bold"
-              _hover={{ bg: "red.100" }}
-              data-testid="logout-menu-item"
-            >
-              Log out
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </Box>
-
-      {/* Mobile (optional, remove if not needed) */}
-      <Box
-        display={{ base: "block", md: "none" }}
-        position="fixed"
-        top={4}
-        right={4}
-      >
-        <Menu>
-          <MenuButton
-            as={IconButton}
+    <div className="fixed right-4 top-4 z-50">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="h-10 w-10 rounded-full border border-slate-200/60 bg-white/70 shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/70"
+            data-testid="user-menu-button"
             aria-label="User menu"
-            icon={<FaUserSecret color="gray.800" fontSize="16px" />}
-            bg="gray.50"
-            border="1px solid"
-            borderColor="red.300"
-            _hover={{ bg: "red.100", borderColor: "red.400" }}
-            _active={{ bg: "red.200", borderColor: "red.500" }}
-            isRound
-            size="sm"
-            data-testid="user-menu-button-mobile"
-          />
-          <MenuList
-            bg="gray.50"
-            borderColor="gray.200"
-            color="gray.800"
-            boxShadow="md"
           >
-            <MenuItem
-              as={Link}
-              to="/settings"
-              icon={<FiUser fontSize="16px" color="gray.600" />}
-              _hover={{ bg: "red.100", color: "red.500" }}
-              data-testid="settings-menu-item-mobile"
-            >
+            <FaUserSecret className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56 rounded-2xl border border-slate-200/60 bg-white/80 p-2 shadow-[0_24px_55px_-42px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/80">
+          <DropdownMenuItem asChild className="gap-2 text-sm">
+            <Link to="/settings">
+              <FiUser className="h-4 w-4 text-slate-500" />
               Settings
-            </MenuItem>
-            {subscriptionStatus && (subscriptionStatus.hasSubscription || subscriptionStatus.isTrial) && (
-              <MenuItem
-                as={Link}
-                to="/proxies/pricing"
-                icon={<FiCreditCard fontSize="16px" color="gray.600" />}
-                _hover={{ bg: "red.100", color: "red.500" }}
-                data-testid="subscription-menu-item-mobile"
-              >
-                Manage Subscription
-              </MenuItem>
+            </Link>
+          </DropdownMenuItem>
+          {subscriptionStatus &&
+            (subscriptionStatus.hasSubscription ||
+              subscriptionStatus.isTrial) && (
+              <DropdownMenuItem asChild className="gap-2 text-sm">
+                <Link to="/proxies/pricing">
+                  <FiCreditCard className="h-4 w-4 text-slate-500" />
+                  Manage subscription
+                </Link>
+              </DropdownMenuItem>
             )}
-            <MenuItem
-              icon={<FiLogOut fontSize="16px" color="red.500" />}
-              onClick={handleLogout}
-              color="red.500"
-              fontWeight="bold"
-              _hover={{ bg: "red.100" }}
-              data-testid="logout-menu-item-mobile"
-            >
-              Log out
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </Box>
-    </>
-  );
-};
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault()
+              handleLogout()
+            }}
+            className="gap-2 text-sm font-medium text-destructive focus:text-destructive"
+            data-testid="logout-menu-item"
+          >
+            <FiLogOut className="h-4 w-4" />
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
 
-export default UserMenu;
+export default UserMenu

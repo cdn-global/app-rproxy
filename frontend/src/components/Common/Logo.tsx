@@ -1,31 +1,39 @@
-import React from 'react';
-import { Image, Box, BoxProps } from '@chakra-ui/react';
-import { Link as RouterLink } from '@tanstack/react-router';
+import { Link as RouterLink } from "@tanstack/react-router"
+import type React from "react"
 
-interface LogoProps extends BoxProps {
-  src: string;
-  alt?: string;
-  to?: string;
+import { cn } from "@/lib/utils"
+
+interface LogoProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  src: string
+  alt?: string
+  to?: string
+  imgClassName?: string
 }
 
-const Logo: React.FC<LogoProps> = ({ to = '/', src, alt = 'Company Logo', width, boxSize, ...rest }) => {
+const Logo: React.FC<LogoProps> = ({
+  to = "/",
+  src,
+  alt = "Company Logo",
+  className,
+  imgClassName,
+  ...rest
+}) => {
   return (
-    <Box
-      as={RouterLink}
+    <RouterLink
       to={to}
-      transition="opacity 0.2s ease-in-out"
-      _hover={{ opacity: 0.8 }}
+      className={cn(
+        "inline-flex transition-opacity duration-200 hover:opacity-80",
+        className,
+      )}
       {...rest}
     >
-      <Image
+      <img
         src={src}
         alt={alt}
-        width={width || boxSize || '110px'}
-        height="auto"
-        objectFit="contain"
+        className={cn("h-auto w-[110px] object-contain", imgClassName)}
       />
-    </Box>
-  );
-};
+    </RouterLink>
+  )
+}
 
-export default Logo;
+export default Logo

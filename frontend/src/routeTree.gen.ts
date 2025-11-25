@@ -20,6 +20,7 @@ import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
+import { Route as LayoutComponentlistImport } from './routes/_layout/componentlist'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as LayoutHostingIndexImport } from './routes/_layout/hosting/index'
 import { Route as LayoutWebScrapingToolsUserAgentsImport } from './routes/_layout/web-scraping-tools/user-agents'
@@ -80,6 +81,12 @@ const LayoutSettingsRoute = LayoutSettingsImport.update({
 const LayoutItemsRoute = LayoutItemsImport.update({
   id: '/items',
   path: '/items',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutComponentlistRoute = LayoutComponentlistImport.update({
+  id: '/componentlist',
+  path: '/componentlist',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -181,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/componentlist': {
+      id: '/_layout/componentlist'
+      path: '/componentlist'
+      fullPath: '/componentlist'
+      preLoaderRoute: typeof LayoutComponentlistImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/items': {
       id: '/_layout/items'
       path: '/items'
@@ -251,6 +265,7 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutComponentlistRoute: typeof LayoutComponentlistRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
@@ -264,6 +279,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutComponentlistRoute: LayoutComponentlistRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
@@ -286,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/componentlist': typeof LayoutComponentlistRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
@@ -304,6 +321,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/componentlist': typeof LayoutComponentlistRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
@@ -324,6 +342,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/componentlist': typeof LayoutComponentlistRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -345,6 +364,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/componentlist'
     | '/items'
     | '/settings'
     | '/'
@@ -362,6 +382,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/componentlist'
     | '/items'
     | '/settings'
     | '/'
@@ -380,6 +401,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/componentlist'
     | '/_layout/items'
     | '/_layout/settings'
     | '/_layout/'
@@ -432,6 +454,7 @@ export const routeTree = rootRoute
       "filePath": "_layout.tsx",
       "children": [
         "/_layout/admin",
+        "/_layout/componentlist",
         "/_layout/items",
         "/_layout/settings",
         "/_layout/",
@@ -460,6 +483,10 @@ export const routeTree = rootRoute
     },
     "/_layout/admin": {
       "filePath": "_layout/admin.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/componentlist": {
+      "filePath": "_layout/componentlist.tsx",
       "parent": "/_layout"
     },
     "/_layout/items": {

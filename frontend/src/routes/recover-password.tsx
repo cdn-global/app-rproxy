@@ -1,22 +1,11 @@
-import {
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Image,
-  Link,
-  Input,
-  Text,
-  Box,
-  Heading,
-} from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import Logo from "../components/Common/Logo"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { type ApiError, LoginService } from "../client"
+import Logo from "../components/Common/Logo"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
 import { emailPattern, handleError } from "../utils"
@@ -78,78 +67,35 @@ function RecoverPassword() {
   }
 
   return (
-    <Container 
-      maxW="container.xl" 
-      p={{ base: 4, md: 0 }} 
-      minH="100vh" 
-      display="flex" 
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Flex 
-        direction={{ base: "column", md: "row" }} 
-        width="100%"
-        maxW={{ base: "100%", md: "container.xl" }}
-        bg="white"
-        boxShadow={{ base: "sm", md: "md" }}
-        borderRadius={{ base: "lg", md: "md" }}
-        overflow="hidden"
-      >
-        {/* Left Column - Text Section */}
-        <Box
-          flex={{ md: 1 }}
-          bg="gray.50"
-          p={{ base: 6, md: 10 }}
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start"
-          borderRadius={{ base: "lg lg 0 0", md: "md 0 0 md" }}
-        >
-          <Heading 
-            as="h1" 
-            size={{ base: "lg", md: "xl" }} 
-            mb={{ base: 4, md: 6 }} 
-            color="gray.800"
-          >
+    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-8">
+      <div className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-background shadow-lg md:grid-cols-[1fr,1fr]">
+        <div className="flex flex-col gap-4 bg-muted/30 p-8 md:p-12">
+          <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
             Recover Your Password
-          </Heading>
-          <Text 
-            fontSize={{ base: "md", md: "lg" }} 
-            color="gray.600" 
-            mb={{ base: 3, md: 4 }}
-          >
-            Enter your email to receive a link to reset your password and regain access.
-          </Text>
-          <Text 
-            fontSize={{ base: "sm", md: "md" }} 
-            color="gray.500"
-          >
-            Need assistance? Our support team and documentation are here to help.
-          </Text>
-        </Box>
+          </h1>
+          <p className="text-base text-muted-foreground md:text-lg">
+            Enter your email to receive a link to reset your password and regain
+            access.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Need assistance? Our support team and documentation are here to
+            help.
+          </p>
+        </div>
 
-        {/* Right Column - Form Section */}
-        <Box
-          flex={{ md: 1 }}
-          as="form"
+        <form
           onSubmit={handleSubmit(onSubmit)}
-          p={{ base: 6, md: 10 }}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          gap={{ base: 4, md: 6 }}
-          width={{ base: "100%", md: "auto" }}
+          className="flex flex-col items-center gap-6 p-8 md:p-12"
         >
-      <Logo
-      src="/assets/images/roaming-proxy-network-logo.png"
-      alt="Roaming Proxy Logo"
-      to="/"
-      width="110px"
-    />
-          <FormControl id="email" isInvalid={!!errors.email} width="100%">
-            <FormLabel htmlFor="email" fontSize={{ base: "sm", md: "md" }}>
-              Email
-            </FormLabel>
+          <Logo
+            src="/assets/images/roaming-proxy-network-logo.png"
+            alt="Roaming Proxy Logo"
+            imgClassName="w-24 md:w-28"
+            className="self-start"
+          />
+
+          <div className="w-full space-y-2">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               {...register("email", {
@@ -158,25 +104,25 @@ function RecoverPassword() {
               })}
               placeholder="Email"
               type="email"
-              size={{ base: "md", md: "lg" }}
+              className="h-12 text-base"
             />
-            {errors.email && (
-              <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-            )}
-          </FormControl>
+            {errors.email ? (
+              <p className="text-sm text-destructive">{errors.email.message}</p>
+            ) : null}
+          </div>
 
-          <Button 
-            variant="primary" 
-            type="submit" 
+          <Button
+            type="submit"
             isLoading={isSubmitting}
-            width="100%"
-            size={{ base: "md", md: "lg" }}
+            loadingText="Sending"
+            className="h-12 w-full text-base"
+            variant="primary"
           >
             Continue
           </Button>
-        </Box>
-      </Flex>
-    </Container>
+        </form>
+      </div>
+    </div>
   )
 }
 

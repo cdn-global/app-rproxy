@@ -16,7 +16,13 @@ RUN npm run build
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginx:1
 
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y gettext && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build-stage /app/dist/ /usr/share/nginx/html
 
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY ./nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.conf
+
+EXPOSE 80
+
+CMD ["/bin/bash", "-c", "envsubst '${PORT}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]

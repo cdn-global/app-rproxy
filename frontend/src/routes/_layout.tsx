@@ -1,9 +1,9 @@
-import { Flex, Spinner } from "@chakra-ui/react";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
-import TopNav from "../components/Common/TopNav";
-import Footer from "../components/Common/Footer"; 
-import useAuth, { isLoggedIn } from "../hooks/useAuth";
+import Footer from "../components/Common/Footer"
+import TopNav from "../components/Common/TopNav"
+import useAuth, { isLoggedIn } from "../hooks/useAuth"
+import { Spinner } from "@/components/ui/spinner"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -11,36 +11,29 @@ export const Route = createFileRoute("/_layout")({
     if (!isLoggedIn()) {
       throw redirect({
         to: "/login",
-      });
+      })
     }
   },
-});
+})
 
 function Layout() {
-  const { isLoading } = useAuth();
+  const { isLoading } = useAuth()
 
   return (
-    <Flex direction="column" minH="100vh" w="100%">
+    <div className="flex min-h-screen w-full flex-col">
       <TopNav />
-      {isLoading ? (
-        <Flex justify="center" align="center" flex="1">
-          <Spinner size="xl" color="ui.main" />
-        </Flex>
-      ) : (
-        <Flex
-          flex="1"
-          direction="column"
-          maxW="1200px"
-          mx="auto"
-          w="100%"
-          as="main"
-        >
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+        {isLoading ? (
+          <div className="flex flex-1 items-center justify-center">
+            <Spinner size={48} />
+          </div>
+        ) : (
           <Outlet />
-        </Flex>
-      )}
+        )}
+      </main>
       <Footer />
-    </Flex>
-  );
+    </div>
+  )
 }
 
-export default Layout;
+export default Layout
