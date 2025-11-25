@@ -757,11 +757,7 @@ const HomePage = () => {
       </div>
   )
 
-  const sidebar = (
-    <>
-      <SectionNavigation items={navigation} />
-    </>
-  )
+  const sidebar = null
   
   const sections: React.ReactNode[] = []
 
@@ -901,6 +897,13 @@ const HomePage = () => {
   }
   
   sections.push(linksCard)
+
+  // Add the Jump navigation as the last page section before the footer
+  sections.push(
+    <PageSection id="jump" title="Jump to" description="Quick links to page sections." key="jump">
+      <SectionNavigation items={navigation} title="" />
+    </PageSection>,
+  )
 
   const mainContent = <>{sections}</>
 
