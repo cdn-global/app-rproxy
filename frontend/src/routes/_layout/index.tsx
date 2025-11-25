@@ -26,6 +26,7 @@ import DashboardHeader from "@/components/Dashboard/DashboardHeader"
 import InfrastructureTable from "@/components/Dashboard/InfrastructureTable"
 import QuickActionsGrid from "@/components/Dashboard/QuickActionsGrid"
 import StatHighlights from "@/components/Dashboard/StatHighlights"
+import UsageChart from "@/components/Dashboard/UsageChart"
 import type {
   DashboardStat,
   DisplayedFeature,
@@ -786,7 +787,7 @@ const Dashboard = () => {
             <CardTitle>Requests over time</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-44 flex items-center justify-center text-sm text-slate-500">Chart placeholder</div>
+            <UsageChart mode="requests" totalRequests={totalRequests} totalDataGB={totalDataGB} />
           </CardContent>
         </Card>
         <Card className="rounded-[24px] p-6">
@@ -794,7 +795,7 @@ const Dashboard = () => {
             <CardTitle>Capacity utilization</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-44 flex items-center justify-center text-sm text-slate-500">Chart placeholder</div>
+            <UsageChart mode="transfer" totalRequests={totalRequests} totalDataGB={totalDataGB} />
           </CardContent>
         </Card>
       </div>
