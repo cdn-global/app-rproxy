@@ -1,12 +1,4 @@
 import React from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 
 const ChartsSection: React.FC = () => {
   const analyticsPoints = [38, 62, 54, 78, 92, 66, 105, 98]
@@ -29,8 +21,9 @@ const ChartsSection: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
-        <CardContent className="space-y-5">
+      <div>
+        <h3 className="mb-4 text-xl font-semibold">Requests over time</h3>
+        <div className="space-y-5">
           <div className="grid gap-4">
             <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
               <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
@@ -58,10 +51,11 @@ const ChartsSection: React.FC = () => {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
-      <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
-        <=
+        </div>
+      </div>
+      <div>
+        <h3 className="mb-4 text-xl font-semibold">Network Usage</h3>
+        <div className="space-y-5">
           <div className="grid gap-4">
             <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
               <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
@@ -89,8 +83,8 @@ const ChartsSection: React.FC = () => {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
