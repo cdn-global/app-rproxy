@@ -19,17 +19,13 @@ const ChartsSection: React.FC = () => {
     .join(" ")
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6">
       <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
         <CardHeader>
-          <CardTitle className="text-xl">Analytics & charts</CardTitle>
-          <CardDescription>
-            Metric cards, sparkline trends, and breakdown tags for throughput
-            reviews.
-          </CardDescription>
+          <CardTitle className="text-xl">Requests over time</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
               <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
                 Requests
@@ -55,66 +51,6 @@ const ChartsSection: React.FC = () => {
                 </svg>
               </div>
             </div>
-
-            <div className="flex flex-col justify-between gap-4 rounded-2xl border p-5">
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                  Network mix
-                </p>
-                <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">
-                  64%
-                  <span className="text-xs font-medium text-emerald-500">
-                    target proximity
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm text-slate-600">
-                  <span>Datacenter</span>
-                  <Badge className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-700">
-                    42%
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between text-sm text-slate-600">
-                  <span>Residential</span>
-                  <Badge
-                    variant="secondary"
-                    className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]"
-                  >
-                    38%
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between text-sm text-slate-600">
-                  <span>ISP</span>
-                  <Badge
-                    variant="outline"
-                    className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]"
-                  >
-                    20%
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="rounded-[24px] p-6">
-        <CardHeader>
-          <CardTitle>Requests over time</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-44 flex items-center justify-center text-sm text-slate-500">
-            Chart placeholder
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="rounded-[24px] p-6">
-        <CardHeader>
-          <CardTitle>Capacity utilization</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-44 flex items-center justify-center text-sm text-slate-500">
-            Chart placeholder
           </div>
         </CardContent>
       </Card>
