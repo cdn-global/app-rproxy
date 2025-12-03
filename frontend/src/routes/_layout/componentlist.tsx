@@ -260,10 +260,6 @@ const WorkspacePulsePage = () => {
               </div>
               <div className="xl:col-span-2">
                 <Card className="rounded-2xl">
-                  <CardHeader>
-                    <CardTitle>Usage insights</CardTitle>
-                    <CardDescription>A per-service breakdown of your workspace's usage.</CardDescription>
-                  </CardHeader>
                   <CardContent className="grid gap-4">
                     <div className="flex items-center gap-4 rounded-lg bg-slate-100/60 p-4 dark:bg-slate-800/60">
                       <div className="flex aspect-square h-12 w-12 items-center justify-center rounded-lg bg-indigo-200 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">

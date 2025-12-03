@@ -188,12 +188,7 @@ const HttpsProxyApiPage = () => {
                 <CardContent className="pt-6">
                   <TabsContent value="analytics" className="space-y-8">
                     <Card>
-                      <CardHeader>
-                        <CardTitle className="text-2xl">Usage Insights</CardTitle>
-                        <CardDescription>
-                          An overview of your recent API usage and performance.
-                        </CardDescription>
-                      </CardHeader>
+                      
                       <CardContent className="space-y-6 pt-6">
                         <UsageInsights stats={statHighlights} />
                         <ChartsSection />
