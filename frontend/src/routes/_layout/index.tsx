@@ -577,18 +577,6 @@ const Dashboard = () => {
     [totalRequests],
   )
 
-  const totalVCPUs = useMemo(
-    () => servers.reduce((sum, s) => sum + (s.vCPUs || 0), 0),
-    [],
-  )
-  const totalRAM = useMemo(
-    () => servers.reduce((sum, s) => sum + s.ramGB, 0),
-    [],
-  )
-  const totalStorage = useMemo(
-    () => servers.reduce((sum, s) => sum + s.storageSizeGB, 0),
-    [],
-  )
   const totalMonthlySpend = useMemo(
     () => servers.reduce((sum, s) => sum + s.monthlyComputePrice, 0),
     [],
@@ -730,22 +718,6 @@ const Dashboard = () => {
     [handleBillingClick, isPortalLoading],
   )
 
-  const formatCurrency = useCallback(
-    (value: number) => currencyFormatter.format(value),
-    [],
-  )
-
-  const infrastructureTotals = useMemo(
-    () => ({
-      totalCount: servers.length,
-      totalVCPUs,
-      totalRAM,
-      totalStorage,
-      totalMonthlySpend,
-    }),
-    [totalMonthlySpend, totalRAM, totalStorage, totalVCPUs],
-  )
-
   const isLoading = isSubscriptionsLoading || isApiKeysLoading
   const error = subscriptionsError || apiKeysError
 
@@ -764,11 +736,6 @@ const Dashboard = () => {
       id: "tool-directory",
       label: "Tool directory",
       description: "Explore every workspace module in one place.",
-    },
-    {
-      id: "infrastructure",
-      label: "Infrastructure",
-      description: "Managed nodes, capacity, and quick deep links.",
     },
   ]
 
@@ -869,19 +836,6 @@ const Dashboard = () => {
         <StatHighlights stats={statHighlights} />
       </PageSection>,
       toolDirectorySection,
-      <PageSection
-        id="infrastructure"
-        title="Infrastructure"
-        description="Cross-section of managed servers, consumption, and handoff destinations."
-        key="infrastructure-empty"
-      >
-        <InfrastructureTable
-          servers={servers.slice(0, 6)}
-          totals={infrastructureTotals}
-          formatCurrency={formatCurrency}
-          ctaTo="/hosting"
-        />
-      </PageSection>,
     )
   } else {
     sections.push(
@@ -914,20 +868,6 @@ const Dashboard = () => {
       </PageSection>,
 
       toolDirectorySection,
-
-      <PageSection
-        id="infrastructure"
-        title="Infrastructure"
-        description="Cross-section of managed servers, consumption, and handoff destinations."
-        key="infrastructure"
-      >
-        <InfrastructureTable
-          servers={servers.slice(0, 6)}
-          totals={infrastructureTotals}
-          formatCurrency={formatCurrency}
-          ctaTo="/hosting"
-        />
-      </PageSection>,
     )
   }
   // Add the Jump navigation as the last page section before the footer
