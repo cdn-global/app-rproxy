@@ -118,20 +118,20 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <Card>
+            <ChartsSection />
+            <UsageInsights stats={statHighlights} />
+        
+            <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
               <CardHeader>
-                <CardTitle>Analytics</CardTitle>
+                <CardTitle className="text-2xl">Interactive playground</CardTitle>
                 <CardDescription>
-                  Usage analytics for your scraping tools.
+                  Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <ChartsSection />
-                <UsageInsights stats={statHighlights} />
+              <CardContent>
+                <PlaygroundHttpsProxy />
               </CardContent>
             </Card>
-        
-            <PlaygroundHttpsProxy />
 
                         <ApiKeyModule token={token} />
 
