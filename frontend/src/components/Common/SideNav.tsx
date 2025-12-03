@@ -67,11 +67,12 @@ const navStructure: NavItem[] = [
         title: "Managed Compute",
         path: "/compute",
         description: "Deploy and manage your managed cloud functions.",
-      },{
-        title: "Serverless Compute",
-        path: "/serverless-compute",
-        description: "Deploy and manage your serverless cloud functions.",
       },
+    //   {
+    //     title: "Serverless Compute",
+    //     path: "/serverless-compute",
+    //     description: "Deploy and manage your serverless cloud functions.",
+    //   },
 
     ],
   },
