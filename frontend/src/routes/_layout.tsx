@@ -1,7 +1,6 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 import Footer from "../components/Common/Footer"
-import Header from "../components/Common/Header"
 import SideNav from "../components/Common/SideNav"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { Spinner } from "@/components/ui/spinner"
