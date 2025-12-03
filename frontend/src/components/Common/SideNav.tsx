@@ -373,13 +373,13 @@ const SideNav = () => {
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
           alt="Roaming Proxy Logo"
-          imgClassName="w-24"
+          imgClassName="w-32"
         />
       </div>
       <div className="flex flex-1 flex-col">
         <NavItems />
-        <FooterItems />
       </div>
+      <FooterItems />
       <UserMenu />
     </aside>
   )
