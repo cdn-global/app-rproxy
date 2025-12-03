@@ -66,7 +66,6 @@ type FeatureKey =
   | "proxy-api"
   | "vps-hosting"
   | "compute"
-  | "infrastructure"
   | "serp-api"
   | "llm-inference-api"
   | "managed-storage"
@@ -90,6 +89,7 @@ const defaultFeatureSlugs: FeatureKey[] = [
   "llm-inference-api",
   "managed-storage",
   "managed-database",
+  "compute",
   "serverless-compute",
 ]
 
@@ -114,7 +114,7 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "linear-gradient(135deg, rgba(34,197,94,0.16), rgba(6,182,212,0.12))",
     period: "Sep 9 – Oct 9, 2025",
   },
-  compute: {
+  "compute": {
     name: "Managed Compute",
     description:
       "Deploy and manage your serverless functions.",
@@ -122,16 +122,6 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
     path: "/compute",
     gradient:
       "linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.1))",
-    period: "ACTIVE",
-  },
-  infrastructure: {
-    name: "Managed Infrastructure",
-    description:
-      "Manage your infrastructure.",
-    icon: FaGlobe,
-    path: "/infrastructure",
-    gradient:
-      "linear-gradient(135deg, rgba(134, 239, 172, 0.16), rgba(59, 130, 246, 0.1))",
     period: "ACTIVE",
   },
   "serp-api": {
@@ -174,14 +164,12 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "linear-gradient(135deg, rgba(134, 239, 172, 0.16), rgba(59, 130, 246, 0.1))",
     period: "ACTIVE",
   },
-  "serverless-compute": {
+   "serverless-compute": {
     name: "Serverless Compute",
-    description:
-      "Run your code without provisioning or managing servers.",
+    description: "Deploy and manage your serverless functions.",
     icon: FaServer,
     path: "/serverless-compute",
-    gradient:
-      "linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.1))",
+    gradient: "linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(219, 39, 119, 0.1))",
     period: "ACTIVE",
   },
 }
@@ -250,7 +238,7 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     label: "Managed VPS Fleet",
     description:
       "Provision, monitor, and snapshot compute capacity across regions.",
-    category: "Infrastructure",
+    category: "Hosting",
     icon: FaServer,
     to: "/hosting",
     featureSlug: "vps-hosting",
@@ -262,14 +250,6 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     icon: FaServer,
     to: "/compute",
     featureSlug: "compute",
-  },
-  {
-    label: "Managed Infrastructure",
-    description: "Manage your infrastructure.",
-    category: "Infrastructure",
-    icon: FaGlobe,
-    to: "/infrastructure",
-    featureSlug: "infrastructure",
   },
   {
     label: "Items Catalog",
@@ -659,7 +639,6 @@ const Dashboard = () => {
     // so the hosting tool shows as highlighted and promoted in the UI.
     enabled.add("vps-hosting")
     enabled.add("compute")
-    enabled.add("infrastructure")
     enabled.add("llm-inference-api")
     enabled.add("managed-storage")
     enabled.add("managed-database")

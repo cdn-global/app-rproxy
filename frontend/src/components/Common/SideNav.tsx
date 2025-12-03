@@ -66,8 +66,13 @@ const navStructure: NavItem[] = [
       },{
         title: "Managed Compute",
         path: "/compute",
-        description: "Deploy and manage your serverless functions.",
+        description: "Deploy and manage your managed cloud functions.",
+      },{
+        title: "Serverless Compute",
+        path: "/serverless-compute",
+        description: "Deploy and manage your serverless cloud functions.",
       },
+
     ],
   },
   {
@@ -87,12 +92,6 @@ const navStructure: NavItem[] = [
     path: "/database",
     description: "Administer your managed relational databases.",
     icon: FiDatabase,
-  },
-  {
-    title: "Settings",
-    path: "/settings",
-    description: "Manage your workspace settings.",
-    icon: FiSettings,
   },
 ]
 
