@@ -937,7 +937,14 @@ const Dashboard = () => {
       </PageSection>,
     )
   }
-  
+  const analyticsPoints = [38, 62, 54, 78, 92, 66, 105, 98]
+  const sparkPath = analyticsPoints
+    .map((point, index) => {
+      const x = (index / (analyticsPoints.length - 1)) * 180
+      const y = 110 - point
+      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+    })
+    .join(" ")
   // Insert Fleet intelligence and VPS overview lower in the page
   sections.push(linksCard)
   sections.push(fleetIntelCard)

@@ -157,8 +157,7 @@ function HostingIndexPage() {
             />
           </div>
         </div>
-      </PageSection>
-         <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+           <Card className="rounded-[24px] border border-slate-200/70 bg-white/90 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
               <CardHeader>
                 <CardTitle className="text-xl">Analytics & charts</CardTitle>
                 <CardDescription>Metric cards, sparkline trends, and breakdown tags for throughput reviews.</CardDescription>
@@ -188,6 +187,8 @@ function HostingIndexPage() {
                 </div>
               </CardContent>
             </Card>
+      </PageSection>
+      
       <PageScaffold
         sidebar={
           <>
