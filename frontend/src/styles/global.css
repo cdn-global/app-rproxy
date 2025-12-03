@@ -83,11 +83,11 @@
     --chart-3: 0 80% 55%;
     --chart-4: 0 65% 60%;
     --chart-5: 0 75% 55%;
-    --sidebar: 210 40% 14%;
+    --sidebar: 210 40% 18%;
     --sidebar-foreground: 210 40% 96%;
     --sidebar-muted: 210 40% 26%;
     --sidebar-accent: 210 40% 50%;
-    --sidebar-border: 210 40% 24%;
+    --sidebar-border: 210 40% 28%;
     --surface-gradient-start: 0 0% 10%;
     --surface-gradient-end: 0 0% 16%;
   }
