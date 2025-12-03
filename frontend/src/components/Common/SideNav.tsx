@@ -123,7 +123,6 @@ const NavItems = () => {
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { pathname } = useRouterState().location
-  const { logout } = useAuth()
 
   const items = React.useMemo(() => {
     const mapped: NavItem[] = [...navStructure]
@@ -131,7 +130,7 @@ const NavItems = () => {
       mapped.push({ title: "Admin", icon: FiUsers, path: "/admin" })
     }
     return mapped
-  }, [currentUser, logout])
+  }, [currentUser])
 
   const isEnabled = (title: string) => {
     return [
@@ -150,7 +149,7 @@ const NavItems = () => {
 
   return (
     <TooltipProvider>
-      <div className="flex flex-1 flex-col gap-2">
+      <div className="flex flex-col gap-2">
         {items.map((item) => {
           if (item.subItems) {
             return (
@@ -223,37 +222,48 @@ const NavItems = () => {
           )
         })}
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="mt-4 w-full text-left">
-          <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback>
-                {currentUser?.email?.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-start">
-              <span className="font-medium">{currentUser?.full_name || currentUser?.email}</span>
-            </div>
-          </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>
-            <div className="flex flex-col">
-                <span>{currentUser?.full_name}</span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {currentUser?.email}
-                </span>
-              </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <RouterLink to="/settings">
-            <DropdownMenuItem>User Settings</DropdownMenuItem>
-          </RouterLink>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logout}>Sign Out</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </TooltipProvider>
+  )
+}
+
+const UserMenu = () => {
+  const queryClient = useQueryClient()
+  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
+  const { logout } = useAuth()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="mt-4 w-full text-left">
+        <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback>
+              {currentUser?.email?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col items-start">
+            <span className="font-medium">
+              {currentUser?.full_name || currentUser?.email}
+            </span>
+          </div>
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col">
+            <span>{currentUser?.full_name}</span>
+            <span className="text-xs font-normal text-muted-foreground">
+              {currentUser?.email}
+            </span>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <RouterLink to="/settings">
+          <DropdownMenuItem>User Settings</DropdownMenuItem>
+        </RouterLink>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logout}>Sign Out</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -386,7 +396,10 @@ const SideNav = () => {
           imgClassName="w-24"
         />
       </div>
-      <NavItems />
+      <div className="flex flex-1 flex-col justify-between">
+        <NavItems />
+        <UserMenu />
+      </div>
       <FooterItems />
     </aside>
   )
