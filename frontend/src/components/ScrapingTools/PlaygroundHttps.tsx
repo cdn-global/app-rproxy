@@ -5,7 +5,6 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -174,15 +173,15 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
 
           {tab === "response" ? (
             <div className="space-y-6">
-              <Card className="border border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-950">
-                <CardHeader className="flex flex-row items-center justify-between gap-4">
+              <div className="border border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-950">
+                <div className="flex flex-row items-center justify-between gap-4 p-6">
                   <div>
-                    <CardTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                       JSON response
-                    </CardTitle>
-                    <CardDescription className="text-xs text-slate-600 dark:text-slate-300">
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
                       Structured data returned from the proxy endpoint.
-                    </CardDescription>
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <TooltipProvider>
@@ -211,19 +210,19 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                       <Download className="h-4 w-4" />
                     </Button>
                   </div>
-                </CardHeader>
-                <CardContent className="p-0">
+                </div>
+                <div className="p-0">
                   <CodeBlock code={jsonResponse} language="json" />
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card className="border border-slate-200/60 bg-white/80 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/80">
-                <CardHeader className="flex flex-row items-center justify-between gap-4">
+              <div className="border border-slate-200/60 bg-white/80 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/80">
+                <div className="flex flex-row items-center justify-between gap-4 p-6">
                   <div>
-                    <CardTitle className="text-base font-semibold">HTML preview</CardTitle>
-                    <CardDescription className="text-xs">
+                    <h3 className="text-base font-semibold">HTML preview</h3>
+                    <p className="text-xs text-muted-foreground">
                       Rendered content provided by the upstream page.
-                    </CardDescription>
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <TooltipProvider>
@@ -252,8 +251,8 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                       <Download className="h-4 w-4" />
                     </Button>
                   </div>
-                </CardHeader>
-                <CardContent>
+                </div>
+                <div className="p-6">
                   <div className="overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm dark:border-slate-700/60">
                     <iframe
                       title="HTML Preview"
@@ -262,19 +261,19 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                       sandbox="allow-scripts allow-same-origin"
                     />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-6">
-              <Card className="border border-slate-200/60 bg-white/80 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/80">
-                <CardHeader>
-                  <CardTitle className="text-base font-semibold">Request details</CardTitle>
-                  <CardDescription className="text-xs">
+              <div className="border border-slate-200/60 bg-white/80 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/80">
+                <div className="p-6">
+                  <h3 className="text-base font-semibold">Request details</h3>
+                  <p className="text-xs text-muted-foreground">
                     Parameters submitted to the proxy fetch endpoint.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4 sm:grid-cols-2">
+                  </p>
+                </div>
+                <div className="grid gap-4 p-6 sm:grid-cols-2">
                   <div>
                     <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">URL</p>
                     <p className="mt-1 break-all font-mono text-sm text-foreground">{requestInfo.url}</p>
@@ -287,16 +286,16 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                     <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Method</p>
                     <p className="mt-1 font-medium text-foreground">POST</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              <Card className="border border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-950">
-                <CardHeader className="flex flex-row items-center justify-between">
+              <div className="border border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-950">
+                <div className="flex flex-row items-center justify-between p-6">
                   <div>
-                    <CardTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">Response headers</CardTitle>
-                    <CardDescription className="text-xs text-slate-600 dark:text-slate-300">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Response headers</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">
                       Key metadata returned from the edge network.
-                    </CardDescription>
+                    </p>
                   </div>
                   <TooltipProvider>
                     <Tooltip>
@@ -314,11 +313,11 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                       <TooltipContent>Copy headers</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </CardHeader>
-                <CardContent className="p-0">
+                </div>
+                <div className="p-0">
                   <CodeBlock code={headers} language="json" />
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           )}
         </div>
