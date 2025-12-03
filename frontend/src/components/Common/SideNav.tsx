@@ -396,11 +396,11 @@ const SideNav = () => {
           imgClassName="w-24"
         />
       </div>
-      <div className="flex flex-1 flex-col justify-between">
+      <div className="flex flex-1 flex-col">
         <NavItems />
-        <UserMenu />
       </div>
       <FooterItems />
+      <UserMenu />
     </aside>
   )
 }
