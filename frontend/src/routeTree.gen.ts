@@ -22,10 +22,15 @@ import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutComponentlistImport } from './routes/_layout/componentlist'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutServicesIndexImport } from './routes/_layout/services/index'
 import { Route as LayoutHostingIndexImport } from './routes/_layout/hosting/index'
 import { Route as LayoutWebScrapingToolsUserAgentsImport } from './routes/_layout/web-scraping-tools/user-agents'
 import { Route as LayoutWebScrapingToolsSerpApiImport } from './routes/_layout/web-scraping-tools/serp-api'
 import { Route as LayoutWebScrapingToolsHttpsApiImport } from './routes/_layout/web-scraping-tools/https-api'
+import { Route as LayoutServicesServerlessComputeImport } from './routes/_layout/services/serverless-compute'
+import { Route as LayoutServicesManagedStorageImport } from './routes/_layout/services/managed-storage'
+import { Route as LayoutServicesManagedDatabaseImport } from './routes/_layout/services/managed-database'
+import { Route as LayoutServicesLlmInferenceApiImport } from './routes/_layout/services/llm-inference-api'
 import { Route as LayoutHostingBillingImport } from './routes/_layout/hosting/billing'
 import { Route as LayoutHostingDeviceNameImport } from './routes/_layout/hosting/$deviceName'
 
@@ -96,6 +101,12 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutServicesIndexRoute = LayoutServicesIndexImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutHostingIndexRoute = LayoutHostingIndexImport.update({
   id: '/hosting/',
   path: '/hosting/',
@@ -120,6 +131,34 @@ const LayoutWebScrapingToolsHttpsApiRoute =
   LayoutWebScrapingToolsHttpsApiImport.update({
     id: '/web-scraping-tools/https-api',
     path: '/web-scraping-tools/https-api',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutServicesServerlessComputeRoute =
+  LayoutServicesServerlessComputeImport.update({
+    id: '/services/serverless-compute',
+    path: '/services/serverless-compute',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutServicesManagedStorageRoute =
+  LayoutServicesManagedStorageImport.update({
+    id: '/services/managed-storage',
+    path: '/services/managed-storage',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutServicesManagedDatabaseRoute =
+  LayoutServicesManagedDatabaseImport.update({
+    id: '/services/managed-database',
+    path: '/services/managed-database',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutServicesLlmInferenceApiRoute =
+  LayoutServicesLlmInferenceApiImport.update({
+    id: '/services/llm-inference-api',
+    path: '/services/llm-inference-api',
     getParentRoute: () => LayoutRoute,
   } as any)
 
@@ -230,6 +269,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutHostingBillingImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/services/llm-inference-api': {
+      id: '/_layout/services/llm-inference-api'
+      path: '/services/llm-inference-api'
+      fullPath: '/services/llm-inference-api'
+      preLoaderRoute: typeof LayoutServicesLlmInferenceApiImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/managed-database': {
+      id: '/_layout/services/managed-database'
+      path: '/services/managed-database'
+      fullPath: '/services/managed-database'
+      preLoaderRoute: typeof LayoutServicesManagedDatabaseImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/managed-storage': {
+      id: '/_layout/services/managed-storage'
+      path: '/services/managed-storage'
+      fullPath: '/services/managed-storage'
+      preLoaderRoute: typeof LayoutServicesManagedStorageImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/serverless-compute': {
+      id: '/_layout/services/serverless-compute'
+      path: '/services/serverless-compute'
+      fullPath: '/services/serverless-compute'
+      preLoaderRoute: typeof LayoutServicesServerlessComputeImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/web-scraping-tools/https-api': {
       id: '/_layout/web-scraping-tools/https-api'
       path: '/web-scraping-tools/https-api'
@@ -258,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutHostingIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/services/': {
+      id: '/_layout/services/'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof LayoutServicesIndexImport
+      parentRoute: typeof LayoutImport
+    }
   }
 }
 
@@ -271,10 +345,15 @@ interface LayoutRouteChildren {
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutHostingDeviceNameRoute: typeof LayoutHostingDeviceNameRoute
   LayoutHostingBillingRoute: typeof LayoutHostingBillingRoute
+  LayoutServicesLlmInferenceApiRoute: typeof LayoutServicesLlmInferenceApiRoute
+  LayoutServicesManagedDatabaseRoute: typeof LayoutServicesManagedDatabaseRoute
+  LayoutServicesManagedStorageRoute: typeof LayoutServicesManagedStorageRoute
+  LayoutServicesServerlessComputeRoute: typeof LayoutServicesServerlessComputeRoute
   LayoutWebScrapingToolsHttpsApiRoute: typeof LayoutWebScrapingToolsHttpsApiRoute
   LayoutWebScrapingToolsSerpApiRoute: typeof LayoutWebScrapingToolsSerpApiRoute
   LayoutWebScrapingToolsUserAgentsRoute: typeof LayoutWebScrapingToolsUserAgentsRoute
   LayoutHostingIndexRoute: typeof LayoutHostingIndexRoute
+  LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -285,10 +364,15 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutHostingDeviceNameRoute: LayoutHostingDeviceNameRoute,
   LayoutHostingBillingRoute: LayoutHostingBillingRoute,
+  LayoutServicesLlmInferenceApiRoute: LayoutServicesLlmInferenceApiRoute,
+  LayoutServicesManagedDatabaseRoute: LayoutServicesManagedDatabaseRoute,
+  LayoutServicesManagedStorageRoute: LayoutServicesManagedStorageRoute,
+  LayoutServicesServerlessComputeRoute: LayoutServicesServerlessComputeRoute,
   LayoutWebScrapingToolsHttpsApiRoute: LayoutWebScrapingToolsHttpsApiRoute,
   LayoutWebScrapingToolsSerpApiRoute: LayoutWebScrapingToolsSerpApiRoute,
   LayoutWebScrapingToolsUserAgentsRoute: LayoutWebScrapingToolsUserAgentsRoute,
   LayoutHostingIndexRoute: LayoutHostingIndexRoute,
+  LayoutServicesIndexRoute: LayoutServicesIndexRoute,
 }
 
 const LayoutRouteWithChildren =
@@ -308,10 +392,15 @@ export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
+  '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
+  '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
+  '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
+  '/services/serverless-compute': typeof LayoutServicesServerlessComputeRoute
   '/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
   '/hosting': typeof LayoutHostingIndexRoute
+  '/services': typeof LayoutServicesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -327,10 +416,15 @@ export interface FileRoutesByTo {
   '/': typeof LayoutIndexRoute
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
+  '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
+  '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
+  '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
+  '/services/serverless-compute': typeof LayoutServicesServerlessComputeRoute
   '/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
   '/hosting': typeof LayoutHostingIndexRoute
+  '/services': typeof LayoutServicesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -348,10 +442,15 @@ export interface FileRoutesById {
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/_layout/hosting/billing': typeof LayoutHostingBillingRoute
+  '/_layout/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
+  '/_layout/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
+  '/_layout/services/managed-storage': typeof LayoutServicesManagedStorageRoute
+  '/_layout/services/serverless-compute': typeof LayoutServicesServerlessComputeRoute
   '/_layout/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/_layout/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/_layout/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
   '/_layout/hosting/': typeof LayoutHostingIndexRoute
+  '/_layout/services/': typeof LayoutServicesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -370,10 +469,15 @@ export interface FileRouteTypes {
     | '/'
     | '/hosting/$deviceName'
     | '/hosting/billing'
+    | '/services/llm-inference-api'
+    | '/services/managed-database'
+    | '/services/managed-storage'
+    | '/services/serverless-compute'
     | '/web-scraping-tools/https-api'
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
     | '/hosting'
+    | '/services'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/activate'
@@ -388,10 +492,15 @@ export interface FileRouteTypes {
     | '/'
     | '/hosting/$deviceName'
     | '/hosting/billing'
+    | '/services/llm-inference-api'
+    | '/services/managed-database'
+    | '/services/managed-storage'
+    | '/services/serverless-compute'
     | '/web-scraping-tools/https-api'
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
     | '/hosting'
+    | '/services'
   id:
     | '__root__'
     | '/_layout'
@@ -407,10 +516,15 @@ export interface FileRouteTypes {
     | '/_layout/'
     | '/_layout/hosting/$deviceName'
     | '/_layout/hosting/billing'
+    | '/_layout/services/llm-inference-api'
+    | '/_layout/services/managed-database'
+    | '/_layout/services/managed-storage'
+    | '/_layout/services/serverless-compute'
     | '/_layout/web-scraping-tools/https-api'
     | '/_layout/web-scraping-tools/serp-api'
     | '/_layout/web-scraping-tools/user-agents'
     | '/_layout/hosting/'
+    | '/_layout/services/'
   fileRoutesById: FileRoutesById
 }
 
@@ -460,10 +574,15 @@ export const routeTree = rootRoute
         "/_layout/",
         "/_layout/hosting/$deviceName",
         "/_layout/hosting/billing",
+        "/_layout/services/llm-inference-api",
+        "/_layout/services/managed-database",
+        "/_layout/services/managed-storage",
+        "/_layout/services/serverless-compute",
         "/_layout/web-scraping-tools/https-api",
         "/_layout/web-scraping-tools/serp-api",
         "/_layout/web-scraping-tools/user-agents",
-        "/_layout/hosting/"
+        "/_layout/hosting/",
+        "/_layout/services/"
       ]
     },
     "/activate": {
@@ -509,6 +628,22 @@ export const routeTree = rootRoute
       "filePath": "_layout/hosting/billing.tsx",
       "parent": "/_layout"
     },
+    "/_layout/services/llm-inference-api": {
+      "filePath": "_layout/services/llm-inference-api.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/managed-database": {
+      "filePath": "_layout/services/managed-database.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/managed-storage": {
+      "filePath": "_layout/services/managed-storage.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/serverless-compute": {
+      "filePath": "_layout/services/serverless-compute.tsx",
+      "parent": "/_layout"
+    },
     "/_layout/web-scraping-tools/https-api": {
       "filePath": "_layout/web-scraping-tools/https-api.tsx",
       "parent": "/_layout"
@@ -523,6 +658,10 @@ export const routeTree = rootRoute
     },
     "/_layout/hosting/": {
       "filePath": "_layout/hosting/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/": {
+      "filePath": "_layout/services/index.tsx",
       "parent": "/_layout"
     }
   }

@@ -1,3 +1,4 @@
+/*
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute()({
@@ -11,3 +12,4 @@ function ManagedDatabase() {
     </div>
   )
 }
+*/
