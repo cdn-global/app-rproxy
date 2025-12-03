@@ -118,17 +118,27 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <ChartsSection />
-            <UsageInsights stats={statHighlights} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">Usage Insights</CardTitle>
+                <CardDescription>
+                  An overview of your recent API usage and performance.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6 pt-6">
+                <UsageInsights stats={statHighlights} />
+                <ChartsSection />
+              </CardContent>
+            </Card>
         
-            <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+            <Card className="overflow-hidden border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
               <CardHeader>
                 <CardTitle className="text-2xl">Interactive playground</CardTitle>
                 <CardDescription>
                   Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <PlaygroundHttpsProxy />
               </CardContent>
             </Card>
