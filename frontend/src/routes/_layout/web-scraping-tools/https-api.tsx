@@ -157,7 +157,7 @@ const HttpsProxyApiPage = () => {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="analytics" className="space-y-8">
-                <Card className="bg-zinc-900/40">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-2xl">Usage Insights</CardTitle>
                     <CardDescription>
@@ -171,7 +171,7 @@ const HttpsProxyApiPage = () => {
                 </Card>
               </TabsContent>
               <TabsContent value="playground" className="space-y-8">
-                <Card className="bg-zinc-900/40">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-2xl">
                       Interactive Playground
