@@ -5,8 +5,6 @@ import { FiArrowUpRight, FiCheck, FiCopy } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import Chart from "@/components/Dashboard/Chart"
-import VpsOverviewCard from "@/components/Dashboard/VpsOverviewCard"
 import {
   Table,
   TableBody,
@@ -308,8 +306,6 @@ function HostingIndexPage() {
             </CardFooter>
           </Card>
         </PageSection>
-        <VpsOverviewCard />
-        <Chart />
       </PageScaffold>
     </>
   )
