@@ -63,28 +63,10 @@ const navStructure: NavItem[] = [
         title: "Managed VPS",
         path: "/hosting",
         description: "Fully managed virtual private servers for your needs.",
-      },
-    ],
-  },
-  {
-    title: "Compute",
-    icon: FiCpu,
-    subItems: [
-      {
+      },{
         title: "Managed Compute",
         path: "/compute",
         description: "Deploy and manage your serverless functions.",
-      },
-    ],
-  },
-  {
-    title: "Infrastructure",
-    icon: FaGlobe,
-    subItems: [
-      {
-        title: "Managed Infrastructure",
-        path: "/infrastructure",
-        description: "Manage your infrastructure.",
       },
     ],
   },
