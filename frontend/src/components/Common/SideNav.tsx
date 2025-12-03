@@ -18,6 +18,19 @@ import {
 import type { IconType } from "react-icons"
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -117,11 +130,6 @@ const NavItems = () => {
     if (currentUser?.is_superuser) {
       mapped.push({ title: "Admin", icon: FiUsers, path: "/admin" })
     }
-    mapped.push({
-      title: "Sign Out",
-      icon: FiLogOut,
-      onClick: logout,
-    })
     return mapped
   }, [currentUser, logout])
 
@@ -215,6 +223,36 @@ const NavItems = () => {
           )
         })}
       </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="mt-4 w-full text-left">
+          <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback>
+                {currentUser?.email?.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col items-start">
+              <span className="font-medium text-primary">{currentUser?.full_name || currentUser?.email}</span>
+            </div>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>
+            <div className="flex flex-col">
+                <span>{currentUser?.full_name}</span>
+                <span className="text-xs font-normal text-muted-foreground">
+                  {currentUser?.email}
+                </span>
+              </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <RouterLink to="/settings">
+            <DropdownMenuItem>User Settings</DropdownMenuItem>
+          </RouterLink>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={logout}>Sign Out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </TooltipProvider>
   )
 }
