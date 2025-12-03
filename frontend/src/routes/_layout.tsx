@@ -22,8 +22,10 @@ function Layout() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <div className="grid flex-1 md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <SideNav />
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+        <div className="sticky top-0 h-screen">
+          <SideNav />
+        </div>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-auto">
           {isLoading ? (
             <div className="flex flex-1 items-center justify-center">
               <Spinner size={48} />

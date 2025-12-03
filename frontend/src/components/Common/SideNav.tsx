@@ -368,7 +368,7 @@ const SocialLink = ({
 
 const SideNav = () => {
   return (
-    <aside className="hidden w-64 flex-col border-r bg-sidebar p-4 sm:flex">
+    <aside className="hidden w-full h-full flex-col border-r bg-sidebar p-4 sm:flex">
       <div className="mb-4">
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
