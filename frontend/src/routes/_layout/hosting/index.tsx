@@ -5,6 +5,8 @@ import { FiArrowUpRight, FiCheck, FiCopy } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import Chart from "@/components/Dashboard/Chart"
+import VpsOverviewCard from "@/components/Dashboard/VpsOverviewCard"
 import {
   Table,
   TableBody,
@@ -108,49 +110,7 @@ function HostingIndexPage() {
   ]
 
   return (
-    <PageScaffold
-      sidebar={
-        <>
-          <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
-              Managed VPS
-            </div>
-            <div className="mt-5 space-y-3">
-              <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                VPS fleet overview
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Centralize credentials, run rates, and feature toggles so operators stay unblocked.
-              </p>
-            </div>
-            <dl className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
-              <div className="flex items-center justify-between">
-                <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Active nodes</dt>
-                <dd className="font-medium text-slate-900 dark:text-slate-100">
-                  {numberFormatter.format(fleetSummary.connected)} / {numberFormatter.format(fleetSummary.totalServers)}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between">
-                <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Run rate</dt>
-                <dd className="font-medium text-slate-900 dark:text-slate-100">
-                  {currencyFormatter.format(fleetSummary.totalMonthlyCharged)}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between">
-                <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Capacity</dt>
-                <dd className="font-medium text-slate-900 dark:text-slate-100">
-                  {numberFormatter.format(fleetSummary.totalVcpus)} vCPU
-                </dd>
-              </div>
-            </dl>
-            <p className="mt-6 text-xs text-slate-500 dark:text-slate-500">
-              Billing, provisioning, and observability data now align with dashboard insights for a unified workflow.
-            </p>
-          </div>
-          <SectionNavigation items={navigation} />
-        </>
-      }
-    >
+    <>
       <PageSection
         id="fleet-intel"
         title="Fleet intelligence"
@@ -193,122 +153,165 @@ function HostingIndexPage() {
           </div>
         </div>
       </PageSection>
-
-      <PageSection
-        id="credentials"
-        title="Access credentials"
-        description="Copy-ready secrets and deep links into individual nodes."
+      <PageScaffold
+        sidebar={
+          <>
+            <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
+                Managed VPS
+              </div>
+              <div className="mt-5 space-y-3">
+                <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                  VPS fleet overview
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Centralize credentials, run rates, and feature toggles so operators stay unblocked.
+                </p>
+              </div>
+              <dl className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                <div className="flex items-center justify-between">
+                  <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Active nodes</dt>
+                  <dd className="font-medium text-slate-900 dark:text-slate-100">
+                    {numberFormatter.format(fleetSummary.connected)} / {numberFormatter.format(fleetSummary.totalServers)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Run rate</dt>
+                  <dd className="font-medium text-slate-900 dark:text-slate-100">
+                    {currencyFormatter.format(fleetSummary.totalMonthlyCharged)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Capacity</dt>
+                  <dd className="font-medium text-slate-900 dark:text-slate-100">
+                    {numberFormatter.format(fleetSummary.totalVcpus)} vCPU
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-6 text-xs text-slate-500 dark:text-slate-500">
+                Billing, provisioning, and observability data now align with dashboard insights for a unified workflow.
+              </p>
+            </div>
+            <SectionNavigation items={navigation} />
+          </>
+        }
       >
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Access credentials
-            </CardTitle>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Copy-ready login details for each managed node, aligned with the dashboard glassmorphism treatment.
-            </p>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>Device</TableHead>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Password</TableHead>
-                    <TableHead>OS</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {hostingServers.map((server) => (
-                    <TableRow
-                      key={server.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        <div>{server.name}</div>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                          Active since {formatDate(server.activeSince)}
-                        </p>
-                      </TableCell>
-                      <TableCell className="align-top text-sm text-slate-700 dark:text-slate-300">
-                        <div className="font-medium text-slate-900 dark:text-slate-50">{server.ip}</div>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                          {server.os.toUpperCase()} · Kernel {server.kernel}
-                        </p>
-                      </TableCell>
-                      <TableCell>
-                        <CredentialCell
-                          label="Username"
-                          value={server.username}
-                          isCopied={copiedKey === `${server.name}-username`}
-                          onCopy={() => handleCopy(server.username, "Username", `${server.name}-username`)}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <CredentialCell
-                          label="Password"
-                          value={server.password}
-                          isCopied={copiedKey === `${server.name}-password`}
-                          onCopy={() => handleCopy(server.password, "Password", `${server.name}-password`)}
-                        />
-                      </TableCell>
-                      <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={server.status === "Connected" ? "success" : "warning"}
-                            className="rounded-full px-3 py-1 text-xs font-semibold"
-                          >
-                            {server.status}
-                          </Badge>
-                          {server.isTrial ? (
-                            <Badge variant="outline" className="rounded-full border-amber-400/60 px-2.5 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-amber-500">
-                              Trial
+        <PageSection
+          id="credentials"
+          title="Access credentials"
+          description="Copy-ready secrets and deep links into individual nodes."
+        >
+          <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+            <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+              <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Access credentials
+              </CardTitle>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Copy-ready login details for each managed node, aligned with the dashboard glassmorphism treatment.
+              </p>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                    <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                      <TableHead>Device</TableHead>
+                      <TableHead>IP</TableHead>
+                      <TableHead>Username</TableHead>
+                      <TableHead>Password</TableHead>
+                      <TableHead>OS</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {hostingServers.map((server) => (
+                      <TableRow
+                        key={server.name}
+                        className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                      >
+                        <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
+                          <div>{server.name}</div>
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Active since {formatDate(server.activeSince)}
+                          </p>
+                        </TableCell>
+                        <TableCell className="align-top text-sm text-slate-700 dark:text-slate-300">
+                          <div className="font-medium text-slate-900 dark:text-slate-50">{server.ip}</div>
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            {server.os.toUpperCase()} · Kernel {server.kernel}
+                          </p>
+                        </TableCell>
+                        <TableCell>
+                          <CredentialCell
+                            label="Username"
+                            value={server.username}
+                            isCopied={copiedKey === `${server.name}-username`}
+                            onCopy={() => handleCopy(server.username, "Username", `${server.name}-username`)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <CredentialCell
+                            label="Password"
+                            value={server.password}
+                            isCopied={copiedKey === `${server.name}-password`}
+                            onCopy={() => handleCopy(server.password, "Password", `${server.name}-password`)}
+                          />
+                        </TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={server.status === "Connected" ? "success" : "warning"}
+                              className="rounded-full px-3 py-1 text-xs font-semibold"
+                            >
+                              {server.status}
                             </Badge>
-                          ) : null}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                          asChild
-                        >
-                          <RouterLink to={`/hosting/${encodeURIComponent(server.name)}`}>
-                            View details
-                          </RouterLink>
-                        </Button>
+                            {server.isTrial ? (
+                              <Badge variant="outline" className="rounded-full border-amber-400/60 px-2.5 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-amber-500">
+                                Trial
+                              </Badge>
+                            ) : null}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
+                            asChild
+                          >
+                            <RouterLink to={`/hosting/${encodeURIComponent(server.name)}`}>
+                              View details
+                            </RouterLink>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-right text-sm font-semibold text-slate-600 dark:text-slate-400">
+                        {fleetSummary.totalServers} servers · {numberFormatter.format(fleetSummary.connected)} connected · {numberFormatter.format(fleetSummary.trial)} trial
+                        {fleetSummary.trial === 1 ? " seat" : " seats"}
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-right text-sm font-semibold text-slate-600 dark:text-slate-400">
-                      {fleetSummary.totalServers} servers · {numberFormatter.format(fleetSummary.connected)} connected · {numberFormatter.format(fleetSummary.trial)} trial
-                      {fleetSummary.trial === 1 ? " seat" : " seats"}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 py-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-400">
-            <p>
-              Charged run rate {currencyFormatter.format(fleetSummary.totalMonthlyCharged)} · List price {currencyFormatter.format(fleetSummary.totalMonthlyList)}.
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500">
-              Rotation, backup, monitoring, and managed support counts update alongside your dashboard tiles.
-            </p>
-          </CardFooter>
-        </Card>
-      </PageSection>
-
-      
-    </PageScaffold>
+                  </TableFooter>
+                </Table>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 py-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-400">
+              <p>
+                Charged run rate {currencyFormatter.format(fleetSummary.totalMonthlyCharged)} · List price {currencyFormatter.format(fleetSummary.totalMonthlyList)}.
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-500">
+                Rotation, backup, monitoring, and managed support counts update alongside your dashboard tiles.
+              </p>
+            </CardFooter>
+          </Card>
+        </PageSection>
+        <VpsOverviewCard />
+        <Chart />
+      </PageScaffold>
+    </>
   )
 }
 
@@ -353,26 +356,6 @@ const CredentialCell = ({
     >
       {isCopied ? <FiCheck className="h-4 w-4 text-emerald-500" /> : <FiCopy className="h-4 w-4" />}
     </Button>
-  </div>
-)
-
-const FeatureHighlight = ({
-  label,
-  value,
-  description,
-}: {
-  label: string
-  value: number
-  description: string
-}) => (
-  <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.4)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_60px_-40px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/55 dark:hover:shadow-[0_26px_60px_-38px_rgba(15,23,42,0.6)]">
-    <div className="flex items-center justify-between gap-4">
-      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{label}</p>
-      <Badge className="rounded-full border border-slate-200/70 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-600/60 dark:bg-slate-900/70 dark:text-slate-200">
-        {numberFormatter.format(value)}
-      </Badge>
-    </div>
-    <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">{description}</p>
   </div>
 )
 
