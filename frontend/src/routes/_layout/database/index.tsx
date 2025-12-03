@@ -127,6 +127,6 @@ function DatabaseIndexPage() {
   )
 }
 
-export const Route = createFileRoute('/_layout/database')({
+export const Route = createFileRoute('/_layout/database/')({
   component: DatabaseIndexPage,
 })

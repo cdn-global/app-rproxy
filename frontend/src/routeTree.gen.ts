@@ -22,8 +22,13 @@ import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutComponentlistImport } from './routes/_layout/componentlist'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutStorageIndexImport } from './routes/_layout/storage/index'
 import { Route as LayoutServicesIndexImport } from './routes/_layout/services/index'
+import { Route as LayoutLanguageModelsIndexImport } from './routes/_layout/language-models/index'
+import { Route as LayoutInfrastructureIndexImport } from './routes/_layout/infrastructure/index'
 import { Route as LayoutHostingIndexImport } from './routes/_layout/hosting/index'
+import { Route as LayoutDatabaseIndexImport } from './routes/_layout/database/index'
+import { Route as LayoutComputeIndexImport } from './routes/_layout/compute/index'
 import { Route as LayoutWebScrapingToolsUserAgentsImport } from './routes/_layout/web-scraping-tools/user-agents'
 import { Route as LayoutWebScrapingToolsSerpApiImport } from './routes/_layout/web-scraping-tools/serp-api'
 import { Route as LayoutWebScrapingToolsHttpsApiImport } from './routes/_layout/web-scraping-tools/https-api'
@@ -101,15 +106,45 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutStorageIndexRoute = LayoutStorageIndexImport.update({
+  id: '/storage/',
+  path: '/storage/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutServicesIndexRoute = LayoutServicesIndexImport.update({
   id: '/services/',
   path: '/services/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutLanguageModelsIndexRoute = LayoutLanguageModelsIndexImport.update({
+  id: '/language-models/',
+  path: '/language-models/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutInfrastructureIndexRoute = LayoutInfrastructureIndexImport.update({
+  id: '/infrastructure/',
+  path: '/infrastructure/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutHostingIndexRoute = LayoutHostingIndexImport.update({
   id: '/hosting/',
   path: '/hosting/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutDatabaseIndexRoute = LayoutDatabaseIndexImport.update({
+  id: '/database/',
+  path: '/database/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutComputeIndexRoute = LayoutComputeIndexImport.update({
+  id: '/compute/',
+  path: '/compute/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -318,6 +353,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutWebScrapingToolsUserAgentsImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/compute/': {
+      id: '/_layout/compute/'
+      path: '/compute'
+      fullPath: '/compute'
+      preLoaderRoute: typeof LayoutComputeIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/database/': {
+      id: '/_layout/database/'
+      path: '/database'
+      fullPath: '/database'
+      preLoaderRoute: typeof LayoutDatabaseIndexImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/hosting/': {
       id: '/_layout/hosting/'
       path: '/hosting'
@@ -325,11 +374,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutHostingIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/infrastructure/': {
+      id: '/_layout/infrastructure/'
+      path: '/infrastructure'
+      fullPath: '/infrastructure'
+      preLoaderRoute: typeof LayoutInfrastructureIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/language-models/': {
+      id: '/_layout/language-models/'
+      path: '/language-models'
+      fullPath: '/language-models'
+      preLoaderRoute: typeof LayoutLanguageModelsIndexImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/services/': {
       id: '/_layout/services/'
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof LayoutServicesIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/storage/': {
+      id: '/_layout/storage/'
+      path: '/storage'
+      fullPath: '/storage'
+      preLoaderRoute: typeof LayoutStorageIndexImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -352,8 +422,13 @@ interface LayoutRouteChildren {
   LayoutWebScrapingToolsHttpsApiRoute: typeof LayoutWebScrapingToolsHttpsApiRoute
   LayoutWebScrapingToolsSerpApiRoute: typeof LayoutWebScrapingToolsSerpApiRoute
   LayoutWebScrapingToolsUserAgentsRoute: typeof LayoutWebScrapingToolsUserAgentsRoute
+  LayoutComputeIndexRoute: typeof LayoutComputeIndexRoute
+  LayoutDatabaseIndexRoute: typeof LayoutDatabaseIndexRoute
   LayoutHostingIndexRoute: typeof LayoutHostingIndexRoute
+  LayoutInfrastructureIndexRoute: typeof LayoutInfrastructureIndexRoute
+  LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
   LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
+  LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -371,8 +446,13 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutWebScrapingToolsHttpsApiRoute: LayoutWebScrapingToolsHttpsApiRoute,
   LayoutWebScrapingToolsSerpApiRoute: LayoutWebScrapingToolsSerpApiRoute,
   LayoutWebScrapingToolsUserAgentsRoute: LayoutWebScrapingToolsUserAgentsRoute,
+  LayoutComputeIndexRoute: LayoutComputeIndexRoute,
+  LayoutDatabaseIndexRoute: LayoutDatabaseIndexRoute,
   LayoutHostingIndexRoute: LayoutHostingIndexRoute,
+  LayoutInfrastructureIndexRoute: LayoutInfrastructureIndexRoute,
+  LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
   LayoutServicesIndexRoute: LayoutServicesIndexRoute,
+  LayoutStorageIndexRoute: LayoutStorageIndexRoute,
 }
 
 const LayoutRouteWithChildren =
@@ -399,8 +479,13 @@ export interface FileRoutesByFullPath {
   '/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
+  '/compute': typeof LayoutComputeIndexRoute
+  '/database': typeof LayoutDatabaseIndexRoute
   '/hosting': typeof LayoutHostingIndexRoute
+  '/infrastructure': typeof LayoutInfrastructureIndexRoute
+  '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
+  '/storage': typeof LayoutStorageIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -423,8 +508,13 @@ export interface FileRoutesByTo {
   '/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
+  '/compute': typeof LayoutComputeIndexRoute
+  '/database': typeof LayoutDatabaseIndexRoute
   '/hosting': typeof LayoutHostingIndexRoute
+  '/infrastructure': typeof LayoutInfrastructureIndexRoute
+  '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
+  '/storage': typeof LayoutStorageIndexRoute
 }
 
 export interface FileRoutesById {
@@ -449,8 +539,13 @@ export interface FileRoutesById {
   '/_layout/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/_layout/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/_layout/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
+  '/_layout/compute/': typeof LayoutComputeIndexRoute
+  '/_layout/database/': typeof LayoutDatabaseIndexRoute
   '/_layout/hosting/': typeof LayoutHostingIndexRoute
+  '/_layout/infrastructure/': typeof LayoutInfrastructureIndexRoute
+  '/_layout/language-models/': typeof LayoutLanguageModelsIndexRoute
   '/_layout/services/': typeof LayoutServicesIndexRoute
+  '/_layout/storage/': typeof LayoutStorageIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -476,8 +571,13 @@ export interface FileRouteTypes {
     | '/web-scraping-tools/https-api'
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
+    | '/compute'
+    | '/database'
     | '/hosting'
+    | '/infrastructure'
+    | '/language-models'
     | '/services'
+    | '/storage'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/activate'
@@ -499,8 +599,13 @@ export interface FileRouteTypes {
     | '/web-scraping-tools/https-api'
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
+    | '/compute'
+    | '/database'
     | '/hosting'
+    | '/infrastructure'
+    | '/language-models'
     | '/services'
+    | '/storage'
   id:
     | '__root__'
     | '/_layout'
@@ -523,8 +628,13 @@ export interface FileRouteTypes {
     | '/_layout/web-scraping-tools/https-api'
     | '/_layout/web-scraping-tools/serp-api'
     | '/_layout/web-scraping-tools/user-agents'
+    | '/_layout/compute/'
+    | '/_layout/database/'
     | '/_layout/hosting/'
+    | '/_layout/infrastructure/'
+    | '/_layout/language-models/'
     | '/_layout/services/'
+    | '/_layout/storage/'
   fileRoutesById: FileRoutesById
 }
 
@@ -581,8 +691,13 @@ export const routeTree = rootRoute
         "/_layout/web-scraping-tools/https-api",
         "/_layout/web-scraping-tools/serp-api",
         "/_layout/web-scraping-tools/user-agents",
+        "/_layout/compute/",
+        "/_layout/database/",
         "/_layout/hosting/",
-        "/_layout/services/"
+        "/_layout/infrastructure/",
+        "/_layout/language-models/",
+        "/_layout/services/",
+        "/_layout/storage/"
       ]
     },
     "/activate": {
@@ -656,12 +771,32 @@ export const routeTree = rootRoute
       "filePath": "_layout/web-scraping-tools/user-agents.tsx",
       "parent": "/_layout"
     },
+    "/_layout/compute/": {
+      "filePath": "_layout/compute/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/database/": {
+      "filePath": "_layout/database/index.tsx",
+      "parent": "/_layout"
+    },
     "/_layout/hosting/": {
       "filePath": "_layout/hosting/index.tsx",
       "parent": "/_layout"
     },
+    "/_layout/infrastructure/": {
+      "filePath": "_layout/infrastructure/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/language-models/": {
+      "filePath": "_layout/language-models/index.tsx",
+      "parent": "/_layout"
+    },
     "/_layout/services/": {
       "filePath": "_layout/services/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/storage/": {
+      "filePath": "_layout/storage/index.tsx",
       "parent": "/_layout"
     }
   }
