@@ -32,6 +32,7 @@ import { Route as LayoutComputeIndexImport } from './routes/_layout/compute/inde
 import { Route as LayoutWebScrapingToolsUserAgentsImport } from './routes/_layout/web-scraping-tools/user-agents'
 import { Route as LayoutWebScrapingToolsSerpApiImport } from './routes/_layout/web-scraping-tools/serp-api'
 import { Route as LayoutWebScrapingToolsHttpsApiImport } from './routes/_layout/web-scraping-tools/https-api'
+import { Route as LayoutStorageBucketImport } from './routes/_layout/storage/bucket'
 import { Route as LayoutServicesServerlessComputeImport } from './routes/_layout/services/serverless-compute'
 import { Route as LayoutServicesManagedStorageImport } from './routes/_layout/services/managed-storage'
 import { Route as LayoutServicesManagedDatabaseImport } from './routes/_layout/services/managed-database'
@@ -176,6 +177,12 @@ const LayoutWebScrapingToolsHttpsApiRoute =
     path: '/web-scraping-tools/https-api',
     getParentRoute: () => LayoutRoute,
   } as any)
+
+const LayoutStorageBucketRoute = LayoutStorageBucketImport.update({
+  id: '/storage/bucket',
+  path: '/storage/bucket',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 const LayoutServicesServerlessComputeRoute =
   LayoutServicesServerlessComputeImport.update({
@@ -422,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutServicesServerlessComputeImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/storage/bucket': {
+      id: '/_layout/storage/bucket'
+      path: '/storage/bucket'
+      fullPath: '/storage/bucket'
+      preLoaderRoute: typeof LayoutStorageBucketImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/web-scraping-tools/https-api': {
       id: '/_layout/web-scraping-tools/https-api'
       path: '/web-scraping-tools/https-api'
@@ -515,6 +529,7 @@ interface LayoutRouteChildren {
   LayoutServicesManagedDatabaseRoute: typeof LayoutServicesManagedDatabaseRoute
   LayoutServicesManagedStorageRoute: typeof LayoutServicesManagedStorageRoute
   LayoutServicesServerlessComputeRoute: typeof LayoutServicesServerlessComputeRoute
+  LayoutStorageBucketRoute: typeof LayoutStorageBucketRoute
   LayoutWebScrapingToolsHttpsApiRoute: typeof LayoutWebScrapingToolsHttpsApiRoute
   LayoutWebScrapingToolsSerpApiRoute: typeof LayoutWebScrapingToolsSerpApiRoute
   LayoutWebScrapingToolsUserAgentsRoute: typeof LayoutWebScrapingToolsUserAgentsRoute
@@ -545,6 +560,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutServicesManagedDatabaseRoute: LayoutServicesManagedDatabaseRoute,
   LayoutServicesManagedStorageRoute: LayoutServicesManagedStorageRoute,
   LayoutServicesServerlessComputeRoute: LayoutServicesServerlessComputeRoute,
+  LayoutStorageBucketRoute: LayoutStorageBucketRoute,
   LayoutWebScrapingToolsHttpsApiRoute: LayoutWebScrapingToolsHttpsApiRoute,
   LayoutWebScrapingToolsSerpApiRoute: LayoutWebScrapingToolsSerpApiRoute,
   LayoutWebScrapingToolsUserAgentsRoute: LayoutWebScrapingToolsUserAgentsRoute,
@@ -584,6 +600,7 @@ export interface FileRoutesByFullPath {
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
   '/services/serverless-compute': typeof LayoutServicesServerlessComputeRoute
+  '/storage/bucket': typeof LayoutStorageBucketRoute
   '/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
@@ -619,6 +636,7 @@ export interface FileRoutesByTo {
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
   '/services/serverless-compute': typeof LayoutServicesServerlessComputeRoute
+  '/storage/bucket': typeof LayoutStorageBucketRoute
   '/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
@@ -656,6 +674,7 @@ export interface FileRoutesById {
   '/_layout/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/_layout/services/managed-storage': typeof LayoutServicesManagedStorageRoute
   '/_layout/services/serverless-compute': typeof LayoutServicesServerlessComputeRoute
+  '/_layout/storage/bucket': typeof LayoutStorageBucketRoute
   '/_layout/web-scraping-tools/https-api': typeof LayoutWebScrapingToolsHttpsApiRoute
   '/_layout/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/_layout/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
@@ -694,6 +713,7 @@ export interface FileRouteTypes {
     | '/services/managed-database'
     | '/services/managed-storage'
     | '/services/serverless-compute'
+    | '/storage/bucket'
     | '/web-scraping-tools/https-api'
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
@@ -728,6 +748,7 @@ export interface FileRouteTypes {
     | '/services/managed-database'
     | '/services/managed-storage'
     | '/services/serverless-compute'
+    | '/storage/bucket'
     | '/web-scraping-tools/https-api'
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
@@ -763,6 +784,7 @@ export interface FileRouteTypes {
     | '/_layout/services/managed-database'
     | '/_layout/services/managed-storage'
     | '/_layout/services/serverless-compute'
+    | '/_layout/storage/bucket'
     | '/_layout/web-scraping-tools/https-api'
     | '/_layout/web-scraping-tools/serp-api'
     | '/_layout/web-scraping-tools/user-agents'
@@ -832,6 +854,7 @@ export const routeTree = rootRoute
         "/_layout/services/managed-database",
         "/_layout/services/managed-storage",
         "/_layout/services/serverless-compute",
+        "/_layout/storage/bucket",
         "/_layout/web-scraping-tools/https-api",
         "/_layout/web-scraping-tools/serp-api",
         "/_layout/web-scraping-tools/user-agents",
@@ -925,6 +948,10 @@ export const routeTree = rootRoute
     },
     "/_layout/services/serverless-compute": {
       "filePath": "_layout/services/serverless-compute.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/storage/bucket": {
+      "filePath": "_layout/storage/bucket.tsx",
       "parent": "/_layout"
     },
     "/_layout/web-scraping-tools/https-api": {
