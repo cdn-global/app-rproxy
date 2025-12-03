@@ -11,6 +11,9 @@ import { parseApiResponse } from "@/lib/api"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
 import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
 import PlaygroundHttpsProxy from "../../../components/ScrapingTools/PlaygroundHttps"
+import UsageInsights from "../../../components/Dashboard/UsageInsights"
+import ChartsSection from "../../../components/Dashboard/ChartsSection"
+import { calculateDashboardStats } from "../../../lib/dashboardUtils"
 
 // --- Interfaces and Helper Functions ---
 interface Subscription {
@@ -76,6 +79,8 @@ const HttpsProxyApiPage = () => {
   const hasActiveSubscription = subscriptions?.some((sub) =>
     ["active", "trialing"].includes(sub.status),
   )
+
+  const statHighlights = calculateDashboardStats(1, 2, 3, [])
 
   return (
     <ProtectedComponent>
@@ -147,7 +152,8 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-
+            <UsageInsights stats={statHighlights} />
+            <ChartsSection />
             <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
               <CardHeader>
                 <CardTitle className="text-2xl">Interactive playground</CardTitle>
