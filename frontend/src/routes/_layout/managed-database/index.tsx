@@ -1,13 +1,13 @@
+import { useMemo } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import {
-  FiPlus,
-} from "react-icons/fi"
+import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -20,9 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { hostingServers } from "@/data/hosting"
-import {
-  PageScaffold,
-} from "@/components/Common/PageLayout"
+
 function ManagedDatabaseIndexPage() {
   return (
     <PageScaffold sidebar={null}>
