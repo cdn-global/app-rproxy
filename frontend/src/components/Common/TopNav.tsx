@@ -67,7 +67,9 @@ const navStructure: NavItem[] = [
 
 const NavGroupDropdown = ({ item }: { item: NavItem }) => {
   const { pathname } = useRouterState().location
-  const isGroupActive = item.subItems?.some((sub) => pathname.startsWith(sub.path))
+  const isGroupActive = item.subItems?.some((sub) =>
+    pathname.startsWith(sub.path),
+  )
 
   return (
     <DropdownMenu>

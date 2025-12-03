@@ -1,6 +1,21 @@
-import { FaBook, FaCreditCard, FaGlobe, FaSearch, FaServer } from "react-icons/fa"
+import {
+  FaBook,
+  FaBrain,
+  FaBox,
+  FaCreditCard,
+  FaDatabase,
+  FaGlobe,
+  FaSearch,
+  FaServer,
+} from "react-icons/fa"
 import type { IconType } from "react-icons"
-import { FiUserCheck, FiDatabase, FiSettings, FiShield, FiArrowUpRight } from "react-icons/fi"
+import {
+  FiUserCheck,
+  FiDatabase as FiDatabaseAlt,
+  FiSettings,
+  FiShield,
+  FiArrowUpRight,
+} from "react-icons/fi"
 import { AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -33,6 +48,7 @@ import type {
   ServerNode,
 } from "@/components/Dashboard/types"
 import ProtectedComponent from "@/components/Common/ProtectedComponent"
+// ... existing imports
 import useCustomToast from "@/hooks/useCustomToast"
 
 type FeatureMeta = {
@@ -44,7 +60,13 @@ type FeatureMeta = {
   period?: string
 }
 
-type FeatureKey = "proxy-api" | "vps-hosting" | "serp-api"
+type FeatureKey =
+  | "proxy-api"
+  | "vps-hosting"
+  | "serp-api"
+  | "llm-inference-api"
+  | "managed-storage"
+  | "managed-database"
 
 type ToolCatalogEntry = {
   label: string
@@ -60,6 +82,9 @@ const defaultFeatureSlugs: FeatureKey[] = [
   "proxy-api",
   "vps-hosting",
   "serp-api",
+  "llm-inference-api",
+  "managed-storage",
+  "managed-database",
 ]
 
 const featureDetails: Record<FeatureKey, FeatureMeta> = {
@@ -93,6 +118,36 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(99,102,241,0.12))",
     period: "Available for activation",
   },
+  "llm-inference-api": {
+    name: "LLM Inference API",
+    description:
+      "Access cutting-edge language models for your applications with a simple, scalable API.",
+    icon: FaBrain,
+    path: "/llm-inference-api",
+    gradient:
+      "linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(236, 72, 153, 0.1))",
+    period: "Now available",
+  },
+  "managed-storage": {
+    name: "Managed Storage",
+    description:
+      "Scalable object storage for your applications, compatible with the S3 API.",
+    icon: FaBox,
+    path: "/storage",
+    gradient:
+      "linear-gradient(135deg, rgba(252, 165, 165, 0.16), rgba(251, 211, 141, 0.1))",
+    period: "Beta",
+  },
+  "managed-database": {
+    name: "Managed Database",
+    description:
+      "A fully managed, scalable, and durable relational database for your applications.",
+    icon: FaDatabase,
+    path: "/database",
+    gradient:
+      "linear-gradient(135deg, rgba(134, 239, 172, 0.16), rgba(59, 130, 246, 0.1))",
+    period: "Alpha",
+  },
 }
 
 const toolCatalogEntries: ToolCatalogEntry[] = [
@@ -123,6 +178,31 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     to: "/web-scraping-tools/user-agents",
   },
   {
+    label: "LLM Inference API",
+    description:
+      "Integrate powerful language models into your applications.",
+    category: "AI Services",
+    icon: FaBrain,
+    to: "/llm-inference-api",
+    featureSlug: "llm-inference-api",
+  },
+  {
+    label: "Managed Storage",
+    description: "Manage your scalable object storage buckets and files.",
+    category: "Storage",
+    icon: FaBox,
+    to: "/storage",
+    featureSlug: "managed-storage",
+  },
+  {
+    label: "Managed Database",
+    description: "Administer your managed relational databases.",
+    category: "Database",
+    icon: FaDatabase,
+    to: "/database",
+    featureSlug: "managed-database",
+  },
+  {
     label: "Managed VPS Fleet",
     description:
       "Provision, monitor, and snapshot compute capacity across regions.",
@@ -136,7 +216,7 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     description:
       "Manage internal runbooks, snippets, and ops metadata in one place.",
     category: "Operations",
-    icon: FiDatabase,
+    icon: FaDatabase,
     to: "/items",
   },
   {
@@ -496,7 +576,7 @@ const Dashboard = () => {
         label: "Estimated Transfer",
         value: `${decimalFormatter.format(totalDataGB)} GB`,
         description: "Based on current data egress",
-        icon: FiDatabase,
+        icon: FaDatabase,
         accent: "ocean",
       },
       {
@@ -544,6 +624,10 @@ const Dashboard = () => {
     // Always surface VPS hosting as an active feature in the dashboard
     // so the hosting tool shows as highlighted and promoted in the UI.
     enabled.add("vps-hosting")
+    enabled.add("llm-inference-api")
+    enabled.add("managed-storage")
+    enabled.add("managed-database")
+    enabled.add("serp-api")
 
     const slugs = enabled.size > 0 ? Array.from(enabled) : defaultFeatureSlugs
 
