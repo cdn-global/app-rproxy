@@ -155,7 +155,7 @@ const NavItems = () => {
           if (item.subItems) {
             return (
               <div key={item.title}>
-                <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground">
+                <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground">
                   {item.icon && <item.icon className="h-5 w-5" />}
                   <span>{item.title}</span>
                 </div>
@@ -168,7 +168,7 @@ const NavItems = () => {
                         "block rounded-md px-4 py-2 text-sm font-medium",
                         pathname.startsWith(subItem.path)
                           ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-muted",
+                          : "text-foreground hover:bg-muted",
                       )}
                     >
                       {subItem.title}
@@ -184,7 +184,7 @@ const NavItems = () => {
               <button
                 key={item.title}
                 onClick={item.onClick}
-                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted"
+                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
               >
                 {item.icon && <item.icon className="h-5 w-5" />}
                 {item.title}
@@ -196,7 +196,7 @@ const NavItems = () => {
             return (
               <Tooltip key={item.title}>
                 <TooltipTrigger asChild>
-                  <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed">
+                  <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground/50 cursor-not-allowed">
                     {item.icon && <item.icon className="h-5 w-5" />}
                     {item.title}
                   </span>
@@ -214,7 +214,7 @@ const NavItems = () => {
                 "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium",
                 pathname.startsWith(item.path || "/")
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted",
+                  : "text-foreground hover:bg-muted",
               )}
             >
               {item.icon && <item.icon className="h-5 w-5" />}
@@ -225,14 +225,14 @@ const NavItems = () => {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger className="mt-4 w-full text-left">
-          <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted">
+          <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted">
             <Avatar className="h-8 w-8">
               <AvatarFallback>
                 {currentUser?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start">
-              <span className="font-medium text-primary">{currentUser?.full_name || currentUser?.email}</span>
+              <span className="font-medium">{currentUser?.full_name || currentUser?.email}</span>
             </div>
           </div>
         </DropdownMenuTrigger>
@@ -378,7 +378,7 @@ const SocialLink = ({
 
 const SideNav = () => {
   return (
-    <aside className="hidden w-64 flex-col border-r bg-background p-4 sm:flex">
+    <aside className="hidden w-64 flex-col border-r bg-card p-4 sm:flex">
       <div className="mb-4">
         <Logo
           src="/assets/images/roaming-proxy-network-logo.png"
