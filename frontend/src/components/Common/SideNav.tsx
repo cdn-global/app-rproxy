@@ -62,7 +62,7 @@ const navStructure: NavItem[] = [
       },
       {
         title: "Managed Database",
-        path: "/database",
+        path: "/managed-database",
         description: "Administer your managed relational databases.",
       },
     ],

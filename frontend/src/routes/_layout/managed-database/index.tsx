@@ -26,7 +26,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 })
 
-function DatabaseIndexPage() {
+function ManagedDatabaseIndexPage() {
   const showToast = useCustomToast()
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
 
@@ -104,13 +104,13 @@ function DatabaseIndexPage() {
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
         <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
           <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
-            <span>Database</span>
+            <span>Managed Database</span>
             <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
             <span>Managed Database</span>
           </div>
           <div className="space-y-2">
             <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              Database
+              Managed Database
             </CardTitle>
             <CardDescription>
               Administer your managed relational databases.
@@ -127,6 +127,6 @@ function DatabaseIndexPage() {
   )
 }
 
-export const Route = createFileRoute('/_layout/database/')({
-  component: DatabaseIndexPage,
+export const Route = createFileRoute('/_layout/managed-database/')({
+  component: ManagedDatabaseIndexPage,
 })
