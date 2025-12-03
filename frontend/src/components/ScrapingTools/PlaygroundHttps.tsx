@@ -433,7 +433,7 @@ const PlaygroundHttps = () => {
 
   const cardClassName = showLiveTest
     ? "rounded-[32px] border border-slate-200/70 bg-white/95 shadow-[0_44px_110px_-66px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-950/85"
-    : "rounded-[32px] border border-slate-200/70 bg-gradient-to-br from-white/95 via-white/92 to-indigo-50/60 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
+    : "rounded-[32px] border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
 
   return (
     <div className="space-y-10">
@@ -612,46 +612,46 @@ const PlaygroundHttps = () => {
         ) : (
           <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
             <div className="max-w-2xl space-y-4">
-              <span className="text-sm font-medium text-indigo-600 dark:text-indigo-300">
+              <span className="text-sm font-medium text-indigo-400 dark:text-indigo-300">
                 Live HTTPS endpoint tester
               </span>
-              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+              <h1 className="text-3xl font-semibold text-slate-100">
                 HTTPS Fetch Playground
               </h1>
-              <p className="text-base text-slate-600 dark:text-slate-300">
+              <p className="text-base text-slate-300">
                 Explore the proxy workflow, review generated snippets, and launch a live test whenever you&apos;re ready.
               </p>
-              <div className="flex flex-wrap gap-2 text-sm text-slate-600 dark:text-slate-300">
-                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+              <div className="flex flex-wrap gap-2 text-sm text-slate-300">
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
                   Live requests
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
                   <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
                   Response inspector
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
                   <span className="h-1.5 w-1.5 rounded-full bg-sky-500" aria-hidden="true" />
                   Copyable code
                 </span>
               </div>
             </div>
-            <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-300">
+            <div className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/70 p-6 text-sm text-slate-300">
               <div>
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-medium text-slate-400">
                   Get started in three steps
                 </p>
-                <ol className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-200">
+                <ol className="mt-3 space-y-2 text-sm text-slate-200">
                   <li className="flex gap-2">
-                    <span className="font-medium text-slate-900 dark:text-slate-100">1.</span>
+                    <span className="font-medium text-slate-100">1.</span>
                     Enter a target URL and API key.
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-medium text-slate-900 dark:text-slate-100">2.</span>
+                    <span className="font-medium text-slate-100">2.</span>
                     Choose the region that matches your test.
                   </li>
                   <li className="flex gap-2">
-                    <span className="font-medium text-slate-900 dark:text-slate-100">3.</span>
+                    <span className="font-medium text-slate-100">3.</span>
                     Trigger a live request and inspect every detail.
                   </li>
                 </ol>
