@@ -26,7 +26,6 @@ const Footer = () => {
           </FooterLink>
           . All rights reserved.
         </p>
-        <p>Roaming Proxy is a registered Trade Vault LLC service.</p>
       </div>
     </footer>
   )
