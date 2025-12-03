@@ -340,15 +340,6 @@ const paymentHistory: PaymentRecord[] = [
   },
   {
     month: months[7],
-    total: 60.0,
-    invoiceId: "pi_3S3MosLqozOkbqR8Bx8H7FYy",
-    paymentDate: "November 12, 2025",
-    paymentMethod: "American Express •••• 4208",
-    description: "pi_3SSgZJLqozOkbqR81edqCR9t",
-    status: "Succeeded",
-  },
-  {
-    month: months[7],
     total: 479.86,
     invoiceId: "pi_3S2MosLqozOkbqR8Bx8H7FYy",
     paymentDate: "November 10, 2025",
