@@ -22,7 +22,6 @@ const ChartsSection: React.FC = () => {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <div>
-        <h3 className="mb-4 text-xl font-semibold">Requests over time</h3>
         <div className="space-y-5">
           <div className="grid gap-4">
             <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
@@ -54,7 +53,7 @@ const ChartsSection: React.FC = () => {
         </div>
       </div>
       <div>
-        <h3 className="mb-4 text-xl font-semibold">Network Usage</h3>
+
         <div className="space-y-5">
           <div className="grid gap-4">
             <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
