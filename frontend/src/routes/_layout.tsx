@@ -20,7 +20,7 @@ function Layout() {
   const { isLoading } = useAuth()
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex min-h-screen w-full flex-col bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
       <TopNav />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-12 pt-6 sm:px-6 lg:px-8">
         {isLoading ? (

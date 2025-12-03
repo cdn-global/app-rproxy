@@ -136,10 +136,25 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
             <Tabs defaultValue="playground">
-              <TabsList>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                <TabsTrigger value="playground">Playground</TabsTrigger>
-                <TabsTrigger value="api-key">API Key</TabsTrigger>
+              <TabsList className="mb-4 flex w-fit items-center justify-start gap-2 rounded-lg bg-transparent p-0">
+                <TabsTrigger
+                  value="analytics"
+                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-primary"
+                >
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger
+                  value="playground"
+                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-primary"
+                >
+                  Playground
+                </TabsTrigger>
+                <TabsTrigger
+                  value="api-key"
+                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-primary"
+                >
+                  API Key
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="analytics" className="space-y-8">
                 <Card>
