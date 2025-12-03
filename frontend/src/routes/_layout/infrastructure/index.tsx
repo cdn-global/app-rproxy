@@ -127,6 +127,6 @@ function InfrastructureIndexPage() {
   )
 }
 
-export const Route = createFileRoute("/_layout/infrastructure/")({
+export const Route = createFileRoute('/_layout/infrastructure/')({
   component: InfrastructureIndexPage,
 })

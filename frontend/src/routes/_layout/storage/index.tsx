@@ -127,6 +127,6 @@ function StorageIndexPage() {
   )
 }
 
-export const Route = createFileRoute("/_layout/storage/")({
+export const Route = createFileRoute('/_layout/storage/')({
   component: StorageIndexPage,
 })

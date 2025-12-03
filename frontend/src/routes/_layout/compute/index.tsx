@@ -127,6 +127,6 @@ function ComputeIndexPage() {
   )
 }
 
-export const Route = createFileRoute("/_layout/compute/")({
+export const Route = createFileRoute('/_layout/compute/')({
   component: ComputeIndexPage,
 })
