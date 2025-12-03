@@ -20,7 +20,7 @@ const accentVariants = {
     card:
       "bg-[linear-gradient(135deg,_rgba(251,191,36,0.22),_rgba(245,158,11,0.12))] dark:bg-[linear-gradient(135deg,_rgba(245,158,11,0.25),_rgba(226,232,240,0.1))]",
     icon:
-      "bg-[rgba(251,191,36,0.22)] text-amber-600 dark:bg-[rgba(245,158,11,0.28)] dark:text-amber-100",
+      "bg-[rgba(251,191,36,0.22)] text-amber-600 dark:bg-[rgba(199, 16, 16, 0.93)28)] dark:text-amber-100",
   },
   ocean: {
     card:
