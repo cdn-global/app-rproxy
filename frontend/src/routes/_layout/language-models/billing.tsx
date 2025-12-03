@@ -1,6 +1,163 @@
-import Billing from '@/components/LanguageModel/Billing'
-import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_layout/language-models/billing')({
-  component: Billing,
-})
+import { useMemo } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { languageModels } from "@/data/language-models";
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+function LanguageModelsBillingPage() {
+  const billingSummary = useMemo(() => {
+    return languageModels.reduce(
+      (acc, model) => {
+        acc.totalInputCost += model.inputTokenPrice;
+        acc.totalOutputCost += model.outputTokenPrice;
+        return acc;
+      },
+      {
+        totalInputCost: 0,
+        totalOutputCost: 0,
+        totalCost: 0,
+      },
+    );
+  }, []);
+
+  billingSummary.totalCost = billingSummary.totalInputCost + billingSummary.totalOutputCost;
+
+  return (
+    <div className="space-y-10 py-10">
+      <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
+        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
+        <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
+            <span>LLM Services</span>
+            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+            <span>Billing</span>
+          </div>
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+              Billing for Language Models
+            </CardTitle>
+            <CardDescription>
+              Review your usage and costs for the language models.
+            </CardDescription>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <div className="space-y-8">
+        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Billing Summary</CardTitle>
+            <CardDescription>A summary of your current billing period.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <SummaryTile
+                label="Total Input Cost"
+                value={currencyFormatter.format(billingSummary.totalInputCost)}
+                description="Per Million Tokens"
+              />
+              <SummaryTile
+                label="Total Output Cost"
+                value={currencyFormatter.format(billingSummary.totalOutputCost)}
+                description="Per Million Tokens"
+              />
+              <SummaryTile
+                label="Total Cost"
+                value={currencyFormatter.format(billingSummary.totalCost)}
+                description="For the current period"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Detailed Costs
+            </CardTitle>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Detailed cost breakdown for each language model.
+            </p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                    <TableHead>AI Model</TableHead>
+                    <TableHead>Input Token Price</TableHead>
+                    <TableHead>Output Token Price</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {languageModels.map((model) => (
+                    <TableRow
+                      key={model.name}
+                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                    >
+                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
+                        {model.name}
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(model.inputTokenPrice)}
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(model.outputTokenPrice)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+const SummaryTile = ({
+  label,
+  value,
+  description,
+}: {
+  label: string;
+  value: string;
+  description: string;
+}) => (
+  <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
+    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
+      {label}
+    </p>
+    <p className="mt-3 text-2xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
+    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{description}</p>
+  </div>
+);
+
+export const Route = createFileRoute("/_layout/language-models/billing")({
+  component: LanguageModelsBillingPage,
+});

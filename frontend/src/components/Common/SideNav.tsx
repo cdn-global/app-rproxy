@@ -97,8 +97,8 @@ const navStructure: NavItem[] = [
     icon: FiCpu,
     subItems: [
       {
-        title: "Language Model",
-        path: "/language-model",
+        title: "LLM Inference",
+        path: "/language-models",
         description: "Manage your language model settings.",
       },
     ],
