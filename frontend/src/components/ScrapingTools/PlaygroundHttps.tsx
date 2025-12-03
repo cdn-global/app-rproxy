@@ -5,7 +5,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -437,21 +437,21 @@ const PlaygroundHttps = () => {
 
   return (
     <div className="flex flex-1 flex-col space-y-10 overflow-auto">
-      <Card id="https-live-test" className={cardClassName}>
+      <div id="https-live-test" className={cardClassName}>
         {showLiveTest ? (
           <>
-            <CardHeader className="gap-4 px-8 pt-8 pb-0 sm:flex-row sm:items-start sm:justify-between">
+            <div className="gap-4 px-8 pt-8 pb-0 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-3">
-                <CardTitle className="text-2xl text-slate-900 dark:text-slate-100">Interactive playground</CardTitle>
-                <CardDescription>
+                <h2 className="text-2xl text-slate-900 dark:text-slate-100">Interactive playground</h2>
+                <p className="text-sm text-muted-foreground">
                   Configure a live HTTPS fetch, inspect the structured response, and grab the exact code you need—without leaving this screen.
-                </CardDescription>
+                </p>
               </div>
               <Button variant="outline" className="rounded-full" onClick={handleHideLiveTest}>
                 Back to overview
               </Button>
-            </CardHeader>
-            <CardContent className="space-y-10 px-8 pb-0 pt-6">
+            </div>
+            <div className="space-y-10 px-8 pb-0 pt-6">
               <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
                 <div className="space-y-6">
                   <div className="space-y-2">
@@ -587,8 +587,8 @@ const PlaygroundHttps = () => {
                   </div>
                 </div>
               </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between mt-4">
+            </div>
+            <div className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between mt-4">
               <div>
                 <p className="font-medium text-slate-900 dark:text-slate-100">Need help accelerating integration?</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -607,10 +607,10 @@ const PlaygroundHttps = () => {
                   </a>
                 </Button>
               </div>
-            </CardFooter>
+            </div>
           </>
         ) : (
-          <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
             <div className="max-w-2xl space-y-4">
               <span className="text-sm font-medium text-indigo-400 dark:text-indigo-300">
                 Live HTTPS endpoint tester
@@ -660,9 +660,9 @@ const PlaygroundHttps = () => {
                 Begin live test
               </Button>
             </div>
-          </CardContent>
+          </div>
         )}
-      </Card>
+      </div>
 
       <ResultsDialog open={dialogOpen} onOpenChange={setDialogOpen} data={resultsData} />
     </div>
