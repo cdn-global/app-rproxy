@@ -86,28 +86,31 @@ const HttpsProxyApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <div className="space-y-8 py-8">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 rounded-full border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                <span>Web Scraping</span>
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-                <span>HTTPS Proxy</span>
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                Route Requests Through the Roaming Network
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
-              </p>
-              <div className="flex flex-wrap items-center gap-2 pt-2">
-                <Badge variant="outline">Global Egress</Badge>
-                <Badge variant="outline">Session Pinning</Badge>
-                <Badge variant="outline">Rotating IPs</Badge>
-              </div>
+      <div className="space-y-10 py-10">
+        <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(245,158,11,0.62)] dark:text-slate-100">
+          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.68),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(129,140,248,0.52),_transparent_55%)]" />
+          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
+          <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
+              <span>Web Scraping</span>
+              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+              <span>HTTPS Proxy</span>
             </div>
-          </CardContent>
+            <div className="space-y-2">
+              <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                Route Requests Through the Roaming Network
+              </CardTitle>
+              <CardDescription className="text-base">
+                Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with
+                automatic retries and region controls.
+              </CardDescription>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              <Badge variant="outline">Global Egress</Badge>
+              <Badge variant="outline">Session Pinning</Badge>
+              <Badge variant="outline">Rotating IPs</Badge>
+            </div>
+          </CardHeader>
         </Card>
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
