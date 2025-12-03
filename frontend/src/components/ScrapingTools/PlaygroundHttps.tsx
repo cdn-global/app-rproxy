@@ -435,7 +435,7 @@ const PlaygroundHttps = () => {
     : "rounded-[32px] border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
 
   return (
-    <div className="flex flex-1 flex-col space-y-10 overflow-auto">
+    <>
       <div id="https-live-test" className={cardClassName}>
         {showLiveTest ? (
           <>
@@ -664,7 +664,7 @@ const PlaygroundHttps = () => {
       </div>
 
       <ResultsDialog open={dialogOpen} onOpenChange={setDialogOpen} data={resultsData} />
-    </div>
+    </>
   )
 }
 
