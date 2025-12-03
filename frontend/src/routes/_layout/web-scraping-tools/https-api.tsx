@@ -101,15 +101,14 @@ const HttpsProxyApiPage = () => {
               <p className="text-lg text-muted-foreground">
                 Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
               </p>
+              <div className="flex flex-wrap items-center gap-2 pt-2">
+                <Badge variant="outline">Global Egress</Badge>
+                <Badge variant="outline">Session Pinning</Badge>
+                <Badge variant="outline">Rotating IPs</Badge>
+              </div>
             </div>
           </CardContent>
         </Card>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline">Global Egress</Badge>
-          <Badge variant="outline">Session Pinning</Badge>
-          <Badge variant="outline">Rotating IPs</Badge>
-        </div> 
-
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
             <Spinner size={48} />
