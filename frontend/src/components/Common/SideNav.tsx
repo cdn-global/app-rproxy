@@ -64,27 +64,15 @@ const navStructure: NavItem[] = [
         path: "/hosting",
         description: "Fully managed virtual private servers for your needs.",
       },
-    ],
-  },
-  {
-    title: "Compute",
-    icon: FiCpu,
-    subItems: [
       {
-        title: "Managed Compute",
+        title: "Server",
+        path: "/hosting",
+        description: "Manage your servers.",
+      },
+      {
+        title: "Serverless Compute",
         path: "/compute",
         description: "Deploy and manage your serverless functions.",
-      },
-    ],
-  },
-  {
-    title: "Infrastructure",
-    icon: FaGlobe,
-    subItems: [
-      {
-        title: "Managed Infrastructure",
-        path: "/infrastructure",
-        description: "Manage your infrastructure.",
       },
     ],
   },
@@ -141,8 +129,6 @@ const NavItems = () => {
       "LLM Inference",
       "Storage",
       "Database",
-      "Compute",
-      "Infrastructure",
       "Settings",
       "Sign Out",
     ].includes(title)
