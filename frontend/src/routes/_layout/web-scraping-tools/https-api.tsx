@@ -136,28 +136,28 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
             <Tabs defaultValue="playground">
-              <TabsList className="mb-4 flex w-fit items-center justify-start gap-2 rounded-lg bg-transparent p-0">
+              <TabsList className="mb-8 inline-flex w-fit items-center justify-start gap-2 rounded-full bg-zinc-900 p-2">
                 <TabsTrigger
                   value="analytics"
-                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-primary"
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                 >
                   Analytics
                 </TabsTrigger>
                 <TabsTrigger
                   value="playground"
-                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-primary"
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                 >
                   Playground
                 </TabsTrigger>
                 <TabsTrigger
                   value="api-key"
-                  className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:text-primary"
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                 >
                   API Key
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="analytics" className="space-y-8">
-                <Card>
+                <Card className="bg-zinc-900/40">
                   <CardHeader>
                     <CardTitle className="text-2xl">Usage Insights</CardTitle>
                     <CardDescription>
@@ -171,7 +171,7 @@ const HttpsProxyApiPage = () => {
                 </Card>
               </TabsContent>
               <TabsContent value="playground" className="space-y-8">
-                <Card>
+                <Card className="bg-zinc-900/40">
                   <CardHeader>
                     <CardTitle className="text-2xl">
                       Interactive Playground
@@ -186,7 +186,9 @@ const HttpsProxyApiPage = () => {
                 </Card>
               </TabsContent>
               <TabsContent value="api-key" className="space-y-8">
-                <ApiKeyModule token={token} />
+                <Card className="bg-zinc-900/40">
+                  <ApiKeyModule token={token} />
+                </Card>
               </TabsContent>
             </Tabs>
           </div>
