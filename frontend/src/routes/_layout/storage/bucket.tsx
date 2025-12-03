@@ -22,21 +22,21 @@ const mockStorageResources = [
     name: "Main Storage Bucket",
     type: "S3 Standard",
     storage: "2TB",
-    price: 50,
+    price: 60,
   },
   {
     id: "storage-backup",
     name: "Backup Storage Bucket",
     type: "Glacier Deep Archive",
     storage: "10TB",
-    price: 10,
+    price: 15,
   },
   {
     id: "data-transfer",
     name: "Data Transfer",
     type: "Outbound",
     usage: "5TB/month",
-    price: 450,
+    price: 480,
   },
 ]
 

@@ -24,7 +24,7 @@ const mockDatabaseResources = [
     vcpu: 8,
     ram: "32GB",
     storage: "1TB SSD",
-    price: 350,
+    price: 400,
   },
   {
     id: "db-replica",
@@ -33,14 +33,14 @@ const mockDatabaseResources = [
     vcpu: 4,
     ram: "16GB",
     storage: "1TB SSD",
-    price: 150,
+    price: 180,
   },
   {
     id: "db-backup",
     name: "Backup Storage",
     type: "Blob Storage",
     storage: "5TB",
-    price: 50,
+    price: 60,
   },
 ]
 
