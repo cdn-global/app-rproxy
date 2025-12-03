@@ -39,22 +39,20 @@ interface NavItem {
 
 const navStructure: NavItem[] = [
   {
-    title: "Language Model",
-    path: "/language-model",
-    description: "Manage your language model settings.",
-    icon: FiCpu,
-  },
-  {
-    title: "Storage",
-    path: "/storage",
-    description: "Manage your scalable object storage buckets and files.",
-    icon: FiBook,
-  },
-  {
-    title: "Database",
-    path: "/database",
-    description: "Administer your managed relational databases.",
+    title: "Store",
     icon: FiDatabase,
+    subItems: [
+      {
+        title: "File Storage",
+        path: "/storage",
+        description: "Manage your scalable object storage buckets and files.",
+      },
+      {
+        title: "Managed Database",
+        path: "/database",
+        description: "Administer your managed relational databases.",
+      },
+    ],
   },
   {
     title: "Scraping Tools",
@@ -92,6 +90,17 @@ const navStructure: NavItem[] = [
     //     description: "Deploy and manage your serverless cloud functions.",
     //   },
 
+    ],
+  },
+  {
+    title: "AI",
+    icon: FiCpu,
+    subItems: [
+      {
+        title: "Language Model",
+        path: "/language-model",
+        description: "Manage your language model settings.",
+      },
     ],
   },
   
