@@ -127,6 +127,6 @@ function LanguageModelsIndexPage() {
   )
 }
 
-export const Route = createFileRoute('/_layout/language-models/')({
+export const Route = createFileRoute('/_layout/language-models')({
   component: LanguageModelsIndexPage,
 })
