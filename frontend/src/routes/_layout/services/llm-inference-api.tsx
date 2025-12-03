@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute()({
-  component: ServicesIndex,
+  component: LlmInferenceApi,
 })
 
-function ServicesIndex() {
+function LlmInferenceApi() {
   return (
     <div className="p-2">
-      <h3>Services Index</h3>
+      <h3>LLM Inference API</h3>
     </div>
   )
 }
