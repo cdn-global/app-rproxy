@@ -39,6 +39,24 @@ interface NavItem {
 
 const navStructure: NavItem[] = [
   {
+    title: "LLM Inference",
+    path: "/language-models",
+    description: "Integrate powerful language models into your applications.",
+    icon: FiCpu,
+  },
+  {
+    title: "Storage",
+    path: "/storage",
+    description: "Manage your scalable object storage buckets and files.",
+    icon: FiBook,
+  },
+  {
+    title: "Database",
+    path: "/database",
+    description: "Administer your managed relational databases.",
+    icon: FiDatabase,
+  },
+  {
     title: "Scraping Tools",
     icon: FaGlobe,
     subItems: [
@@ -76,24 +94,7 @@ const navStructure: NavItem[] = [
 
     ],
   },
-  {
-    title: "LLM Inference",
-    path: "/language-models",
-    description: "Integrate powerful language models into your applications.",
-    icon: FiCpu,
-  },
-  {
-    title: "Storage",
-    path: "/storage",
-    description: "Manage your scalable object storage buckets and files.",
-    icon: FiBook,
-  },
-  {
-    title: "Database",
-    path: "/database",
-    description: "Administer your managed relational databases.",
-    icon: FiDatabase,
-  },
+  
 ]
 
 const NavItems = () => {
