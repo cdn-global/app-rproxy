@@ -95,7 +95,7 @@ const CodeBlock = ({ code, language, maxHeight = "60vh" }: CodeBlockProps) => (
     customStyle={{
       margin: 0,
       borderRadius: "0.75rem",
-      padding: "1rem",
+      padding: "1.5rem",
       maxHeight: maxHeight === "none" ? undefined : maxHeight,
       overflow: "auto",
       background: "#0f172a",
