@@ -303,26 +303,6 @@ const FooterItems = () => (
         </FooterLink>
       </FooterSection>
     </div>
-
-    <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
-        Stay in touch
-      </p>
-      <div className="flex flex-wrap gap-3">
-        <SocialLink href="https://x.com/cobaltdata" label="X">
-          <FiTwitter className="h-4 w-4" />
-        </SocialLink>
-        <SocialLink href="https://github.com/cdn-global" label="GitHub">
-          <FiGithub className="h-4 w-4" />
-        </SocialLink>
-        <SocialLink href="https://cobaltdata.net" label="Cobalt Data">
-          <FiGlobe className="h-4 w-4" />
-        </SocialLink>
-        <SocialLink href="https://docs.roamingproxy.com/" label="Docs">
-          <FiBook className="h-4 w-4" />
-        </SocialLink>
-      </div>
-    </div>
   </div>
 )
 

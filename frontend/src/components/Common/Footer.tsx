@@ -4,17 +4,27 @@ import {
   FiBook,
   FiGithub,
   FiGlobe,
-  FiMail,
-  FiPhone,
   FiTwitter,
 } from "react-icons/fi"
-
-import Logo from "../Common/Logo"
 
 const Footer = () => {
   return (
     <footer className="border-t bg-background/95 px-4 py-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-2 text-xs text-slate-500 dark:text-slate-500 sm:flex-row sm:justify-between">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 text-xs text-slate-500 dark:text-slate-500 sm:flex-row sm:justify-between">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <SocialLink href="https://x.com/cobaltdata" label="X">
+            <FiTwitter className="h-4 w-4" />
+          </SocialLink>
+          <SocialLink href="https://github.com/cdn-global" label="GitHub">
+            <FiGithub className="h-4 w-4" />
+          </SocialLink>
+          <SocialLink href="https://cobaltdata.net" label="Cobalt Data">
+            <FiGlobe className="h-4 w-4" />
+          </SocialLink>
+          <SocialLink href="https://docs.roamingproxy.com/" label="Docs">
+            <FiBook className="h-4 w-4" />
+          </SocialLink>
+        </div>
         <p>
           © 2025
           <FooterLink href="https://ROAMINGPROXY.com" newTab className="mx-1">
