@@ -24,10 +24,10 @@ import { Route as LayoutComponentlistImport } from './routes/_layout/componentli
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as LayoutStorageIndexImport } from './routes/_layout/storage/index'
 import { Route as LayoutServicesIndexImport } from './routes/_layout/services/index'
+import { Route as LayoutManagedDatabaseIndexImport } from './routes/_layout/managed-database/index'
 import { Route as LayoutLanguageModelsIndexImport } from './routes/_layout/language-models/index'
 import { Route as LayoutInfrastructureIndexImport } from './routes/_layout/infrastructure/index'
 import { Route as LayoutHostingIndexImport } from './routes/_layout/hosting/index'
-import { Route as LayoutDatabaseIndexImport } from './routes/_layout/database/index'
 import { Route as LayoutComputeIndexImport } from './routes/_layout/compute/index'
 import { Route as LayoutWebScrapingToolsUserAgentsImport } from './routes/_layout/web-scraping-tools/user-agents'
 import { Route as LayoutWebScrapingToolsSerpApiImport } from './routes/_layout/web-scraping-tools/serp-api'
@@ -123,6 +123,14 @@ const LayoutServicesIndexRoute = LayoutServicesIndexImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutManagedDatabaseIndexRoute = LayoutManagedDatabaseIndexImport.update(
+  {
+    id: '/managed-database/',
+    path: '/managed-database/',
+    getParentRoute: () => LayoutRoute,
+  } as any,
+)
+
 const LayoutLanguageModelsIndexRoute = LayoutLanguageModelsIndexImport.update({
   id: '/language-models/',
   path: '/language-models/',
@@ -138,12 +146,6 @@ const LayoutInfrastructureIndexRoute = LayoutInfrastructureIndexImport.update({
 const LayoutHostingIndexRoute = LayoutHostingIndexImport.update({
   id: '/hosting/',
   path: '/hosting/',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutDatabaseIndexRoute = LayoutDatabaseIndexImport.update({
-  id: '/database/',
-  path: '/database/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -433,13 +435,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutComputeIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/database/': {
-      id: '/_layout/database/'
-      path: '/database'
-      fullPath: '/database'
-      preLoaderRoute: typeof LayoutDatabaseIndexImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/hosting/': {
       id: '/_layout/hosting/'
       path: '/hosting'
@@ -459,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/language-models'
       fullPath: '/language-models'
       preLoaderRoute: typeof LayoutLanguageModelsIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/managed-database/': {
+      id: '/_layout/managed-database/'
+      path: '/managed-database'
+      fullPath: '/managed-database'
+      preLoaderRoute: typeof LayoutManagedDatabaseIndexImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/services/': {
@@ -501,10 +503,10 @@ interface LayoutRouteChildren {
   LayoutWebScrapingToolsSerpApiRoute: typeof LayoutWebScrapingToolsSerpApiRoute
   LayoutWebScrapingToolsUserAgentsRoute: typeof LayoutWebScrapingToolsUserAgentsRoute
   LayoutComputeIndexRoute: typeof LayoutComputeIndexRoute
-  LayoutDatabaseIndexRoute: typeof LayoutDatabaseIndexRoute
   LayoutHostingIndexRoute: typeof LayoutHostingIndexRoute
   LayoutInfrastructureIndexRoute: typeof LayoutInfrastructureIndexRoute
   LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
+  LayoutManagedDatabaseIndexRoute: typeof LayoutManagedDatabaseIndexRoute
   LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
   LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
 }
@@ -530,10 +532,10 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutWebScrapingToolsSerpApiRoute: LayoutWebScrapingToolsSerpApiRoute,
   LayoutWebScrapingToolsUserAgentsRoute: LayoutWebScrapingToolsUserAgentsRoute,
   LayoutComputeIndexRoute: LayoutComputeIndexRoute,
-  LayoutDatabaseIndexRoute: LayoutDatabaseIndexRoute,
   LayoutHostingIndexRoute: LayoutHostingIndexRoute,
   LayoutInfrastructureIndexRoute: LayoutInfrastructureIndexRoute,
   LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
+  LayoutManagedDatabaseIndexRoute: LayoutManagedDatabaseIndexRoute,
   LayoutServicesIndexRoute: LayoutServicesIndexRoute,
   LayoutStorageIndexRoute: LayoutStorageIndexRoute,
 }
@@ -568,10 +570,10 @@ export interface FileRoutesByFullPath {
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
   '/compute': typeof LayoutComputeIndexRoute
-  '/database': typeof LayoutDatabaseIndexRoute
   '/hosting': typeof LayoutHostingIndexRoute
   '/infrastructure': typeof LayoutInfrastructureIndexRoute
   '/language-models': typeof LayoutLanguageModelsIndexRoute
+  '/managed-database': typeof LayoutManagedDatabaseIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
 }
@@ -602,10 +604,10 @@ export interface FileRoutesByTo {
   '/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
   '/compute': typeof LayoutComputeIndexRoute
-  '/database': typeof LayoutDatabaseIndexRoute
   '/hosting': typeof LayoutHostingIndexRoute
   '/infrastructure': typeof LayoutInfrastructureIndexRoute
   '/language-models': typeof LayoutLanguageModelsIndexRoute
+  '/managed-database': typeof LayoutManagedDatabaseIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
 }
@@ -638,10 +640,10 @@ export interface FileRoutesById {
   '/_layout/web-scraping-tools/serp-api': typeof LayoutWebScrapingToolsSerpApiRoute
   '/_layout/web-scraping-tools/user-agents': typeof LayoutWebScrapingToolsUserAgentsRoute
   '/_layout/compute/': typeof LayoutComputeIndexRoute
-  '/_layout/database/': typeof LayoutDatabaseIndexRoute
   '/_layout/hosting/': typeof LayoutHostingIndexRoute
   '/_layout/infrastructure/': typeof LayoutInfrastructureIndexRoute
   '/_layout/language-models/': typeof LayoutLanguageModelsIndexRoute
+  '/_layout/managed-database/': typeof LayoutManagedDatabaseIndexRoute
   '/_layout/services/': typeof LayoutServicesIndexRoute
   '/_layout/storage/': typeof LayoutStorageIndexRoute
 }
@@ -675,10 +677,10 @@ export interface FileRouteTypes {
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
     | '/compute'
-    | '/database'
     | '/hosting'
     | '/infrastructure'
     | '/language-models'
+    | '/managed-database'
     | '/services'
     | '/storage'
   fileRoutesByTo: FileRoutesByTo
@@ -708,10 +710,10 @@ export interface FileRouteTypes {
     | '/web-scraping-tools/serp-api'
     | '/web-scraping-tools/user-agents'
     | '/compute'
-    | '/database'
     | '/hosting'
     | '/infrastructure'
     | '/language-models'
+    | '/managed-database'
     | '/services'
     | '/storage'
   id:
@@ -742,10 +744,10 @@ export interface FileRouteTypes {
     | '/_layout/web-scraping-tools/serp-api'
     | '/_layout/web-scraping-tools/user-agents'
     | '/_layout/compute/'
-    | '/_layout/database/'
     | '/_layout/hosting/'
     | '/_layout/infrastructure/'
     | '/_layout/language-models/'
+    | '/_layout/managed-database/'
     | '/_layout/services/'
     | '/_layout/storage/'
   fileRoutesById: FileRoutesById
@@ -810,10 +812,10 @@ export const routeTree = rootRoute
         "/_layout/web-scraping-tools/serp-api",
         "/_layout/web-scraping-tools/user-agents",
         "/_layout/compute/",
-        "/_layout/database/",
         "/_layout/hosting/",
         "/_layout/infrastructure/",
         "/_layout/language-models/",
+        "/_layout/managed-database/",
         "/_layout/services/",
         "/_layout/storage/"
       ]
@@ -913,10 +915,6 @@ export const routeTree = rootRoute
       "filePath": "_layout/compute/index.tsx",
       "parent": "/_layout"
     },
-    "/_layout/database/": {
-      "filePath": "_layout/database/index.tsx",
-      "parent": "/_layout"
-    },
     "/_layout/hosting/": {
       "filePath": "_layout/hosting/index.tsx",
       "parent": "/_layout"
@@ -927,6 +925,10 @@ export const routeTree = rootRoute
     },
     "/_layout/language-models/": {
       "filePath": "_layout/language-models/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/managed-database/": {
+      "filePath": "_layout/managed-database/index.tsx",
       "parent": "/_layout"
     },
     "/_layout/services/": {
