@@ -132,7 +132,7 @@ const UserMenu = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 rounded-2xl border border-slate-200/60 bg-white/80 p-2 shadow-[0_24px_55px_-42px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/80">
-          <DropdownMenuItem asChild className="gap-2 text-sm">
+          <DropdownMenuItem asChild className="gap-2 text-sm my-1">
             <Link to="/settings">
               <FiUser className="h-4 w-4 text-slate-500" />
               Settings
@@ -141,7 +141,7 @@ const UserMenu = () => {
           {subscriptionStatus &&
             (subscriptionStatus.hasSubscription ||
               subscriptionStatus.isTrial) && (
-              <DropdownMenuItem asChild className="gap-2 text-sm">
+              <DropdownMenuItem asChild className="gap-2 text-sm my-1">
                 <Link to="/proxies/pricing">
                   <FiCreditCard className="h-4 w-4 text-slate-500" />
                   Manage subscription
@@ -154,7 +154,7 @@ const UserMenu = () => {
               event.preventDefault()
               handleLogout()
             }}
-            className="gap-2 text-sm font-medium text-destructive focus:text-destructive"
+            className="gap-2 text-sm font-medium text-destructive focus:text-destructive my-1"
             data-testid="logout-menu-item"
           >
             <FiLogOut className="h-4 w-4" />
