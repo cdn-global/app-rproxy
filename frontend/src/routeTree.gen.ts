@@ -25,7 +25,6 @@ import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as LayoutStorageIndexImport } from './routes/_layout/storage/index'
 import { Route as LayoutServicesIndexImport } from './routes/_layout/services/index'
 import { Route as LayoutLanguageModelsIndexImport } from './routes/_layout/language-models/index'
-import { Route as LayoutLanguageModelIndexImport } from './routes/_layout/language-model/index'
 import { Route as LayoutInfrastructureIndexImport } from './routes/_layout/infrastructure/index'
 import { Route as LayoutHostingIndexImport } from './routes/_layout/hosting/index'
 import { Route as LayoutDatabaseIndexImport } from './routes/_layout/database/index'
@@ -127,12 +126,6 @@ const LayoutServicesIndexRoute = LayoutServicesIndexImport.update({
 const LayoutLanguageModelsIndexRoute = LayoutLanguageModelsIndexImport.update({
   id: '/language-models/',
   path: '/language-models/',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutLanguageModelIndexRoute = LayoutLanguageModelIndexImport.update({
-  id: '/language-model/',
-  path: '/language-model/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -462,13 +455,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutInfrastructureIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/language-model/': {
-      id: '/_layout/language-model/'
-      path: '/language-model'
-      fullPath: '/language-model'
-      preLoaderRoute: typeof LayoutLanguageModelIndexImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/language-models/': {
       id: '/_layout/language-models/'
       path: '/language-models'
@@ -519,7 +505,6 @@ interface LayoutRouteChildren {
   LayoutDatabaseIndexRoute: typeof LayoutDatabaseIndexRoute
   LayoutHostingIndexRoute: typeof LayoutHostingIndexRoute
   LayoutInfrastructureIndexRoute: typeof LayoutInfrastructureIndexRoute
-  LayoutLanguageModelIndexRoute: typeof LayoutLanguageModelIndexRoute
   LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
   LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
   LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
@@ -549,7 +534,6 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutDatabaseIndexRoute: LayoutDatabaseIndexRoute,
   LayoutHostingIndexRoute: LayoutHostingIndexRoute,
   LayoutInfrastructureIndexRoute: LayoutInfrastructureIndexRoute,
-  LayoutLanguageModelIndexRoute: LayoutLanguageModelIndexRoute,
   LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
   LayoutServicesIndexRoute: LayoutServicesIndexRoute,
   LayoutStorageIndexRoute: LayoutStorageIndexRoute,
@@ -588,7 +572,6 @@ export interface FileRoutesByFullPath {
   '/database': typeof LayoutDatabaseIndexRoute
   '/hosting': typeof LayoutHostingIndexRoute
   '/infrastructure': typeof LayoutInfrastructureIndexRoute
-  '/language-model': typeof LayoutLanguageModelIndexRoute
   '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
@@ -623,7 +606,6 @@ export interface FileRoutesByTo {
   '/database': typeof LayoutDatabaseIndexRoute
   '/hosting': typeof LayoutHostingIndexRoute
   '/infrastructure': typeof LayoutInfrastructureIndexRoute
-  '/language-model': typeof LayoutLanguageModelIndexRoute
   '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
@@ -660,7 +642,6 @@ export interface FileRoutesById {
   '/_layout/database/': typeof LayoutDatabaseIndexRoute
   '/_layout/hosting/': typeof LayoutHostingIndexRoute
   '/_layout/infrastructure/': typeof LayoutInfrastructureIndexRoute
-  '/_layout/language-model/': typeof LayoutLanguageModelIndexRoute
   '/_layout/language-models/': typeof LayoutLanguageModelsIndexRoute
   '/_layout/services/': typeof LayoutServicesIndexRoute
   '/_layout/storage/': typeof LayoutStorageIndexRoute
@@ -698,7 +679,6 @@ export interface FileRouteTypes {
     | '/database'
     | '/hosting'
     | '/infrastructure'
-    | '/language-model'
     | '/language-models'
     | '/services'
     | '/storage'
@@ -732,7 +712,6 @@ export interface FileRouteTypes {
     | '/database'
     | '/hosting'
     | '/infrastructure'
-    | '/language-model'
     | '/language-models'
     | '/services'
     | '/storage'
@@ -767,7 +746,6 @@ export interface FileRouteTypes {
     | '/_layout/database/'
     | '/_layout/hosting/'
     | '/_layout/infrastructure/'
-    | '/_layout/language-model/'
     | '/_layout/language-models/'
     | '/_layout/services/'
     | '/_layout/storage/'
@@ -836,7 +814,6 @@ export const routeTree = rootRoute
         "/_layout/database/",
         "/_layout/hosting/",
         "/_layout/infrastructure/",
-        "/_layout/language-model/",
         "/_layout/language-models/",
         "/_layout/services/",
         "/_layout/storage/"
@@ -947,10 +924,6 @@ export const routeTree = rootRoute
     },
     "/_layout/infrastructure/": {
       "filePath": "_layout/infrastructure/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/language-model/": {
-      "filePath": "_layout/language-model/index.tsx",
       "parent": "/_layout"
     },
     "/_layout/language-models/": {
