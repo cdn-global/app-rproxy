@@ -24,7 +24,7 @@ const ChartsSection: React.FC = () => {
       <div>
         <div className="space-y-5">
           <div className="grid gap-4">
-            <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
+            <div className="rounded-2xl border bg-card p-5 text-slate-900 dark:text-slate-50">
               <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
                 Requests
               </div>
@@ -56,7 +56,7 @@ const ChartsSection: React.FC = () => {
 
         <div className="space-y-5">
           <div className="grid gap-4">
-            <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
+            <div className="rounded-2xl border bg-card p-5 text-slate-900 dark:text-slate-50">
               <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
                 Network Usage
               </div>
