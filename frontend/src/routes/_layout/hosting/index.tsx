@@ -176,10 +176,10 @@ function HostingIndexPage() {
                   <div className="flex flex-col justify-between gap-4 rounded-2xl border p-5">
                     <div>
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Network mix</p>
-                      <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">64%<span className="text-xs font-medium text-red-500">target proximity</span></div>
+                      <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">64%<span className="text-xs font-medium text-purple-500">target proximity</span></div>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm text-slate-600"><span>Datacenter</span><Badge className="rounded-full bg-red-500/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-red-700">42%</Badge></div>
+                      <div className="flex items-center justify-between text-sm text-slate-600"><span>Datacenter</span><Badge className="rounded-full bg-purple-500/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-purple-700">42%</Badge></div>
                       <div className="flex items-center justify-between text-sm text-slate-600"><span>Residential</span><Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">38%</Badge></div>
                       <div className="flex items-center justify-between text-sm text-slate-600"><span>ISP</span><Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">20%</Badge></div>
                     </div>
