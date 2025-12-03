@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { ExternalLink } from "lucide-react"
+import { useState } from "react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
@@ -52,6 +53,17 @@ const fetchProxyApiAccess = (token: string) =>
   requestFromApi<ProxyApiAccess>("/proxy-api/access", token)
 
 const HttpsProxyApiPage = () => {
+  const [activeTab, setActiveTab] = useState("playground")
+  const tabTitleMap: { [key: string]: string } = {
+    analytics: "Usage Analytics & Insights",
+    playground: "Interactive API Playground",
+    "api-key": "API Key Management",
+  }
+  const tabDescriptionMap: { [key: string]: string } = {
+    analytics: "An overview of your recent API usage and performance.",
+    playground: "Test endpoints, customize requests, and generate code snippets.",
+    "api-key": "Manage and rotate your secret key for authenticating API requests.",
+  }
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") || "" : ""
 
   const {
@@ -141,14 +153,14 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <Tabs defaultValue="playground">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle>HTTPs Request API</CardTitle>
+                      <CardTitle>{tabTitleMap[activeTab]}</CardTitle>
                       <CardDescription>
-                        Everything you need to get started with our HTTPS proxy.
+                        {tabDescriptionMap[activeTab]}
                       </CardDescription>
                     </div>
                     <TabsList className="inline-flex w-fit items-center justify-start gap-2 rounded-full bg-muted p-2">
