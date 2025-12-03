@@ -52,32 +52,30 @@ const StatHighlights = ({ stats }: StatHighlightsProps) => {
         const palette = accentVariants[stat.accent]
 
         return (
-          <Card
+          <div
             key={stat.label}
             className={cn(
-              "h-full rounded-[24px] border border-slate-200/70 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.45)] backdrop-blur-2xl transition duration-200 hover:-translate-y-1 hover:shadow-[0_32px_60px_-32px_rgba(15,23,42,0.55)] dark:border-slate-700/50 dark:shadow-[0_28px_60px_-35px_rgba(148,163,184,0.55)]",
+              "flex h-full flex-col gap-6 rounded-[24px] border border-slate-200/70 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.45)] backdrop-blur-2xl transition duration-200 hover:-translate-y-1 hover:shadow-[0_32px_60px_-32px_rgba(15,23,42,0.55)] dark:border-slate-700/50 dark:shadow-[0_28px_60px_-35px_rgba(148,163,184,0.55)]",
               palette.card,
             )}
           >
-            <CardContent className="flex h-full flex-col gap-6 p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className={cn("flex aspect-square h-12 items-center justify-center rounded-full", palette.icon)}>
-                    <stat.icon className="h-6 w-6" />
-                  </div>
-                <span className="text-[0.7rem] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                  {stat.description}
-                </span>
+            <div className="flex items-start justify-between gap-4">
+              <div className={cn("flex aspect-square h-12 items-center justify-center rounded-full", palette.icon)}>
+                <stat.icon className="h-6 w-6" />
               </div>
-              <div>
-                <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                  {stat.label}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              <span className="text-[0.7rem] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                {stat.description}
+              </span>
+            </div>
+            <div>
+              <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
+                {stat.value}
+              </p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                {stat.label}
+              </p>
+            </div>
+          </div>
         )
       })}
     </div>
