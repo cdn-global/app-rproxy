@@ -87,19 +87,23 @@ const HttpsProxyApiPage = () => {
   return (
     <ProtectedComponent>
       <div className="space-y-8 py-8">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-            <span>Web Scraping</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-            <span>HTTPS Proxy</span>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Route Requests Through the Roaming Network
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
-          </p>
-        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 rounded-full border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                <span>Web Scraping</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+                <span>HTTPS Proxy</span>
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Route Requests Through the Roaming Network
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">Global Egress</Badge>
           <Badge variant="outline">Session Pinning</Badge>
@@ -135,62 +139,66 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <Tabs defaultValue="playground">
-              <TabsList className="mb-8 inline-flex w-fit items-center justify-start gap-2 rounded-full bg-zinc-900 p-2">
-                <TabsTrigger
-                  value="analytics"
-                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  Analytics
-                </TabsTrigger>
-                <TabsTrigger
-                  value="playground"
-                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  Playground
-                </TabsTrigger>
-                <TabsTrigger
-                  value="api-key"
-                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  API Key
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="analytics" className="space-y-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-2xl">Usage Insights</CardTitle>
-                    <CardDescription>
-                      An overview of your recent API usage and performance.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6 pt-6">
-                    <UsageInsights stats={statHighlights} />
-                    <ChartsSection />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="playground" className="space-y-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-2xl">
-                      Interactive Playground
-                    </CardTitle>
-                    <CardDescription>
-                      Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <PlaygroundHttpsProxy />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="api-key" className="space-y-8">
-                <Card className="bg-zinc-900/40">
-                  <ApiKeyModule token={token} />
-                </Card>
-              </TabsContent>
-            </Tabs>
+            <Card>
+              <CardContent className="pt-6">
+                <Tabs defaultValue="playground">
+                  <TabsList className="mb-8 inline-flex w-fit items-center justify-start gap-2 rounded-full bg-zinc-900 p-2">
+                    <TabsTrigger
+                      value="analytics"
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                    >
+                      Analytics
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="playground"
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                    >
+                      Playground
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="api-key"
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                    >
+                      API Key
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="analytics" className="space-y-8">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-2xl">Usage Insights</CardTitle>
+                        <CardDescription>
+                          An overview of your recent API usage and performance.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6 pt-6">
+                        <UsageInsights stats={statHighlights} />
+                        <ChartsSection />
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="playground" className="space-y-8">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-2xl">
+                          Interactive Playground
+                        </CardTitle>
+                        <CardDescription>
+                          Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <PlaygroundHttpsProxy />
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="api-key" className="space-y-8">
+                    <Card className="bg-zinc-900/40">
+                      <ApiKeyModule token={token} />
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>
