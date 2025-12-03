@@ -89,8 +89,13 @@ const NavItems = () => {
     if (currentUser?.is_superuser) {
       mapped.push({ title: "Admin", icon: FiUsers, path: "/admin" })
     }
+    mapped.push({
+      title: "Sign Out",
+      icon: FiLogOut,
+      onClick: logout,
+    })
     return mapped
-  }, [currentUser])
+  }, [currentUser, logout])
 
   const isEnabled = (title: string) => {
     return [
@@ -99,22 +104,23 @@ const NavItems = () => {
       "Hosting",
       "LLM Inference API",
       "Settings",
+      "Sign Out",
     ].includes(title)
   }
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col gap-2">
-        {items.map((item) => {
-          if (item.subItems) {
-            return (
-              <Accordion type="single" collapsible key={item.title}>
-                <AccordionItem value={item.title} className="border-none">
-                  <AccordionTrigger className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:no-underline">
+      <div className="flex h-full flex-col gap-2">
+        <div className="flex-1">
+          {items.map((item) => {
+            if (item.subItems) {
+              return (
+                <div key={item.title}>
+                  <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground">
                     {item.icon && <item.icon className="h-5 w-5" />}
                     <span>{item.title}</span>
-                  </AccordionTrigger>
-                  <AccordionContent className="pl-6">
+                  </div>
+                  <div className="pl-6">
                     {item.subItems.map((subItem) => (
                       <RouterLink
                         key={subItem.path}
@@ -129,51 +135,55 @@ const NavItems = () => {
                         {subItem.title}
                       </RouterLink>
                     ))}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            )
-          }
+                  </div>
+                </div>
+              )
+            }
 
-          if (!isEnabled(item.title)) {
+            if (item.onClick) {
+              return (
+                <button
+                  key={item.title}
+                  onClick={item.onClick}
+                  className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted"
+                >
+                  {item.icon && <item.icon className="h-5 w-5" />}
+                  {item.title}
+                </button>
+              )
+            }
+
+            if (!isEnabled(item.title)) {
+              return (
+                <Tooltip key={item.title}>
+                  <TooltipTrigger asChild>
+                    <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed">
+                      {item.icon && <item.icon className="h-5 w-5" />}
+                      {item.title}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>Coming soon</TooltipContent>
+                </Tooltip>
+              )
+            }
+
             return (
-              <Tooltip key={item.title}>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed">
-                    {item.icon && <item.icon className="h-5 w-5" />}
-                    {item.title}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Coming soon</TooltipContent>
-              </Tooltip>
+              <RouterLink
+                key={item.path}
+                to={item.path || "/"}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium",
+                  pathname.startsWith(item.path || "/")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted",
+                )}
+              >
+                {item.icon && <item.icon className="h-5 w-5" />}
+                {item.title}
+              </RouterLink>
             )
-          }
-
-          return (
-            <RouterLink
-              key={item.path}
-              to={item.path || "/"}
-              className={cn(
-                "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium",
-                pathname.startsWith(item.path || "/")
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted",
-              )}
-            >
-              {item.icon && <item.icon className="h-5 w-5" />}
-              {item.title}
-            </RouterLink>
-          )
-        })}
-      </div>
-      <div className="mt-auto">
-        <button
-          onClick={() => logout()}
-          className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted"
-        >
-          <FiLogOut className="h-5 w-5" />
-          Sign Out
-        </button>
+          })}
+        </div>
       </div>
     </TooltipProvider>
   )
