@@ -25,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PageScaffold, { PageSection } from "@/components/Common/PageLayout"
 
 const usageData = [
@@ -119,165 +120,175 @@ const WorkspacePulsePage = () => {
             Subscriptions, average usage, and quick billing actions.
           </p>
         </div>
-        <PageSection
-          id="tool-directory"
-          title="Tool directory"
-          description="A visual sweep of available tools and services for your workspace."
-        >
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            <Card className="rounded-2xl">
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">Data pipeline</CardTitle>
-                    <CardDescription className="text-xs">ETL & reverse-ETL</CardDescription>
-                  </div>
-                  <Zap className="h-5 w-5 text-slate-400" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" variant="outline" className="rounded-full px-4">
-                  Configure
-                </Button>
-              </CardContent>
-            </Card>
-            <Card className="rounded-2xl">
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">Geoproxy</CardTitle>
-                    <CardDescription className="text-xs">Proxy & scraper</CardDescription>
-                  </div>
-                  <Globe className="h-5 w-5 text-slate-400" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" variant="outline" className="rounded-full px-4">
-                  Manage
-                </Button>
-              </CardContent>
-            </Card>
-            <Card className="rounded-2xl">
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">Storage</CardTitle>
-                    <CardDescription className="text-xs">Object & file</CardDescription>
-                  </div>
-                  <HardDrive className="h-5 w-5 text-slate-400" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" variant="outline" className="rounded-full px-4">
-                  Connect
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </PageSection>
-        <PageSection
-          id="infrastructure"
-          title="Infrastructure"
-          description="A high-level overview of your workspace's infrastructure."
-        >
-          <div className="grid gap-6 xl:grid-cols-2">
-            <Card className="rounded-2xl">
-              <CardHeader className="flex-row items-start justify-between">
-                <div>
-                  <CardTitle>Regional usage</CardTitle>
-                  <CardDescription>A breakdown of usage by region.</CardDescription>
-                </div>
-                <div>
-                  <label htmlFor="metric-select" className="sr-only">Select metric</label>
-                  <select id="metric-select" defaultValue="requests" className="w-48 rounded-full border px-3 py-1 text-sm">
-                    <option value="requests">Requests</option>
-                    <option value="latency">Latency</option>
-                    <option value="errors">Errors</option>
-                  </select>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-48 w-full flex items-center justify-center text-sm text-slate-500">
-                  <div className="text-center">Bar chart placeholder (install @tremor/react for full charts)</div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle>Service status</CardTitle>
-                <CardDescription>The current status of your workspace's services.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                      <p>Data pipeline</p>
+        <Tabs defaultValue="tools" className="w-full">
+          <TabsList>
+            <TabsTrigger value="tools">Tool directory</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          </TabsList>
+          <TabsContent value="tools">
+            <PageSection
+              id="tool-directory"
+              title="Tool directory"
+              description="A visual sweep of available tools and services for your workspace."
+            >
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <Card className="rounded-2xl">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">Data pipeline</CardTitle>
+                        <CardDescription className="text-xs">ETL & reverse-ETL</CardDescription>
+                      </div>
+                      <Zap className="h-5 w-5 text-slate-400" />
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Operational</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                      <p>Geoproxy</p>
+                  </CardHeader>
+                  <CardContent>
+                    <Button size="sm" variant="outline" className="rounded-full px-4">
+                      Configure
+                    </Button>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-2xl">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">Geoproxy</CardTitle>
+                        <CardDescription className="text-xs">Proxy & scraper</CardDescription>
+                      </div>
+                      <Globe className="h-5 w-5 text-slate-400" />
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Operational</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-3 w-3 rounded-full bg-amber-500" />
-                      <p>Storage</p>
+                  </CardHeader>
+                  <CardContent>
+                    <Button size="sm" variant="outline" className="rounded-full px-4">
+                      Manage
+                    </Button>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-2xl">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">Storage</CardTitle>
+                        <CardDescription className="text-xs">Object & file</CardDescription>
+                      </div>
+                      <HardDrive className="h-5 w-5 text-slate-400" />
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Degraded performance</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </PageSection>
-        <div className="grid gap-6 xl:grid-cols-5">
-          <div className="xl:col-span-3">
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle>Usage overview</CardTitle>
-                <CardDescription>A snapshot of your workspace's usage patterns over time.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-72 w-full flex items-center justify-center text-sm text-slate-500">
-                  <div className="text-center">Area chart placeholder (install @tremor/react for full charts)</div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="xl:col-span-2">
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle>Usage insights</CardTitle>
-                <CardDescription>A per-service breakdown of your workspace's usage.</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4">
-                <div className="flex items-center gap-4 rounded-lg bg-slate-100/60 p-4 dark:bg-slate-800/60">
-                  <div className="flex aspect-square h-12 w-12 items-center justify-center rounded-lg bg-indigo-200 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-                    <Zap className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">Data pipeline</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">2.4M requests</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 rounded-lg bg-slate-100/60 p-4 dark:bg-slate-800/60">
-                  <div className="flex aspect-square h-12 w-12 items-center justify-center rounded-lg bg-sky-200 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
-                    <Globe className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">Geoproxy</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">1.9M requests</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Button size="sm" variant="outline" className="rounded-full px-4">
+                      Connect
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </PageSection>
+          </TabsContent>
+          <TabsContent value="analytics">
+            <PageSection
+              id="infrastructure"
+              title="Infrastructure"
+              description="A high-level overview of your workspace's infrastructure."
+            >
+              <div className="grid gap-6 xl:grid-cols-2">
+                <Card className="rounded-2xl">
+                  <CardHeader className="flex-row items-start justify-between">
+                    <div>
+                      <CardTitle>Regional usage</CardTitle>
+                      <CardDescription>A breakdown of usage by region.</CardDescription>
+                    </div>
+                    <div>
+                      <label htmlFor="metric-select" className="sr-only">Select metric</label>
+                      <select id="metric-select" defaultValue="requests" className="w-48 rounded-full border px-3 py-1 text-sm">
+                        <option value="requests">Requests</option>
+                        <option value="latency">Latency</option>
+                        <option value="errors">Errors</option>
+                      </select>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-48 w-full flex items-center justify-center text-sm text-slate-500">
+                      <div className="text-center">Bar chart placeholder (install @tremor/react for full charts)</div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-2xl">
+                  <CardHeader>
+                    <CardTitle>Service status</CardTitle>
+                    <CardDescription>The current status of your workspace's services.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-3 w-3 rounded-full bg-emerald-500" />
+                          <p>Data pipeline</p>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Operational</p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-3 w-3 rounded-full bg-emerald-500" />
+                          <p>Geoproxy</p>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Operational</p>
+                      </div>
+                      <div className="flex items-center justify--between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-3 w-3 rounded-full bg-amber-500" />
+                          <p>Storage</p>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Degraded performance</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </PageSection>
+            <div className="grid gap-6 xl:grid-cols-5">
+              <div className="xl:col-span-3">
+                <Card className="rounded-2xl">
+                  <CardHeader>
+                    <CardTitle>Usage overview</CardTitle>
+                    <CardDescription>A snapshot of your workspace's usage patterns over time.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-72 w-full flex items-center justify-center text-sm text-slate-500">
+                      <div className="text-center">Area chart placeholder (install @tremor/react for full charts)</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="xl:col-span-2">
+                <Card className="rounded-2xl">
+                  <CardHeader>
+                    <CardTitle>Usage insights</CardTitle>
+                    <CardDescription>A per-service breakdown of your workspace's usage.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="grid gap-4">
+                    <div className="flex items-center gap-4 rounded-lg bg-slate-100/60 p-4 dark:bg-slate-800/60">
+                      <div className="flex aspect-square h-12 w-12 items-center justify-center rounded-lg bg-indigo-200 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+                        <Zap className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Data pipeline</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">2.4M requests</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 rounded-lg bg-slate-100/60 p-4 dark:bg-slate-800/60">
+                      <div className="flex aspect-square h-12 w-12 items-center justify-center rounded-lg bg-sky-200 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
+                        <Globe className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Geoproxy</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">1.9M requests</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
         <PageSection
           id="billing"
           title="Billing"

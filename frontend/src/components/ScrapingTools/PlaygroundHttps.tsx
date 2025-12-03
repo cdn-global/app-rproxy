@@ -95,7 +95,7 @@ const CodeBlock = ({ code, language, maxHeight = "60vh" }: CodeBlockProps) => (
     customStyle={{
       margin: 0,
       borderRadius: "0.75rem",
-      padding: "1.5rem",
+      padding: "1rem",
       maxHeight: maxHeight === "none" ? undefined : maxHeight,
       overflow: "auto",
       background: "#0f172a",
@@ -573,7 +573,7 @@ const PlaygroundHttps = () => {
                       ))}
                     </div>
                   </div>
-                  <div className="relative flex-1">
+                  <div className="relative flex-1 p-4">
                     <Button
                       size="icon"
                       variant="secondary"
@@ -588,7 +588,7 @@ const PlaygroundHttps = () => {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between">
+            <CardFooter className="flex flex-col gap-4 rounded-b-[26px] border-t border-slate-200/70 bg-gradient-to-r from-white/70 via-white/65 to-white/70 px-8 py-6 text-sm text-slate-600 dark:border-slate-800/70 dark:from-slate-900/70 dark:via-slate-900/65 dark:to-slate-900/70 dark:text-slate-300 md:flex-row md:items-center md:justify-between mt-4">
               <div>
                 <p className="font-medium text-slate-900 dark:text-slate-100">Need help accelerating integration?</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">

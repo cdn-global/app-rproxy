@@ -93,7 +93,7 @@ const SerpApiPage = () => {
             </div>
             <div className="space-y-2">
               <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-                Search Engine Results Playground
+                Search Engine Results
               </CardTitle>
               <CardDescription>
                 Monitor access, rotate keys, and launch our interactive playground to validate SERP requests before shipping to production.
