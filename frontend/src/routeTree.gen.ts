@@ -36,6 +36,7 @@ import { Route as LayoutServicesServerlessComputeImport } from './routes/_layout
 import { Route as LayoutServicesManagedStorageImport } from './routes/_layout/services/managed-storage'
 import { Route as LayoutServicesManagedDatabaseImport } from './routes/_layout/services/managed-database'
 import { Route as LayoutServicesLlmInferenceApiImport } from './routes/_layout/services/llm-inference-api'
+import { Route as LayoutManagedDatabaseInstanceImport } from './routes/_layout/managed-database/instance'
 import { Route as LayoutLanguageModelsLlmServiceImport } from './routes/_layout/language-models/llm-service'
 import { Route as LayoutLanguageModelsBillingImport } from './routes/_layout/language-models/billing'
 import { Route as LayoutInfrastructureBillingImport } from './routes/_layout/infrastructure/billing'
@@ -201,6 +202,13 @@ const LayoutServicesLlmInferenceApiRoute =
   LayoutServicesLlmInferenceApiImport.update({
     id: '/services/llm-inference-api',
     path: '/services/llm-inference-api',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutManagedDatabaseInstanceRoute =
+  LayoutManagedDatabaseInstanceImport.update({
+    id: '/managed-database/instance',
+    path: '/managed-database/instance',
     getParentRoute: () => LayoutRoute,
   } as any)
 
@@ -379,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutLanguageModelsLlmServiceImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/managed-database/instance': {
+      id: '/_layout/managed-database/instance'
+      path: '/managed-database/instance'
+      fullPath: '/managed-database/instance'
+      preLoaderRoute: typeof LayoutManagedDatabaseInstanceImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/services/llm-inference-api': {
       id: '/_layout/services/llm-inference-api'
       path: '/services/llm-inference-api'
@@ -495,6 +510,7 @@ interface LayoutRouteChildren {
   LayoutInfrastructureBillingRoute: typeof LayoutInfrastructureBillingRoute
   LayoutLanguageModelsBillingRoute: typeof LayoutLanguageModelsBillingRoute
   LayoutLanguageModelsLlmServiceRoute: typeof LayoutLanguageModelsLlmServiceRoute
+  LayoutManagedDatabaseInstanceRoute: typeof LayoutManagedDatabaseInstanceRoute
   LayoutServicesLlmInferenceApiRoute: typeof LayoutServicesLlmInferenceApiRoute
   LayoutServicesManagedDatabaseRoute: typeof LayoutServicesManagedDatabaseRoute
   LayoutServicesManagedStorageRoute: typeof LayoutServicesManagedStorageRoute
@@ -524,6 +540,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutInfrastructureBillingRoute: LayoutInfrastructureBillingRoute,
   LayoutLanguageModelsBillingRoute: LayoutLanguageModelsBillingRoute,
   LayoutLanguageModelsLlmServiceRoute: LayoutLanguageModelsLlmServiceRoute,
+  LayoutManagedDatabaseInstanceRoute: LayoutManagedDatabaseInstanceRoute,
   LayoutServicesLlmInferenceApiRoute: LayoutServicesLlmInferenceApiRoute,
   LayoutServicesManagedDatabaseRoute: LayoutServicesManagedDatabaseRoute,
   LayoutServicesManagedStorageRoute: LayoutServicesManagedStorageRoute,
@@ -562,6 +579,7 @@ export interface FileRoutesByFullPath {
   '/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
   '/language-models/billing': typeof LayoutLanguageModelsBillingRoute
   '/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
+  '/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
   '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -596,6 +614,7 @@ export interface FileRoutesByTo {
   '/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
   '/language-models/billing': typeof LayoutLanguageModelsBillingRoute
   '/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
+  '/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
   '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -632,6 +651,7 @@ export interface FileRoutesById {
   '/_layout/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
   '/_layout/language-models/billing': typeof LayoutLanguageModelsBillingRoute
   '/_layout/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
+  '/_layout/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
   '/_layout/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/_layout/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/_layout/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -669,6 +689,7 @@ export interface FileRouteTypes {
     | '/infrastructure/billing'
     | '/language-models/billing'
     | '/language-models/llm-service'
+    | '/managed-database/instance'
     | '/services/llm-inference-api'
     | '/services/managed-database'
     | '/services/managed-storage'
@@ -702,6 +723,7 @@ export interface FileRouteTypes {
     | '/infrastructure/billing'
     | '/language-models/billing'
     | '/language-models/llm-service'
+    | '/managed-database/instance'
     | '/services/llm-inference-api'
     | '/services/managed-database'
     | '/services/managed-storage'
@@ -736,6 +758,7 @@ export interface FileRouteTypes {
     | '/_layout/infrastructure/billing'
     | '/_layout/language-models/billing'
     | '/_layout/language-models/llm-service'
+    | '/_layout/managed-database/instance'
     | '/_layout/services/llm-inference-api'
     | '/_layout/services/managed-database'
     | '/_layout/services/managed-storage'
@@ -804,6 +827,7 @@ export const routeTree = rootRoute
         "/_layout/infrastructure/billing",
         "/_layout/language-models/billing",
         "/_layout/language-models/llm-service",
+        "/_layout/managed-database/instance",
         "/_layout/services/llm-inference-api",
         "/_layout/services/managed-database",
         "/_layout/services/managed-storage",
@@ -881,6 +905,10 @@ export const routeTree = rootRoute
     },
     "/_layout/language-models/llm-service": {
       "filePath": "_layout/language-models/llm-service.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/managed-database/instance": {
+      "filePath": "_layout/managed-database/instance.tsx",
       "parent": "/_layout"
     },
     "/_layout/services/llm-inference-api": {
