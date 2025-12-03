@@ -34,8 +34,9 @@ function Layout() {
         </main>
 
       </div>
-              <Footer />
+            <Footer />  
     </div>
+    
   )
 }
 

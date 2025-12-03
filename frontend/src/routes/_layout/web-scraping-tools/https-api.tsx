@@ -109,13 +109,12 @@ const HttpsProxyApiPage = () => {
               <span>HTTPS Proxy</span>
             </div>
             <div className="space-y-2">
-              <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-                Route Requests Through the Roaming Network
-              </CardTitle>
-              <CardDescription className="text-base">
-                Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with
-                automatic retries and region controls.
-              </CardDescription>
+                <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                  HTTPS Proxy API
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Tunnel HTTP/S traffic through managed proxies with automatic retries and geo-targeting.
+                </CardDescription>
             </div>
             <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
               <Badge variant="outline">Global Egress</Badge>
