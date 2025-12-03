@@ -141,34 +141,48 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">Usage Insights</CardTitle>
-                <CardDescription>
-                  An overview of your recent API usage and performance.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6 pt-6">
-                <UsageInsights stats={statHighlights} />
-                <ChartsSection />
-              </CardContent>
-            </Card>
-        
-            <Card className="overflow-hidden border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-              <CardHeader>
-                <CardTitle className="text-2xl">Interactive playground</CardTitle>
-                <CardDescription>
-                  Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <PlaygroundHttpsProxy />
-              </CardContent>
-            </Card>
-
-                        <ApiKeyModule token={token} />
-
-            
+            <Tabs defaultValue="playground">
+              <div className="sticky top-20 z-10 -mx-4 -mt-10 mb-8 bg-background/80 py-4 pl-4 backdrop-blur-md">
+                <TabsList>
+                  <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                  <TabsTrigger value="playground">Playground</TabsTrigger>
+                  <TabsTrigger value="api-key">API Key</TabsTrigger>
+                </TabsList>
+              </div>
+              <TabsContent value="analytics" className="space-y-8">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-2xl">Usage Insights</CardTitle>
+                    <CardDescription>
+                      An overview of your recent API usage and performance.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6 pt-6">
+                    <UsageInsights stats={statHighlights} />
+                    <ChartsSection />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="playground" className="space-y-8">
+                <Card className="overflow-hidden border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+                  <CardHeader>
+                    <CardTitle className="text-2xl">
+                      Interactive playground
+                    </CardTitle>
+                    <CardDescription>
+                      Verify target URLs, tweak retries, and export ready-made
+                      snippets before plugging into your pipelines.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <PlaygroundHttpsProxy />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="api-key" className="space-y-8">
+                <ApiKeyModule token={token} />
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </div>
