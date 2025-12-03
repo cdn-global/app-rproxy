@@ -89,7 +89,7 @@ export const hostingServers: HostingServer[] = [
     monthlyComputePrice: 45.3,
     fullMonthlyComputePrice: 45.3,
     storageSizeGB: 110,
-    activeSince: "2025-09-01",
+    activeSince: "2025-12-01",
     hasRotatingIP: false,
     hasBackup: false,
     hasMonitoring: false,

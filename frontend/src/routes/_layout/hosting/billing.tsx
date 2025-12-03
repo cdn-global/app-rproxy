@@ -111,6 +111,21 @@ const months: Month[] = [
     start: new Date(2025, 8, 1),
     end: new Date(2025, 8, 30),
   },
+  {
+    name: "October 2025",
+    start: new Date(2025, 9, 1),
+    end: new Date(2025, 9, 31),
+  },
+  {
+    name: "November 2025",
+    start: new Date(2025, 10, 1),
+    end: new Date(2025, 10, 30),
+  },
+  {
+    name: "December 2025",
+    start: new Date(2025, 11, 1),
+    end: new Date(2025, 11, 31),
+  },
 ]
 
 function calculateTotalsForMonth(month: Month) {
