@@ -36,12 +36,12 @@ const ChartsSection: React.FC = () => {
                 <svg viewBox="0 0 180 110" className="h-24 w-full">
                   <path
                     d={`${sparkPath} L 180 110 L 0 110 Z`}
-                    fill="rgba(14,165,233,0.16)"
+                    fill="hsl(var(--chart-2))"
                     className="stroke-none"
                   />
                   <path
                     d={sparkPath}
-                    stroke="rgba(56,189,248,0.9)"
+                    stroke="hsl(var(--chart-1))"
                     strokeWidth={3}
                     fill="none"
                     strokeLinecap="round"
@@ -68,12 +68,12 @@ const ChartsSection: React.FC = () => {
                 <svg viewBox="0 0 180 110" className="h-24 w-full">
                   <path
                     d={`${networkSparkPath} L 180 110 L 0 110 Z`}
-                    fill="rgba(14,165,233,0.16)"
+                    fill="hsl(var(--chart-2))"
                     className="stroke-none"
                   />
                   <path
                     d={networkSparkPath}
-                    stroke="rgba(56,189,248,0.9)"
+                    stroke="hsl(var(--chart-1))"
                     strokeWidth={3}
                     fill="none"
                     strokeLinecap="round"
