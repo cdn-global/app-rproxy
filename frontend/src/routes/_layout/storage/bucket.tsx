@@ -76,6 +76,24 @@ function BucketDetailsPage() {
     },
   ]
 
+  const costPoints = [50, 45, 60, 70, 65, 80, 85, 90]
+  const costSparkPath = costPoints
+    .map((point, index) => {
+      const x = (index / (costPoints.length - 1)) * 180
+      const y = 110 - point
+      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+    })
+    .join(" ")
+
+  const usagePoints = [30, 40, 35, 50, 60, 75, 70, 80]
+  const usageSparkPath = usagePoints
+    .map((point, index) => {
+      const x = (index / (usagePoints.length - 1)) * 180
+      const y = 110 - point
+      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+    })
+    .join(" ")
+
   return (
     <div className="space-y-12">
       <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
@@ -147,7 +165,29 @@ function BucketDetailsPage() {
               <CardTitle>Cost Breakdown</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Graph of cost breakdown here</p>
+              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+                Total Cost
+              </div>
+              <div className="mt-2 text-2xl font-semibold">$510.00</div>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+                +8.1% vs last 30 days
+              </p>
+              <div className="mt-4">
+                <svg viewBox="0 0 180 110" className="h-24 w-full">
+                  <path
+                    d={`${costSparkPath} L 180 110 L 0 110 Z`}
+                    fill="rgba(14,165,233,0.16)"
+                    className="stroke-none"
+                  />
+                  <path
+                    d={costSparkPath}
+                    stroke="rgba(56,189,248,0.9)"
+                    strokeWidth={3}
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
             </CardContent>
           </Card>
           <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
@@ -155,7 +195,29 @@ function BucketDetailsPage() {
               <CardTitle>Usage Metrics</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Graph of usage metrics here</p>
+              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+                Data Transfer Out
+              </div>
+              <div className="mt-2 text-2xl font-semibold">5.2TB</div>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+                vs 4.8TB last month
+              </p>
+              <div className="mt-4">
+                <svg viewBox="0 0 180 110" className="h-24 w-full">
+                  <path
+                    d={`${usageSparkPath} L 180 110 L 0 110 Z`}
+                    fill="rgba(14,165,233,0.16)"
+                    className="stroke-none"
+                  />
+                  <path
+                    d={usageSparkPath}
+                    stroke="rgba(56,189,248,0.9)"
+                    strokeWidth={3}
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
             </CardContent>
           </Card>
         </div>
