@@ -39,42 +39,19 @@ interface NavItem {
 
 const navStructure: NavItem[] = [
   {
-    title: "Scraping Tools",
+    title: "Web Scraping",
     icon: FaGlobe,
-    subItems: [
-      {
-        title: "Roaming IP",
-        path: "/web-scraping-tools/https-api",
-        description:
-          "Access any webpage with our powerful rotating proxy network.",
-      },
-      {
-        title: "SERP API",
-        path: "/web-scraping-tools/serp-api",
-        description: "Access any webpage with our powerful SERP API.",
-      },
-    ],
+    path: "/web-scraping-tools",
   },
   {
     title: "Hosting",
     icon: FaServer,
-    subItems: [
-      {
-        title: "Managed VPS",
-        path: "/hosting",
-        description: "Fully managed virtual private servers for your needs.",
-      },
-      {
-        title: "Server",
-        path: "/hosting",
-        description: "Manage your servers.",
-      },
-      {
-        title: "Serverless Compute",
-        path: "/compute",
-        description: "Deploy and manage your serverless functions.",
-      },
-    ],
+    path: "/hosting",
+  },
+  {
+    title: "Compute",
+    icon: FiCpu,
+    path: "/compute",
   },
   {
     title: "LLM Inference",
