@@ -1,7 +1,8 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 import Footer from "../components/Common/Footer"
-import TopNav from "../components/Common/TopNav"
+import Header from "../components/Common/Header"
+import SideNav from "../components/Common/SideNav"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { Spinner } from "@/components/ui/spinner"
 
@@ -20,18 +21,21 @@ function Layout() {
   const { isLoading } = useAuth()
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <TopNav />
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-12 pt-6 sm:px-6 lg:px-8">
-        {isLoading ? (
-          <div className="flex flex-1 items-center justify-center">
-            <Spinner size={48} />
-          </div>
-        ) : (
-          <Outlet />
-        )}
-      </main>
-      <Footer />
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <SideNav />
+      <div className="flex flex-col">
+        <Header />
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+          {isLoading ? (
+            <div className="flex flex-1 items-center justify-center">
+              <Spinner size={48} />
+            </div>
+          ) : (
+            <Outlet />
+          )}
+        </main>
+        <Footer />
+      </div>
     </div>
   )
 }
