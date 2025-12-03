@@ -88,7 +88,7 @@ const CODE_TEMPLATES = [
   },
 ] as const
 
-const CodeBlock = ({ code, language, maxHeight = "60vh" }: CodeBlockProps) => (
+const CodeBlock = ({ code, language, maxHeight = "none" }: CodeBlockProps) => (
   <SyntaxHighlighter
     language={language}
     style={vscDarkPlus}
@@ -213,7 +213,7 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <CodeBlock code={jsonResponse} language="json" maxHeight="45vh" />
+                  <CodeBlock code={jsonResponse} language="json" />
                 </CardContent>
               </Card>
 
@@ -436,7 +436,7 @@ const PlaygroundHttps = () => {
     : "rounded-[32px] border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
 
   return (
-    <div className="space-y-10">
+    <div className="flex flex-1 flex-col space-y-10 overflow-auto p-4">
       <Card id="https-live-test" className={cardClassName}>
         {showLiveTest ? (
           <>
