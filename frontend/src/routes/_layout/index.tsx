@@ -859,6 +859,7 @@ const Dashboard = () => {
           apiConsoleTo="/web-scraping-tools/https-api"
         />
       </PageSection>,
+      chartsSection,
       <PageSection
         id="usage-insights"
         title="Usage insights"
@@ -901,6 +902,8 @@ const Dashboard = () => {
         />
       </PageSection>,
 
+      chartsSection,
+
       <PageSection
         id="usage-insights"
         title="Usage insights"
@@ -927,16 +930,6 @@ const Dashboard = () => {
       </PageSection>,
     )
   }
-  sections.push(
-    <PageSection
-      id="charts"
-      title="Charts"
-      description="Quick visualizations of throughput and capacity."
-      key="charts"
-    >
-      <ChartsSection />
-    </PageSection>,
-  )
   // Add the Jump navigation as the last page section before the footer
   sections.push(
     <PageSection id="jump" title="Jump to" description="Quick links to page sections." key="jump">
