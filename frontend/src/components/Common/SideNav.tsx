@@ -196,15 +196,6 @@ const NavItems = () => {
 const FooterItems = () => (
   <div className="mt-auto flex flex-col gap-6">
     <div className="space-y-3 text-sm">
-      <FooterSection title="Talk to us">
-        <FooterLink href="tel:+18334353873">
-          <FiPhone className="h-4 w-4" /> +1 (833) 435-3873
-        </FooterLink>
-        <FooterLink href="mailto:info@roamingproxy.com">
-          <FiMail className="h-4 w-4" /> info@roamingproxy.com
-        </FooterLink>
-      </FooterSection>
-
       <FooterSection title="Resources">
         <FooterLink href="https://ROAMINGPROXY.com/resources/faq" newTab>
           FAQ
@@ -226,6 +217,15 @@ const FooterItems = () => (
         </FooterLink>
         <FooterLink href="https://ROAMINGPROXY.com/compliance" newTab>
           Compliance Center
+        </FooterLink>
+      </FooterSection>
+
+      <FooterSection title="Talk to us">
+        <FooterLink href="tel:+18334353873">
+          <FiPhone className="h-4 w-4" /> +1 (833) 435-3873
+        </FooterLink>
+        <FooterLink href="mailto:info@roamingproxy.com">
+          <FiMail className="h-4 w-4" /> info@roamingproxy.com
         </FooterLink>
       </FooterSection>
     </div>
