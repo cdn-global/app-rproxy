@@ -120,37 +120,37 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
     path: "/web-scraping-tools/serp-api",
     gradient:
       "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(99,102,241,0.12))",
-    period: "Available for activation",
+    period: "ACTIVE",
   },
   "llm-inference-api": {
     name: "LLM Inference API",
     description:
-      "Access cutting-edge language models for your applications with a simple, scalable API.",
+      "Integrate powerful language models into your applications.",
     icon: FaBrain,
     path: "/llm-inference-api",
     gradient:
       "linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(236, 72, 153, 0.1))",
-    period: "Now available",
+    period: "ACTIVE",
   },
   "managed-storage": {
     name: "Managed Storage",
     description:
-      "Scalable object storage for your applications, compatible with the S3 API.",
+      "Manage your scalable object storage buckets and files.",
     icon: FaBox,
     path: "/storage",
     gradient:
       "linear-gradient(135deg, rgba(252, 165, 165, 0.16), rgba(251, 211, 141, 0.1))",
-    period: "Beta",
+    period: "ACTIVE",
   },
   "managed-database": {
     name: "Managed Database",
     description:
-      "A fully managed, scalable, and durable relational database for your applications.",
+      "Administer your managed relational databases.",
     icon: FaDatabase,
     path: "/database",
     gradient:
       "linear-gradient(135deg, rgba(134, 239, 172, 0.16), rgba(59, 130, 246, 0.1))",
-    period: "Alpha",
+    period: "ACTIVE",
   },
   "serverless-compute": {
     name: "Serverless Compute",
@@ -160,7 +160,7 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
     path: "/serverless-compute",
     gradient:
       "linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.1))",
-    period: "Preview",
+    period: "ACTIVE",
   },
 }
 
@@ -194,7 +194,7 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
   {
     label: "LLM Inference API",
     description:
-      "Integrate powerful language models into your applications.",
+      "Integrate powerful language models into your applications. Open",
     category: "AI Services",
     icon: FaBrain,
     to: "/llm-inference-api",
@@ -202,7 +202,7 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
   },
   {
     label: "Managed Storage",
-    description: "Manage your scalable object storage buckets and files.",
+    description: "Manage your scalable object storage buckets and files. Open",
     category: "Storage",
     icon: FaBox,
     to: "/storage",
@@ -210,7 +210,7 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
   },
   {
     label: "Managed Database",
-    description: "Administer your managed relational databases.",
+    description: "Administer your managed relational databases. Open",
     category: "Database",
     icon: FaDatabase,
     to: "/database",

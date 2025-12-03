@@ -3,7 +3,7 @@ import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
 import { Menu, X } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { FaGlobe, FaSearch, FaServer } from "react-icons/fa"
-import { FiLogOut, FiUsers, FiSettings } from "react-icons/fi"
+import { FiLogOut, FiUsers, FiSettings,FiDatabase } from "react-icons/fi"
 import type { IconType } from "react-icons"
 
 import { Button } from "@/components/ui/button"
@@ -56,6 +56,32 @@ const navStructure: NavItem[] = [
     path: "/hosting",
     description: "Fully managed virtual private servers for your needs.",
     icon: FaServer,
+  },
+  {
+    title: "Services",
+    icon: FiDatabase,
+    subItems: [
+      {
+        title: "LLM Inference API",
+        path: "/services/llm-inference-api",
+        description: "Integrate powerful language models into your applications.",
+      },
+      {
+        title: "Managed Storage",
+        path: "/services/managed-storage",
+        description: "Manage your scalable object storage buckets and files.",
+      },
+      {
+        title: "Managed Database",
+        path: "/services/managed-database",
+        description: "Administer your managed relational databases.",
+      },
+      {
+        title: "Serverless Compute",
+        path: "/services/serverless-compute",
+        description: "Run your code without provisioning or managing servers.",
+      },
+    ],
   },
   {
     title: "Settings",
@@ -128,6 +154,7 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
       "Settings",
       "Sign Out",
       "Managed VPS",
+      "Services",
     ].includes(title)
   }
 
