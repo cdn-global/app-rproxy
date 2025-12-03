@@ -67,6 +67,7 @@ type FeatureKey =
   | "llm-inference-api"
   | "managed-storage"
   | "managed-database"
+  | "serverless-compute"
 
 type ToolCatalogEntry = {
   label: string
@@ -85,6 +86,7 @@ const defaultFeatureSlugs: FeatureKey[] = [
   "llm-inference-api",
   "managed-storage",
   "managed-database",
+  "serverless-compute",
 ]
 
 const featureDetails: Record<FeatureKey, FeatureMeta> = {
@@ -148,6 +150,16 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
       "linear-gradient(135deg, rgba(134, 239, 172, 0.16), rgba(59, 130, 246, 0.1))",
     period: "Alpha",
   },
+  "serverless-compute": {
+    name: "Serverless Compute",
+    description:
+      "Run your code without provisioning or managing servers.",
+    icon: FaServer,
+    path: "/serverless-compute",
+    gradient:
+      "linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.1))",
+    period: "Preview",
+  },
 }
 
 const toolCatalogEntries: ToolCatalogEntry[] = [
@@ -201,6 +213,14 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     icon: FaDatabase,
     to: "/database",
     featureSlug: "managed-database",
+  },
+  {
+    label: "Serverless Compute",
+    description: "Deploy and manage your serverless functions.",
+    category: "Compute",
+    icon: FaServer,
+    to: "/serverless-compute",
+    featureSlug: "serverless-compute",
   },
   {
     label: "Managed VPS Fleet",
@@ -628,6 +648,7 @@ const Dashboard = () => {
     enabled.add("managed-storage")
     enabled.add("managed-database")
     enabled.add("serp-api")
+    enabled.add("serverless-compute")
 
     const slugs = enabled.size > 0 ? Array.from(enabled) : defaultFeatureSlugs
 
@@ -1133,7 +1154,6 @@ const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
                   >
                     <RouterLink to={tool.to}>
                       <span>Open</span>
-                      <FiArrowUpRight className="h-4 w-4" />
                     </RouterLink>
                   </Button>
                 ) : tool.href ? (
