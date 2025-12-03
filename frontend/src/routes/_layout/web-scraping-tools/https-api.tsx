@@ -107,19 +107,6 @@ const HttpsProxyApiPage = () => {
               <Badge variant="outline">Session pinning</Badge>
               <Badge variant="outline">Rotating IPs</Badge>
             </div>
-            <div>
-              <Button asChild variant="outline" size="sm" className="mt-2">
-                <a
-                  href="https://cloud.roamingproxy.com/hosting/billing"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2"
-                >
-                  Manage billing
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                </a>
-              </Button>
-            </div>
           </CardHeader>
         </Card>
 
