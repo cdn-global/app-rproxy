@@ -142,7 +142,7 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
             <Tabs defaultValue="playground">
-              <div className="sticky top-20 z-10 -mx-4 -mt-10 mb-8 bg-background/80 py-4 pl-4 backdrop-blur-md">
+              <div className="-mx-4 mb-8 bg-background/80 py-4 pl-4 backdrop-blur-md">
                 <TabsList>
                   <TabsTrigger value="analytics">Analytics</TabsTrigger>
                   <TabsTrigger value="playground">Playground</TabsTrigger>
