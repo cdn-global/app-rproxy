@@ -16,6 +16,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -167,13 +174,13 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
 
           {tab === "response" ? (
             <div className="space-y-6">
-              <Card className="border border-slate-200/60 bg-slate-950 text-slate-100 dark:border-slate-700/60">
+              <Card className="border border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-950">
                 <CardHeader className="flex flex-row items-center justify-between gap-4">
                   <div>
-                    <CardTitle className="text-base font-semibold text-slate-100">
+                    <CardTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">
                       JSON response
                     </CardTitle>
-                    <CardDescription className="text-xs text-slate-300">
+                    <CardDescription className="text-xs text-slate-600 dark:text-slate-300">
                       Structured data returned from the proxy endpoint.
                     </CardDescription>
                   </div>
@@ -283,11 +290,11 @@ const ResultsDialog = ({ open, onOpenChange, data }: {
                 </CardContent>
               </Card>
 
-              <Card className="border border-slate-200/60 bg-slate-950 text-slate-100 dark:border-slate-700/60">
+              <Card className="border border-slate-200/60 bg-white dark:border-slate-700/60 dark:bg-slate-950">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-base font-semibold text-slate-100">Response headers</CardTitle>
-                    <CardDescription className="text-xs text-slate-300">
+                    <CardTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">Response headers</CardTitle>
+                    <CardDescription className="text-xs text-slate-600 dark:text-slate-300">
                       Key metadata returned from the edge network.
                     </CardDescription>
                   </div>
@@ -476,18 +483,21 @@ const PlaygroundHttps = () => {
                       <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="region">
                         Region
                       </label>
-                      <select
-                        id="region"
-                        value={region}
-                        onChange={(event) => setRegion(event.target.value)}
-                        className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
-                      >
-                        {REGIONS.map((reg) => (
-                          <option key={reg} value={reg}>
-                            {reg}
-                          </option>
-                        ))}
-                      </select>
+                      <Select value={region} onValueChange={setRegion}>
+                        <SelectTrigger
+                          id="region"
+                          className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70"
+                        >
+                          <SelectValue placeholder="Select region" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {REGIONS.map((reg) => (
+                            <SelectItem key={reg} value={reg}>
+                              {reg}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="flex items-end">
                       <Button
