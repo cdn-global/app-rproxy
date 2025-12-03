@@ -40,41 +40,29 @@ interface NavItemsProps {
 
 const navStructure: NavItem[] = [
   {
-    title: "Roaming IP",
-    path: "/web-scraping-tools/https-api",
-    description: "Access any webpage with our powerful rotating proxy network.",
+    title: "Scraping Tools",
     icon: FaGlobe,
-  },
-  {
-    title: "SERP API",
-    path: "/web-scraping-tools/serp-api",
-    description: "Access any webpage with our powerful SERP API.",
-    icon: FaSearch,
-  },
-  {
-    title: "Managed VPS",
-    path: "/hosting",
-    description: "Fully managed virtual private servers for your needs.",
-    icon: FaServer,
-  },
-  {
-    title: "Services",
-    icon: FiDatabase,
     subItems: [
       {
-        title: "LLM Inference API",
-        path: "/services/llm-inference-api",
-        description: "Integrate powerful language models into your applications.",
+        title: "Roaming IP",
+        path: "/web-scraping-tools/https-api",
+        description: "Access any webpage with our powerful rotating proxy network.",
       },
       {
-        title: "Managed Storage",
-        path: "/services/managed-storage",
-        description: "Manage your scalable object storage buckets and files.",
+        title: "SERP API",
+        path: "/web-scraping-tools/serp-api",
+        description: "Access any webpage with our powerful SERP API.",
       },
+    ],
+  },
+  {
+    title: "Hosting",
+    icon: FaServer,
+    subItems: [
       {
-        title: "Managed Database",
-        path: "/services/managed-database",
-        description: "Administer your managed relational databases.",
+        title: "Managed VPS",
+        path: "/hosting",
+        description: "Fully managed virtual private servers for your needs.",
       },
       {
         title: "Serverless Compute",
@@ -82,6 +70,12 @@ const navStructure: NavItem[] = [
         description: "Run your code without provisioning or managing servers.",
       },
     ],
+  },
+  {
+    title: "LLM Inference API",
+    path: "/services/llm-inference-api",
+    description: "Integrate powerful language models into your applications.",
+    icon: FiDatabase,
   },
   {
     title: "Settings",
@@ -148,13 +142,11 @@ const NavItems = ({ onClose, isMobile = false }: NavItemsProps) => {
   const isEnabled = (title: string) => {
     return [
       "Admin",
-      "Roaming IP",
-      "SERP API",
-      "User Agents",
+      "Scraping Tools",
+      "Hosting",
+      "LLM Inference API",
       "Settings",
       "Sign Out",
-      "Managed VPS",
-      "Services",
     ].includes(title)
   }
 
