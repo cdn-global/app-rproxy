@@ -64,17 +64,31 @@ const navStructure: NavItem[] = [
         description: "Fully managed virtual private servers for your needs.",
       },
       {
-        title: "Serverless Compute",
-        path: "/services/serverless-compute",
-        description: "Run your code without provisioning or managing servers.",
+        title: "Language Models",
+        path: "/language-models",
+        description: "Integrate powerful language models into your applications.",
+      },
+      {
+        title: "Storage",
+        path: "/storage",
+        description: "Manage your scalable object storage buckets and files.",
+      },
+      {
+        title: "Database",
+        path: "/database",
+        description: "Administer your managed relational databases.",
+      },
+      {
+        title: "Compute",
+        path: "/compute",
+        description: "Deploy and manage your serverless functions.",
+      },
+      {
+        title: "Infrastructure",
+        path: "/infrastructure",
+        description: "Manage your infrastructure.",
       },
     ],
-  },
-  {
-    title: "LLM Inference API",
-    path: "/services/llm-inference-api",
-    description: "Integrate powerful language models into your applications.",
-    icon: FiDatabase,
   },
   {
     title: "Settings",
@@ -108,7 +122,11 @@ const NavItems = () => {
       "Admin",
       "Scraping Tools",
       "Hosting",
-      "LLM Inference API",
+      "Language Models",
+      "Storage",
+      "Database",
+      "Compute",
+      "Infrastructure",
       "Settings",
       "Sign Out",
     ].includes(title)
