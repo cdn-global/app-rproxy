@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
 import { Menu, X } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
-import { FaGlobe, FaServer } from "react-icons/fa"
+import { FaGlobe, FaSearch, FaServer } from "react-icons/fa"
 import { FiLogOut, FiUsers, FiSettings } from "react-icons/fi"
 import type { IconType } from "react-icons"
 
@@ -44,6 +44,12 @@ const navStructure: NavItem[] = [
     path: "/web-scraping-tools/https-api",
     description: "Access any webpage with our powerful rotating proxy network.",
     icon: FaGlobe,
+  },
+  {
+    title: "SERP API",
+    path: "/web-scraping-tools/serp-api",
+    description: "Access any webpage with our powerful SERP API.",
+    icon: FaSearch,
   },
   {
     title: "Managed VPS",

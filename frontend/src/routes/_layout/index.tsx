@@ -975,14 +975,14 @@ const Dashboard = () => {
       </PageSection>,
     )
   }
-  
+  sections.push(chartsSection)
   // Insert Fleet intelligence and VPS overview lower in the page
   sections.push(linksCard)
   sections.push(fleetIntelCard)
   // Push VPS overview card so it's the penultimate section before the jump
   sections.push(vpsOverviewCard)
   // Add the Charts section (lightweight placeholders)
-  sections.push(chartsSection)
+
 
   // Add the Jump navigation as the last page section before the footer
   sections.push(
