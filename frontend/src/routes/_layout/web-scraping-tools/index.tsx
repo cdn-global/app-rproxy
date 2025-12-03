@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_layout/web-scraping-tools/')({
+export const Route = createFileRoute('/web-scraping-tools/')({
   component: WebScrapingToolsIndex,
 })
 
