@@ -785,107 +785,6 @@ const Dashboard = () => {
     </PageSection>
   )
 
-  const linksCard = (
-    <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
-          Control center
-        </div>
-        <div className="mt-5 space-y-3">
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-            RoamingProxy workspace
-          </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Monitor subscriptions, rotate API keys, and coordinate compute capacity without losing context.
-          </p>
-        </div>
-        <dl className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
-          <div className="flex items-center justify-between">
-            <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Next renewal</dt>
-            <dd className="font-medium text-slate-900 dark:text-slate-100">{nextRenewalLabel}</dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Active services</dt>
-            <dd className="font-medium text-slate-900 dark:text-slate-100">{displayedFeatures.length}</dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">API keys</dt>
-            <dd className="font-medium text-slate-900 dark:text-slate-100">{apiKeyCount}</dd>
-          </div>
-        </dl>
-        <p className="mt-6 text-xs text-slate-500 dark:text-slate-500">
-          Usage alerts, billing, and infrastructure rollups stay synchronized so you can pivot from experimentation to scale in seconds.
-        </p>
-      </div>
-  )
-
-  const vpsOverviewCard = (
-    <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-emerald-700 dark:border-emerald-500/30 dark:text-emerald-100">
-        VPS overview
-      </div>
-      <div className="mt-5 space-y-3">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Fleet overview</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">Snapshot of managed VPS capacity, health, and monthly run rate.</p>
-      </div>
-      <dl className="mt-6 grid gap-3 text-sm text-slate-600 dark:text-slate-400 sm:grid-cols-3">
-        <div>
-          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Servers</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-100">{numberFormatter.format(servers.length)}</dd>
-        </div>
-        <div>
-          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Connected</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-100">{numberFormatter.format(connectedServers)}</dd>
-        </div>
-        <div>
-          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Monthly</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-100">{currencyFormatter.format(totalMonthlySpend)}</dd>
-        </div>
-      </dl>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Button asChild className="gap-2 rounded-full px-5 py-2 text-sm font-semibold">
-          <RouterLink to="/hosting">Open Fleet</RouterLink>
-        </Button>
-        <Button asChild variant="outline" className="gap-2 rounded-full px-5 py-2 text-sm font-semibold">
-          <RouterLink to="/hosting/billing">Billing</RouterLink>
-        </Button>
-      </div>
-    </div>
-  )
-
-  const fleetIntelCard = (
-    <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-      <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
-        Fleet intelligence
-      </div>
-      <div className="mt-5 space-y-3">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Fleet intelligence</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400">Top-level summary of managed VPS health, capacity, and billing.</p>
-      </div>
-      <dl className="mt-6 grid gap-3 text-sm text-slate-600 dark:text-slate-400 sm:grid-cols-3">
-        <div>
-          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Servers</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-100">{numberFormatter.format(servers.length)}</dd>
-        </div>
-        <div>
-          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Connected</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-100">{numberFormatter.format(connectedServers)}</dd>
-        </div>
-        <div>
-          <dt className="uppercase tracking-[0.18em] text-xs text-slate-500 dark:text-slate-500">Monthly</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-100">{currencyFormatter.format(totalMonthlySpend)}</dd>
-        </div>
-      </dl>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Button asChild className="gap-2 rounded-full px-5 py-2 text-sm font-semibold">
-          <RouterLink to="/hosting">Open Fleet</RouterLink>
-        </Button>
-        <Button asChild variant="outline" className="gap-2 rounded-full px-5 py-2 text-sm font-semibold">
-          <RouterLink to="/web-scraping-tools/https-api">Proxy overview</RouterLink>
-        </Button>
-      </div>
-    </div>
-  )
-
   const chartsSection = (
     <PageSection id="charts" title="Charts" description="Quick visualizations of throughput and capacity." key="charts">
       <ChartsSection />
@@ -1038,14 +937,6 @@ const Dashboard = () => {
       <ChartsSection />
     </PageSection>,
   )
-  // Insert Fleet intelligence and VPS overview lower in the page
-  sections.push(linksCard)
-  sections.push(fleetIntelCard)
-  // Push VPS overview card so it's the penultimate section before the jump
-  sections.push(vpsOverviewCard)
-  // Add the Charts section (lightweight placeholders)
-
-
   // Add the Jump navigation as the last page section before the footer
   sections.push(
     <PageSection id="jump" title="Jump to" description="Quick links to page sections." key="jump">
