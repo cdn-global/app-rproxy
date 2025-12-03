@@ -169,17 +169,34 @@ function HostingIndexPage() {
                     <div className="mt-2 text-2xl font-semibold">4.8M</div>
                     <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">+12.4% vs last 7 days</p>
                     <div className="mt-4">
-                      <svg viewBox="0 0 180 110" className="h-24 w-full"><path d={`${sparkPath} L 180 110 L 0 110 Z`} fill="rgba(168, 85, 247, 0.16)" className="stroke-none" /><path d={sparkPath} stroke="rgba(168, 85, 247, 0.9)" strokeWidth={3} fill="none" strokeLinecap="round" /></svg>
+                      <svg viewBox="0 0 180 110" className="h-24 w-full">
+                        <path
+                          d={`${sparkPath} L 180 110 L 0 110 Z`}
+                          className="fill-chart-1/10 stroke-none"
+                        />
+                        <path
+                          d={sparkPath}
+                          className="stroke-chart-1"
+                          strokeWidth={3}
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </div>
                   </div>
 
                   <div className="flex flex-col justify-between gap-4 rounded-2xl border p-5">
                     <div>
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Network mix</p>
-                      <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">64%<span className="text-xs font-medium text-purple-500">target proximity</span></div>
+                      <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">
+                        64%
+                        <span className="text-xs font-medium text-chart-2">
+                          target proximity
+                        </span>
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm text-slate-600"><span>Datacenter</span><Badge className="rounded-full bg-purple-500/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-purple-700">42%</Badge></div>
+                      <div className="flex items-center justify-between text-sm text-slate-600"><span>Datacenter</span><Badge className="rounded-full bg-chart-2/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-chart-2">42%</Badge></div>
                       <div className="flex items-center justify-between text-sm text-slate-600"><span>Residential</span><Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">38%</Badge></div>
                       <div className="flex items-center justify-between text-sm text-slate-600"><span>ISP</span><Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">20%</Badge></div>
                     </div>
@@ -193,7 +210,7 @@ function HostingIndexPage() {
         sidebar={
           <>
             <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/70 bg-purple-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-purple-700 dark:border-purple-500/30 dark:text-purple-100">
+              <div className="inline-flex items-center gap-2 rounded-full border border-accent/70 bg-accent/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-accent dark:border-accent/30 dark:text-accent">
                 Managed VPS
               </div>
               <div className="mt-5 space-y-3">

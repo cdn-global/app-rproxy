@@ -146,7 +146,7 @@ const HttpsProxyApiPage = () => {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle>Your Tools</CardTitle>
+                      <CardTitle>HTTPs Request API</CardTitle>
                       <CardDescription>
                         Everything you need to get started with our HTTPS proxy.
                       </CardDescription>
