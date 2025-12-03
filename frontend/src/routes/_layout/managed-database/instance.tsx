@@ -95,6 +95,15 @@ function InstanceDetailsPage() {
     })
     .join(" ")
 
+  const uptimePoints = [100, 100, 99.9, 100, 99.8, 100, 100, 100]
+  const uptimeSparkPath = uptimePoints
+    .map((point, index) => {
+      const x = (index / (uptimePoints.length - 1)) * 180
+      const y = 110 - (point - 99) * 100
+      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+    })
+    .join(" ")
+
   return (
     <div className="space-y-12">
       <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
@@ -127,103 +136,132 @@ function InstanceDetailsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-            <CardHeader>
-              <CardTitle>Resource Breakdown</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Resource</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>vCPU</TableHead>
-                    <TableHead>RAM</TableHead>
-                    <TableHead>Storage</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
+        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <CardHeader>
+            <CardTitle>Cost Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+              Total Cost
+            </div>
+            <div className="mt-2 text-2xl font-semibold">$550.00</div>
+            <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+              +5.6% vs last 30 days
+            </p>
+            <div className="mt-4">
+              <svg viewBox="0 0 180 110" className="h-24 w-full">
+                <path
+                  d={`${costSparkPath} L 180 110 L 0 110 Z`}
+                  fill="rgba(14,165,233,0.16)"
+                  className="stroke-none"
+                />
+                <path
+                  d={costSparkPath}
+                  stroke="rgba(56,189,248,0.9)"
+                  strokeWidth={3}
+                  fill="none"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <CardHeader>
+            <CardTitle>Resource Utilization</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+              CPU Usage
+            </div>
+            <div className="mt-2 text-2xl font-semibold">78%</div>
+            <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+              Avg utilization over last 24 hours
+            </p>
+            <div className="mt-4">
+              <svg viewBox="0 0 180 110" className="h-24 w-full">
+                <path
+                  d={`${utilizationSparkPath} L 180 110 L 0 110 Z`}
+                  fill="rgba(14,165,233,0.16)"
+                  className="stroke-none"
+                />
+                <path
+                  d={utilizationSparkPath}
+                  stroke="rgba(56,189,248,0.9)"
+                  strokeWidth={3}
+                  fill="none"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <CardHeader>
+            <CardTitle>Uptime</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+              Last 7 days
+            </div>
+            <div className="mt-2 text-2xl font-semibold">99.98%</div>
+            <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+              SLA: 99.95%
+            </p>
+            <div className="mt-4">
+              <svg viewBox="0 0 180 110" className="h-24 w-full">
+                <path
+                  d={`${uptimeSparkPath} L 180 110 L 0 110 Z`}
+                  fill="rgba(14,165,233,0.16)"
+                  className="stroke-none"
+                />
+                <path
+                  d={uptimeSparkPath}
+                  stroke="rgba(56,189,248,0.9)"
+                  strokeWidth={3}
+                  fill="none"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div>
+        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <CardHeader>
+            <CardTitle>Resource Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Resource</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>vCPU</TableHead>
+                  <TableHead>RAM</TableHead>
+                  <TableHead>Storage</TableHead>
+                  <TableHead className="text-right">Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockDatabaseResources.map((resource) => (
+                  <TableRow key={resource.id}>
+                    <TableCell>{resource.name}</TableCell>
+                    <TableCell>{resource.type}</TableCell>
+                    <TableCell>{resource.vcpu ?? "N/A"}</TableCell>
+                    <TableCell>{resource.ram ?? "N/A"}</TableCell>
+                    <TableCell>{resource.storage}</TableCell>
+                    <TableCell className="text-right">
+                      ${resource.price.toFixed(2)}
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockDatabaseResources.map((resource) => (
-                    <TableRow key={resource.id}>
-                      <TableCell>{resource.name}</TableCell>
-                      <TableCell>{resource.type}</TableCell>
-                      <TableCell>{resource.vcpu ?? "N/A"}</TableCell>
-                      <TableCell>{resource.ram ?? "N/A"}</TableCell>
-                      <TableCell>{resource.storage}</TableCell>
-                      <TableCell className="text-right">
-                        ${resource.price.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="space-y-8">
-          <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-            <CardHeader>
-              <CardTitle>Cost Breakdown</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
-                Total Cost
-              </div>
-              <div className="mt-2 text-2xl font-semibold">$550.00</div>
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                +5.6% vs last 30 days
-              </p>
-              <div className="mt-4">
-                <svg viewBox="0 0 180 110" className="h-24 w-full">
-                  <path
-                    d={`${costSparkPath} L 180 110 L 0 110 Z`}
-                    fill="rgba(14,165,233,0.16)"
-                    className="stroke-none"
-                  />
-                  <path
-                    d={costSparkPath}
-                    stroke="rgba(56,189,248,0.9)"
-                    strokeWidth={3}
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-            <CardHeader>
-              <CardTitle>Resource Utilization</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
-                CPU Usage
-              </div>
-              <div className="mt-2 text-2xl font-semibold">78%</div>
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                Avg utilization over last 24 hours
-              </p>
-              <div className="mt-4">
-                <svg viewBox="0 0 180 110" className="h-24 w-full">
-                  <path
-                    d={`${utilizationSparkPath} L 180 110 L 0 110 Z`}
-                    fill="rgba(14,165,233,0.16)"
-                    className="stroke-none"
-                  />
-                  <path
-                    d={utilizationSparkPath}
-                    stroke="rgba(56,189,248,0.9)"
-                    strokeWidth={3}
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
