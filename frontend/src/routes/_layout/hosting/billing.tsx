@@ -238,7 +238,7 @@ interface PaymentRecord {
   paymentDate: string
   paymentMethod: string
   description: string
-  status: "Succeeded" | "Pending" | "Failed"
+  status: "Succeeded" | "Pending" | "Failed" | "Canceled"
 }
 
 const paymentHistory: PaymentRecord[] = [
