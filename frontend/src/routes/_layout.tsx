@@ -32,8 +32,9 @@ function Layout() {
             <Outlet />
           )}
         </main>
-        <Footer />
+
       </div>
+              <Footer />
     </div>
   )
 }
