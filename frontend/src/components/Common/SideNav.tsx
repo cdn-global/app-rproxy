@@ -39,9 +39,9 @@ interface NavItem {
 
 const navStructure: NavItem[] = [
   {
-    title: "LLM Inference",
-    path: "/language-models",
-    description: "Integrate powerful language models into your applications.",
+    title: "Language Model",
+    path: "/language-model",
+    description: "Manage your language model settings.",
     icon: FiCpu,
   },
   {
