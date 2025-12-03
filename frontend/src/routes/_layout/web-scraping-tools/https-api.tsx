@@ -142,8 +142,14 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
             <Card>
-              <CardContent className="pt-6">
-                <Tabs defaultValue="playground">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Your Tools</CardTitle>
+                    <CardDescription>
+                      Everything you need to get started with our HTTPS proxy.
+                    </CardDescription>
+                  </div>
                   <TabsList className="mb-8 inline-flex w-fit items-center justify-start gap-2 rounded-full bg-muted p-2">
                     <TabsTrigger
                       value="analytics"
@@ -164,6 +170,10 @@ const HttpsProxyApiPage = () => {
                       API Key
                     </TabsTrigger>
                   </TabsList>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <Tabs defaultValue="playground">
                   <TabsContent value="analytics" className="space-y-8">
                     <Card>
                       <CardHeader>
