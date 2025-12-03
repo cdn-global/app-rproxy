@@ -106,7 +106,7 @@ const navStructure: NavItem[] = [
     ],
   },
   {
-    title: "AI",
+    title: "Artificial Intelligence",
     icon: FiCpu,
     subItems: [
       {
