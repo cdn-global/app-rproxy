@@ -1,7 +1,6 @@
-/*
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute('/_layout/services/managed-storage' as any)({
   component: ManagedStorage,
 })
 
@@ -12,4 +11,3 @@ function ManagedStorage() {
     </div>
   )
 }
-*/
