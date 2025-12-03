@@ -86,31 +86,25 @@ const HttpsProxyApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <div className="space-y-10 py-10">
-            <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_32px_84px_-46px_rgba(14,165,233,0.65)] dark:text-slate-100">
-          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.65),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(79,70,229,0.55),_transparent_55%)]" />
-          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/75 via-white/55 to-white/30 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-          <CardHeader className="relative space-y-4 rounded-[24px] bg-white/80 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/70">
-              <span>Web Scraping</span>
-              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-              <span>HTTPS Proxy</span>
-            </div>
-            <div className="space-y-2">
-              <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-                Route requests through the roaming network
-              </CardTitle>
-              <CardDescription>
-                Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
-              </CardDescription>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              <Badge variant="outline">Global egress</Badge>
-              <Badge variant="outline">Session pinning</Badge>
-              <Badge variant="outline">Rotating IPs</Badge>
-            </div>
-          </CardHeader>
-        </Card> 
+      <div className="space-y-8 py-8">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 rounded-full border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span>Web Scraping</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+            <span>HTTPS Proxy</span>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Route Requests Through the Roaming Network
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Ship resilient scrapers by tunneling HTTP/S traffic through our managed proxies with automatic retries and region controls.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="outline">Global Egress</Badge>
+          <Badge variant="outline">Session Pinning</Badge>
+          <Badge variant="outline">Rotating IPs</Badge>
+        </div> 
 
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
@@ -142,13 +136,11 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
             <Tabs defaultValue="playground">
-              <div className="-mx-4 mb-8 bg-background/80 py-4 pl-4 backdrop-blur-md">
-                <TabsList>
-                  <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                  <TabsTrigger value="playground">Playground</TabsTrigger>
-                  <TabsTrigger value="api-key">API Key</TabsTrigger>
-                </TabsList>
-              </div>
+              <TabsList>
+                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                <TabsTrigger value="playground">Playground</TabsTrigger>
+                <TabsTrigger value="api-key">API Key</TabsTrigger>
+              </TabsList>
               <TabsContent value="analytics" className="space-y-8">
                 <Card>
                   <CardHeader>
@@ -164,17 +156,16 @@ const HttpsProxyApiPage = () => {
                 </Card>
               </TabsContent>
               <TabsContent value="playground" className="space-y-8">
-                <Card className="overflow-hidden border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-2xl">
-                      Interactive playground
+                      Interactive Playground
                     </CardTitle>
                     <CardDescription>
-                      Verify target URLs, tweak retries, and export ready-made
-                      snippets before plugging into your pipelines.
+                      Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-6">
+                  <CardContent>
                     <PlaygroundHttpsProxy />
                   </CardContent>
                 </Card>
