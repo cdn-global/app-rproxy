@@ -141,39 +141,39 @@ const HttpsProxyApiPage = () => {
                 </AlertDescription>
               </Alert>
             ) : null}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Your Tools</CardTitle>
-                    <CardDescription>
-                      Everything you need to get started with our HTTPS proxy.
-                    </CardDescription>
+            <Tabs defaultValue="playground">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Your Tools</CardTitle>
+                      <CardDescription>
+                        Everything you need to get started with our HTTPS proxy.
+                      </CardDescription>
+                    </div>
+                    <TabsList className="inline-flex w-fit items-center justify-start gap-2 rounded-full bg-muted p-2">
+                      <TabsTrigger
+                        value="analytics"
+                        className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      >
+                        Analytics
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="playground"
+                        className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      >
+                        Playground
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="api-key"
+                        className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      >
+                        API Key
+                      </TabsTrigger>
+                    </TabsList>
                   </div>
-                  <TabsList className="mb-8 inline-flex w-fit items-center justify-start gap-2 rounded-full bg-muted p-2">
-                    <TabsTrigger
-                      value="analytics"
-                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                    >
-                      Analytics
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="playground"
-                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                    >
-                      Playground
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="api-key"
-                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-medium text-muted-foreground ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                    >
-                      API Key
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <Tabs defaultValue="playground">
+                </CardHeader>
+                <CardContent className="pt-6">
                   <TabsContent value="analytics" className="space-y-8">
                     <Card>
                       <CardHeader>
@@ -195,7 +195,8 @@ const HttpsProxyApiPage = () => {
                           Interactive Playground
                         </CardTitle>
                         <CardDescription>
-                          Verify target URLs, tweak retries, and export ready-made snippets before plugging into your pipelines.
+                          Verify target URLs, tweak retries, and export ready-made snippets before
+                          plugging into your pipelines.
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -208,9 +209,9 @@ const HttpsProxyApiPage = () => {
                       <ApiKeyModule token={token} />
                     </Card>
                   </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Tabs>
           </div>
         )}
       </div>
