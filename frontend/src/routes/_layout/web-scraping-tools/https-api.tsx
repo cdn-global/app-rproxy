@@ -202,15 +202,7 @@ const HttpsProxyApiPage = () => {
                   </TabsContent>
                   <TabsContent value="playground" className="space-y-8">
                     <Card>
-                      <CardHeader>
-                        <CardTitle className="text-2xl">
-                          Interactive Playground
-                        </CardTitle>
-                        <CardDescription>
-                          Verify target URLs, tweak retries, and export ready-made snippets before
-                          plugging into your pipelines.
-                        </CardDescription>
-                      </CardHeader>
+                      
                       <CardContent>
                         <PlaygroundHttpsProxy />
                       </CardContent>
