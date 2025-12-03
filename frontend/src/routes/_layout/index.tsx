@@ -65,6 +65,8 @@ type FeatureMeta = {
 type FeatureKey =
   | "proxy-api"
   | "vps-hosting"
+  | "compute"
+  | "infrastructure"
   | "serp-api"
   | "llm-inference-api"
   | "managed-storage"
@@ -111,6 +113,26 @@ const featureDetails: Record<FeatureKey, FeatureMeta> = {
     gradient:
       "linear-gradient(135deg, rgba(34,197,94,0.16), rgba(6,182,212,0.12))",
     period: "Sep 9 – Oct 9, 2025",
+  },
+  compute: {
+    name: "Managed Compute",
+    description:
+      "Deploy and manage your serverless functions.",
+    icon: FaServer,
+    path: "/compute",
+    gradient:
+      "linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.1))",
+    period: "ACTIVE",
+  },
+  infrastructure: {
+    name: "Managed Infrastructure",
+    description:
+      "Manage your infrastructure.",
+    icon: FaGlobe,
+    path: "/infrastructure",
+    gradient:
+      "linear-gradient(135deg, rgba(134, 239, 172, 0.16), rgba(59, 130, 246, 0.1))",
+    period: "ACTIVE",
   },
   "serp-api": {
     name: "SERP Intelligence",
@@ -232,6 +254,22 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     icon: FaServer,
     to: "/hosting",
     featureSlug: "vps-hosting",
+  },
+  {
+    label: "Managed Compute",
+    description: "Deploy and manage your serverless functions.",
+    category: "Compute",
+    icon: FaServer,
+    to: "/compute",
+    featureSlug: "compute",
+  },
+  {
+    label: "Managed Infrastructure",
+    description: "Manage your infrastructure.",
+    category: "Infrastructure",
+    icon: FaGlobe,
+    to: "/infrastructure",
+    featureSlug: "infrastructure",
   },
   {
     label: "Items Catalog",
@@ -620,6 +658,8 @@ const Dashboard = () => {
     // Always surface VPS hosting as an active feature in the dashboard
     // so the hosting tool shows as highlighted and promoted in the UI.
     enabled.add("vps-hosting")
+    enabled.add("compute")
+    enabled.add("infrastructure")
     enabled.add("llm-inference-api")
     enabled.add("managed-storage")
     enabled.add("managed-database")
