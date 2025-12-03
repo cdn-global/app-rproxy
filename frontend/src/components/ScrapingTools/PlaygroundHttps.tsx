@@ -641,7 +641,7 @@ const PlaygroundHttps = () => {
                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
                   Get started in three steps
                 </p>
-                <ol className="mt-3 space-y-2 text-sm">
+                <ol className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-200">
                   <li className="flex gap-2">
                     <span className="font-medium text-slate-900 dark:text-slate-100">1.</span>
                     Enter a target URL and API key.
