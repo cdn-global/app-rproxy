@@ -4,6 +4,7 @@ import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
 import { FaGlobe, FaServer } from "react-icons/fa"
 import {
   FiBook,
+  FiCpu,
   FiDatabase,
   FiGithub,
   FiGlobe,
@@ -64,11 +65,6 @@ const navStructure: NavItem[] = [
         description: "Fully managed virtual private servers for your needs.",
       },
       {
-        title: "Language Models",
-        path: "/language-models",
-        description: "Integrate powerful language models into your applications.",
-      },
-      {
         title: "Compute",
         path: "/compute",
         description: "Deploy and manage your serverless functions.",
@@ -79,6 +75,12 @@ const navStructure: NavItem[] = [
         description: "Manage your infrastructure.",
       },
     ],
+  },
+  {
+    title: "LLM Inference",
+    path: "/language-models",
+    description: "Integrate powerful language models into your applications.",
+    icon: FiCpu,
   },
   {
     title: "Storage",
@@ -124,7 +126,7 @@ const NavItems = () => {
       "Admin",
       "Scraping Tools",
       "Hosting",
-      "Language Models",
+      "LLM Inference",
       "Storage",
       "Database",
       "Compute",
