@@ -40,6 +40,7 @@ import { Route as LayoutInfrastructureBillingImport } from './routes/_layout/inf
 import { Route as LayoutHostingBillingImport } from './routes/_layout/hosting/billing'
 import { Route as LayoutHostingDeviceNameImport } from './routes/_layout/hosting/$deviceName'
 import { Route as LayoutComputeBillingImport } from './routes/_layout/compute/billing'
+import { Route as LayoutComputeServiceNameImport } from './routes/_layout/compute/$serviceName'
 
 // Create/Update Routes
 
@@ -224,6 +225,12 @@ const LayoutComputeBillingRoute = LayoutComputeBillingImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutComputeServiceNameRoute = LayoutComputeServiceNameImport.update({
+  id: '/compute/$serviceName',
+  path: '/compute/$serviceName',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -303,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/compute/$serviceName': {
+      id: '/_layout/compute/$serviceName'
+      path: '/compute/$serviceName'
+      fullPath: '/compute/$serviceName'
+      preLoaderRoute: typeof LayoutComputeServiceNameImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/compute/billing': {
@@ -442,6 +456,7 @@ interface LayoutRouteChildren {
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutComputeServiceNameRoute: typeof LayoutComputeServiceNameRoute
   LayoutComputeBillingRoute: typeof LayoutComputeBillingRoute
   LayoutHostingDeviceNameRoute: typeof LayoutHostingDeviceNameRoute
   LayoutHostingBillingRoute: typeof LayoutHostingBillingRoute
@@ -468,6 +483,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutComputeServiceNameRoute: LayoutComputeServiceNameRoute,
   LayoutComputeBillingRoute: LayoutComputeBillingRoute,
   LayoutHostingDeviceNameRoute: LayoutHostingDeviceNameRoute,
   LayoutHostingBillingRoute: LayoutHostingBillingRoute,
@@ -503,6 +519,7 @@ export interface FileRoutesByFullPath {
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/compute/$serviceName': typeof LayoutComputeServiceNameRoute
   '/compute/billing': typeof LayoutComputeBillingRoute
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
@@ -534,6 +551,7 @@ export interface FileRoutesByTo {
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/compute/$serviceName': typeof LayoutComputeServiceNameRoute
   '/compute/billing': typeof LayoutComputeBillingRoute
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
@@ -567,6 +585,7 @@ export interface FileRoutesById {
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/compute/$serviceName': typeof LayoutComputeServiceNameRoute
   '/_layout/compute/billing': typeof LayoutComputeBillingRoute
   '/_layout/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/_layout/hosting/billing': typeof LayoutHostingBillingRoute
@@ -601,6 +620,7 @@ export interface FileRouteTypes {
     | '/items'
     | '/settings'
     | '/'
+    | '/compute/$serviceName'
     | '/compute/billing'
     | '/hosting/$deviceName'
     | '/hosting/billing'
@@ -631,6 +651,7 @@ export interface FileRouteTypes {
     | '/items'
     | '/settings'
     | '/'
+    | '/compute/$serviceName'
     | '/compute/billing'
     | '/hosting/$deviceName'
     | '/hosting/billing'
@@ -662,6 +683,7 @@ export interface FileRouteTypes {
     | '/_layout/items'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/compute/$serviceName'
     | '/_layout/compute/billing'
     | '/_layout/hosting/$deviceName'
     | '/_layout/hosting/billing'
@@ -727,6 +749,7 @@ export const routeTree = rootRoute
         "/_layout/items",
         "/_layout/settings",
         "/_layout/",
+        "/_layout/compute/$serviceName",
         "/_layout/compute/billing",
         "/_layout/hosting/$deviceName",
         "/_layout/hosting/billing",
@@ -780,6 +803,10 @@ export const routeTree = rootRoute
     },
     "/_layout/": {
       "filePath": "_layout/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/compute/$serviceName": {
+      "filePath": "_layout/compute/$serviceName.tsx",
       "parent": "/_layout"
     },
     "/_layout/compute/billing": {
