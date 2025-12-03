@@ -36,8 +36,10 @@ import { Route as LayoutServicesServerlessComputeImport } from './routes/_layout
 import { Route as LayoutServicesManagedStorageImport } from './routes/_layout/services/managed-storage'
 import { Route as LayoutServicesManagedDatabaseImport } from './routes/_layout/services/managed-database'
 import { Route as LayoutServicesLlmInferenceApiImport } from './routes/_layout/services/llm-inference-api'
+import { Route as LayoutInfrastructureBillingImport } from './routes/_layout/infrastructure/billing'
 import { Route as LayoutHostingBillingImport } from './routes/_layout/hosting/billing'
 import { Route as LayoutHostingDeviceNameImport } from './routes/_layout/hosting/$deviceName'
+import { Route as LayoutComputeBillingImport } from './routes/_layout/compute/billing'
 
 // Create/Update Routes
 
@@ -197,6 +199,13 @@ const LayoutServicesLlmInferenceApiRoute =
     getParentRoute: () => LayoutRoute,
   } as any)
 
+const LayoutInfrastructureBillingRoute =
+  LayoutInfrastructureBillingImport.update({
+    id: '/infrastructure/billing',
+    path: '/infrastructure/billing',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
 const LayoutHostingBillingRoute = LayoutHostingBillingImport.update({
   id: '/hosting/billing',
   path: '/hosting/billing',
@@ -206,6 +215,12 @@ const LayoutHostingBillingRoute = LayoutHostingBillingImport.update({
 const LayoutHostingDeviceNameRoute = LayoutHostingDeviceNameImport.update({
   id: '/hosting/$deviceName',
   path: '/hosting/$deviceName',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutComputeBillingRoute = LayoutComputeBillingImport.update({
+  id: '/compute/billing',
+  path: '/compute/billing',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -290,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/compute/billing': {
+      id: '/_layout/compute/billing'
+      path: '/compute/billing'
+      fullPath: '/compute/billing'
+      preLoaderRoute: typeof LayoutComputeBillingImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/hosting/$deviceName': {
       id: '/_layout/hosting/$deviceName'
       path: '/hosting/$deviceName'
@@ -302,6 +324,13 @@ declare module '@tanstack/react-router' {
       path: '/hosting/billing'
       fullPath: '/hosting/billing'
       preLoaderRoute: typeof LayoutHostingBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/infrastructure/billing': {
+      id: '/_layout/infrastructure/billing'
+      path: '/infrastructure/billing'
+      fullPath: '/infrastructure/billing'
+      preLoaderRoute: typeof LayoutInfrastructureBillingImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/services/llm-inference-api': {
@@ -413,8 +442,10 @@ interface LayoutRouteChildren {
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutComputeBillingRoute: typeof LayoutComputeBillingRoute
   LayoutHostingDeviceNameRoute: typeof LayoutHostingDeviceNameRoute
   LayoutHostingBillingRoute: typeof LayoutHostingBillingRoute
+  LayoutInfrastructureBillingRoute: typeof LayoutInfrastructureBillingRoute
   LayoutServicesLlmInferenceApiRoute: typeof LayoutServicesLlmInferenceApiRoute
   LayoutServicesManagedDatabaseRoute: typeof LayoutServicesManagedDatabaseRoute
   LayoutServicesManagedStorageRoute: typeof LayoutServicesManagedStorageRoute
@@ -437,8 +468,10 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutComputeBillingRoute: LayoutComputeBillingRoute,
   LayoutHostingDeviceNameRoute: LayoutHostingDeviceNameRoute,
   LayoutHostingBillingRoute: LayoutHostingBillingRoute,
+  LayoutInfrastructureBillingRoute: LayoutInfrastructureBillingRoute,
   LayoutServicesLlmInferenceApiRoute: LayoutServicesLlmInferenceApiRoute,
   LayoutServicesManagedDatabaseRoute: LayoutServicesManagedDatabaseRoute,
   LayoutServicesManagedStorageRoute: LayoutServicesManagedStorageRoute,
@@ -470,8 +503,10 @@ export interface FileRoutesByFullPath {
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/compute/billing': typeof LayoutComputeBillingRoute
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
+  '/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
   '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -499,8 +534,10 @@ export interface FileRoutesByTo {
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/compute/billing': typeof LayoutComputeBillingRoute
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
+  '/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
   '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -530,8 +567,10 @@ export interface FileRoutesById {
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/compute/billing': typeof LayoutComputeBillingRoute
   '/_layout/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/_layout/hosting/billing': typeof LayoutHostingBillingRoute
+  '/_layout/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
   '/_layout/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/_layout/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/_layout/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -562,8 +601,10 @@ export interface FileRouteTypes {
     | '/items'
     | '/settings'
     | '/'
+    | '/compute/billing'
     | '/hosting/$deviceName'
     | '/hosting/billing'
+    | '/infrastructure/billing'
     | '/services/llm-inference-api'
     | '/services/managed-database'
     | '/services/managed-storage'
@@ -590,8 +631,10 @@ export interface FileRouteTypes {
     | '/items'
     | '/settings'
     | '/'
+    | '/compute/billing'
     | '/hosting/$deviceName'
     | '/hosting/billing'
+    | '/infrastructure/billing'
     | '/services/llm-inference-api'
     | '/services/managed-database'
     | '/services/managed-storage'
@@ -619,8 +662,10 @@ export interface FileRouteTypes {
     | '/_layout/items'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/compute/billing'
     | '/_layout/hosting/$deviceName'
     | '/_layout/hosting/billing'
+    | '/_layout/infrastructure/billing'
     | '/_layout/services/llm-inference-api'
     | '/_layout/services/managed-database'
     | '/_layout/services/managed-storage'
@@ -682,8 +727,10 @@ export const routeTree = rootRoute
         "/_layout/items",
         "/_layout/settings",
         "/_layout/",
+        "/_layout/compute/billing",
         "/_layout/hosting/$deviceName",
         "/_layout/hosting/billing",
+        "/_layout/infrastructure/billing",
         "/_layout/services/llm-inference-api",
         "/_layout/services/managed-database",
         "/_layout/services/managed-storage",
@@ -735,12 +782,20 @@ export const routeTree = rootRoute
       "filePath": "_layout/index.tsx",
       "parent": "/_layout"
     },
+    "/_layout/compute/billing": {
+      "filePath": "_layout/compute/billing.tsx",
+      "parent": "/_layout"
+    },
     "/_layout/hosting/$deviceName": {
       "filePath": "_layout/hosting/$deviceName.tsx",
       "parent": "/_layout"
     },
     "/_layout/hosting/billing": {
       "filePath": "_layout/hosting/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/infrastructure/billing": {
+      "filePath": "_layout/infrastructure/billing.tsx",
       "parent": "/_layout"
     },
     "/_layout/services/llm-inference-api": {
