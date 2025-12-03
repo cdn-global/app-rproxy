@@ -22,7 +22,6 @@ import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutComponentlistImport } from './routes/_layout/componentlist'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as LayoutWebScrapingToolsIndexImport } from './routes/_layout/web-scraping-tools/index'
 import { Route as LayoutStorageIndexImport } from './routes/_layout/storage/index'
 import { Route as LayoutServicesIndexImport } from './routes/_layout/services/index'
 import { Route as LayoutLanguageModelsIndexImport } from './routes/_layout/language-models/index'
@@ -108,13 +107,6 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
-
-const LayoutWebScrapingToolsIndexRoute =
-  LayoutWebScrapingToolsIndexImport.update({
-    id: '/web-scraping-tools/',
-    path: '/web-scraping-tools/',
-    getParentRoute: () => LayoutRoute,
-  } as any)
 
 const LayoutStorageIndexRoute = LayoutStorageIndexImport.update({
   id: '/storage/',
@@ -439,13 +431,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutStorageIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/web-scraping-tools/': {
-      id: '/_layout/web-scraping-tools/'
-      path: '/web-scraping-tools'
-      fullPath: '/web-scraping-tools'
-      preLoaderRoute: typeof LayoutWebScrapingToolsIndexImport
-      parentRoute: typeof LayoutImport
-    }
   }
 }
 
@@ -475,7 +460,6 @@ interface LayoutRouteChildren {
   LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
   LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
   LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
-  LayoutWebScrapingToolsIndexRoute: typeof LayoutWebScrapingToolsIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -502,7 +486,6 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
   LayoutServicesIndexRoute: LayoutServicesIndexRoute,
   LayoutStorageIndexRoute: LayoutStorageIndexRoute,
-  LayoutWebScrapingToolsIndexRoute: LayoutWebScrapingToolsIndexRoute,
 }
 
 const LayoutRouteWithChildren =
@@ -538,7 +521,6 @@ export interface FileRoutesByFullPath {
   '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
-  '/web-scraping-tools': typeof LayoutWebScrapingToolsIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -570,7 +552,6 @@ export interface FileRoutesByTo {
   '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
-  '/web-scraping-tools': typeof LayoutWebScrapingToolsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -604,7 +585,6 @@ export interface FileRoutesById {
   '/_layout/language-models/': typeof LayoutLanguageModelsIndexRoute
   '/_layout/services/': typeof LayoutServicesIndexRoute
   '/_layout/storage/': typeof LayoutStorageIndexRoute
-  '/_layout/web-scraping-tools/': typeof LayoutWebScrapingToolsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -639,7 +619,6 @@ export interface FileRouteTypes {
     | '/language-models'
     | '/services'
     | '/storage'
-    | '/web-scraping-tools'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/activate'
@@ -670,7 +649,6 @@ export interface FileRouteTypes {
     | '/language-models'
     | '/services'
     | '/storage'
-    | '/web-scraping-tools'
   id:
     | '__root__'
     | '/_layout'
@@ -702,7 +680,6 @@ export interface FileRouteTypes {
     | '/_layout/language-models/'
     | '/_layout/services/'
     | '/_layout/storage/'
-    | '/_layout/web-scraping-tools/'
   fileRoutesById: FileRoutesById
 }
 
@@ -767,8 +744,7 @@ export const routeTree = rootRoute
         "/_layout/infrastructure/",
         "/_layout/language-models/",
         "/_layout/services/",
-        "/_layout/storage/",
-        "/_layout/web-scraping-tools/"
+        "/_layout/storage/"
       ]
     },
     "/activate": {
@@ -876,10 +852,6 @@ export const routeTree = rootRoute
     },
     "/_layout/storage/": {
       "filePath": "_layout/storage/index.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/web-scraping-tools/": {
-      "filePath": "_layout/web-scraping-tools/index.tsx",
       "parent": "/_layout"
     }
   }
