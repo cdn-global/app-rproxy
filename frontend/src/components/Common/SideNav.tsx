@@ -69,16 +69,6 @@ const navStructure: NavItem[] = [
         description: "Integrate powerful language models into your applications.",
       },
       {
-        title: "Storage",
-        path: "/storage",
-        description: "Manage your scalable object storage buckets and files.",
-      },
-      {
-        title: "Database",
-        path: "/database",
-        description: "Administer your managed relational databases.",
-      },
-      {
         title: "Compute",
         path: "/compute",
         description: "Deploy and manage your serverless functions.",
@@ -89,6 +79,18 @@ const navStructure: NavItem[] = [
         description: "Manage your infrastructure.",
       },
     ],
+  },
+  {
+    title: "Storage",
+    path: "/storage",
+    description: "Manage your scalable object storage buckets and files.",
+    icon: FiBook,
+  },
+  {
+    title: "Database",
+    path: "/database",
+    description: "Administer your managed relational databases.",
+    icon: FiDatabase,
   },
   {
     title: "Settings",
