@@ -268,7 +268,7 @@ const UserMenu = () => {
 }
 
 const FooterItems = () => (
-  <div className="mt-auto flex flex-col gap-6">
+  <div className="mt-6 flex flex-col gap-6">
     <div className="space-y-3 text-sm">
       <FooterSection title="Resources">
         <FooterLink href="https://ROAMINGPROXY.com/resources/faq" newTab>
@@ -378,8 +378,8 @@ const SideNav = () => {
       </div>
       <div className="flex flex-1 flex-col">
         <NavItems />
+        <FooterItems />
       </div>
-      <FooterItems />
       <UserMenu />
     </aside>
   )
