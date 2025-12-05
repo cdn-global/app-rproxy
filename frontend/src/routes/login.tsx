@@ -91,7 +91,7 @@ function Login() {
                     autoCorrect="off"
                   />
                   {errors.username && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.username.message}
                     </p>
                   )}
@@ -129,13 +129,13 @@ function Login() {
                     </Button>
                   </div>
                   {errors.password && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.password.message}
                     </p>
                   )}
                 </div>
                 {error && (
-                  <p className="text-sm text-red-500">{String(error)}</p>
+                  <p className="text-sm text-gray-500">{String(error)}</p>
                 )}
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Logging in..." : "Login"}

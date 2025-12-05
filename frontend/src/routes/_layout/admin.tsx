@@ -147,7 +147,7 @@ function UsersTable() {
                           </TableCell>
                           <TableCell>
                             <Badge variant={statusBadgeVariant} className="gap-2">
-                              <span className={`h-2 w-2 rounded-full ${user.is_active ? "bg-emerald-500" : "bg-red-500"}`} aria-hidden="true" />
+                              <span className={`h-2 w-2 rounded-full ${user.is_active ? "bg-emerald-500" : "bg-gray-500"}`} aria-hidden="true" />
                               {user.is_active ? "Active" : "Inactive"}
                             </Badge>
                           </TableCell>

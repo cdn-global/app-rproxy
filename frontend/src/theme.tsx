@@ -19,10 +19,10 @@ const theme = extendTheme({
   },
   colors: {
     ui: {
-      main: "#FF0000", // orange as the primary accent color
-      secondary: "#C41E3A", // Orange for secondary elements (or "#FFFF00" for yellow if preferred)
+      main: "#38A169", // Green as the primary accent color
+      secondary: "#718096", // Gray for secondary elements
       success: "#38A169", // Green for success states
-      danger: "#E53E3E", // Red for errors (unchanged)
+      danger: "#4A5568", // Gray for errors
       light: "#FFFFFF", // White for backgrounds
       dark: "#1A202C", // Dark background for dark mode (unchanged)
       darkSlate: "#2D3748", // Darker gray for contrast
@@ -67,10 +67,10 @@ const theme = extendTheme({
           },
         },
         danger: {
-          backgroundColor: "ui.danger", // Red (unchanged)
+          backgroundColor: "ui.danger", // Gray for errors
           color: "ui.light", // White text
           _hover: {
-            backgroundColor: "#E32727", // Darker red (unchanged)
+            backgroundColor: "#2D3748", // Darker gray on hover
           },
         },
       },
@@ -114,10 +114,10 @@ const theme = extendTheme({
       variants: {
         error: {
           container: {
-            bg: "red.100", // Light red for error
-            color: "red.900",
+            bg: "gray.100", // Light gray for error
+            color: "gray.900",
             border: "1px solid",
-            borderColor: "red.300",
+            borderColor: "gray.300",
           },
         },
         success: {
@@ -130,18 +130,18 @@ const theme = extendTheme({
         },
         info: {
           container: {
-            bg: "red.100", // Light blue for info
-            color: "red.900",
+            bg: "gray.100", // Light gray for info
+            color: "gray.900",
             border: "1px solid",
-            borderColor: "red.300",
+            borderColor: "gray.300",
           },
         },
         warning: {
           container: {
-            bg: "yellow.100", // Light yellow for warning
-            color: "yellow.900",
+            bg: "gray.100", // Light gray for warning
+            color: "gray.900",
             border: "1px solid",
-            borderColor: "yellow.300",
+            borderColor: "gray.300",
           },
         },
       },

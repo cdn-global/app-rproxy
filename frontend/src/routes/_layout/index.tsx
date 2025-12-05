@@ -791,7 +791,7 @@ const Dashboard = () => {
       >
         <Alert
           variant="destructive"
-          className="rounded-[24px] border border-red-500/40 bg-red-500/10 text-red-700 backdrop-blur dark:text-red-200"
+          className="rounded-[24px] border border-gray-500/40 bg-gray-500/10 text-gray-700 backdrop-blur dark:text-gray-200"
         >
           <AlertCircle className="h-5 w-5" />
           <div>
