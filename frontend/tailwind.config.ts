@@ -107,10 +107,10 @@ const config = {
   		backgroundImage: {
   			'dashboard-shell': 'linear-gradient(145deg, hsl(var(--surface-gradient-start)) 0%, hsl(var(--surface-gradient-end)) 100%)',
   			'glass-panel': 'linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%)',
-  			'glass-panel-dark': 'linear-gradient(160deg, rgba(30, 41, 59, 0.92) 0%, rgba(30, 41, 59, 0.7) 100%)'
+  			'glass-panel-dark': 'linear-gradient(160deg, rgba(28, 32, 38, 0.92) 0%, rgba(28, 32, 38, 0.7) 100%)'
   		},
   		dropShadow: {
-  			glow: '0 0 20px rgba(59, 130, 246, 0.35)'
+  			glow: '0 0 20px rgba(34, 195, 109, 0.35)'
   		},
   		backdropBlur: {
   			xs: '2px'

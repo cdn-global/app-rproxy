@@ -314,10 +314,10 @@ const FooterSection = ({
   children: ReactNode
 }) => (
   <div className="space-y-2">
-    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
+    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
       {title}
     </p>
-    <div className="flex flex-col gap-1 text-sm text-slate-600 dark:text-slate-400">
+    <div className="flex flex-col gap-1 text-sm text-muted-foreground">
       {children}
     </div>
   </div>
@@ -338,7 +338,7 @@ const FooterLink = ({
     href={href}
     target={newTab ? "_blank" : undefined}
     rel={newTab ? "noreferrer" : undefined}
-    className={`inline-flex items-center gap-2 text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 ${
+    className={`inline-flex items-center gap-2 text-muted-foreground transition hover:text-foreground ${
       className ?? ""
     }`.trim()}
   >
@@ -360,7 +360,7 @@ const SocialLink = ({
     target="_blank"
     rel="noreferrer"
     aria-label={label}
-    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/70 bg-white/70 text-slate-600 transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-slate-100"
+    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground transition hover:border-primary hover:text-foreground"
   >
     {children}
   </a>
