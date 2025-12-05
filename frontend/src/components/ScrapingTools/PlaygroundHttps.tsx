@@ -485,7 +485,7 @@ const PlaygroundHttps = () => {
                       <Select value={region} onValueChange={setRegion}>
                         <SelectTrigger
                           id="region"
-                          className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70"
+                          className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 shadow-sm transition hover:border-slate-300 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 dark:border-slate-700/60 dark:bg-slate-900/70"
                         >
                           <SelectValue placeholder="Select region" />
                         </SelectTrigger>
@@ -611,7 +611,7 @@ const PlaygroundHttps = () => {
         ) : (
           <div className="flex flex-col gap-6 p-8 md:flex-row md:items-start md:justify-between">
             <div className="max-w-2xl space-y-4">
-              <span className="text-sm font-medium text-indigo-400 dark:text-indigo-300">
+              <span className="text-sm font-medium text-emerald-400 dark:text-emerald-300">
                 Live HTTPS endpoint tester
               </span>
               <h1 className="text-3xl font-semibold text-slate-100">
@@ -626,7 +626,7 @@ const PlaygroundHttps = () => {
                   Live requests
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">
-                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
                   Response inspector
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/60 px-3 py-1 dark:border-slate-700/60 dark:bg-slate-900/60">

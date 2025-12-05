@@ -130,18 +130,18 @@ const theme = extendTheme({
         },
         info: {
           container: {
-            bg: "gray.100", // Light gray for info
-            color: "gray.900",
+            bg: "green.50", // Light green for info
+            color: "green.900",
             border: "1px solid",
-            borderColor: "gray.300",
+            borderColor: "green.200",
           },
         },
         warning: {
           container: {
-            bg: "gray.100", // Light gray for warning
-            color: "gray.900",
+            bg: "green.50", // Light green for warning
+            color: "green.900",
             border: "1px solid",
-            borderColor: "gray.300",
+            borderColor: "green.200",
           },
         },
       },

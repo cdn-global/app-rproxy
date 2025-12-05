@@ -6,9 +6,9 @@ import type { DashboardStat } from "./types"
 const accentVariants = {
   brand: {
     card:
-      "bg-[linear-gradient(135deg,_rgba(99,102,241,0.18),_rgba(14,165,233,0.12))] dark:bg-[linear-gradient(135deg,_rgba(129,140,248,0.24),_rgba(45,212,191,0.16))]",
+      "bg-[linear-gradient(135deg,_rgba(16,185,129,0.18),_rgba(52,211,153,0.12))] dark:bg-[linear-gradient(135deg,_rgba(52,211,153,0.24),_rgba(16,185,129,0.16))]",
     icon:
-      "bg-[rgba(99,102,241,0.16)] text-indigo-600 dark:bg-[rgba(129,140,248,0.24)] dark:text-indigo-100",
+      "bg-[rgba(16,185,129,0.16)] text-emerald-600 dark:bg-[rgba(52,211,153,0.24)] dark:text-emerald-100",
   },
   success: {
     card:
@@ -18,15 +18,15 @@ const accentVariants = {
   },
   warning: {
     card:
-      "bg-[linear-gradient(135deg,_rgba(251,191,36,0.22),_rgba(245,158,11,0.12))] dark:bg-[linear-gradient(135deg,_rgba(245,158,11,0.25),_rgba(226,232,240,0.1))]",
+      "bg-[linear-gradient(135deg,_rgba(132,204,22,0.22),_rgba(163,230,53,0.12))] dark:bg-[linear-gradient(135deg,_rgba(163,230,53,0.25),_rgba(226,232,240,0.1))]",
     icon:
-      "bg-[rgba(251,191,36,0.22)] text-amber-600 dark:bg-[rgba(199, 16, 16, 0.93)28)] dark:text-amber-100",
+      "bg-[rgba(132,204,22,0.22)] text-lime-600 dark:bg-[rgba(163,230,53,0.28)] dark:text-lime-100",
   },
   ocean: {
     card:
-      "bg-[linear-gradient(135deg,_rgba(6,182,212,0.2),_rgba(56,189,248,0.12))] dark:bg-[linear-gradient(135deg,_rgba(56,189,248,0.26),_rgba(6,182,212,0.18))]",
+      "bg-[linear-gradient(135deg,_rgba(20,184,166,0.2),_rgba(45,212,191,0.12))] dark:bg-[linear-gradient(135deg,_rgba(45,212,191,0.26),_rgba(20,184,166,0.18))]",
     icon:
-      "bg-[rgba(6,182,212,0.18)] text-cyan-600 dark:bg-[rgba(56,189,248,0.28)] dark:text-cyan-100",
+      "bg-[rgba(20,184,166,0.18)] text-teal-600 dark:bg-[rgba(45,212,191,0.28)] dark:text-teal-100",
   },
 } as const
 

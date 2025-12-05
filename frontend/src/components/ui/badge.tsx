@@ -15,7 +15,7 @@ const badgeVariants = cva(
         outline: "text-foreground",
         subtle: "border border-border/50 bg-muted text-muted-foreground",
         success: "border-transparent bg-emerald-500/10 text-emerald-500",
-        warning: "border-transparent bg-amber-500/10 text-amber-500",
+        warning: "border-transparent bg-gray-500/10 text-gray-500",
         destructive:
           "border-transparent bg-destructive/10 text-destructive ring-offset-background",
       },
