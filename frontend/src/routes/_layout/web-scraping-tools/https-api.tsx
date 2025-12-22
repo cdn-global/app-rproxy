@@ -183,3 +183,9 @@ const HttpsProxyApiPage = () => {
     </ProtectedComponent>
   )
 }
+
+export const Route = createFileRoute('/_layout/web-scraping-tools/https-api')({
+  component: HttpsProxyApiPage,
+})
+
+export default HttpsProxyApiPage
