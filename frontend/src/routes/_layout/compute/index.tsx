@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from '@tanstack/react-router'
 import { FiCpu } from "react-icons/fi"
+import { Card, CardContent } from "@/components/ui/card"
 import ActiveServicesGrid from "@/components/Dashboard/ActiveServicesGrid"
 import { computeServers } from "@/data/compute"
 import { DisplayedFeature } from "@/components/Dashboard/types"
@@ -19,12 +20,14 @@ function ComputeComponent() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Managed Compute</h1>
-      <p className="mb-6 text-muted-foreground">
-        Deploy and manage your managed cloud functions.
-      </p>
-
       <ActiveServicesGrid features={computeFeatures} />
+      <Card className="mt-6">
+        <CardContent className="pt-6">
+          <p className="text-muted-foreground">
+            Deploy and manage your managed cloud functions.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }
