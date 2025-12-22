@@ -149,22 +149,22 @@ const NavItems = () => {
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         {items.map((item) => {
           if (item.subItems) {
             return (
               <div key={item.title}>
-                <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-foreground">
-                  {item.icon && <item.icon className="h-5 w-5" />}
+                <div className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-foreground">
+                  {item.icon && <item.icon className="h-4 w-4" />}
                   <span>{item.title}</span>
                 </div>
-                <div className="pl-6">
+                <div className="pl-4">
                   {item.subItems.map((subItem) => (
                     <RouterLink
                       key={subItem.path}
                       to={subItem.path}
                       className={cn(
-                        "block rounded-md px-4 py-2 text-sm font-medium font-serif",
+                        "block rounded-md px-3 py-1.5 text-xs font-medium font-serif",
                         pathname.startsWith(subItem.path)
                           ? "bg-primary text-primary-foreground"
                           : "text-foreground hover:bg-muted",
@@ -183,9 +183,9 @@ const NavItems = () => {
               <button
                 key={item.title}
                 onClick={item.onClick}
-                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-foreground hover:bg-muted"
+                className="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-foreground hover:bg-muted"
               >
-                {item.icon && <item.icon className="h-5 w-5" />}
+                {item.icon && <item.icon className="h-4 w-4" />}
                 {item.title}
               </button>
             )
@@ -195,8 +195,8 @@ const NavItems = () => {
             return (
               <Tooltip key={item.title}>
                 <TooltipTrigger asChild>
-                  <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-muted-foreground/50 cursor-not-allowed">
-                    {item.icon && <item.icon className="h-5 w-5" />}
+                  <span className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-muted-foreground/50 cursor-not-allowed">
+                    {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </span>
                 </TooltipTrigger>
@@ -210,13 +210,13 @@ const NavItems = () => {
               key={item.path}
               to={item.path || "/"}
               className={cn(
-                "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif",
+                "flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif",
                 pathname.startsWith(item.path || "/")
                   ? "bg-primary text-primary-foreground"
                   : "text-foreground hover:bg-muted",
               )}
             >
-              {item.icon && <item.icon className="h-5 w-5" />}
+              {item.icon && <item.icon className="h-4 w-4" />}
               {item.title}
             </RouterLink>
           )
@@ -233,15 +233,15 @@ const UserMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="mt-4 w-full text-left">
-        <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-foreground hover:bg-muted">
-          <Avatar className="h-8 w-8">
+      <DropdownMenuTrigger className="mt-2 w-full text-left">
+        <div className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-foreground hover:bg-muted">
+          <Avatar className="h-6 w-6">
             <AvatarFallback>
               {currentUser?.email?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start">
-            <span className="font-medium">
+            <span className="font-medium text-xs">
               {currentUser?.full_name || currentUser?.email}
             </span>
           </div>

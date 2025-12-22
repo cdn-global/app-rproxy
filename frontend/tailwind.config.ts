@@ -8,10 +8,10 @@ const config = {
   	container: {
   		center: true,
   		padding: {
-  			DEFAULT: '1.5rem',
-  			sm: '2rem',
-  			lg: '2.5rem',
-  			xl: '3rem'
+  			DEFAULT: '1rem',
+  			sm: '1.5rem',
+  			lg: '2rem',
+  			xl: '2.5rem'
   		},
   		screens: {
   			'2xl': '1400px'
@@ -109,12 +109,11 @@ const config = {
   			inset: 'inset 0 1px 0 rgba(255, 255, 255, 0.08)'
   		},
   		backgroundImage: {
-  			'dashboard-shell': 'linear-gradient(145deg, hsl(var(--surface-gradient-start)) 0%, hsl(var(--surface-gradient-end)) 100%)',
   			'glass-panel': 'linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%)',
   			'glass-panel-dark': 'linear-gradient(160deg, rgba(28, 32, 38, 0.92) 0%, rgba(28, 32, 38, 0.7) 100%)'
   		},
   		dropShadow: {
-  			glow: '0 0 20px rgba(34, 195, 109, 0.35)'
+  			glow: '0 0 8px rgba(34, 139, 34, 0.2)'
   		},
   		backdropBlur: {
   			xs: '2px'
