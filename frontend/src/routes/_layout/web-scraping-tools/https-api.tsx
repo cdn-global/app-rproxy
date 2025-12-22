@@ -212,30 +212,6 @@ const HttpsProxyApiPage = () => {
             </Tabs>
           </div>
         )}
-        <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(239,68,68,0.62)] dark:text-slate-100">
-          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(239,68,68,0.68),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.52),_transparent_55%)]" />
-          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-          <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
-              <span>Web Scraping</span>
-              <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-              <span>HTTPS Proxy</span>
-            </div>
-            <div className="space-y-2">
-                <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-                  HTTPS Proxy API
-                </CardTitle>
-                <CardDescription className="text-base">
-                  Tunnel HTTP/S traffic through managed proxies with automatic retries and geo-targeting.
-                </CardDescription>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              <Badge variant="outline">Global Egress</Badge>
-              <Badge variant="outline">Session Pinning</Badge>
-              <Badge variant="outline">Rotating IPs</Badge>
-            </div>
-          </CardHeader>
-        </Card>
       </div>
     </ProtectedComponent>
   )
