@@ -292,7 +292,7 @@ fetch(url, {
                 id="serp-region"
                 value={region}
                 onChange={(event) => setRegion(event.target.value)}
-                className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
+                className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
               >
                 {REGIONS.map((reg) => (
                   <option key={reg} value={reg}>
@@ -312,7 +312,7 @@ fetch(url, {
                 id="serp-engine"
                 value={searchEngine}
                 onChange={(event) => setSearchEngine(event.target.value)}
-                className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
+                className="h-11 w-full rounded-2xl border border-slate-200/70 bg-white/90 px-3 text-sm text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-100"
               >
                 {SEARCH_ENGINES.map((engine) => (
                   <option key={engine.value} value={engine.value}>
@@ -339,7 +339,7 @@ fetch(url, {
                     >
                       {isLoading ? (
                         <span className="flex items-center gap-2">
-                          <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-indigo-200 border-t-indigo-600" />
+                          <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-emerald-200 border-t-emerald-600" />
                           Sending…
                         </span>
                       ) : (

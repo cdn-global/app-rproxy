@@ -124,17 +124,17 @@ const UserMenu = () => {
             type="button"
             size="icon"
             variant="ghost"
-            className="h-10 w-10 rounded-full border border-slate-200/60 bg-white/70 shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/70"
+            className="h-10 w-10 rounded-full border border-border bg-background/70 shadow-sm hover:border-primary hover:bg-background dark:border-border dark:bg-background/70"
             data-testid="user-menu-button"
             aria-label="User menu"
           >
-            <FaUserSecret className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+            <FaUserSecret className="h-4 w-4 text-foreground" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 rounded-2xl border border-slate-200/60 bg-white/80 p-2 shadow-[0_24px_55px_-42px_rgba(15,23,42,0.65)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/80">
+        <DropdownMenuContent className="w-56 rounded-2xl border border-border bg-popover/80 p-2 shadow-lg backdrop-blur-xl">
           <DropdownMenuItem asChild className="gap-2 text-sm my-1">
             <Link to="/settings">
-              <FiUser className="h-4 w-4 text-slate-500" />
+              <FiUser className="h-4 w-4 text-muted-foreground" />
               Settings
             </Link>
           </DropdownMenuItem>
@@ -143,7 +143,7 @@ const UserMenu = () => {
               subscriptionStatus.isTrial) && (
               <DropdownMenuItem asChild className="gap-2 text-sm my-1">
                 <Link to="/proxies/pricing">
-                  <FiCreditCard className="h-4 w-4 text-slate-500" />
+                  <FiCreditCard className="h-4 w-4 text-muted-foreground" />
                   Manage subscription
                 </Link>
               </DropdownMenuItem>

@@ -114,7 +114,7 @@ function ResetPassword() {
                     autoComplete="new-password"
                   />
                   {errors.new_password && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.new_password.message}
                     </p>
                   )}
@@ -131,7 +131,7 @@ function ResetPassword() {
                     autoComplete="new-password"
                   />
                   {errors.confirm_password && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.confirm_password.message}
                     </p>
                   )}

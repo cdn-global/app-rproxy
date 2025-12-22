@@ -90,7 +90,7 @@ function SignUp() {
                     autoComplete="name"
                   />
                   {errors.full_name && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.full_name.message}
                     </p>
                   )}
@@ -109,7 +109,7 @@ function SignUp() {
                     autoCorrect="off"
                   />
                   {errors.email && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.email.message}
                     </p>
                   )}
@@ -123,7 +123,7 @@ function SignUp() {
                     autoComplete="new-password"
                   />
                   {errors.password && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.password.message}
                     </p>
                   )}
@@ -140,7 +140,7 @@ function SignUp() {
                     autoComplete="new-password"
                   />
                   {errors.confirm_password && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.confirm_password.message}
                     </p>
                   )}

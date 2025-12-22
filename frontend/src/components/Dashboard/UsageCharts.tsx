@@ -96,7 +96,7 @@
 //         name: "Requests",
 //         xValueFormatString: "DD MMMM YYYY",
 //         yValueFormatString: "#,##0",
-//         color: "rgba(237, 137, 54, 0.7)", // Chakra Orange 400 with opacity
+//         color: "rgba(56, 161, 105, 0.7)", // Chakra Green 500 with opacity
 //         dataPoints: requestsDps
 //     }],
 //   };

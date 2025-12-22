@@ -253,7 +253,7 @@ const ApiKeyModule = ({ token }: ApiKeyProps) => {
 
   if (!token) {
     return (
-      <Alert variant="destructive" className="border-amber-300/40 bg-amber-100/60 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+      <Alert variant="destructive" className="border-gray-300/40 bg-gray-100/60 text-gray-900 dark:border-gray-500/40 dark:bg-gray-500/10 dark:text-gray-100">
         <AlertTitle>Authentication required</AlertTitle>
         <AlertDescription>
           Please sign in to manage your API keys.
@@ -310,7 +310,7 @@ const ApiKeyModule = ({ token }: ApiKeyProps) => {
           >
             {isGenerating ? (
               <span className="flex items-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-indigo-200 border-t-indigo-600" />
+                <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-emerald-200 border-t-emerald-600" />
                 Generating…
               </span>
             ) : (

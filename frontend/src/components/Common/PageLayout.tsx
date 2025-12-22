@@ -53,11 +53,11 @@ export const SectionNavigation = ({ items, title = "Jump to" }: SectionNavigatio
           <div key={id} className="flex flex-col gap-1">
             <a
               href={`#${id}`}
-              className="group inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-4 py-2 font-medium text-slate-600 transition hover:border-indigo-200/80 hover:bg-white hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:border-indigo-500/50 dark:hover:text-slate-100"
+              className="group inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/60 px-4 py-2 font-medium text-slate-600 transition hover:border-emerald-200/80 hover:bg-white hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:border-emerald-500/50 dark:hover:text-slate-100"
             >
-              {Icon ? <Icon className="h-4 w-4 text-slate-400 transition group-hover:text-indigo-500" /> : null}
+              {Icon ? <Icon className="h-4 w-4 text-slate-400 transition group-hover:text-emerald-500" /> : null}
               {label}
-              <FiArrowUpRight className="h-4 w-4 text-slate-400 transition group-hover:text-indigo-500" />
+              <FiArrowUpRight className="h-4 w-4 text-slate-400 transition group-hover:text-emerald-500" />
             </a>
             {description ? (
               <p className="text-xs text-slate-500 dark:text-slate-500">

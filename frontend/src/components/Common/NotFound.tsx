@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button"
 const NotFound = () => {
   return (
     <div className="flex h-[85vh] flex-col items-center justify-center gap-6 px-6 text-center">
-      <div className="rounded-full border border-slate-200/70 bg-white/70 px-6 py-2 text-xs font-medium uppercase tracking-[0.3em] text-slate-500 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-400">
+      <div className="rounded-full border border-border bg-background/70 px-6 py-2 text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground backdrop-blur-sm dark:border-border dark:bg-background/70">
         Lost in space
       </div>
-      <h1 className="text-7xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+      <h1 className="text-7xl font-semibold tracking-tight text-foreground">
         404
       </h1>
       <p className="max-w-md text-sm text-muted-foreground">

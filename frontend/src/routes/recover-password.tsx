@@ -111,7 +111,7 @@ function RecoverPassword() {
                     autoCorrect="off"
                   />
                   {errors.email && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-gray-500">
                       {errors.email.message}
                     </p>
                   )}

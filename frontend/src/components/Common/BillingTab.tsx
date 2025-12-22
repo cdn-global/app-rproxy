@@ -55,7 +55,7 @@ const BillingTab = () => {
   // Guard clause to match the provided template's pattern
   if (!token) {
     return (
-      <div className="w-full rounded-2xl border border-amber-200/60 bg-amber-100/60 p-6 text-sm text-amber-800 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-200">
+      <div className="w-full rounded-2xl border border-gray-200/60 bg-gray-100/60 p-6 text-sm text-gray-800 dark:border-gray-400/40 dark:bg-gray-500/10 dark:text-gray-200">
         Please log in to manage your billing information.
       </div>
     )
