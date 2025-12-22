@@ -99,31 +99,6 @@ function HostingIndexPage() {
     .join(" ")
   return (
     <div className="space-y-10 py-10">
-      <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-        <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
-            <span>Managed Hosting</span>
-            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-            <span>VPS Fleet</span>
-          </div>
-          <div className="space-y-2">
-            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              VPS fleet overview
-            </CardTitle>
-            <CardDescription>
-              Centralize credentials, run rates, and feature toggles so operators stay unblocked.
-            </CardDescription>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            <Badge variant="outline">Managed VPS</Badge>
-            <Badge variant="outline">Daily Backups</Badge>
-            <Badge variant="outline">24/7 Monitoring</Badge>
-          </div>
-        </CardHeader>
-      </Card>
-
       <div className="space-y-8">
         <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
           <CardHeader>
@@ -323,6 +298,30 @@ function HostingIndexPage() {
           </CardFooter>
         </Card>
       </div>
+      <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
+        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
+        <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
+            <span>Managed Hosting</span>
+            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
+            <span>VPS Fleet</span>
+          </div>
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+              VPS fleet overview
+            </CardTitle>
+            <CardDescription>
+              Centralize credentials, run rates, and feature toggles so operators stay unblocked.
+            </CardDescription>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            <Badge variant="outline">Managed VPS</Badge>
+            <Badge variant="outline">Daily Backups</Badge>
+            <Badge variant="outline">24/7 Monitoring</Badge>
+          </div>
+        </CardHeader>
+      </Card>
     </div>
   )
 }
