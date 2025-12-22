@@ -19,8 +19,8 @@ const theme = extendTheme({
   },
   colors: {
     ui: {
-      main: "#FF0000", // orange as the primary accent color
-      secondary: "#C41E3A", // Orange for secondary elements (or "#FFFF00" for yellow if preferred)
+      main: "#38A169", // Green as the primary accent color
+      secondary: "#38A169", // Green for secondary elements
       success: "#38A169", // Green for success states
       danger: "#E53E3E", // Red for errors (unchanged)
       light: "#FFFFFF", // White for backgrounds

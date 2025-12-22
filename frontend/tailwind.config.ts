@@ -25,6 +25,10 @@ const config = {
   				'ui-sans-serif',
   				'system-ui'
   			],
+  			serif: [
+  				'Times New Roman',
+  				'serif'
+  			],
   			display: [
   				'Figtree',
   				'Inter',

@@ -52,18 +52,13 @@ interface NavItem {
 
 const navStructure: NavItem[] = [
   {
-    title: "Store",
-    icon: FiDatabase,
+    title: "Artificial Intelligence",
+    icon: FiCpu,
     subItems: [
       {
-        title: "File Storage",
-        path: "/storage",
-        description: "Manage your scalable object storage buckets and files.",
-      },
-      {
-        title: "Managed Database",
-        path: "/managed-database",
-        description: "Administer your managed relational databases.",
+        title: "LLM Inference",
+        path: "/language-models",
+        description: "Manage your language model settings.",
       },
     ],
   },
@@ -106,13 +101,18 @@ const navStructure: NavItem[] = [
     ],
   },
   {
-    title: "Artificial Intelligence",
-    icon: FiCpu,
+    title: "Store",
+    icon: FiDatabase,
     subItems: [
       {
-        title: "LLM Inference",
-        path: "/language-models",
-        description: "Manage your language model settings.",
+        title: "File Storage",
+        path: "/storage",
+        description: "Manage your scalable object storage buckets and files.",
+      },
+      {
+        title: "Managed Database",
+        path: "/managed-database",
+        description: "Administer your managed relational databases.",
       },
     ],
   },
@@ -154,7 +154,7 @@ const NavItems = () => {
           if (item.subItems) {
             return (
               <div key={item.title}>
-                <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground">
+                <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-foreground">
                   {item.icon && <item.icon className="h-5 w-5" />}
                   <span>{item.title}</span>
                 </div>
@@ -164,7 +164,7 @@ const NavItems = () => {
                       key={subItem.path}
                       to={subItem.path}
                       className={cn(
-                        "block rounded-md px-4 py-2 text-sm font-medium",
+                        "block rounded-md px-4 py-2 text-sm font-medium font-serif",
                         pathname.startsWith(subItem.path)
                           ? "bg-primary text-primary-foreground"
                           : "text-foreground hover:bg-muted",
@@ -183,7 +183,7 @@ const NavItems = () => {
               <button
                 key={item.title}
                 onClick={item.onClick}
-                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-foreground hover:bg-muted"
               >
                 {item.icon && <item.icon className="h-5 w-5" />}
                 {item.title}
@@ -195,7 +195,7 @@ const NavItems = () => {
             return (
               <Tooltip key={item.title}>
                 <TooltipTrigger asChild>
-                  <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground/50 cursor-not-allowed">
+                  <span className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-muted-foreground/50 cursor-not-allowed">
                     {item.icon && <item.icon className="h-5 w-5" />}
                     {item.title}
                   </span>
@@ -210,7 +210,7 @@ const NavItems = () => {
               key={item.path}
               to={item.path || "/"}
               className={cn(
-                "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium",
+                "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif",
                 pathname.startsWith(item.path || "/")
                   ? "bg-primary text-primary-foreground"
                   : "text-foreground hover:bg-muted",
@@ -234,7 +234,7 @@ const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="mt-4 w-full text-left">
-        <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted">
+        <div className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium font-serif text-foreground hover:bg-muted">
           <Avatar className="h-8 w-8">
             <AvatarFallback>
               {currentUser?.email?.charAt(0).toUpperCase()}
