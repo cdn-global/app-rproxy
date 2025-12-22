@@ -47,7 +47,7 @@ const DashboardHeader = ({
             <div className="flex items-center gap-3">
               <Button
                 asChild
-                size="md"
+                size="default"
                 className="gap-2 rounded-full px-4 text-sm font-semibold"
               >
                 <RouterLink to={apiConsoleTo}>
@@ -57,7 +57,7 @@ const DashboardHeader = ({
               </Button>
               <Button
                 variant="outline"
-                size="md"
+                size="default"
                 className="gap-2 rounded-full px-4 text-sm font-medium"
                 onClick={onBillingClick}
                 isLoading={isBillingLoading}
