@@ -11,6 +11,7 @@ import {
 import type { IconType } from "react-icons"
 import {
   FiUserCheck,
+  FiKey,
   FiDatabase as FiDatabaseAlt,
   FiSettings,
   FiShield,
@@ -200,6 +201,13 @@ const toolCatalogEntries: ToolCatalogEntry[] = [
     category: "Web scraping",
     icon: FiUserCheck,
     to: "/web-scraping-tools/user-agents",
+  },
+  {
+    label: "API Keys",
+    description: "Create, rotate and manage secret API keys for this workspace.",
+    category: "Web scraping",
+    icon: FiKey,
+    to: "/web-scraping-tools/api-keys",
   },
   {
     label: "LLM Inference API",

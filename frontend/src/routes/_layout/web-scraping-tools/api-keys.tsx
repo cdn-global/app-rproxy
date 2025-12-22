@@ -1,18 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { ExternalLink } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 
 import { parseApiResponse } from "@/lib/api"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
-import PlaygroundHttpsProxy from "../../../components/ScrapingTools/PlaygroundHttps"
+import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
 
-// --- Interfaces and Helper Functions ---
 interface Subscription {
   id: string
   status: string
@@ -46,9 +42,7 @@ const fetchSubscriptions = (token: string) =>
 const fetchProxyApiAccess = (token: string) =>
   requestFromApi<ProxyApiAccess>("/proxy-api/access", token)
 
-const HttpsProxyApiPage = () => {
-  const tabTitle = "Interactive API Playground"
-  const tabDescription = "Test endpoints, customize requests, and generate code snippets."
+const ApiKeysPage = () => {
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") || "" : ""
 
   const {
@@ -75,9 +69,7 @@ const HttpsProxyApiPage = () => {
 
   const isLoading = subscriptionsLoading || accessLoading
   const error = subscriptionsError || accessError
-  const hasActiveSubscription = subscriptions?.some((sub) =>
-    ["active", "trialing"].includes(sub.status),
-  )
+  const hasActiveSubscription = subscriptions?.some((sub) => ["active", "trialing"].includes(sub.status))
 
   return (
     <ProtectedComponent>
@@ -114,49 +106,14 @@ const HttpsProxyApiPage = () => {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>{tabTitle}</CardTitle>
-                    <CardDescription>{tabDescription}</CardDescription>
-                  </div>
-                  <div className="inline-flex items-center gap-3">
-                    <Button variant="ghost" size="sm" asChild>
-                      <a href="/docs#https-proxy" target="_blank" rel="noreferrer">
-                        Docs <ExternalLink className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  </div>
+                <div>
+                  <CardTitle>API Key Management</CardTitle>
+                  <CardDescription>Manage and rotate your secret key for authenticating API requests.</CardDescription>
                 </div>
               </CardHeader>
               <CardContent>
-                <PlaygroundHttpsProxy />
+                <ApiKeyModule token={token} />
               </CardContent>
-            </Card>
-
-            {/* Decorative card moved outside the playground so tunneling text sits independently */}
-            <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(239,68,68,0.62)] dark:text-slate-100">
-              <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(239,68,68,0.68),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.52),_transparent_55%)]" />
-              <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-              <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
-                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
-                  <span>Web Scraping</span>
-                  <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-                  <span>HTTPS Proxy</span>
-                </div>
-                <div className="space-y-2">
-                  <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-                    Tunnel HTTP/S traffic through
-                  </CardTitle>
-                  <CardDescription className="text-base">
-                    Tunnel HTTP/S traffic through managed proxies with automatic retries and geo-targeting.
-                  </CardDescription>
-                </div>
-                <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                  <Badge variant="outline">Global Egress</Badge>
-                  <Badge variant="outline">Session Pinning</Badge>
-                  <Badge variant="outline">Rotating IPs</Badge>
-                </div>
-              </CardHeader>
             </Card>
           </div>
         )}
@@ -164,3 +121,9 @@ const HttpsProxyApiPage = () => {
     </ProtectedComponent>
   )
 }
+
+export const Route = createFileRoute("/_layout/web-scraping-tools/api-keys" as any)({
+  component: ApiKeysPage,
+})
+
+export default ApiKeysPage
