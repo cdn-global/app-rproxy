@@ -55,8 +55,7 @@ const StatHighlights = ({ stats }: StatHighlightsProps) => {
           <div
             key={stat.label}
             className={cn(
-              "flex h-full flex-col gap-6 rounded-[24px] border border-slate-200/70 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.45)] backdrop-blur-2xl transition duration-200 hover:-translate-y-1 hover:shadow-[0_32px_60px_-32px_rgba(15,23,42,0.55)] dark:border-slate-700/50 dark:shadow-[0_28px_60px_-35px_rgba(148,163,184,0.55)]",
-              palette.card,
+              "flex h-full flex-col gap-6 rounded-[24px] border border-slate-200/70 bg-white/95 p-6 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.45)] backdrop-blur-2xl transition duration-200 hover:-translate-y-1 hover:shadow-[0_32px_60px_-32px_rgba(15,23,42,0.55)] dark:border-slate-700/50 dark:bg-slate-900/70 dark:shadow-[0_28px_60px_-35px_rgba(148,163,184,0.55)]",
             )}
           >
             <div className="flex items-start justify-between gap-4">

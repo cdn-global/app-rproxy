@@ -119,6 +119,18 @@ const HttpsProxyApiPage = () => {
             <Card>
               <CardHeader>
                 <div>
+                  <CardTitle>API Key Management</CardTitle>
+                  <CardDescription>Manage and rotate your secret key for authenticating API requests.</CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ApiKeyModule token={token} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div>
                   <CardTitle>Usage Analytics & Insights</CardTitle>
                   <CardDescription>An overview of your recent API usage and performance.</CardDescription>
                 </div>
@@ -138,18 +150,6 @@ const HttpsProxyApiPage = () => {
               </CardHeader>
               <CardContent>
                 <PlaygroundHttpsProxy />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div>
-                  <CardTitle>API Key Management</CardTitle>
-                  <CardDescription>Manage and rotate your secret key for authenticating API requests.</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ApiKeyModule token={token} />
               </CardContent>
             </Card>
             {/* Decorative card moved outside the playground so tunneling text sits independently */}
