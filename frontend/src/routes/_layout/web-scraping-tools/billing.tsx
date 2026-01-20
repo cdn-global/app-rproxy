@@ -187,6 +187,22 @@ function calculateTotalsForMonth(month: Month) {
     {} as Record<string, { total: number; count: number }>,
   )
 
+  const fullPriceTotals = services.reduce(
+    (acc, service) => {
+      const fullTotal = activePlans.reduce((sum, plan) => {
+        return sum + service.getMonthlyCost(plan)
+      }, 0)
+
+      const count = activePlans.filter((plan) => {
+        return service.getMonthlyCost(plan) > 0
+      }).length
+
+      acc[service.name] = { total: fullTotal, count }
+      return acc
+    },
+    {} as Record<string, { total: number; count: number }>,
+  )
+
   const perPlanTotals = activePlans.reduce(
     (acc, plan) => {
       const charged = plan.isTrial
@@ -198,13 +214,26 @@ function calculateTotalsForMonth(month: Month) {
     {} as Record<string, number>,
   )
 
+  const fullPricePerPlanTotals = activePlans.reduce(
+    (acc, plan) => {
+      const fullPrice = services.reduce((sum, service) => sum + service.getMonthlyCost(plan), 0)
+      acc[plan.name] = fullPrice
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+
   const grandTotal = Object.values(totals).reduce((sum, { total }) => sum + total, 0)
+  const fullGrandTotal = Object.values(fullPriceTotals).reduce((sum, { total }) => sum + total, 0)
 
   return {
     totals,
     grandTotal,
+    fullPriceTotals,
+    fullGrandTotal,
     activePlans,
     perPlanTotals,
+    fullPricePerPlanTotals,
   }
 }
 
@@ -255,10 +284,22 @@ const paymentHistory: PaymentRecord[] = [
 
 const WebScrapingToolsBillingPage = () => {
   const showToast = useCustomToast()
-  const [selectedMonth, setSelectedMonth] = useState<Month>(months[months.length - 1])
+  const [selectedMonth, setSelectedMonth] = useState<Month>(months.at(-1) ?? {
+    name: "Current Month",
+    start: new Date(),
+    end: new Date(),
+  })
   const [isRedirecting, setIsRedirecting] = useState(false)
 
-  const { totals, grandTotal, activePlans, perPlanTotals } = useMemo(
+  const {
+    totals: currentTotals,
+    grandTotal,
+    fullGrandTotal,
+    activePlans: currentActivePlans,
+    perPlanTotals,
+    fullPriceTotals,
+    fullPricePerPlanTotals,
+  } = useMemo(
     () => calculateTotalsForMonth(selectedMonth),
     [selectedMonth],
   )
@@ -279,19 +320,65 @@ const WebScrapingToolsBillingPage = () => {
     }
   }
 
+  const handleBillingClick = handlePortalRedirect
+
+  const succeededInvoices = paymentHistory.filter((item) => item.status === "Succeeded")
+  const invoicedAmount = succeededInvoices
+    .filter(({ month }) => month.name === selectedMonth.name)
+    .reduce((sum, { total }) => sum + total, 0)
+
+  const outstandingBalance = useMemo(() => {
+    const priorPending = paymentHistory
+      .filter(({ month, status }) => month.name !== selectedMonth.name && status === "Pending")
+      .reduce((sum, { total }) => sum + total, 0)
+    return grandTotal + priorPending - invoicedAmount
+  }, [grandTotal, invoicedAmount])
+
+  const allTimeTotal = paymentHistory.reduce((sum, { total }) => sum + total, 0)
+  const averageMonthly = allTimeTotal / months.length
+  const previousMonthTotal = paymentHistory
+    .filter(({ month }) => month.name === "August 2025")
+    .reduce((sum, { total }) => sum + total, 0)
+  const monthOverMonthChange = previousMonthTotal
+    ? ((grandTotal - previousMonthTotal) / previousMonthTotal) * 100
+    : 0
+
+  const summaryMetrics = [
+    {
+      label: "Charged total",
+      value: currencyFormatter.format(grandTotal),
+      description: `${currentActivePlans.length} active plans (trials excluded).`,
+    },
+    {
+      label: "Full-price total",
+      value: currencyFormatter.format(fullGrandTotal),
+      description: "List pricing with trials factored back in.",
+    },
+    {
+      label: "Average monthly",
+      value: currencyFormatter.format(averageMonthly),
+      description: `${months.length} months tracked in this view.`,
+    },
+    {
+      label: "MoM change",
+      value: percentageFormatter(monthOverMonthChange),
+      description: `${selectedMonth.name} vs August 2025.`,
+    },
+  ]
+
   return (
     <PageScaffold sidebar={null}>
       <div className="space-y-12">
         <PageSection
           id="billing-cycle"
-          title={`${selectedMonth.name} Billing cycle`}
-          description="Review usage-based charges, subscription run rate, and settlement history."
+          title="Billing cycle"
+          description="View charges and usage for this period."
           actions={
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/50 px-3 py-1 text-sm dark:border-slate-700/60 dark:bg-slate-900/50">
-                <span className="text-slate-500 dark:text-slate-400">View:</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Month:</span>
                 <select
-                  className="bg-transparent font-medium text-slate-900 focus:outline-none dark:text-slate-100"
+                  className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   value={selectedMonth.name}
                   onChange={(e) => {
                     const month = months.find((m) => m.name === e.target.value)
@@ -299,210 +386,331 @@ const WebScrapingToolsBillingPage = () => {
                   }}
                 >
                   {months.map((m) => (
-                    <option key={m.name} value={m.name} className="dark:bg-slate-800">
+                    <option key={m.name} value={m.name}>
                       {m.name}
                     </option>
                   ))}
                 </select>
               </div>
               <Button
-                variant="outline"
-                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-4 py-1.5 text-xs font-semibold shadow-sm hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60"
-                onClick={handlePortalRedirect}
-                disabled={isRedirecting}
-              >
-                <FiCreditCard className="h-3.5 w-3.5" />
-                <span>Payment Method</span>
-              </Button>
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex gap-2 rounded-full border-slate-200/80 text-xs font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+                  onClick={handleBillingClick}
+                >
+                  <FiCreditCard className="h-3.5 w-3.5" />
+                  Add Payment Method
+                </Button>
             </div>
           }
         >
-          <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {summaryMetrics.map((metric) => (
+            <SummaryMetric
+              key={metric.label}
+              label={metric.label}
+              value={metric.value}
+              description={metric.description}
+            />
+          ))}
+        </div>
+    
+      </PageSection>
+
+      {/* Payment Status */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          Payment Status
+        </h3>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          {outstandingBalance > 0 ? (
             <div className="space-y-4">
-              <Badge className="rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
-                Web Scraping Billing
-              </Badge>
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                    {selectedMonth.name}
-                  </h1>
-                   <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
-                      Growth Plan + Add-ons
-                   </Badge>
+              <div className="flex justify-between items-baseline">
+                <span className="text-slate-600 dark:text-slate-400">Outstanding</span>
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">
+                  {currencyFormatter.format(outstandingBalance)}
+                </span>
+              </div>
+              <div className="p-3 rounded bg-amber-500/10 border border-amber-500/20 text-sm text-amber-700 dark:text-amber-200">
+                Payment pending for {selectedMonth.name} usage.
+              </div>
+              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleBillingClick}>
+                Pay Now
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                <FiCreditCard className="h-6 w-6" />
+              </div>
+              <div className="text-center sm:text-left">
+                <div className="font-medium text-slate-900 dark:text-slate-100">All caught up</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">
+                  No outstanding balance. Your next invoice will be issued on {months[months.length - 1].end.toLocaleDateString()}.
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                className="mt-4 sm:mt-0 sm:ml-auto rounded-full border-slate-200/80"
+                onClick={handleBillingClick}
+              >
+                Manage Payment Methods
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          {/* Active Plans */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Active Plans
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                      <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                        <TableHead>Plan</TableHead>
+                        <TableHead>Since</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Charged (USD)</TableHead>
+                        <TableHead className="text-right">Full (USD)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {currentActivePlans.map((plan) => {
+                        const charged = perPlanTotals[plan.name] ?? 0
+                        const full = fullPricePerPlanTotals[plan.name] ?? 0
+                        return (
+                          <TableRow
+                            key={plan.name}
+                            className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                          >
+                            <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                              {plan.name}
+                            </TableCell>
+                            <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                              {plan.activeSince}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={plan.isTrial ? "outline" : "success"}
+                                className="rounded-full px-3 py-1 text-xs font-semibold"
+                              >
+                                {plan.isTrial ? "Trial" : "Active"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                              {currencyFormatter.format(charged)}
+                            </TableCell>
+                            <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                              {currencyFormatter.format(full)}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Plans total
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(grandTotal)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(fullGrandTotal)}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
                 </div>
               </div>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-               <SummaryMetric
-                 label="Total Cost"
-                 value={currencyFormatter.format(grandTotal)}
-                 description={`${activePlans.length} active plans/tools`}
-               />
-               <SummaryMetric
-                 label="Plans Active"
-                 value={activePlans.length.toString()}
-                 description="Includes trials"
-               />
-               <SummaryMetric
-                  label="Invoices"
-                  value={paymentHistory.filter(p => p.month.name === selectedMonth.name).length.toString()}
-                  description="For this month"
-               />
-               <SummaryMetric
-                  label="Last Payment"
-                  value={paymentHistory[0]?.paymentDate || "N/A"}
-                  description="Most recent transaction"
-               />
-            </div>
           </div>
-        </PageSection>
 
-        <PageSection
-          id="usage-breakdown"
-          title="Usage Breakdown"
-          description="Detailed view of your scraping usage costs and plan distribution."
-        >
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          {/* Service Breakdown */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Service Breakdown
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="p-0">
                 <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                    <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                      <TableHead className="w-[50%]">Service Item</TableHead>
-                      <TableHead>Units / Plans</TableHead>
-                      <TableHead className="text-right">Cost</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {services.map((service) => {
-                      const { total, count } = totals[service.name]
-                      if (total === 0 && count === 0) return null
-
-                      return (
-                        <TableRow key={service.name} className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50">
-                          <TableCell className="font-medium text-slate-700 dark:text-slate-200">
+                  <Table>
+                    <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                      <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                        <TableHead>Service</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead className="text-right">Charged (USD)</TableHead>
+                        <TableHead className="text-right">Full (USD)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {services.map((service) => (
+                        <TableRow key={service.name}>
+                          <TableCell className="font-medium text-slate-900 dark:text-slate-50">
                             {service.name}
                           </TableCell>
-                          <TableCell className="text-slate-500 dark:text-slate-400">
-                            {count} {count === 1 ? "plan" : "plans"}
+                          <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                            × {currentTotals[service.name].count}
                           </TableCell>
-                          <TableCell className="text-right font-medium text-slate-900 dark:text-slate-100">
-                            {currencyFormatter.format(total)}
+                          <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                            {currencyFormatter.format(currentTotals[service.name].total)}
+                          </TableCell>
+                          <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                            {currencyFormatter.format(fullPriceTotals[service.name].total)}
                           </TableCell>
                         </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={2} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Total estimated cost
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Total
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(grandTotal)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(fullGrandTotal)}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {/* Plan Overview */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Subscription
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                    Growth Plan
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    Pro Scraper + API
+                  </p>
+                </div>
+                <Badge variant="outline" className="ml-auto rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
+                  Active
+                </Badge>
+              </div>
+              <div className="space-y-4 p-6 pt-6">
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Included:
+                  </p>
+                  <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                    {services
+                      .filter((service) => currentTotals[service.name]?.count > 0)
+                      .map((service) => (
+                        <li key={service.name} className="flex justify-between">
+                          <span>{service.name} (×{currentTotals[service.name].count})</span>
+                          <span className="font-mono">{currencyFormatter.format(currentTotals[service.name].total)}</span>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 rounded-full border-slate-200/80 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+                  onClick={handleBillingClick}
+                >
+                  <FiExternalLink className="h-4 w-4" />
+                  Manage Plan
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Payment History */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          Payment History
+        </h3>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                    <TableHead>Date</TableHead>
+                    <TableHead>Invoice ID</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paymentHistory.map((record) => (
+                    <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
+                      <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                        {record.paymentDate}
                       </TableCell>
-                      <TableCell className="text-right text-lg font-bold text-slate-900 dark:text-slate-50">
-                        {currencyFormatter.format(grandTotal)}
+                       <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-xs">
+                        {record.invoiceId}
+                      </TableCell>
+                       <TableCell className="text-slate-600 dark:text-slate-400">
+                        {record.description}
+                      </TableCell>
+                      <TableCell>
+                         <Badge
+                            variant={record.status === "Succeeded" ? "success" : record.status === "Pending" ? "warning" : "destructive"}
+                            className="rounded-full px-2 py-0.5 text-[0.65rem] uppercase tracking-wider"
+                          >
+                            {record.status}
+                          </Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {currencyFormatter.format(record.total)}
                       </TableCell>
                     </TableRow>
-                  </TableFooter>
-                </Table>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="rounded-[28px] border border-slate-200/70 bg-slate-50/80 p-6 shadow-inner backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-900/40">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    Plan Breakdown
-                </h3>
-                <div className="space-y-3">
-                  {Object.entries(perPlanTotals).map(([name, cost]) => (
-                    <div key={name} className="flex items-center justify-between text-sm">
-                      <span className="truncate font-medium text-slate-600 dark:text-slate-300" title={name}>
-                        {name}
-                      </span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-100">
-                        {currencyFormatter.format(cost)}
-                      </span>
-                    </div>
                   ))}
-                </div>
-              </div>
+                </TableBody>
+              </Table>
+            </div>
+            <div className="p-4 border-t border-slate-200/70 dark:border-slate-700/60">
+              <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  onClick={handleBillingClick}
+              >
+                View All Invoices
+              </Button>
             </div>
           </div>
-        </PageSection>
-
-        <PageSection
-          id="invoices"
-          title="Payment history"
-          description="Download past invoices and view transaction status."
-        >
-          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-            <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Invoice</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paymentHistory.map((payment) => (
-                  <TableRow key={payment.invoiceId} className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50">
-                    <TableCell className="text-slate-600 dark:text-slate-400">
-                      {payment.paymentDate}
-                    </TableCell>
-                    <TableCell className="font-medium text-slate-900 dark:text-slate-200">
-                      {payment.description}
-                      <div className="text-xs font-normal text-slate-500 dark:text-slate-500">
-                        {payment.paymentMethod}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-slate-600 dark:text-slate-400">
-                      {currencyFormatter.format(payment.total)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          payment.status === "Succeeded"
-                            ? "success"
-                            : payment.status === "Pending"
-                              ? "outline"
-                              : "destructive"
-                        }
-                        className="rounded-full px-2 py-0.5 text-xs font-medium"
-                      >
-                        {payment.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 rounded-full p-0 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
-                        asChild
-                      >
-                        <a
-                          href="#"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`View invoice ${payment.invoiceId}`}
-                        >
-                          <FiExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            </div>
-          </div>
-        </PageSection>
+        </div>
       </div>
+
+      <div className="flex justify-end">
+        <Button
+          asChild
+          variant="outline"
+          className="gap-2 rounded-full border-slate-200/80 px-5 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+        >
+          <RouterLink to="..">
+            <FiArrowLeft className="h-4 w-4" />
+            Back to tools
+          </RouterLink>
+        </Button>
+      </div>
+    </div>
     </PageScaffold>
   )
 }
