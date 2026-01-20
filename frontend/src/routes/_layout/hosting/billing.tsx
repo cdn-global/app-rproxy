@@ -793,6 +793,7 @@ const BillingPage = () => {
             </Table>
           </div>
         </div>
+      </div>
       </PageSection>
 
       <PageSection
@@ -858,6 +859,7 @@ const BillingPage = () => {
             </Table>
           </div>
         </div>
+      </div>
       </PageSection>
 
       <PageSection

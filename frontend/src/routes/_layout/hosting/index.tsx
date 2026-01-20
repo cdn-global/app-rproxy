@@ -298,30 +298,60 @@ function HostingIndexPage() {
           </div>
         </PageSection>
       </div>
-      <div className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-        <div className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
-            <span>Managed Hosting</span>
-            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-            <span>VPS Fleet</span>
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              VPS fleet overview
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Centralize credentials, run rates, and feature toggles so operators stay unblocked.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            <Badge variant="outline">Managed VPS</Badge>
-            <Badge variant="outline">Daily Backups</Badge>
-            <Badge variant="outline">24/7 Monitoring</Badge>
-          </div>
-        </div>
-      </div>
+            <div className="mt-10 border-t border-slate-200/60 pt-10 dark:border-slate-800">
+              <div className="mb-6 space-y-1">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  Jump to
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Quick links to page sections.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <RouterLink
+                  to="/"
+                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
+                >
+                  <div className="space-y-1">
+                    <div className="font-semibold text-slate-900 dark:text-slate-100">
+                      Workspace
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Subscriptions, average usage, and quick billing actions.
+                    </div>
+                  </div>
+                </RouterLink>
+
+                <a
+                  href="#analytics"
+                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
+                >
+                  <div className="space-y-1">
+                    <div className="font-semibold text-slate-900 dark:text-slate-100">
+                      Usage insights
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Traffic, spend, and throughput metrics.
+                    </div>
+                  </div>
+                </a>
+
+                <RouterLink
+                  to="/"
+                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
+                >
+                  <div className="space-y-1">
+                    <div className="font-semibold text-slate-900 dark:text-slate-100">
+                      Tool directory
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Explore every workspace module in one place.
+                    </div>
+                  </div>
+                </RouterLink>
+              </div>
+            </div>
     </div>
     </PageScaffold>
   )
