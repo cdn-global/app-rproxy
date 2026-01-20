@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/table";
 import { languageModels } from "@/data/language-models";
 import { compoundTools, gptOssTools } from "@/data/language-model-tools";
-import PageScaffold from "@/components/ui/PageScaffold";
-import PageSection from "@/components/ui/PageSection";
+import PageScaffold, { PageSection } from "@/components/Common/PageLayout";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
