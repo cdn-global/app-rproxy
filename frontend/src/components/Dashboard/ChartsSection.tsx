@@ -19,8 +19,17 @@ const ChartsSection: React.FC = () => {
     })
     .join(" ")
 
+  const concurrencyPoints = [25, 32, 28, 45, 42, 55, 48, 60]
+  const concurrencySparkPath = concurrencyPoints
+    .map((point, index) => {
+      const x = (index / (concurrencyPoints.length - 1)) * 180
+      const y = 110 - point
+      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+    })
+    .join(" ")
+
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
       <div>
         <div className="space-y-5">
           <div className="grid gap-4">
@@ -73,6 +82,37 @@ const ChartsSection: React.FC = () => {
                   />
                   <path
                     d={networkSparkPath}
+                    stroke="hsl(var(--chart-1))"
+                    strokeWidth={3}
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="space-y-5">
+          <div className="grid gap-4">
+            <div className="rounded-2xl border bg-card p-5 text-slate-900 dark:text-slate-50">
+              <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+                Concurrency
+              </div>
+              <div className="mt-2 text-2xl font-semibold">512</div>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+                +5.1% vs last 7 days
+              </p>
+              <div className="mt-4">
+                <svg viewBox="0 0 180 110" className="h-24 w-full">
+                  <path
+                    d={`${concurrencySparkPath} L 180 110 L 0 110 Z`}
+                    fill="hsl(var(--chart-2))"
+                    className="stroke-none"
+                  />
+                  <path
+                    d={concurrencySparkPath}
                     stroke="hsl(var(--chart-1))"
                     strokeWidth={3}
                     fill="none"

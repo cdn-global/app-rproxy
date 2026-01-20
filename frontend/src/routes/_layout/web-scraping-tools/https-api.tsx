@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { FiArrowUpRight } from "react-icons/fi"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -10,9 +11,7 @@ import ProtectedComponent from "../../../components/Common/ProtectedComponent"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 import PlaygroundHttpsProxy from "../../../components/ScrapingTools/PlaygroundHttps"
 import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
-import UsageInsights from "../../../components/Dashboard/UsageInsights"
-import ChartsSection from "../../../components/Dashboard/ChartsSection"
-import { calculateDashboardStats } from "../../../lib/dashboardUtils"
+import SummaryMetric from "../../../components/Common/SummaryMetric"
 
 // --- Interfaces and Helper Functions ---
 interface Subscription {
@@ -115,13 +114,43 @@ const HttpsProxyApiPage = () => {
             ) : null}
 
             <PageSection
-              id="analytics"
-              title="Usage Analytics & Insights"
-              description="An overview of your recent API usage and performance."
+              id="fleet"
+              title="Fleet intelligence"
+              description="Summaries of capacity, health, and monthly run rate."
+              actions={
+                <Button
+                  asChild
+                  variant="outline"
+                  className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+                >
+                  <Link to="/web-scraping-tools/billing">
+                    <span>Open billing cycle</span>
+                    <FiArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              }
             >
-              <div className="flex flex-col gap-6">
-                <UsageInsights stats={calculateDashboardStats(1, 2, 3, [])} />
-                <ChartsSection />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <SummaryMetric
+                  label="Access Status"
+                  value={proxyApiAccess?.has_access ? "Active" : "Inactive"}
+                  description="Proxy API Access"
+                />
+                <SummaryMetric
+                  label="Subscription"
+                  value={hasActiveSubscription ? "Active" : "None"}
+                  description="Current Plan Status"
+                />
+                <SummaryMetric
+                  label="Requests"
+                  value="--"
+                  description="Last 30 days"
+                />
+                <SummaryMetric
+                  label="Success Rate"
+                  value="--"
+                  description="Global Average"
+                />
               </div>
             </PageSection>
 
