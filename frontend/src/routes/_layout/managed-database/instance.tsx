@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SummaryMetric from "@/components/Common/SummaryMetric"
-import PageScaffold from "../../../components/Common/PageLayout"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const mockDatabaseResources = [
   {
@@ -100,25 +100,25 @@ function InstanceDetailsPage() {
     .join(" ")
 
   return (
-    <div className="space-y-12">
-      <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-        <div className="space-y-4">
+    <PageScaffold sidebar={null}>
+    <div className="space-y-10">
+        <PageSection
+          id="overview"
+          title="PostgreSQL Instance"
+          description="Review your provisioned database resources, cost breakdown, and utilization metrics."
+        >
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <div className="space-y-4 p-6">
+          <div className="flex flex-wrap items-center gap-3">
           <Badge className="rounded-full border border-emerald-200/70 bg-emerald-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-emerald-700 dark:border-emerald-500/30 dark:text-emerald-100">
             Managed Database
           </Badge>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-              PostgreSQL Instance
-            </h1>
             <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
               High Availability Cluster
             </Badge>
           </div>
-          <p className="max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-            Review your provisioned database resources, cost breakdown, and utilization metrics.
-          </p>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 p-6 pt-0">
           {summaryMetrics.map((metric) => (
             <SummaryMetric
               key={metric.label}
@@ -129,7 +129,13 @@ function InstanceDetailsPage() {
           ))}
         </div>
       </div>
+      </PageSection>
 
+      <PageSection
+        id="metrics"
+        title="Performance Metrics"
+        description="Real-time utilization and health data."
+      >
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
           <div className="p-6 pb-2">
@@ -222,13 +228,14 @@ function InstanceDetailsPage() {
           </div>
         </div>
       </div>
+      </PageSection>
 
-      <div>
+      <PageSection
+        id="resources"
+        title="Resource Breakdown"
+      >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-6 pb-2">
-            <h3 className="text-lg font-semibold leading-none tracking-tight">Resource Breakdown</h3>
-          </div>
-          <div className="p-6 pt-0">
+          <div className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -257,8 +264,9 @@ function InstanceDetailsPage() {
             </Table>
           </div>
         </div>
-      </div>
+      </PageSection>
     </div>
+    </PageScaffold>
   )
 }
 
