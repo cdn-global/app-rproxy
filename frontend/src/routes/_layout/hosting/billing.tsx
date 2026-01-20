@@ -630,7 +630,6 @@ const BillingPage = () => {
             </div>
           }
         >
-      <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {summaryMetrics.map((metric) => (
             <SummaryMetric
@@ -641,7 +640,7 @@ const BillingPage = () => {
             />
           ))}
         </div>
-      </div>
+    
       </PageSection>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
