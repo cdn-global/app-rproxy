@@ -4,14 +4,6 @@ import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Table,
   TableBody,
   TableCell,
@@ -53,16 +45,16 @@ function ManagedDatabaseIndexPage() {
   return (
     <div className="space-y-10 py-10">
       <div className="space-y-8">
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-6">
+            <h3 className="text-lg font-semibold">
               Fleet intelligence
-            </CardTitle>
-            <CardDescription>
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
               Summaries of capacity, health, and monthly run rate.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </p>
+          </div>
+          <div className="p-6 pt-0">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total databases"
@@ -89,8 +81,8 @@ function ManagedDatabaseIndexPage() {
                 description="Across all databases"
               />
             </div>
-          </CardContent>
-          <CardFooter>
+          </div>
+          <div className="p-6 pt-0">
             <Button
               asChild
               variant="outline"
@@ -101,19 +93,19 @@ function ManagedDatabaseIndexPage() {
                 <FiArrowUpRight className="h-4 w-4" />
               </Link>
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Database Instances
-            </CardTitle>
+            </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Administer your managed relational databases.
             </p>
-          </CardHeader>
-          <CardContent className="p-0">
+          </div>
+          <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -164,13 +156,13 @@ function ManagedDatabaseIndexPage() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-      <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
+      <div className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-        <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+        <div className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
           <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
             <span>Database Services</span>
             <span
@@ -180,20 +172,20 @@ function ManagedDatabaseIndexPage() {
             <span>Database Fleet</span>
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
               Managed Databases
-            </CardTitle>
-            <CardDescription>
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Administer your managed relational databases.
-            </CardDescription>
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
             <Badge variant="outline">PostgreSQL</Badge>
             <Badge variant="outline">High Availability</Badge>
             <Badge variant="outline">24/7 Monitoring</Badge>
           </div>
-        </CardHeader>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

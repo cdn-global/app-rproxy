@@ -4,7 +4,6 @@ import { useEffect } from "react"
 import { z } from "zod"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -77,78 +76,70 @@ function ItemsTable() {
   const showEmptyState = !isPending && (items?.data.length ?? 0) === 0
 
   return (
-    <Card className="border border-slate-200/70 bg-white/75 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
-      <CardHeader className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <CardTitle className="text-xl">Items Inventory</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Track knowledge base entries and inline tooling snippets.
-          </p>
-        </div>
-        <Badge variant="subtle" className="rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.2em]">
+    <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+      <div className="mb-4 flex items-center justify-end">
+        <Badge variant="outline" className="rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.2em]">
           {totalItems} total
         </Badge>
-      </CardHeader>
-      <CardContent className="px-6 pb-6">
-        <div className="overflow-x-auto">
-          <Table className="min-w-[680px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[110px]">ID</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="w-[120px] text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isPending
-                ? skeletonRows.map((_, index) => (
-                    <TableRow key={`skeleton-${index}`} className="animate-pulse">
-                      {[0, 1, 2, 3].map((cell) => (
-                        <TableCell key={cell}>
-                          <div className="h-4 w-full rounded bg-muted" />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                : showEmptyState
-                  ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
-                        No items found. Use the quick action above to add your first record.
+      </div>
+      <div className="overflow-x-auto">
+        <Table className="min-w-[680px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[110px]">ID</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="w-[120px] text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isPending
+              ? skeletonRows.map((_, index) => (
+                  <TableRow key={`skeleton-${index}`} className="animate-pulse">
+                    {[0, 1, 2, 3].map((cell) => (
+                      <TableCell key={cell}>
+                        <div className="h-4 w-full rounded bg-muted" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              : showEmptyState
+                ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="py-10 text-center text-sm text-muted-foreground">
+                      No items found. Use the quick action above to add your first record.
+                    </TableCell>
+                  </TableRow>
+                )
+                : items?.data.map((item) => (
+                    <TableRow
+                      key={item.id}
+                      className={isPlaceholderData ? "opacity-60" : undefined}
+                    >
+                      <TableCell className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                        {item.id}
+                      </TableCell>
+                      <TableCell className="max-w-[240px] truncate font-medium">
+                        {item.title}
+                      </TableCell>
+                      <TableCell className="max-w-[320px] truncate text-muted-foreground">
+                        {item.description || "N/A"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <ActionsMenu type="Item" value={item} />
                       </TableCell>
                     </TableRow>
-                  )
-                  : items?.data.map((item) => (
-                      <TableRow
-                        key={item.id}
-                        className={isPlaceholderData ? "opacity-60" : undefined}
-                      >
-                        <TableCell className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                          {item.id}
-                        </TableCell>
-                        <TableCell className="max-w-[240px] truncate font-medium">
-                          {item.title}
-                        </TableCell>
-                        <TableCell className="max-w-[320px] truncate text-muted-foreground">
-                          {item.description || "N/A"}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <ActionsMenu type="Item" value={item} />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-            </TableBody>
-          </Table>
-        </div>
-        <PaginationFooter
-          page={page}
-          onChangePage={setPage}
-          hasNextPage={hasNextPage}
-          hasPreviousPage={hasPreviousPage}
-        />
-      </CardContent>
-    </Card>
+                  ))}
+          </TableBody>
+        </Table>
+      </div>
+      <PaginationFooter
+        page={page}
+        onChangePage={setPage}
+        hasNextPage={hasNextPage}
+        hasPreviousPage={hasPreviousPage}
+      />
+    </div>
   )
 }
 

@@ -25,13 +25,6 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { useQuery } from "@tanstack/react-query"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { useCallback, useMemo, useState } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import PageScaffold, {
   PageSection,
   SectionNavigation,
@@ -778,14 +771,14 @@ const Dashboard = () => {
         description="Loading the latest billing, usage, and infrastructure details."
         key="loading"
       >
-        <Card className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
-          <CardContent className="flex flex-col items-center gap-4 p-10">
+        <div className="rounded-[28px] border border-dashed border-slate-200/80 bg-white/70 text-center shadow-none backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/60">
+          <div className="flex flex-col items-center gap-4 p-10">
             <Spinner size={40} />
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Loading your dashboard...
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </PageSection>,
       toolDirectorySection,
     )
@@ -908,11 +901,11 @@ const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
         const isActive = tool.featureSlug ? activeFeatureSlugs.has(tool.featureSlug) : false
 
         return (
-          <Card
+          <div
             key={tool.label}
             className="group h-full rounded-[24px] border border-slate-200/70 bg-white/95 shadow-[0_20px_44px_-28px_rgba(15,23,42,0.46)] backdrop-blur-xl transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_32px_60px_-30px_rgba(15,23,42,0.52)] dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_28px_64px_-34px_rgba(15,23,42,0.7)]"
           >
-            <CardContent className="flex h-full flex-col gap-5 p-6">
+            <div className="flex h-full flex-col gap-5 p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex aspect-square h-11 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <Icon className="h-5 w-5" />
@@ -958,8 +951,8 @@ const ToolDirectory = ({ tools, activeFeatureSlugs }: ToolDirectoryProps) => {
                   </Button>
                 ) : null}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )
       })}
     </div>

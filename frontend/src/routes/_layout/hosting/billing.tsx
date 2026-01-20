@@ -6,13 +6,6 @@ import SummaryMetric from "@/components/Common/SummaryMetric"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Table,
   TableBody,
   TableCell,
@@ -641,12 +634,12 @@ const BillingPage = () => {
       </div>
 
       {outstandingBalance > 0 || pendingInvoices.length > 0 ? (
-        <Card className="rounded-[28px] border border-amber-300/70 bg-amber-50/80 shadow-[0_24px_60px_-40px_rgba(217,119,6,0.45)] backdrop-blur-xl dark:border-amber-500/60 dark:bg-amber-500/15">
-          <CardHeader className="flex flex-wrap items-center justify-between gap-4">
+        <div className="rounded-[28px] border border-amber-300/70 bg-amber-50/80 shadow-[0_24px_60px_-40px_rgba(217,119,6,0.45)] backdrop-blur-xl dark:border-amber-500/60 dark:bg-amber-500/15">
+          <div className="flex flex-wrap items-center justify-between gap-4 p-6">
             <div>
-              <CardTitle className="text-lg font-semibold text-amber-700 dark:text-amber-100">
+              <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-100">
                 Balance snapshot
-              </CardTitle>
+              </h3>
               <p className="text-sm text-amber-700/90 dark:text-amber-100/80">
                 Outstanding items include uninvoiced usage and any prior pending receipts.
               </p>
@@ -654,8 +647,8 @@ const BillingPage = () => {
             <Badge variant="warning" className="rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
               Action recommended
             </Badge>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          </div>
+          <div className="space-y-4 p-6 pt-0">
             <div className="flex flex-wrap items-end gap-3 text-slate-900 dark:text-slate-100">
               <span className="text-3xl font-semibold">
                 {currencyFormatter.format(outstandingBalance)}
@@ -682,8 +675,8 @@ const BillingPage = () => {
                 All invoices for {currentMonth.name} have settled. The balance reflects usage awaiting billing sync.
               </p>
             )}
-          </CardContent>
-          <CardFooter className="flex flex-wrap items-center gap-4 border-t border-amber-200/60 bg-white/60 dark:border-amber-500/40 dark:bg-amber-500/10">
+          </div>
+          <div className="flex flex-wrap items-center gap-4 border-t border-amber-200/60 bg-white/60 p-6 text-sm text-slate-600 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-slate-400">
             <Button
               variant="outline"
               className="gap-2 rounded-full border-amber-300/70 px-5 py-2 text-sm font-semibold text-amber-700 hover:border-amber-400 hover:text-amber-800 dark:border-amber-500/60 dark:text-amber-100"
@@ -697,20 +690,20 @@ const BillingPage = () => {
             <span className="text-xs text-amber-700/80 dark:text-amber-100/70">
               You&apos;ll land directly in the self-service customer portal.
             </span>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       ) : null}
 
-      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Server charges
-          </CardTitle>
+          </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             Per-server view of charged vs. list pricing for the month.
           </p>
-        </CardHeader>
-        <CardContent className="p-0">
+        </div>
+        <div className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -792,22 +785,22 @@ const BillingPage = () => {
               </TableFooter>
             </Table>
           </div>
-        </CardContent>
-        <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
+        </div>
+        <div className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 p-6 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
           Charged totals exclude compute trials; full pricing illustrates what you would pay without promotional credits.
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Service breakdown
-          </CardTitle>
+          </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             Each managed add-on measured against its full list price.
           </p>
-        </CardHeader>
-        <CardContent className="p-0">
+        </div>
+        <div className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -863,18 +856,18 @@ const BillingPage = () => {
               </TableFooter>
             </Table>
           </div>
-        </CardContent>
-        <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
+        </div>
+        <div className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 p-6 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
           Storage and elastic IP fees are metered across the active fleet; managed support appears only where enabled.
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <CardHeader className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <div className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
           <div>
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Subscription snapshot
-            </CardTitle>
+            </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Unlimited HTTPS API Request – Plus Tier · Renews monthly.
             </p>
@@ -882,8 +875,8 @@ const BillingPage = () => {
           <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
             {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)} / month
           </Badge>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
+        </div>
+        <div className="space-y-4 p-6 pt-6">
           <div className="space-y-2">
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
               Subscribed services:
@@ -915,19 +908,19 @@ const BillingPage = () => {
             <FiExternalLink className="h-4 w-4" />
             Manage subscription
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Invoice history
-          </CardTitle>
+          </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             Direct links into Stripe for deeper detail or PDF exports.
           </p>
-        </CardHeader>
-        <CardContent className="p-0">
+        </div>
+        <div className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">

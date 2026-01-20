@@ -4,7 +4,6 @@ import { FiArrowUpRight, FiCheck, FiCopy } from "react-icons/fi"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription,CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import PageScaffold, { PageSection } from "@/components/Common/PageLayout"
 import { hostingServers } from "@/data/hosting"
 import useCustomToast from "@/hooks/useCustomToast"
 
@@ -98,32 +98,24 @@ function InfrastructureIndexPage() {
     })
     .join(" ")
   return (
-    <div className="space-y-10 py-10">
-      <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
-        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-        <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
-            <span>Infrastructure</span>
-            <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
-            <span>Managed Infrastructure</span>
+    <PageScaffold className="py-8" sidebar={null}>
+      <div className="space-y-6">
+        <div className="mx-auto w-full max-w-4xl space-y-4 text-center">
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">Infrastructure</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Manage your infrastructure.</p>
+        </div>
+
+        <PageSection id="overview" title="Managed Infrastructure" description="Details about your Terraform, Ansible, and Kubernetes resources.">
+          <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+            <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              <Badge variant="outline">Terraform</Badge>
+              <Badge variant="outline">Ansible</Badge>
+              <Badge variant="outline">Kubernetes</Badge>
+            </div>
           </div>
-          <div className="space-y-2">
-            <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              Infrastructure
-            </CardTitle>
-            <CardDescription>
-              Manage your infrastructure.
-            </CardDescription>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            <Badge variant="outline">Terraform</Badge>
-            <Badge variant="outline">Ansible</Badge>
-            <Badge variant="outline">Kubernetes</Badge>
-          </div>
-        </CardHeader>
-      </Card>
-    </div>
+        </PageSection>
+      </div>
+    </PageScaffold>
   )
 }
 

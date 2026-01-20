@@ -80,18 +80,7 @@ function UsersTable() {
 
   return (
     <Card className="border border-slate-200/70 bg-white/75 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
-      <CardHeader className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <CardTitle className="text-xl">Account Directory</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Manage platform operators, superusers, and billing contacts.
-          </p>
-        </div>
-        <Badge variant="subtle" className="rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.2em]">
-          {totalUsers} team
-        </Badge>
-      </CardHeader>
-      <CardContent className="px-6 pb-6">
+      <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table className="min-w-[760px]">
             <TableHeader>

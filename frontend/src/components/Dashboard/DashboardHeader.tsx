@@ -3,7 +3,6 @@ import { FiArrowUpRight } from "react-icons/fi"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 
 interface DashboardHeaderProps {
   servicesCount: number
@@ -25,9 +24,9 @@ const DashboardHeader = ({
   apiConsoleTo,
 }: DashboardHeaderProps) => {
   return (
-    <Card className="relative overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl transition-shadow dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
+    <div className="relative overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.36)] backdrop-blur-2xl transition-shadow dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_20px_50px_-32px_rgba(148,163,184,0.35)]">
       <BackgroundAura />
-      <CardContent className="relative z-[1] space-y-6 p-6 md:space-y-8 md:p-8">
+      <div className="relative z-[1] space-y-6 p-6 md:space-y-8 md:p-8">
         <div className="flex items-start justify-between gap-6">
           <div className="space-y-4 xl:max-w-2xl">
             <Badge className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[0.68rem] font-semibold tracking-[0.06em] text-primary/85 dark:bg-primary/20 dark:text-primary-foreground/85">
@@ -81,8 +80,8 @@ const DashboardHeader = ({
           <StatBadge label="Active services" value={servicesCount.toString()} />
           <StatBadge label="Next renewal" value={nextRenewalLabel} />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

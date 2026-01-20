@@ -1,12 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { Badge } from "@/components/ui/badge"
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Table,
   TableBody,
   TableCell,
@@ -136,11 +130,11 @@ function InstanceDetailsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle>Cost Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-6 pb-2">
+            <h3 className="text-lg font-semibold leading-none tracking-tight">Cost Breakdown</h3>
+          </div>
+          <div className="p-6 pt-0">
             <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
               Total Cost
             </div>
@@ -164,13 +158,13 @@ function InstanceDetailsPage() {
                 />
               </svg>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle>Resource Utilization</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </div>
+        </div>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-6 pb-2">
+            <h3 className="text-lg font-semibold leading-none tracking-tight">Resource Utilization</h3>
+          </div>
+          <div className="p-6 pt-0">
             <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
               CPU Usage
             </div>
@@ -194,13 +188,13 @@ function InstanceDetailsPage() {
                 />
               </svg>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle>Uptime</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </div>
+        </div>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-6 pb-2">
+            <h3 className="text-lg font-semibold leading-none tracking-tight">Uptime</h3>
+          </div>
+          <div className="p-6 pt-0">
             <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
               Last 7 days
             </div>
@@ -224,16 +218,16 @@ function InstanceDetailsPage() {
                 />
               </svg>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       <div>
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle>Resource Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-6 pb-2">
+            <h3 className="text-lg font-semibold leading-none tracking-tight">Resource Breakdown</h3>
+          </div>
+          <div className="p-6 pt-0">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -260,8 +254,8 @@ function InstanceDetailsPage() {
                 ))}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )

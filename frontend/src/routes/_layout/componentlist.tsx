@@ -5,7 +5,6 @@ import { DollarSign, ExternalLink, Globe, HardDrive, Zap } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -132,54 +131,54 @@ const WorkspacePulsePage = () => {
               description="A visual sweep of available tools and services for your workspace."
             >
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                <Card className="rounded-2xl">
-                  <CardHeader className="pb-4">
+                <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+                  <div className="pb-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-lg">Data pipeline</CardTitle>
-                        <CardDescription className="text-xs">ETL & reverse-ETL</CardDescription>
+                        <h3 className="text-lg font-semibold leading-none tracking-tight">Data pipeline</h3>
+                        <p className="text-xs text-muted-foreground mt-1">ETL & reverse-ETL</p>
                       </div>
                       <Zap className="h-5 w-5 text-slate-400" />
                     </div>
-                  </CardHeader>
-                  <CardContent>
+                  </div>
+                  <div>
                     <Button size="sm" variant="outline" className="rounded-full px-4">
                       Configure
                     </Button>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-2xl">
-                  <CardHeader className="pb-4">
+                  </div>
+                </div>
+                <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+                  <div className="pb-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-lg">Geoproxy</CardTitle>
-                        <CardDescription className="text-xs">Proxy & scraper</CardDescription>
+                        <h3 className="text-lg font-semibold leading-none tracking-tight">Geoproxy</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Proxy & scraper</p>
                       </div>
                       <Globe className="h-5 w-5 text-slate-400" />
                     </div>
-                  </CardHeader>
-                  <CardContent>
+                  </div>
+                  <div>
                     <Button size="sm" variant="outline" className="rounded-full px-4">
                       Manage
                     </Button>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-2xl">
-                  <CardHeader className="pb-4">
+                  </div>
+                </div>
+                <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+                  <div className="pb-4">
                     <div className="flex items-start justify-between">
                       <div>
-                        <CardTitle className="text-lg">Storage</CardTitle>
-                        <CardDescription className="text-xs">Object & file</CardDescription>
+                        <h3 className="text-lg font-semibold leading-none tracking-tight">Storage</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Object & file</p>
                       </div>
                       <HardDrive className="h-5 w-5 text-slate-400" />
                     </div>
-                  </CardHeader>
-                  <CardContent>
+                  </div>
+                  <div>
                     <Button size="sm" variant="outline" className="rounded-full px-4">
                       Connect
                     </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
             </PageSection>
           </TabsContent>
@@ -190,33 +189,32 @@ const WorkspacePulsePage = () => {
               description="A high-level overview of your workspace's infrastructure."
             >
               <div className="grid gap-6 xl:grid-cols-2">
-                <Card className="rounded-2xl">
-                  <CardHeader className="flex-row items-start justify-between">
-                    <div>
-                      <CardTitle>Regional usage</CardTitle>
-                      <CardDescription>A breakdown of usage by region.</CardDescription>
-                    </div>
-                    <div>
+                <div className="space-y-2">
+                  <div className="px-1">
+                    <h3 className="font-medium">Regional usage</h3>
+                    <p className="text-xs text-muted-foreground">A breakdown of usage by region.</p>
+                  </div>
+                  <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+                    <div className="flex items-center justify-end mb-4">
                       <label htmlFor="metric-select" className="sr-only">Select metric</label>
-                      <select id="metric-select" defaultValue="requests" className="w-48 rounded-full border px-3 py-1 text-sm">
+                      <select id="metric-select" defaultValue="requests" className="w-48 rounded-full border px-3 py-1 text-sm bg-transparent">
                         <option value="requests">Requests</option>
                         <option value="latency">Latency</option>
                         <option value="errors">Errors</option>
                       </select>
                     </div>
-                  </CardHeader>
-                  <CardContent>
                     <div className="h-48 w-full flex items-center justify-center text-sm text-slate-500">
                       <div className="text-center">Bar chart placeholder (install @tremor/react for full charts)</div>
                     </div>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-2xl">
-                  <CardHeader>
-                    <CardTitle>Service status</CardTitle>
-                    <CardDescription>The current status of your workspace's services.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="px-1">
+                    <h3 className="font-medium">Service status</h3>
+                    <p className="text-xs text-muted-foreground">The current status of your workspace's services.</p>
+                  </div>
+                  <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -240,27 +238,29 @@ const WorkspacePulsePage = () => {
                         <p className="text-sm text-slate-600 dark:text-slate-400">Degraded performance</p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
             </PageSection>
-            <div className="grid gap-6 xl:grid-cols-5">
-              <div className="xl:col-span-3">
-                <Card className="rounded-2xl">
-                  <CardHeader>
-                    <CardTitle>Usage overview</CardTitle>
-                    <CardDescription>A snapshot of your workspace's usage patterns over time.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-72 w-full flex items-center justify-center text-sm text-slate-500">
-                      <div className="text-center">Area chart placeholder (install @tremor/react for full charts)</div>
-                    </div>
-                  </CardContent>
-                </Card>
+            <div className="grid gap-6 xl:grid-cols-5 mt-6">
+              <div className="xl:col-span-3 space-y-2">
+                <div className="px-1">
+                  <h3 className="font-medium">Usage overview</h3>
+                  <p className="text-xs text-muted-foreground">A snapshot of your workspace's usage patterns over time.</p>
+                </div>
+                <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+                  <div className="h-72 w-full flex items-center justify-center text-sm text-slate-500">
+                    <div className="text-center">Area chart placeholder (install @tremor/react for full charts)</div>
+                  </div>
+                </div>
               </div>
-              <div className="xl:col-span-2">
-                <Card className="rounded-2xl">
-                  <CardContent className="grid gap-4">
+              <div className="xl:col-span-2 space-y-2">
+                 <div className="px-1 invisible">
+                  <h3 className="font-medium">Stats</h3>
+                  <p className="text-xs text-muted-foreground">Hidden spacer</p>
+                </div>
+                <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80 h-[calc(100%-3rem)]">
+                  <div className="grid gap-4">
                     <div className="flex items-center gap-4 rounded-lg bg-slate-100/60 p-4 dark:bg-slate-800/60">
                       <div className="flex aspect-square h-12 w-12 items-center justify-center rounded-lg bg-indigo-200 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
                         <Zap className="h-6 w-6" />
@@ -279,8 +279,8 @@ const WorkspacePulsePage = () => {
                         <p className="text-sm text-slate-600 dark:text-slate-400">1.9M requests</p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
@@ -291,35 +291,37 @@ const WorkspacePulsePage = () => {
           description="Manage your subscription, view invoices, and update payment details."
         >
           <div className="grid gap-6 xl:grid-cols-2">
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle>Current plan</CardTitle>
-                <CardDescription>You are currently on the Team plan.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="rounded-lg bg-slate-100/60 p-6 dark:bg-slate-800/60">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold">$1,250</span>
-                    <span className="text-sm text-slate-600 dark:text-slate-400">/ month</span>
+            <div className="space-y-2">
+              <div className="px-1">
+                <h3 className="font-medium">Current plan</h3>
+                <p className="text-xs text-muted-foreground">You are currently on the Team plan.</p>
+              </div>
+              <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+                <div className="space-y-4">
+                  <div className="rounded-lg bg-slate-100/60 p-6 dark:bg-slate-800/60">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold">$1,250</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-400">/ month</span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                      Your next invoice is on December 1, 2025.
+                    </p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                    Your next invoice is on December 1, 2025.
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <Button className="rounded-full px-4">Upgrade plan</Button>
+                    <Button variant="outline" className="rounded-full px-4">
+                      Update payment
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Button className="rounded-full px-4">Upgrade plan</Button>
-                  <Button variant="outline" className="rounded-full px-4">
-                    Update payment
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle>Recent invoices</CardTitle>
-                <CardDescription>A record of your recent payments and charges.</CardDescription>
-              </CardHeader>
-              <CardContent>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="px-1">
+                <h3 className="font-medium">Recent invoices</h3>
+                <p className="text-xs text-muted-foreground">A record of your recent payments and charges.</p>
+              </div>
+              <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -374,42 +376,36 @@ const WorkspacePulsePage = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </PageSection>
         <PageSection id="links" title="Links" description="A collection of useful links for your workspace.">
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg">Documentation</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold leading-none tracking-tight">Documentation</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   Read the docs, and get started with our API.
                 </p>
-              </CardContent>
-            </Card>
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg">API playground</CardTitle>
-              </CardHeader>
-              <CardContent>
+              </div>
+            </div>
+            <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold leading-none tracking-tight">API playground</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   Explore the API and make requests in real-time.
                 </p>
-              </CardContent>
-            </Card>
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg">Support</CardTitle>
-              </CardHeader>
-              <CardContent>
+              </div>
+            </div>
+            <div className="rounded-[24px] border border-slate-200/70 bg-white/90 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/80">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold leading-none tracking-tight">Support</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   Get in touch with our team for help.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </PageSection>
       </div>
