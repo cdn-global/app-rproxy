@@ -19,6 +19,7 @@ import {
   type HostingServer,
 } from "@/data/hosting"
 import useCustomToast from "@/hooks/useCustomToast"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const servers: HostingServer[] = hostingServers
 
@@ -603,7 +604,13 @@ const BillingPage = () => {
   }
 
   return (
+    <PageScaffold sidebar={null}>
     <div className="space-y-12">
+        <PageSection
+          id="billing-cycle"
+          title={`${currentMonth.name} Billing cycle`}
+          description="Review usage-based charges, subscription run rate, and settlement history with the same glass aesthetic as the dashboard landing page."
+        >
       <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
         <div className="space-y-4">
           <Badge className="rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
@@ -617,9 +624,6 @@ const BillingPage = () => {
               Managed hosting + API
             </Badge>
           </div>
-          <p className="max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-            Review usage-based charges, subscription run rate, and settlement history with the same glass aesthetic as the dashboard landing page.
-          </p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {summaryMetrics.map((metric) => (
@@ -632,7 +636,12 @@ const BillingPage = () => {
           ))}
         </div>
       </div>
+      </PageSection>
 
+      <PageSection
+        id="balance"
+        title="Balance"
+      >
       {outstandingBalance > 0 || pendingInvoices.length > 0 ? (
         <div className="rounded-[28px] border border-amber-300/70 bg-amber-50/80 shadow-[0_24px_60px_-40px_rgba(217,119,6,0.45)] backdrop-blur-xl dark:border-amber-500/60 dark:bg-amber-500/15">
           <div className="flex flex-wrap items-center justify-between gap-4 p-6">
@@ -693,16 +702,14 @@ const BillingPage = () => {
           </div>
         </div>
       ) : null}
+      </PageSection>
 
+      <PageSection
+        id="server-charges"
+        title="Server Charges"
+        description="Per-server view of charged vs. list pricing for the month."
+      >
       <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Server charges
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Per-server view of charged vs. list pricing for the month.
-          </p>
-        </div>
         <div className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -786,20 +793,14 @@ const BillingPage = () => {
             </Table>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 p-6 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
-          Charged totals exclude compute trials; full pricing illustrates what you would pay without promotional credits.
-        </div>
-      </div>
+      </PageSection>
 
+      <PageSection
+        id="service-breakdown"
+        title="Service Breakdown"
+        description="Each managed add-on measured against its full list price."
+      >
       <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Service breakdown
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Each managed add-on measured against its full list price.
-          </p>
-        </div>
         <div className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -857,11 +858,12 @@ const BillingPage = () => {
             </Table>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 p-6 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-500">
-          Storage and elastic IP fees are metered across the active fleet; managed support appears only where enabled.
-        </div>
-      </div>
+      </PageSection>
 
+      <PageSection
+        id="subscription"
+        title="Subscription Snapshot"
+      >
       <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
         <div className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
           <div>
@@ -910,16 +912,14 @@ const BillingPage = () => {
           </Button>
         </div>
       </div>
+      </PageSection>
 
+      <PageSection
+        id="invoice-history"
+        title="Invoice History"
+        description="Direct links into Stripe for deeper detail or PDF exports."
+      >
       <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Invoice history
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Direct links into Stripe for deeper detail or PDF exports.
-          </p>
-        </div>
         <div className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -985,16 +985,14 @@ const BillingPage = () => {
           </span>
         </div>
       </div>
+      </PageSection>
 
+      <PageSection
+        id="payment-method"
+        title="Payment method & billing address"
+        description="The saved card and remit-to details in Stripe today."
+      >
       <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Payment method & billing address
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            The saved card and remit-to details in Stripe today.
-          </p>
-        </div>
         <div className="grid gap-6 p-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
@@ -1043,6 +1041,7 @@ const BillingPage = () => {
           </div>
         </div>
       </div>
+      </PageSection>
 
       <div className="flex justify-end">
         <Button
@@ -1057,6 +1056,7 @@ const BillingPage = () => {
         </Button>
       </div>
     </div>
+    </PageScaffold>
   )
 }
 

@@ -370,6 +370,23 @@ const SocialLink = ({
   </a>
 )
 
+const SocialItems = () => (
+  <div className="mt-4 flex flex-wrap items-center gap-2 px-1">
+    <SocialLink href="https://x.com/cobaltdata" label="X">
+      <FiTwitter className="h-4 w-4" />
+    </SocialLink>
+    <SocialLink href="https://github.com/cdn-global" label="GitHub">
+      <FiGithub className="h-4 w-4" />
+    </SocialLink>
+    <SocialLink href="https://cobaltdata.net" label="Cobalt Data">
+      <FiGlobe className="h-4 w-4" />
+    </SocialLink>
+    <SocialLink href="https://docs.roamingproxy.com/" label="Docs">
+      <FiBook className="h-4 w-4" />
+    </SocialLink>
+  </div>
+)
+
 const SideNav = () => {
   return (
     <aside className="hidden w-full h-full flex-col border-r bg-sidebar p-4 sm:flex">
@@ -383,8 +400,9 @@ const SideNav = () => {
       <div className="flex flex-1 flex-col">
         <NavItems />
       </div>
-      <FooterItems />
       <UserMenu />
+      <FooterItems />
+      <SocialItems />
     </aside>
   )
 }

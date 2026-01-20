@@ -1,30 +1,11 @@
 import type { ReactNode } from "react"
 
-import {
-  FiBook,
-  FiGithub,
-  FiGlobe,
-  FiTwitter,
-} from "react-icons/fi"
+
 
 const Footer = () => {
   return (
     <footer className="border-t bg-background/95 px-4 py-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 text-xs text-slate-500 dark:text-slate-500 sm:flex-row sm:justify-between">
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <SocialLink href="https://x.com/cobaltdata" label="X">
-            <FiTwitter className="h-4 w-4" />
-          </SocialLink>
-          <SocialLink href="https://github.com/cdn-global" label="GitHub">
-            <FiGithub className="h-4 w-4" />
-          </SocialLink>
-          <SocialLink href="https://cobaltdata.net" label="Cobalt Data">
-            <FiGlobe className="h-4 w-4" />
-          </SocialLink>
-          <SocialLink href="https://docs.roamingproxy.com/" label="Docs">
-            <FiBook className="h-4 w-4" />
-          </SocialLink>
-        </div>
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 text-xs text-slate-500 dark:text-slate-500 sm:flex-row sm:justify-center">
         <p>
           © 2025
           <FooterLink href="https://ROAMINGPROXY.com" newTab className="mx-1">
@@ -79,24 +60,6 @@ const FooterLink = ({
   </a>
 )
 
-const SocialLink = ({
-  href,
-  label,
-  children,
-}: {
-  href: string
-  label: string
-  children: ReactNode
-}) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noreferrer"
-    aria-label={label}
-    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/70 bg-white/70 text-slate-600 transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-slate-100"
-  >
-    {children}
-  </a>
-)
+
 
 export default Footer

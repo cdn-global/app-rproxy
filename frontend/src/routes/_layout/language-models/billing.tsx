@@ -1,15 +1,6 @@
-
 import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -20,6 +11,8 @@ import {
 } from "@/components/ui/table";
 import { languageModels } from "@/data/language-models";
 import { compoundTools, gptOssTools } from "@/data/language-model-tools";
+import PageScaffold from "@/components/ui/PageScaffold";
+import PageSection from "@/components/ui/PageSection";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -47,13 +40,13 @@ function LanguageModelsBillingPage() {
   billingSummary.totalCost = billingSummary.totalInputCost + billingSummary.totalOutputCost;
 
   return (
-    <div className="space-y-10 py-10">
-      <div className="space-y-8">
+    <PageScaffold sidebar={null}>
+      <div className="space-y-10">
+        <PageSection
+          title="Billing Summary"
+          description="A summary of your current billing period."
+        >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Billing Summary</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">A summary of your current billing period.</p>
-          </div>
           <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <SummaryTile
@@ -74,16 +67,13 @@ function LanguageModelsBillingPage() {
             </div>
           </div>
         </div>
+        </PageSection>
 
+        <PageSection
+          title="Detailed Costs"
+          description="Detailed cost breakdown for each language model."
+        >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Detailed Costs
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Detailed cost breakdown for each language model.
-            </p>
-          </div>
           <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -116,13 +106,12 @@ function LanguageModelsBillingPage() {
             </div>
           </div>
         </div>
+        </PageSection>
 
+        <PageSection
+          title="Built-In Tools (Compound)"
+        >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Built-In Tools (Compound)
-            </h3>
-          </div>
           <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -151,13 +140,12 @@ function LanguageModelsBillingPage() {
             </div>
           </div>
         </div>
+        </PageSection>
 
+        <PageSection
+          title="Built-In Tools (GPT-OSS)"
+        >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Built-In Tools (GPT-OSS)
-            </h3>
-          </div>
           <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -186,8 +174,9 @@ function LanguageModelsBillingPage() {
             </div>
           </div>
         </div>
+        </PageSection>
       </div>
-    </div>
+    </PageScaffold>
   );
 }
 
