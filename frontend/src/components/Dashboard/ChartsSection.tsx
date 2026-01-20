@@ -20,7 +20,7 @@ const ChartsSection: React.FC = () => {
     .join(" ")
 
   return (
-    <div className="grid grid-cols-1 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <div className="space-y-5">
           <div className="grid gap-4">
@@ -33,14 +33,14 @@ const ChartsSection: React.FC = () => {
                 +12.4% vs last 7 days
               </p>
               <div className="mt-4">
-                <svg viewBox="0 0 180 110" className="h-24 w-full">
+                <svg viewBox="0 0 140 110" className="h-20 w-full max-w-[420px]">
                   <path
-                    d={`${sparkPath} L 180 110 L 0 110 Z`}
+                    d={`${sparkPath} L 140 110 L 0 110 Z`}
                     fill="hsl(var(--chart-2))"
                     className="stroke-none"
                   />
                   <path
-                    d={sparkPath}
+                    d={sparkPath.replace(/\b180\b/g, "140")}
                     stroke="hsl(var(--chart-1))"
                     strokeWidth={3}
                     fill="none"
@@ -65,14 +65,14 @@ const ChartsSection: React.FC = () => {
                 +8.2% vs last 7 days
               </p>
               <div className="mt-4">
-                <svg viewBox="0 0 180 110" className="h-24 w-full">
+                <svg viewBox="0 0 140 110" className="h-20 w-full max-w-[420px]">
                   <path
-                    d={`${networkSparkPath} L 180 110 L 0 110 Z`}
+                    d={`${networkSparkPath} L 140 110 L 0 110 Z`}
                     fill="hsl(var(--chart-2))"
                     className="stroke-none"
                   />
                   <path
-                    d={networkSparkPath}
+                    d={networkSparkPath.replace(/\b180\b/g, "140")}
                     stroke="hsl(var(--chart-1))"
                     strokeWidth={3}
                     fill="none"

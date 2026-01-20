@@ -210,6 +210,24 @@ const ApiKeyModule = ({ token }: ApiKeyProps) => {
     }
   }
 
+  // Listen for top-level generate events (page-level Generate key button)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const custom = e as CustomEvent
+      // If there is a full key in the event, show it in the modal
+      if (custom?.detail?.api_key) {
+        setFullKey(custom.detail.api_key)
+        setCountdown(15)
+        setIsModalOpen(true)
+      }
+      // Refresh the key list
+      fetchApiKeys()
+    }
+
+    window.addEventListener("apiKeyGenerated", handler as EventListener)
+    return () => window.removeEventListener("apiKeyGenerated", handler as EventListener)
+  }, [token])
+
   const deleteApiKey = async (key: ApiKey) => {
     if (!token) return
     setKeyToDelete(key.key_preview)
@@ -302,24 +320,7 @@ const ApiKeyModule = ({ token }: ApiKeyProps) => {
               Generate and rotate credential tokens for programmatic access. Keys expire after 365 days.
             </CardDescription>
           </div>
-          <Button
-            type="button"
-            className="rounded-full"
-            onClick={generateKey}
-            disabled={isGenerating || hasProxyApiAccess === false}
-          >
-            {isGenerating ? (
-              <span className="flex items-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-emerald-200 border-t-emerald-600" />
-                Generating…
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Generate key
-              </span>
-            )}
-          </Button>
+          {/* Generate button moved to page header to save space */}
         </CardHeader>
         <CardContent className="space-y-4">
           {hasProxyApiAccess === false ? (
