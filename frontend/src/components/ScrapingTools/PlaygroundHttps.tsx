@@ -342,7 +342,7 @@ const PlaygroundHttps = () => {
   const [resultsData, setResultsData] = useState<ResultsData | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [activeCode, setActiveCode] = useState<(typeof CODE_TEMPLATES)[number]["id"]>("curl")
-  const [showLiveTest, setShowLiveTest] = useState(false)
+  const [showLiveTest, setShowLiveTest] = useState(true)
 
   const displayApiKey = apiKey.trim() || "YOUR_API_KEY"
 

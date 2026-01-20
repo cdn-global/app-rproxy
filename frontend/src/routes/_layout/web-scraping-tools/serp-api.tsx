@@ -81,7 +81,8 @@ const SerpApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <div className="space-y-10 py-10">
+      <div className="px-3 py-6 sm:px-4 lg:px-6"> 
+        <div className="mx-auto w-full max-w-7xl space-y-8">
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
             <Spinner size={48} />
@@ -152,7 +153,7 @@ const SerpApiPage = () => {
             </Card>
           </div>
         )}
-      </div>
+      </div></div>
     </ProtectedComponent>
   )
 }

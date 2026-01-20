@@ -85,7 +85,8 @@ const HttpsProxyApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <div className="space-y-10 py-10">
+      <div className="px-3 py-6 sm:px-4 lg:px-6"> 
+        <div className="mx-auto w-full max-w-7xl space-y-8">
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
             <Spinner size={48} />
@@ -124,7 +125,7 @@ const HttpsProxyApiPage = () => {
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
-                <div className="grid gap-6 lg:grid-cols-2">
+                <div className="flex flex-col gap-6">
                   <UsageInsights stats={calculateDashboardStats(1, 2, 3, [])} />
                   <ChartsSection />
                 </div>
@@ -172,7 +173,7 @@ const HttpsProxyApiPage = () => {
             </Card>
           </div>
         )}
-      </div>
+      </div></div>
     </ProtectedComponent>
   )
 }
