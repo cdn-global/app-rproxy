@@ -49,12 +49,12 @@ function LanguageModelsBillingPage() {
   return (
     <div className="space-y-10 py-10">
       <div className="space-y-8">
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Billing Summary</CardTitle>
-            <CardDescription>A summary of your current billing period.</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Billing Summary</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400">A summary of your current billing period.</p>
+          </div>
+          <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <SummaryTile
                 label="Total Input Cost"
