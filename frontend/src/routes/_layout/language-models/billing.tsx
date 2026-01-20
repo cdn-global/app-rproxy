@@ -75,16 +75,16 @@ function LanguageModelsBillingPage() {
           </div>
         </div>
 
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Detailed Costs
-            </CardTitle>
+            </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Detailed cost breakdown for each language model.
             </p>
-          </CardHeader>
-          <CardContent className="p-0">
+          </div>
+          <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -114,16 +114,16 @@ function LanguageModelsBillingPage() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Built-In Tools (Compound)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+            </h3>
+          </div>
+          <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -149,16 +149,16 @@ function LanguageModelsBillingPage() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Built-In Tools (GPT-OSS)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+            </h3>
+          </div>
+          <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -184,8 +184,8 @@ function LanguageModelsBillingPage() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
