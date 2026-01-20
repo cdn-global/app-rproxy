@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SummaryMetric from "@/components/Common/SummaryMetric"
+import PageScaffold from "../../../components/Common/PageLayout"
 
 const mockDatabaseResources = [
   {

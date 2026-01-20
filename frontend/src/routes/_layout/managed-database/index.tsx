@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { hostingServers } from "@/data/hosting"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -43,18 +44,16 @@ function ManagedDatabaseIndexPage() {
   }, [])
 
   return (
-    <div className="space-y-10 py-10">
+    <PageScaffold sidebar={null}>
+    <div className="space-y-10">
       <div className="space-y-8">
+        <PageSection
+          id="fleet"
+          title="Fleet intelligence"
+          description="Summaries of capacity, health, and monthly run rate."
+        >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
           <div className="p-6">
-            <h3 className="text-lg font-semibold">
-              Fleet intelligence
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Summaries of capacity, health, and monthly run rate.
-            </p>
-          </div>
-          <div className="p-6 pt-0">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total databases"

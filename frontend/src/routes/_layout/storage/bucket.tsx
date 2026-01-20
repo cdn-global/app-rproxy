@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SummaryMetric from "@/components/Common/SummaryMetric"
+import PageScaffold from "../../../components/Common/PageLayout"
 
 const mockStorageResources = [
   {
@@ -104,8 +105,9 @@ function BucketDetailsPage() {
     .join(" ")
 
   return (
-    <div className="space-y-12">
-      <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+    <PageScaffold sidebar={null}>
+      <div className="space-y-12">
+        <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
         <div className="space-y-4">
           <Badge className="rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
             Storage
@@ -261,6 +263,7 @@ function BucketDetailsPage() {
         </Card>
       </div>
     </div>
+    </PageScaffold>
   )
 }
 
