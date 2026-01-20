@@ -133,13 +133,7 @@ const HttpsProxyApiPage = () => {
             </Card>
 
             <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-              <CardHeader>
-                <CardTitle className="text-2xl">Interactive playground</CardTitle>
-                <CardDescription>
-                  Experiment with live requests, inspect responses, and export ready-made snippets for your stack.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <PlaygroundHttpsProxy />
               </CardContent>
             </Card>
