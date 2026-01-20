@@ -81,29 +81,6 @@ const DashboardHeader = ({
           <StatBadge label="Active services" value={servicesCount.toString()} />
           <StatBadge label="Next renewal" value={nextRenewalLabel} />
         </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            asChild
-            size="lg"
-            className="gap-2 rounded-full px-6 text-base font-semibold shadow-lg"
-          >
-            <RouterLink to={apiConsoleTo}>
-              <span>Open API console</span>
-              <FiArrowUpRight className="h-4 w-4" />
-            </RouterLink>
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className="gap-2 rounded-full px-6 text-base font-medium"
-            onClick={onBillingClick}
-            isLoading={isBillingLoading}
-          >
-            <span>Customer billing</span>
-            <FiArrowUpRight className="h-4 w-4" />
-          </Button>
-        </div>
       </CardContent>
     </Card>
   )
