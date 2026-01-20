@@ -56,12 +56,12 @@ function LanguageModelsIndexPage() {
   return (
     <div className="space-y-10 py-10">
       <div className="space-y-8">
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Fleet intelligence</CardTitle>
-            <CardDescription>Summaries of capacity, health, and monthly run rate.</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Fleet intelligence</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Summaries of capacity, health, and monthly run rate.</p>
+          </div>
+          <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total models"
@@ -84,8 +84,8 @@ function LanguageModelsIndexPage() {
                 description="Per Million Tokens"
               />
             </div>
-          </CardContent>
-          <CardFooter>
+          </div>
+          <div className="p-6 pt-0">
             <Button
               asChild
               variant="outline"
@@ -96,19 +96,19 @@ function LanguageModelsIndexPage() {
                 <FiArrowUpRight className="h-4 w-4" />
               </RouterLink>
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               AI Model
-            </CardTitle>
+            </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               pricing will be slightly upchaged for geo location and other support
             </p>
-          </CardHeader>
-          <CardContent className="p-0">
+          </div>
+          <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -153,8 +153,8 @@ function LanguageModelsIndexPage() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
       <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />

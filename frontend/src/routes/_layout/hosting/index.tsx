@@ -101,7 +101,7 @@ function HostingIndexPage() {
       <div className="space-y-8">
         <PageSection id="fleet" title="Fleet intelligence" description="Summaries of capacity, health, and monthly run rate.">
           <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-            <CardContent>
+            <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total servers"
@@ -124,8 +124,8 @@ function HostingIndexPage() {
                 description={`${numberFormatter.format(fleetSummary.totalRam)} GB RAM · ${numberFormatter.format(fleetSummary.totalStorage)} GB storage`}
               />
             </div>
-          </CardContent>
-          <CardFooter>
+          </div>
+          <div className="p-6 pt-0">
             <Button
               asChild
               variant="outline"
@@ -136,7 +136,7 @@ function HostingIndexPage() {
                 <FiArrowUpRight className="h-4 w-4" />
               </RouterLink>
             </Button>
-          </CardFooter>
+          </div>
           </div>
         </PageSection>
 
@@ -146,7 +146,7 @@ function HostingIndexPage() {
           description="Live metric cards, sparkline trends, and throughput breakdown."
         >
           <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardContent className="space-y-5 pt-6">
+          <div className="space-y-5 p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
                 <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">Requests</div>
@@ -186,7 +186,7 @@ function HostingIndexPage() {
                 </div>
               </div>
             </div>
-          </CardContent>
+          </div>
           </div>
         </PageSection>
 

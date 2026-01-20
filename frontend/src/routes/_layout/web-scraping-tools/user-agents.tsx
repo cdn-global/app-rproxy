@@ -408,28 +408,28 @@ const UserAgentsPage = () => {
 
 	return (
 		<div className="space-y-10 py-10">
-			<Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(16,185,129,0.62)] dark:text-slate-100">
+			<div className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(16,185,129,0.62)] dark:text-slate-100">
 				<div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.65),_transparent_52%),_radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.5),_transparent_58%)]" />
 				<div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/78 via-white/52 to-white/30 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/38" />
-				<CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+				<div className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
 					<div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
 						<span>Web scraping</span>
 						<span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
 						<span>User agents</span>
 					</div>
 					<div className="space-y-2">
-						<CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+						<h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
 							User agent catalogue
-						</CardTitle>
-						<CardDescription>
+						</h2>
+						<p className="text-sm text-slate-600 dark:text-slate-400">
 							Curate and rotate trusted user agents for your scraping workloads. Track source refreshes and manage overrides in one place.
-						</CardDescription>
+						</p>
 					</div>
-				</CardHeader>
-			</Card>
+				</div>
+			</div>
 
-			<Card className="border border-slate-200/70 bg-white/85 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur-lg dark:border-slate-700/60 dark:bg-slate-900/70">
-				<CardHeader className="gap-6">
+			<div className="rounded-[28px] border border-slate-200/70 bg-white/85 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur-lg dark:border-slate-700/60 dark:bg-slate-900/70">
+				<div className="flex flex-col gap-6 p-6 border-b border-slate-200/70 dark:border-slate-700/60">
 					<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 						<div className="flex flex-wrap items-center gap-2">
 							{TAB_CONFIG.map((tab) => (
@@ -487,8 +487,8 @@ const UserAgentsPage = () => {
 							) : null}
 						</div>
 					</div>
-				</CardHeader>
-				<CardContent className="space-y-6">
+				</div>
+				<div className="space-y-6 p-6">
 					<div className="rounded-2xl border border-slate-200/70 bg-white/90 px-4 py-3 text-sm text-slate-600 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-slate-300">
 						{totalCount > 0 ? (
 							<span>{totalCount.toLocaleString()} total user agents indexed across your workspace.</span>
@@ -612,8 +612,8 @@ const UserAgentsPage = () => {
 							</Button>
 						</div>
 					</div>
-				</CardContent>
-			</Card>
+				</div>
+			</div>
 
 			<AddEditDialog
 				mode={dialogState.mode}

@@ -115,42 +115,42 @@ const SerpApiPage = () => {
 
             <ApiKeyModule token={token} />
 
-            <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-              <CardHeader>
-                <CardTitle className="text-2xl">Interactive playground</CardTitle>
-                <CardDescription>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+              <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+                <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Interactive playground</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Experiment with live requests, inspect responses, and export ready-made snippets for your stack.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+                </p>
+              </div>
+              <div className="p-6">
                 <PlaygroundSerpApi />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(245,158,11,0.62)] dark:text-slate-100">
+            <div className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(245,158,11,0.62)] dark:text-slate-100">
               <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.68),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(129,140,248,0.52),_transparent_55%)]" />
               <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-              <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
+              <div className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
                 <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
                   <span>Web Scraping</span>
                   <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
                   <span>SERP API</span>
                 </div>
                 <div className="space-y-2">
-                  <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                  <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
                     Search Engine Results
-                  </CardTitle>
-                  <CardDescription>
+                  </h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     Monitor access, rotate keys, and launch our interactive playground to validate SERP requests before shipping to production.
-                  </CardDescription>
+                  </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                   <Badge variant="outline">Managed proxy</Badge>
                   <Badge variant="outline">Rotating keys</Badge>
                   <Badge variant="outline">JSON responses</Badge>
                 </div>
-              </CardHeader>
-            </Card>
+              </div>
+            </div>
           </div>
         )}
       </div></div>

@@ -104,17 +104,17 @@ const ApiKeysPage = () => {
               </Alert>
             ) : null}
 
-            <Card>
-              <CardHeader>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
                 <div>
-                  <CardTitle>API Key Management</CardTitle>
-                  <CardDescription>Manage and rotate your secret key for authenticating API requests.</CardDescription>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">API Key Management</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Manage and rotate your secret key for authenticating API requests.</p>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </div>
+              <div className="p-6">
                 <ApiKeyModule token={token} />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         )}
       </div>
