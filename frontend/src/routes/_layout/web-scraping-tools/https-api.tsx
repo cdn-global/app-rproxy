@@ -140,7 +140,7 @@ const HttpsProxyApiPage = () => {
               id="api-keys"
               title=""
             >
-              <ApiKeyModule token={token} />
+              <ApiKeyModule token={token} variant="plain" />
             </PageSection>
 
             {/* Decorative card moved outside the playground so tunneling text sits independently */}

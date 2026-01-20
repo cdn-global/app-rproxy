@@ -1,6 +1,7 @@
 import { Copy, KeyRound, Plus, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 
+import { cn } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -39,6 +40,7 @@ interface ApiKey {
 
 interface ApiKeyProps {
   token: string | null
+  variant?: "card" | "plain"
 }
 
 const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy"
@@ -66,7 +68,7 @@ const truncateApiKey = (
 }
 // --- END: New helper function ---
 
-const ApiKeyModule = ({ token }: ApiKeyProps) => {
+const ApiKeyModule = ({ token, variant = "card" }: ApiKeyProps) => {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
   const [loading, setLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -262,8 +264,126 @@ const ApiKeyModule = ({ token }: ApiKeyProps) => {
     )
   }
 
+  const generateButton = (
+    <Button
+      type="button"
+      className="rounded-full"
+      onClick={generateKey}
+      disabled={isGenerating || hasProxyApiAccess === false}
+    >
+      {isGenerating ? (
+        <span className="flex items-center gap-2">
+          <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-emerald-200 border-t-emerald-600" />
+          Generating…
+        </span>
+      ) : (
+        <span className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Generate key
+        </span>
+      )}
+    </Button>
+  )
+
+  const content = (
+    <>
+      {hasProxyApiAccess === false ? (
+        <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+          <AlertTitle>Upgrade required</AlertTitle>
+          <AlertDescription>
+            Your current plan does not include Proxy API features. Upgrade your subscription to enable key management.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {error ? (
+        <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
+          <AlertTitle>Something went wrong</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      <div className="overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-700/60">
+        {loading ? (
+          <div className="flex h-56 items-center justify-center">
+            <Spinner size={32} />
+          </div>
+        ) : apiKeys.length === 0 ? (
+          <div className="flex h-48 items-center justify-center bg-slate-50/60 text-sm text-muted-foreground dark:bg-slate-900/40">
+            No API keys found. Generate one to get started.
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Key preview</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Expires</TableHead>
+                <TableHead>Requests</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {apiKeys.map((key) => (
+                <TableRow key={key.key_preview}>
+                  <TableCell>
+                    <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                      <KeyRound className="h-4 w-4 text-slate-400" />
+                      {key.key_preview}
+                    </div>
+                  </TableCell>
+                  <TableCell>{new Date(key.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(key.expires_at).toLocaleDateString()}</TableCell>
+                  <TableCell>{key.request_count ?? 0}</TableCell>
+                  <TableCell>
+                    <span className={key.is_active ? "rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-600" : "rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive"}>
+                      {key.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-9 w-9 rounded-full text-destructive hover:bg-destructive/10"
+                            onClick={() => deleteApiKey(key)}
+                            disabled={
+                              (key.request_count != null && key.request_count > 0) ||
+                              keyToDelete === key.key_preview
+                            }
+                            aria-label="Delete key"
+                          >
+                            {keyToDelete === key.key_preview ? (
+                              <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-destructive/40 border-t-destructive" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {key.request_count && key.request_count > 0
+                            ? "Keys with usage can’t be deleted"
+                            : "Delete API key"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </div>
+    </>
+  )
+
+  const isPlain = variant === "plain"
+
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", isPlain ? "w-full" : "")}>
       <Dialog open={isModalOpen} onOpenChange={(next) => (next ? setIsModalOpen(true) : handleCloseModal())}>
         <DialogContent className="max-w-md rounded-3xl border border-emerald-300/60 bg-white/95 shadow-[0_40px_120px_-60px_rgba(16,185,129,0.35)] backdrop-blur-xl dark:border-emerald-500/40 dark:bg-slate-950/95">
           <DialogHeader>
@@ -292,128 +412,41 @@ const ApiKeyModule = ({ token }: ApiKeyProps) => {
         </DialogContent>
       </Dialog>
 
-      <Card className="border border-slate-200/70 bg-white/80 shadow-[0_32px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-              API keys
-            </CardTitle>
-            <CardDescription>
-              Generate and rotate credential tokens for programmatic access. Keys expire after 365 days.
-            </CardDescription>
+      {isPlain ? (
+        <div className="space-y-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-0.5">
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                API keys
+              </h2>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                Generate and rotate credential tokens for programmatic access. Keys expire after 365 days.
+              </p>
+            </div>
+            {generateButton}
           </div>
-          <Button
-            type="button"
-            className="rounded-full"
-            onClick={generateKey}
-            disabled={isGenerating || hasProxyApiAccess === false}
-          >
-            {isGenerating ? (
-              <span className="flex items-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-emerald-200 border-t-emerald-600" />
-                Generating…
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Generate key
-              </span>
-            )}
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {hasProxyApiAccess === false ? (
-            <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
-              <AlertTitle>Upgrade required</AlertTitle>
-              <AlertDescription>
-                Your current plan does not include Proxy API features. Upgrade your subscription to enable key management.
-              </AlertDescription>
-            </Alert>
-          ) : null}
-
-          {error ? (
-            <Alert variant="destructive" className="border-destructive/40 bg-destructive/10">
-              <AlertTitle>Something went wrong</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : null}
-
-          <div className="overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-700/60">
-            {loading ? (
-              <div className="flex h-56 items-center justify-center">
-                <Spinner size={32} />
-              </div>
-            ) : apiKeys.length === 0 ? (
-              <div className="flex h-48 items-center justify-center bg-slate-50/60 text-sm text-muted-foreground dark:bg-slate-900/40">
-                No API keys found. Generate one to get started.
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Key preview</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Expires</TableHead>
-                    <TableHead>Requests</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {apiKeys.map((key) => (
-                    <TableRow key={key.key_preview}>
-                      <TableCell>
-                        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                          <KeyRound className="h-4 w-4 text-slate-400" />
-                          {key.key_preview}
-                        </div>
-                      </TableCell>
-                      <TableCell>{new Date(key.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell>{new Date(key.expires_at).toLocaleDateString()}</TableCell>
-                      <TableCell>{key.request_count ?? 0}</TableCell>
-                      <TableCell>
-                        <span className={key.is_active ? "rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-600" : "rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive"}>
-                          {key.is_active ? "Active" : "Inactive"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-9 w-9 rounded-full text-destructive hover:bg-destructive/10"
-                                onClick={() => deleteApiKey(key)}
-                                disabled={
-                                  (key.request_count != null && key.request_count > 0) ||
-                                  keyToDelete === key.key_preview
-                                }
-                                aria-label="Delete key"
-                              >
-                                {keyToDelete === key.key_preview ? (
-                                  <span className="h-4 w-4 animate-spin rounded-full border-[2px] border-destructive/40 border-t-destructive" />
-                                ) : (
-                                  <Trash2 className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              {key.request_count && key.request_count > 0
-                                ? "Keys with usage can’t be deleted"
-                                : "Delete API key"}
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+          <div className="space-y-4">
+            {content}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      ) : (
+        <Card className="border border-slate-200/70 bg-white/80 shadow-[0_32px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
+          <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                API keys
+              </CardTitle>
+              <CardDescription>
+                Generate and rotate credential tokens for programmatic access. Keys expire after 365 days.
+              </CardDescription>
+            </div>
+            {generateButton}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {content}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

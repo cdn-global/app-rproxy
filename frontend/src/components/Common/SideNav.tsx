@@ -245,7 +245,7 @@ const UserMenu = () => {
               {currentUser?.full_name || currentUser?.email?.split('@')[0]}
             </span>
             <span className="truncate text-xs text-emerald-600/80 dark:text-emerald-400/70">
-              Workspace Admin
+              Workspace User
             </span>
           </div>
           <FiSettings className="h-4 w-4 text-emerald-600/60 dark:text-emerald-400/60" />
@@ -375,9 +375,6 @@ const SideNav = () => {
     <aside className="hidden w-full h-full flex-col border-r bg-sidebar p-4 sm:flex">
       <div className="mb-8">
         <RouterLink to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
-          <div className="flex aspect-square h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-600/10">
-            <FiShield className="h-7 w-7 fill-current" />
-          </div>
           <span className="font-bold tracking-[0.14em] text-base uppercase text-foreground">
             ROAMINGPROXY
           </span>

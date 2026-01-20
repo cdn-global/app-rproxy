@@ -92,7 +92,7 @@ const BackgroundAura = () => (
       className="absolute -right-36 -top-32 h-80 w-80 rounded-full blur-3xl"
       style={{
         background:
-          "radial-gradient(circle, rgba(99,102,241,0.32) 0%, transparent 60%)",
+          "radial-gradient(circle, rgba(25, 160, 70, 0.32) 0%, transparent 60%)",
       }}
     />
     <div
