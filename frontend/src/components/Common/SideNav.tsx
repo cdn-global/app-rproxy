@@ -12,6 +12,7 @@ import {
   FiMail,
   FiPhone,
   FiSettings,
+  FiShield,
   FiTwitter,
   FiUsers,
 } from "react-icons/fi"
@@ -39,7 +40,6 @@ import {
 import { cn } from "@/lib/utils"
 import type { UserPublic } from "../../client"
 import useAuth from "../../hooks/useAuth"
-import Logo from "../Common/Logo"
 
 interface NavItem {
   title: string
@@ -369,12 +369,15 @@ const SocialLink = ({
 const SideNav = () => {
   return (
     <aside className="hidden w-full h-full flex-col border-r bg-sidebar p-4 sm:flex">
-      <div className="mb-4">
-        <Logo
-          src="/assets/images/roaming-proxy-network-logo.png"
-          alt="Roaming Proxy Logo"
-          imgClassName="w-32"
-        />
+      <div className="mb-8 pl-2">
+        <RouterLink to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-600/10">
+            <FiShield className="h-5 w-5 fill-current" />
+          </div>
+          <span className="font-bold tracking-[0.14em] text-base uppercase text-foreground">
+            ROAMINGPROXY
+          </span>
+        </RouterLink>
       </div>
       <div className="flex flex-1 flex-col">
         <NavItems />
