@@ -94,16 +94,14 @@ function ManagedDatabaseIndexPage() {
             </Button>
           </div>
         </div>
+        </PageSection>
 
+        <PageSection
+          id="instances"
+          title="Database Instances"
+          description="Administer your managed relational databases."
+        >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Database Instances
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Administer your managed relational databases.
-            </p>
-          </div>
           <div className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -157,6 +155,7 @@ function ManagedDatabaseIndexPage() {
             </div>
           </div>
         </div>
+        </PageSection>
       </div>
       <div className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.62)] dark:text-slate-100">
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(129,140,248,0.52),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.52),_transparent_55%)]" />
@@ -186,6 +185,7 @@ function ManagedDatabaseIndexPage() {
         </div>
       </div>
     </div>
+    </PageScaffold>
   )
 }
 
