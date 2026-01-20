@@ -983,19 +983,19 @@ const BillingPage = () => {
           <span className="text-xs text-slate-500 dark:text-slate-500">
             Stripe provides PDF exports, receipts, and VAT-compliant billing data.
           </span>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+        <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Payment method & billing address
-          </CardTitle>
+          </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             The saved card and remit-to details in Stripe today.
           </p>
-        </CardHeader>
-        <CardContent className="grid gap-6 lg:grid-cols-2">
+        </div>
+        <div className="grid gap-6 p-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
               Default payment method
