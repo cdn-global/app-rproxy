@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
-import useCustomToast from "@/hooks/useCustomToast"
 
 import { parseApiResponse } from "@/lib/api"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
@@ -55,7 +54,6 @@ const HttpsProxyApiPage = () => {
   const tabTitle = "Interactive API Playground"
   const tabDescription = "Test endpoints, customize requests, and generate code snippets."
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") || "" : ""
-  const toast = useCustomToast()
 
   const {
     data: subscriptions,
@@ -118,47 +116,6 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
 
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-semibold">Interactive API Playground</h2>
-                <p className="text-sm text-muted-foreground">{tabDescription}</p>
-              </div>
-              <div>
-                <Button
-                  type="button"
-                  className="rounded-full"
-                  onClick={async () => {
-                    if (!token) {
-                      toast("Sign in required", "Log in to generate keys.", "warning")
-                      return
-                    }
-                    try {
-                      const resp = await fetch(`${API_URL}/proxy/generate-api-key`, {
-                        method: "POST",
-                        headers: {
-                          Accept: "application/json",
-                          "Content-Type": "application/json",
-                          Authorization: `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({}),
-                      })
-                      if (!resp.ok) {
-                        const err = await resp.json().catch(() => ({}))
-                        throw new Error(err.detail || `Failed to generate key: ${resp.status}`)
-                      }
-                      const data = await resp.json().catch(() => ({}))
-                      window.dispatchEvent(new CustomEvent("apiKeyGenerated", { detail: data }))
-                      toast("Key generated", "A new API key was created.", "success")
-                    } catch (e) {
-                      toast("Unable to generate key", e instanceof Error ? e.message : String(e), "error")
-                    }
-                  }}
-                >
-                  Generate key
-                </Button>
-              </div>
-            </div>
-
             <Card>
               <CardHeader>
                 <div>
@@ -166,9 +123,11 @@ const HttpsProxyApiPage = () => {
                   <CardDescription>An overview of your recent API usage and performance.</CardDescription>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-6 pt-6">
-                <UsageInsights stats={calculateDashboardStats(1, 2, 3, [])} />
-                <ChartsSection />
+              <CardContent className="pt-6">
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <UsageInsights stats={calculateDashboardStats(1, 2, 3, [])} />
+                  <ChartsSection />
+                </div>
               </CardContent>
             </Card>
 
@@ -184,36 +143,27 @@ const HttpsProxyApiPage = () => {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div>
-                  <CardTitle>API Key Management</CardTitle>
-                  <CardDescription>Generate and rotate credential tokens for programmatic access. Keys expire after 365 days.</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ApiKeyModule token={token} />
-              </CardContent>
-            </Card>
+            <ApiKeyModule token={token} />
+
             {/* Decorative card moved outside the playground so tunneling text sits independently */}
-            <Card className="relative overflow-hidden rounded-[20px] border border-transparent text-slate-900 shadow-md dark:text-slate-100">
+            <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(239,68,68,0.62)] dark:text-slate-100">
               <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(239,68,68,0.68),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.52),_transparent_55%)]" />
               <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-gradient-to-br from-white/80 via-white/55 to-white/35 dark:from-slate-900/80 dark:via-slate-900/70 dark:to-slate-900/40" />
-              <CardHeader className="relative space-y-2 rounded-lg bg-white/90 p-4 dark:bg-slate-900/70">
+              <CardHeader className="relative space-y-4 rounded-[24px] bg-white/78 p-6 shadow-[0_22px_46px_-30px_rgba(15,23,42,0.42)] backdrop-blur dark:bg-slate-900/70">
                 <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/80 px-4 py-1 text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/70">
                   <span>Web Scraping</span>
                   <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
                   <span>HTTPS Proxy</span>
                 </div>
                 <div className="space-y-2">
-                  <CardTitle className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                  <CardTitle className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
                     Tunnel HTTP/S traffic through
                   </CardTitle>
-                  <CardDescription className="text-sm">
-                    Tunnel traffic through managed proxies with retries and geo-targeting.
+                  <CardDescription className="text-base">
+                    Tunnel HTTP/S traffic through managed proxies with automatic retries and geo-targeting.
                   </CardDescription>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                   <Badge variant="outline">Global Egress</Badge>
                   <Badge variant="outline">Session Pinning</Badge>
                   <Badge variant="outline">Rotating IPs</Badge>

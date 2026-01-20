@@ -450,8 +450,8 @@ const PlaygroundHttps = () => {
                 Back to overview
               </Button>
             </div>
-              <div className="space-y-10 px-8 pb-0 pt-6">
-              <div className="grid gap-8 md:grid-cols-2">
+            <div className="space-y-10 px-8 pb-0 pt-6">
+              <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-xs uppercase tracking-[0.18em] text-muted-foreground" htmlFor="url">
@@ -555,7 +555,9 @@ const PlaygroundHttps = () => {
                   <div className="flex flex-col gap-3 border-b border-slate-800/70 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h3 className="text-base font-semibold text-slate-100">Generated code</h3>
-                      <p className="text-xs text-slate-300">Snippets refresh instantly as parameters change.</p>
+                      <p className="text-xs text-slate-300">
+                        Snippets refresh instantly as parameters change.
+                      </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {codeTabs.map((tab) => (
