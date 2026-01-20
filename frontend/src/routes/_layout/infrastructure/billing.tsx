@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import BillingTab from "@/components/Common/BillingTab";
-import PageScaffold from "@/components/ui/PageScaffold";
+import PageScaffold from "@/components/Common/PageLayout";
 
 export const Route = createFileRoute('/_layout/infrastructure/billing')({
   component: Component,

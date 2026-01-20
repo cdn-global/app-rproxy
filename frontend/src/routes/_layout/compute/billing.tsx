@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import ComingSoon from "@/components/Common/ComingSoon"
-import PageScaffold from "@/components/ui/PageScaffold"
+import PageScaffold from "@/components/Common/PageLayout"
 
 export const Route = createFileRoute("/_layout/compute/billing")({
   component: ComputeBilling,
