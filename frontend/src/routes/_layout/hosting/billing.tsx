@@ -611,22 +611,33 @@ const BillingPage = () => {
           title="Billing cycle"
           description="View charges and usage for this period."
           actions={
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Month:</span>
-              <select
-                className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                value={selectedMonth.name}
-                onChange={(e) => {
-                  const month = months.find((m) => m.name === e.target.value)
-                  if (month) setSelectedMonth(month)
-                }}
-              >
-                {months.map((m) => (
-                  <option key={m.name} value={m.name}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Month:</span>
+                <select
+                  className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={selectedMonth.name}
+                  onChange={(e) => {
+                    const month = months.find((m) => m.name === e.target.value)
+                    if (month) setSelectedMonth(month)
+                  }}
+                >
+                  {months.map((m) => (
+                    <option key={m.name} value={m.name}>
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex gap-2 rounded-full border-slate-200/80 text-xs font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+                  onClick={handleBillingClick}
+                >
+                  <FiCreditCard className="h-3.5 w-3.5" />
+                  Add Payment Method
+                </Button>
             </div>
           }
         >
@@ -642,6 +653,50 @@ const BillingPage = () => {
         </div>
     
       </PageSection>
+
+      {/* Payment Status */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          Payment Status
+        </h3>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          {outstandingBalance > 0 ? (
+            <div className="space-y-4">
+              <div className="flex justify-between items-baseline">
+                <span className="text-slate-600 dark:text-slate-400">Outstanding</span>
+                <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">
+                  {currencyFormatter.format(outstandingBalance)}
+                </span>
+              </div>
+              <div className="p-3 rounded bg-amber-500/10 border border-amber-500/20 text-sm text-amber-700 dark:text-amber-200">
+                Payment pending for {selectedMonth.name} usage.
+              </div>
+              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleBillingClick}>
+                Pay Now
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                <FiCreditCard className="h-6 w-6" />
+              </div>
+              <div className="text-center sm:text-left">
+                <div className="font-medium text-slate-900 dark:text-slate-100">All caught up</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">
+                  No outstanding balance. Your next invoice will be issued on {months[months.length - 1].end.toLocaleDateString()}.
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                className="mt-4 sm:mt-0 sm:ml-auto rounded-full border-slate-200/80"
+                onClick={handleBillingClick}
+              >
+                Manage Payment Methods
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
@@ -783,47 +838,10 @@ const BillingPage = () => {
         </div>
 
         <div className="space-y-8">
-          {/* Balance / Payment Status */}
-          <div className="space-y-4">
-             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Payment Status
-            </h3>
-            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-              {outstandingBalance > 0 ? (
-                <div className="space-y-4">
-                  <div className="flex justify-between items-baseline">
-                    <span className="text-slate-600 dark:text-slate-400">Outstanding</span>
-                    <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">
-                      {currencyFormatter.format(outstandingBalance)}
-                    </span>
-                  </div>
-                  <div className="p-3 rounded bg-amber-500/10 border border-amber-500/20 text-sm text-amber-700 dark:text-amber-200">
-                    Payment pending for {selectedMonth.name} usage.
-                  </div>
-                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleBillingClick}>
-                    Pay Now
-                  </Button>
-                </div>
-              ) : (
-                <div className="text-center py-6 space-y-3">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-                    <FiCreditCard className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-slate-900 dark:text-slate-100">All caught up</div>
-                    <div className="text-sm text-slate-500 dark:text-slate-400">
-                      No outstanding balance
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Subscription Snapshot */}
+          {/* Plan Overview */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Subscription
+              Plan Overview
             </h3>
             <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
               <div className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
@@ -870,44 +888,64 @@ const BillingPage = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Invoice History */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Recent Invoices
-            </h3>
-            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-              <div className="p-0">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableBody>
-                      {succeededInvoices.slice(0, 5).map((record) => (
-                        <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
-                          <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                            <div className="flex flex-col">
-                              <span>{record.month.name}</span>
-                              <span className="text-xs text-slate-500 font-normal">{record.paymentDate}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                            {currencyFormatter.format(record.total)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-                <div className="p-4 border-t border-slate-200/70 dark:border-slate-700/60">
-                  <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-                      onClick={handleBillingClick}
-                  >
-                    View All Invoices
-                  </Button>
-                </div>
-              </div>
+      {/* Payment History */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          Payment History
+        </h3>
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                    <TableHead>Date</TableHead>
+                    <TableHead>Invoice ID</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paymentHistory.map((record) => (
+                    <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
+                      <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                        {record.paymentDate}
+                      </TableCell>
+                       <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-xs">
+                        {record.invoiceId}
+                      </TableCell>
+                       <TableCell className="text-slate-600 dark:text-slate-400">
+                        {record.description}
+                      </TableCell>
+                      <TableCell>
+                         <Badge
+                            variant={record.status === "Succeeded" ? "success" : record.status === "Pending" ? "warning" : "destructive"}
+                            className="rounded-full px-2 py-0.5 text-[0.65rem] uppercase tracking-wider"
+                          >
+                            {record.status}
+                          </Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {currencyFormatter.format(record.total)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="p-4 border-t border-slate-200/70 dark:border-slate-700/60">
+              <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  onClick={handleBillingClick}
+              >
+                View All Invoices
+              </Button>
             </div>
           </div>
         </div>
