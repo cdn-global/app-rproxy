@@ -100,11 +100,8 @@ function HostingIndexPage() {
     .join(" ")
   return (
     <PageScaffold sidebar={null}>
-    <div className="space-y-10">
-      <div className="space-y-8">
+    <div className="space-y-8">
         <PageSection id="fleet" title="Fleet intelligence" description="Summaries of capacity, health, and monthly run rate.">
-          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-            <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total servers"
@@ -127,8 +124,7 @@ function HostingIndexPage() {
                 description={`${numberFormatter.format(fleetSummary.totalRam)} GB RAM · ${numberFormatter.format(fleetSummary.totalStorage)} GB storage`}
               />
             </div>
-          </div>
-          <div className="p-6 pt-0">
+            <div className="mt-6">
             <Button
               asChild
               variant="outline"
@@ -140,7 +136,6 @@ function HostingIndexPage() {
               </RouterLink>
             </Button>
           </div>
-          </div>
         </PageSection>
 
         <PageSection
@@ -148,10 +143,8 @@ function HostingIndexPage() {
           title="Active services"
           description="Live metric cards, sparkline trends, and throughput breakdown."
         >
-          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="space-y-5 p-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border p-5 text-slate-900 dark:text-slate-50">
+              <div className="rounded-2xl border border-slate-200/70 bg-white/50 p-5 text-slate-900 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/50 dark:text-slate-50">
                 <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">Requests</div>
                 <div className="mt-2 text-2xl font-semibold">4.8M</div>
                 <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">+12.4% vs last 7 days</p>
@@ -172,7 +165,7 @@ function HostingIndexPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col justify-between gap-4 rounded-2xl border p-5">
+              <div className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/50 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/50">
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Network mix</p>
                   <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">
@@ -189,8 +182,6 @@ function HostingIndexPage() {
                 </div>
               </div>
             </div>
-          </div>
-          </div>
         </PageSection>
 
         <PageSection
@@ -297,7 +288,6 @@ function HostingIndexPage() {
             </div>
           </div>
         </PageSection>
-      </div>
             <div className="mt-10 border-t border-slate-200/60 pt-10 dark:border-slate-800">
               <div className="mb-6 space-y-1">
                 <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -342,8 +332,13 @@ function HostingIndexPage() {
                   className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
                 >
                   <div className="space-y-1">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Tool directory
+                    <div className="flex items-center justify-between">
+                      <div className="font-semibold text-slate-900 dark:text-slate-100">
+                        Tool directory
+                      </div>
+                       <span className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                        View
+                      </span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">
                       Explore every workspace module in one place.
