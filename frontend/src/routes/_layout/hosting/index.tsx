@@ -101,7 +101,23 @@ function HostingIndexPage() {
   return (
     <PageScaffold sidebar={null}>
     <div className="space-y-8">
-        <PageSection id="fleet" title="Fleet intelligence" description="Summaries of capacity, health, and monthly run rate.">
+        <PageSection
+          id="fleet"
+          title="Fleet intelligence"
+          description="Summaries of capacity, health, and monthly run rate."
+          actions={
+            <Button
+              asChild
+              variant="outline"
+              className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+            >
+              <RouterLink to="billing">
+                <span>Open billing cycle</span>
+                <FiArrowUpRight className="h-4 w-4" />
+              </RouterLink>
+            </Button>
+          }
+        >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total servers"
@@ -124,18 +140,6 @@ function HostingIndexPage() {
                 description={`${numberFormatter.format(fleetSummary.totalRam)} GB RAM · ${numberFormatter.format(fleetSummary.totalStorage)} GB storage`}
               />
             </div>
-            <div className="mt-6">
-            <Button
-              asChild
-              variant="outline"
-              className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-            >
-              <RouterLink to="billing">
-                <span>Open billing cycle</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </RouterLink>
-            </Button>
-          </div>
         </PageSection>
 
         <PageSection

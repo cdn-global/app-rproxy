@@ -51,9 +51,19 @@ function ManagedDatabaseIndexPage() {
           id="fleet"
           title="Fleet intelligence"
           description="Summaries of capacity, health, and monthly run rate."
+          actions={
+            <Button
+              asChild
+              variant="outline"
+              className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+            >
+              <Link to="/managed-database/instance">
+                <span>New Database</span>
+                <FiArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          }
         >
-        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total databases"
@@ -80,20 +90,6 @@ function ManagedDatabaseIndexPage() {
                 description="Across all databases"
               />
             </div>
-          </div>
-          <div className="p-6 pt-0">
-            <Button
-              asChild
-              variant="outline"
-              className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-            >
-              <Link to="/managed-database/instance">
-                <span>New Database</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
         </PageSection>
 
         <PageSection
