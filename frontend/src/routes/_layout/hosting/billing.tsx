@@ -968,8 +968,8 @@ const BillingPage = () => {
               </TableBody>
             </Table>
           </div>
-        </CardContent>
-        <CardFooter className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-900/50">
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-[28px] border-t border-slate-200/70 bg-white/70 p-6 dark:border-slate-700/60 dark:bg-slate-900/50">
           <Button
             variant="outline"
             className="gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
