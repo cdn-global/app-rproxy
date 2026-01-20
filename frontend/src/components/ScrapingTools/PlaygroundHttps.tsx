@@ -446,9 +446,6 @@ const PlaygroundHttps = () => {
                   Configure a live HTTPS fetch, inspect the structured response, and grab the exact code you need—without leaving this screen.
                 </p>
               </div>
-              <Button variant="outline" className="rounded-full" onClick={handleHideLiveTest}>
-                Back to overview
-              </Button>
             </div>
             <div className="space-y-10 px-8 pb-0 pt-6">
               <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
