@@ -195,13 +195,9 @@ function calculateTotalsForMonth(month: Month) {
     {} as Record<string, number>,
   )
 
-  const subscriptionStart = new Date(2025, 3, 1)
-  const isSubscriptionActive = month.start >= subscriptionStart
-  const subscriptionCost = isSubscriptionActive ? SUBSCRIPTION_COST_PER_MONTH : 0
-
-  const grandTotal = Object.values(totals).reduce((sum, { total }) => sum + total, 0) + subscriptionCost
+  const grandTotal = Object.values(totals).reduce((sum, { total }) => sum + total, 0)
   const fullGrandTotal =
-    Object.values(fullPriceTotals).reduce((sum, { total }) => sum + total, 0) + subscriptionCost
+    Object.values(fullPriceTotals).reduce((sum, { total }) => sum + total, 0)
 
   return {
     totals,
@@ -757,10 +753,10 @@ const BillingPage = () => {
                           Server total
                         </TableCell>
                         <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                          {currencyFormatter.format(grandTotal - SUBSCRIPTION_COST_PER_MONTH)}
+                          {currencyFormatter.format(grandTotal)}
                         </TableCell>
                         <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                          {currencyFormatter.format(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH)}
+                          {currencyFormatter.format(fullGrandTotal)}
                         </TableCell>
                       </TableRow>
                     </TableFooter>
@@ -804,18 +800,6 @@ const BillingPage = () => {
                           </TableCell>
                         </TableRow>
                       ))}
-                      <TableRow>
-                        <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                          HTTPS API Subscription (Plus)
-                        </TableCell>
-                        <TableCell className="text-sm text-slate-600 dark:text-slate-400">× 1</TableCell>
-                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                          {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
-                        </TableCell>
-                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                          {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
-                        </TableCell>
-                      </TableRow>
                     </TableBody>
                     <TableFooter>
                       <TableRow>
@@ -863,10 +847,6 @@ const BillingPage = () => {
                     Included:
                   </p>
                   <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                    <li className="flex justify-between">
-                      <span>HTTPS API (Plus)</span>
-                      <span className="font-mono">{currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}</span>
-                    </li>
                     {services
                       .filter((service) => currentTotals[service.name]?.count > 0)
                       .map((service) => (
