@@ -834,7 +834,7 @@ const Dashboard = () => {
           apiConsoleTo="/web-scraping-tools/https-api"
         />
       </PageSection>,
-      chartsSection,
+      // chartsSection,
       <PageSection
         id="usage-insights"
         title="Usage insights"
@@ -864,7 +864,7 @@ const Dashboard = () => {
         />
       </PageSection>,
 
-      chartsSection,
+      // chartsSection,
 
       <PageSection
         id="usage-insights"
