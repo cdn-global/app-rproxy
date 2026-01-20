@@ -38,14 +38,14 @@ interface InfrastructureTableProps {
 
 const InfrastructureTable = ({ servers, totals, formatCurrency, ctaTo }: InfrastructureTableProps) => {
   return (
-    <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_26px_60px_-34px_rgba(15,23,42,0.42)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_26px_60px_-30px_rgba(15,23,42,0.62)]">
-      <CardHeader className="space-y-1.5 border-b border-slate-200/70 dark:border-slate-700/60">
-        <CardTitle className="text-lg font-semibold">Infrastructure footprint</CardTitle>
+    <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_26px_60px_-34px_rgba(15,23,42,0.42)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/80 dark:shadow-[0_26px_60px_-30px_rgba(15,23,42,0.62)]">
+      <div className="space-y-1.5 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Infrastructure footprint</h3>
         <p className="text-sm text-slate-600 dark:text-slate-400">
           Managed VPS instances across your RoamingProxy regions.
         </p>
-      </CardHeader>
-      <CardContent className="p-6">
+      </div>
+      <div className="p-6">
         <div className="overflow-hidden rounded-3xl border border-slate-200/70 dark:border-slate-700/60">
           <Table>
             <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
@@ -116,8 +116,8 @@ const InfrastructureTable = ({ servers, totals, formatCurrency, ctaTo }: Infrast
             </TableBody>
           </Table>
         </div>
-      </CardContent>
-      <CardFooter className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/60 py-6 dark:border-slate-700/60 dark:bg-slate-900/50">
+      </div>
+      <div className="flex flex-wrap items-center gap-4 rounded-b-[28px] border-t border-slate-200/70 bg-white/60 p-6 dark:border-slate-700/60 dark:bg-slate-900/50">
         <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
           <p>
             Network total: {totals.totalCount} servers · {totals.totalVCPUs} vCPUs · {totals.totalRAM} GB RAM · {totals.totalStorage} GB SSD
@@ -136,8 +136,8 @@ const InfrastructureTable = ({ servers, totals, formatCurrency, ctaTo }: Infrast
             </RouterLink>
           </Button>
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   )
 }
 
