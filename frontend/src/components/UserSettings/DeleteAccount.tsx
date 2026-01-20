@@ -27,9 +27,9 @@ const DeleteAccount = () => {
         >
           Delete account
         </Button>
-      </CardContent>
+      </div>
       <DeleteConfirmation open={open} onOpenChange={setOpen} />
-    </Card>
+    </div>
   )
 }
 
