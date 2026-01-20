@@ -154,20 +154,20 @@ const NavItems = () => {
           if (item.subItems) {
             return (
               <div key={item.title}>
-                <div className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-foreground">
-                  {item.icon && <item.icon className="h-4 w-4" />}
+                <div className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+                  {item.icon && <item.icon className="hidden h-4 w-4" />}
                   <span>{item.title}</span>
                 </div>
-                <div className="pl-4">
+                <div className="space-y-0.5">
                   {item.subItems.map((subItem) => (
                     <RouterLink
                       key={subItem.path}
                       to={subItem.path}
                       className={cn(
-                        "block rounded-md px-3 py-1.5 text-xs font-medium font-serif",
+                        "block rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200",
                         pathname.startsWith(subItem.path)
-                          ? "bg-primary text-primary-foreground"
-                          : "text-foreground hover:bg-muted",
+                          ? "bg-slate-100/80 text-emerald-700 font-semibold dark:bg-slate-800/60 dark:text-emerald-400 border-l-2 border-emerald-500 rounded-l-none pl-[10px]"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/40 dark:hover:text-slate-200",
                       )}
                     >
                       {subItem.title}
@@ -183,7 +183,7 @@ const NavItems = () => {
               <button
                 key={item.title}
                 onClick={item.onClick}
-                className="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-foreground hover:bg-muted"
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/40 dark:hover:text-slate-200"
               >
                 {item.icon && <item.icon className="h-4 w-4" />}
                 {item.title}
@@ -195,7 +195,7 @@ const NavItems = () => {
             return (
               <Tooltip key={item.title}>
                 <TooltipTrigger asChild>
-                  <span className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-muted-foreground/50 cursor-not-allowed">
+                  <span className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-400/50 cursor-not-allowed">
                     {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </span>
@@ -210,10 +210,10 @@ const NavItems = () => {
               key={item.path}
               to={item.path || "/"}
               className={cn(
-                "flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif",
-                pathname.startsWith(item.path || "/")
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-muted",
+                "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200",
+                pathname.startsWith(item.path || "/") && item.path !== "/"
+                  ? "bg-slate-100/80 text-emerald-700 font-semibold dark:bg-slate-800/60 dark:text-emerald-400 border-l-2 border-emerald-500 rounded-l-none pl-[10px]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/40 dark:hover:text-slate-200",
               )}
             >
               {item.icon && <item.icon className="h-4 w-4" />}
@@ -233,18 +233,22 @@ const UserMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="mt-2 w-full text-left">
-        <div className="flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium font-serif text-foreground hover:bg-muted">
-          <Avatar className="h-6 w-6">
-            <AvatarFallback>
+      <DropdownMenuTrigger className="mt-2 w-full text-left outline-none">
+        <div className="flex items-center gap-3 rounded-xl border border-emerald-200/50 bg-gradient-to-br from-emerald-50/80 to-emerald-100/50 p-2.5 transition-all hover:bg-emerald-100/80 hover:shadow-sm dark:border-emerald-500/20 dark:from-emerald-950/40 dark:to-emerald-900/20 dark:hover:from-emerald-900/40">
+          <Avatar className="h-9 w-9 border-2 border-white bg-white shadow-sm dark:border-slate-800">
+            <AvatarFallback className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
               {currentUser?.email?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col items-start">
-            <span className="font-medium text-xs">
-              {currentUser?.full_name || currentUser?.email}
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <span className="truncate text-sm font-semibold text-emerald-950 dark:text-emerald-50">
+              {currentUser?.full_name || currentUser?.email?.split('@')[0]}
+            </span>
+            <span className="truncate text-xs text-emerald-600/80 dark:text-emerald-400/70">
+              Workspace Admin
             </span>
           </div>
+          <FiSettings className="h-4 w-4 text-emerald-600/60 dark:text-emerald-400/60" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
