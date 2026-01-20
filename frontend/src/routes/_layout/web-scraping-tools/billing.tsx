@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { FiArrowLeft, FiArrowUpRight, FiCreditCard, FiExternalLink } from "react-icons/fi"
+import SummaryMetric from "@/components/Common/SummaryMetric"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
