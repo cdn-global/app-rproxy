@@ -42,6 +42,7 @@ function LanguageModelsBillingPage() {
     <PageScaffold sidebar={null}>
       <div className="space-y-10">
         <PageSection
+          id="billing-summary"
           title="Billing Summary"
           description="A summary of your current billing period."
         >
@@ -69,6 +70,7 @@ function LanguageModelsBillingPage() {
         </PageSection>
 
         <PageSection
+          id="detailed-costs"
           title="Detailed Costs"
           description="Detailed cost breakdown for each language model."
         >
