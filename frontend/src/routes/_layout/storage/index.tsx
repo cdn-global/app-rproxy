@@ -4,14 +4,6 @@ import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Table,
   TableBody,
   TableCell,
@@ -20,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { hostingServers } from "@/data/hosting"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -47,18 +40,16 @@ function StorageIndexPage() {
   }, [])
 
   return (
-    <div className="space-y-10 py-10">
+    <PageScaffold sidebar={null}>
+      <div className="space-y-10">
       <div className="space-y-8">
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">
-              Fleet intelligence
-            </CardTitle>
-            <CardDescription>
-              Summaries of capacity, health, and monthly run rate.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <PageSection
+          id="fleet"
+          title="Fleet intelligence"
+          description="Summaries of capacity, health, and monthly run rate."
+        >
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="p-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <SummaryTile
                 label="Total buckets"
@@ -78,8 +69,8 @@ function StorageIndexPage() {
                 description="Across all buckets"
               />
             </div>
-          </CardContent>
-          <CardFooter>
+          </div>
+          <div className="p-6 pt-0">
             <Button
               asChild
               variant="outline"
@@ -90,14 +81,23 @@ function StorageIndexPage() {
                 <FiArrowUpRight className="h-4 w-4" />
               </Link>
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
+        </PageSection>
 
-        <Card className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <CardHeader className="space-y-2 border-b border-slate-200/70 pb-6 dark:border-slate-700/60">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <PageSection
+          id="buckets"
+          title="Storage Buckets"
+        >
+        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+          <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Storage Buckets
-            </CardTitle>
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              scalable object storage for your needs
+            </p>
+          </div>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Administer your managed object storage buckets.
             </p>
