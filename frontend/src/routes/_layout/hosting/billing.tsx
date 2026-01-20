@@ -631,19 +631,6 @@ const BillingPage = () => {
           }
         >
       <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
-        <div className="space-y-4">
-          <Badge className="rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
-            Billing cycle
-          </Badge>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-              {selectedMonth.name}
-            </h1>
-            <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
-              Managed hosting + API
-            </Badge>
-          </div>
-        </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {summaryMetrics.map((metric) => (
             <SummaryMetric
