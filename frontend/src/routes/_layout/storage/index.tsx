@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { hostingServers } from "@/data/hosting"
+import { storageBuckets } from "@/data/hosting"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
@@ -30,7 +30,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 function StorageIndexPage() {
   const storageSummary = useMemo(() => {
-    return hostingServers.reduce(
+    return storageBuckets.reduce(
       (acc, server) => {
         acc.totalBuckets += 1
         acc.totalStorage += server.storageSizeGB
@@ -106,7 +106,7 @@ function StorageIndexPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {hostingServers.map((server) => (
+                  {storageBuckets.map((server) => (
                     <TableRow
                       key={server.name}
                       className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"

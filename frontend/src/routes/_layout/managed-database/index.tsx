@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { hostingServers } from "@/data/hosting"
+import { databaseInstances } from "@/data/hosting"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
@@ -24,7 +24,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 function ManagedDatabaseIndexPage() {
   const databaseSummary = useMemo(() => {
-    return hostingServers.reduce(
+    return databaseInstances.reduce(
       (acc, server) => {
         acc.totalDatabases += 1
         acc.totalVCPUs += server.vCPUs ?? 0
@@ -115,7 +115,7 @@ function ManagedDatabaseIndexPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {hostingServers.map((server) => (
+                  {databaseInstances.map((server) => (
                     <TableRow
                       key={server.name}
                       className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
