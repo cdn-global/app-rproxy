@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
 import PlaygroundSerpApi from "../../../components/ScrapingTools/PlaygroundSerp"
 
@@ -81,8 +82,7 @@ const SerpApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <div className="px-3 py-6 sm:px-4 lg:px-6"> 
-        <div className="mx-auto w-full max-w-7xl space-y-8">
+      <PageScaffold sidebar={null}>
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
             <Spinner size={48} />
@@ -113,19 +113,21 @@ const SerpApiPage = () => {
               </Alert>
             ) : null}
 
-            <ApiKeyModule token={token} />
+            <PageSection id="api-keys" title="">
+              <ApiKeyModule token={token} />
+            </PageSection>
 
+            <PageSection
+              id="playground"
+              title="Interactive playground"
+              description="Experiment with live requests, inspect responses, and export ready-made snippets for your stack."
+            >
             <div className="rounded-[28px] border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-              <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-                <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Interactive playground</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Experiment with live requests, inspect responses, and export ready-made snippets for your stack.
-                </p>
-              </div>
               <div className="p-6">
                 <PlaygroundSerpApi />
               </div>
             </div>
+            </PageSection>
 
             <div className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(245,158,11,0.62)] dark:text-slate-100">
               <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.68),_transparent_55%),_radial-gradient(circle_at_bottom_right,_rgba(129,140,248,0.52),_transparent_55%)]" />
@@ -153,7 +155,7 @@ const SerpApiPage = () => {
             </div>
           </div>
         )}
-      </div></div>
+      </PageScaffold>
     </ProtectedComponent>
   )
 }

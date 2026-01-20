@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import ActiveServicesGrid from "@/components/Dashboard/ActiveServicesGrid"
 import { computeServers } from "@/data/compute"
 import { DisplayedFeature } from "@/components/Dashboard/types"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 export const Route = createFileRoute("/_layout/compute/")({
   component: ComputeComponent,
@@ -19,15 +20,14 @@ function ComputeComponent() {
   }))
 
   return (
-    <div className="p-6">
-      <ActiveServicesGrid features={computeFeatures} />
-      <Card className="mt-6">
-        <CardContent className="pt-6">
-          <p className="text-muted-foreground">
-            Deploy and manage your managed cloud functions.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <PageScaffold sidebar={null}>
+      <PageSection
+        id="services"
+        title="Compute Services"
+        description="Deploy and manage your managed cloud functions."
+      >
+        <ActiveServicesGrid features={computeFeatures} />
+      </PageSection>
+    </PageScaffold>
   )
 }
