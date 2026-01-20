@@ -280,75 +280,95 @@ const WebScrapingToolsBillingPage = () => {
 
   return (
     <PageScaffold sidebar={null}>
-      <div className="mx-auto w-full max-w-5xl space-y-10">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="-ml-2 h-8 w-8 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-                asChild
-              >
-                <RouterLink to="/web-scraping-tools/https-api">
-                  <FiArrowLeft className="h-4 w-4" />
-                </RouterLink>
-              </Button>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
-                Billing & Usage
-              </h1>
-            </div>
-            <p className="ml-8 text-slate-500 dark:text-slate-400">
-              Manage your scraping subscriptions, invoices, and payment methods.
-            </p>
-          </div>
-          <div className="flex gap-3 ml-8 md:ml-0">
-            <Button
-              variant="outline"
-              className="gap-2 border-slate-200 bg-white shadow-sm hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
-              onClick={handlePortalRedirect}
-              disabled={isRedirecting}
-            >
-              <FiCreditCard className="h-4 w-4" />
-              <span>{isRedirecting ? "Loading..." : "Manage Payment Method"}</span>
-            </Button>
-            <Button className="gap-2 bg-indigo-600 shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg dark:bg-indigo-500 dark:hover:bg-indigo-400">
-              <FiArrowUpRight className="h-4 w-4" />
-              <span>Upgrade Plan</span>
-            </Button>
-          </div>
-        </div>
-
+      <div className="space-y-12">
         <PageSection
-          id="current-cycle"
-          title={`Usage in ${selectedMonth.name}`}
-          description="Estimated cost based on your current plan usage and overages."
+          id="billing-cycle"
+          title={`${selectedMonth.name} Billing cycle`}
+          description="Review usage-based charges, subscription run rate, and settlement history."
           actions={
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500 dark:text-slate-400">Month:</span>
-              <select
-                className="h-9 rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:text-slate-200"
-                value={selectedMonth.name}
-                onChange={(e) => {
-                  const month = months.find((m) => m.name === e.target.value)
-                  if (month) setSelectedMonth(month)
-                }}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/50 px-3 py-1 text-sm dark:border-slate-700/60 dark:bg-slate-900/50">
+                <span className="text-slate-500 dark:text-slate-400">View:</span>
+                <select
+                  className="bg-transparent font-medium text-slate-900 focus:outline-none dark:text-slate-100"
+                  value={selectedMonth.name}
+                  onChange={(e) => {
+                    const month = months.find((m) => m.name === e.target.value)
+                    if (month) setSelectedMonth(month)
+                  }}
+                >
+                  {months.map((m) => (
+                    <option key={m.name} value={m.name} className="dark:bg-slate-800">
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button
+                variant="outline"
+                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-4 py-1.5 text-xs font-semibold shadow-sm hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60"
+                onClick={handlePortalRedirect}
+                disabled={isRedirecting}
               >
-                {months.map((m) => (
-                  <option key={m.name} value={m.name} className="dark:bg-slate-800">
-                    {m.name}
-                  </option>
-                ))}
-              </select>
+                <FiCreditCard className="h-3.5 w-3.5" />
+                <span>Payment Method</span>
+              </Button>
             </div>
           }
         >
+          <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+            <div className="space-y-4">
+              <Badge className="rounded-full border border-indigo-200/70 bg-indigo-500/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-indigo-700 dark:border-indigo-500/30 dark:text-indigo-100">
+                Web Scraping Billing
+              </Badge>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                    {selectedMonth.name}
+                  </h1>
+                   <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
+                      Growth Plan + Add-ons
+                   </Badge>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+               <SummaryMetric
+                 label="Total Cost"
+                 value={currencyFormatter.format(grandTotal)}
+                 description={`${activePlans.length} active plans/tools`}
+               />
+               <SummaryMetric
+                 label="Plans Active"
+                 value={activePlans.length.toString()}
+                 description="Includes trials"
+               />
+               <SummaryMetric
+                  label="Invoices"
+                  value={paymentHistory.filter(p => p.month.name === selectedMonth.name).length.toString()}
+                  description="For this month"
+               />
+               <SummaryMetric
+                  label="Last Payment"
+                  value={paymentHistory[0]?.paymentDate || "N/A"}
+                  description="Most recent transaction"
+               />
+            </div>
+          </div>
+        </PageSection>
+
+        <PageSection
+          id="usage-breakdown"
+          title="Usage Breakdown"
+          description="Detailed view of your scraping usage costs and plan distribution."
+        >
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+                <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50">
-                    <TableRow className="border-slate-100 dark:border-slate-800">
+                  <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                    <TableRow className="border-slate-200/70 dark:border-slate-700/60">
                       <TableHead className="w-[50%]">Service Item</TableHead>
                       <TableHead>Units / Plans</TableHead>
                       <TableHead className="text-right">Cost</TableHead>
@@ -360,7 +380,7 @@ const WebScrapingToolsBillingPage = () => {
                       if (total === 0 && count === 0) return null
 
                       return (
-                        <TableRow key={service.name} className="border-slate-100 dark:border-slate-800">
+                        <TableRow key={service.name} className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50">
                           <TableCell className="font-medium text-slate-700 dark:text-slate-200">
                             {service.name}
                           </TableCell>
@@ -374,9 +394,9 @@ const WebScrapingToolsBillingPage = () => {
                       )
                     })}
                   </TableBody>
-                  <TableFooter className="border-t border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-800/50">
+                  <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={2} className="font-semibold text-slate-900 dark:text-slate-100">
+                      <TableCell colSpan={2} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Total estimated cost
                       </TableCell>
                       <TableCell className="text-right text-lg font-bold text-slate-900 dark:text-slate-50">
@@ -385,21 +405,22 @@ const WebScrapingToolsBillingPage = () => {
                     </TableRow>
                   </TableFooter>
                 </Table>
+                </div>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/50">
-                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className="rounded-[28px] border border-slate-200/70 bg-slate-50/80 p-6 shadow-inner backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-900/40">
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Plan Breakdown
                 </h3>
                 <div className="space-y-3">
                   {Object.entries(perPlanTotals).map(([name, cost]) => (
                     <div key={name} className="flex items-center justify-between text-sm">
-                      <span className="truncate text-slate-600 dark:text-slate-300" title={name}>
+                      <span className="truncate font-medium text-slate-600 dark:text-slate-300" title={name}>
                         {name}
                       </span>
-                      <span className="font-medium text-slate-900 dark:text-slate-100">
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">
                         {currencyFormatter.format(cost)}
                       </span>
                     </div>
@@ -415,10 +436,11 @@ const WebScrapingToolsBillingPage = () => {
           title="Payment history"
           description="Download past invoices and view transaction status."
         >
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+            <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50">
-                <TableRow className="border-slate-100 dark:border-slate-800">
+              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
                   <TableHead>Date</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Amount</TableHead>
@@ -428,7 +450,7 @@ const WebScrapingToolsBillingPage = () => {
               </TableHeader>
               <TableBody>
                 {paymentHistory.map((payment) => (
-                  <TableRow key={payment.invoiceId} className="border-slate-100 dark:border-slate-800">
+                  <TableRow key={payment.invoiceId} className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50">
                     <TableCell className="text-slate-600 dark:text-slate-400">
                       {payment.paymentDate}
                     </TableCell>
@@ -459,7 +481,7 @@ const WebScrapingToolsBillingPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+                        className="h-8 w-8 rounded-full p-0 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
                         asChild
                       >
                         <a
@@ -476,6 +498,7 @@ const WebScrapingToolsBillingPage = () => {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </div>
         </PageSection>
       </div>

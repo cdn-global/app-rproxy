@@ -498,11 +498,11 @@ const paymentHistory: PaymentRecord[] = [
 ]
 
 const BillingPage = () => {
-  const currentMonth = months.at(-1) ?? {
+  const [selectedMonth, setSelectedMonth] = useState<Month>(months.at(-1) ?? {
     name: "Current Month",
     start: new Date(),
     end: new Date(),
-  }
+  })
 
   const {
     totals: currentTotals,
@@ -512,7 +512,7 @@ const BillingPage = () => {
     fullPriceTotals,
     fullGrandTotal,
     fullPricePerServerTotals,
-  } = useMemo(() => calculateTotalsForMonth(currentMonth), [currentMonth])
+  } = useMemo(() => calculateTotalsForMonth(selectedMonth), [selectedMonth])
 
   const [token] = useState<string | null>(() =>
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null,
@@ -549,13 +549,13 @@ const BillingPage = () => {
 
   const succeededInvoices = paymentHistory.filter((item) => item.status === "Succeeded")
   const invoicedAmount = succeededInvoices
-    .filter(({ month }) => month.name === currentMonth.name)
+    .filter(({ month }) => month.name === selectedMonth.name)
     .reduce((sum, { total }) => sum + total, 0)
   const pendingInvoices = paymentHistory.filter((item) => item.status === "Pending")
 
   const outstandingBalance = useMemo(() => {
     const priorPending = paymentHistory
-      .filter(({ month, status }) => month.name !== currentMonth.name && status === "Pending")
+      .filter(({ month, status }) => month.name !== selectedMonth.name && status === "Pending")
       .reduce((sum, { total }) => sum + total, 0)
     return grandTotal + priorPending - invoicedAmount
   }, [grandTotal, invoicedAmount])
@@ -588,7 +588,7 @@ const BillingPage = () => {
     {
       label: "MoM change",
       value: percentageFormatter(monthOverMonthChange),
-      description: `${currentMonth.name} vs August 2025.`,
+      description: `${selectedMonth.name} vs August 2025.`,
     },
   ]
 
@@ -608,8 +608,27 @@ const BillingPage = () => {
     <div className="space-y-12">
         <PageSection
           id="billing-cycle"
-          title={`${currentMonth.name} Billing cycle`}
-          description="Review usage-based charges, subscription run rate, and settlement history with the same glass aesthetic as the dashboard landing page."
+          title="Billing cycle"
+          description="View charges and usage for this period."
+          actions={
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Month:</span>
+              <select
+                className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                value={selectedMonth.name}
+                onChange={(e) => {
+                  const month = months.find((m) => m.name === e.target.value)
+                  if (month) setSelectedMonth(month)
+                }}
+              >
+                {months.map((m) => (
+                  <option key={m.name} value={m.name}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          }
         >
       <div className="rounded-[32px] border border-slate-200/70 bg-white/85 px-6 py-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/75 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
         <div className="space-y-4">
@@ -618,7 +637,7 @@ const BillingPage = () => {
           </Badge>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-              {currentMonth.name}
+              {selectedMonth.name}
             </h1>
             <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
               Managed hosting + API
@@ -638,412 +657,275 @@ const BillingPage = () => {
       </div>
       </PageSection>
 
-      <PageSection
-        id="balance"
-        title="Balance"
-      >
-      {outstandingBalance > 0 || pendingInvoices.length > 0 ? (
-        <div className="rounded-[28px] border border-amber-300/70 bg-amber-50/80 shadow-[0_24px_60px_-40px_rgba(217,119,6,0.45)] backdrop-blur-xl dark:border-amber-500/60 dark:bg-amber-500/15">
-          <div className="flex flex-wrap items-center justify-between gap-4 p-6">
-            <div>
-              <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-100">
-                Balance snapshot
-              </h3>
-              <p className="text-sm text-amber-700/90 dark:text-amber-100/80">
-                Outstanding items include uninvoiced usage and any prior pending receipts.
-              </p>
-            </div>
-            <Badge variant="warning" className="rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
-              Action recommended
-            </Badge>
-          </div>
-          <div className="space-y-4 p-6 pt-0">
-            <div className="flex flex-wrap items-end gap-3 text-slate-900 dark:text-slate-100">
-              <span className="text-3xl font-semibold">
-                {currencyFormatter.format(outstandingBalance)}
-              </span>
-              <span className="text-sm text-slate-600 dark:text-slate-400">
-                Outstanding across current charges
-              </span>
-            </div>
-            {pendingInvoices.length > 0 ? (
-              <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
-                {pendingInvoices.map((invoice) => (
-                  <li key={invoice.invoiceId} className="flex items-center justify-between rounded-2xl border border-amber-200/70 bg-white/60 px-4 py-2 dark:border-amber-500/40 dark:bg-amber-500/10">
-                    <span>
-                      {invoice.description} ({invoice.month.name})
-                    </span>
-                    <span className="font-semibold">
-                      {currencyFormatter.format(invoice.total)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                All invoices for {currentMonth.name} have settled. The balance reflects usage awaiting billing sync.
-              </p>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center gap-4 border-t border-amber-200/60 bg-white/60 p-6 text-sm text-slate-600 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-slate-400">
-            <Button
-              variant="outline"
-              className="gap-2 rounded-full border-amber-300/70 px-5 py-2 text-sm font-semibold text-amber-700 hover:border-amber-400 hover:text-amber-800 dark:border-amber-500/60 dark:text-amber-100"
-              onClick={handleBillingClick}
-              isLoading={isLoading}
-              loadingText="Redirecting..."
-            >
-              <FiArrowUpRight className="h-4 w-4" />
-              Resolve in Stripe
-            </Button>
-            <span className="text-xs text-amber-700/80 dark:text-amber-100/70">
-              You&apos;ll land directly in the self-service customer portal.
-            </span>
-          </div>
-        </div>
-      ) : null}
-      </PageSection>
-
-      <PageSection
-        id="server-charges"
-        title="Server Charges"
-        description="Per-server view of charged vs. list pricing for the month."
-      >
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                  <TableHead>Server</TableHead>
-                  <TableHead>IP</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Charged (USD)</TableHead>
-                  <TableHead className="text-right">Full (USD)</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentActiveServers.map((server) => {
-                  const charged = perServerTotals[server.name] ?? 0
-                  const full = fullPricePerServerTotals[server.name] ?? 0
-                  return (
-                    <TableRow
-                      key={server.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                        {server.name}
-                      </TableCell>
-                      <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                        {server.ip}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={server.isTrial ? "outline" : "success"}
-                          className="rounded-full px-3 py-1 text-xs font-semibold"
-                        >
-                          {server.isTrial ? "Trial" : "Active"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                        {currencyFormatter.format(charged)}
-                      </TableCell>
-                      <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                        {currencyFormatter.format(full)}
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Server total
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(grandTotal - SUBSCRIPTION_COST_PER_MONTH)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH)}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Subscription
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Grand total
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(grandTotal)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(fullGrandTotal)}
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </div>
-        </div>
-      </div>
-      </PageSection>
-
-      <PageSection
-        id="service-breakdown"
-        title="Service Breakdown"
-        description="Each managed add-on measured against its full list price."
-      >
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                  <TableHead>Service</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead className="text-right">Charged (USD)</TableHead>
-                  <TableHead className="text-right">Full (USD)</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {services.map((service) => (
-                  <TableRow key={service.name}>
-                    <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                      {service.name}
-                    </TableCell>
-                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                      × {currentTotals[service.name].count}
-                    </TableCell>
-                    <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                      {currencyFormatter.format(currentTotals[service.name].total)}
-                    </TableCell>
-                    <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                      {currencyFormatter.format(fullPriceTotals[service.name].total)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                    HTTPS API Subscription (Plus)
-                  </TableCell>
-                  <TableCell className="text-sm text-slate-600 dark:text-slate-400">× 1</TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
-                    {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={2} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Total
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(grandTotal)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {currencyFormatter.format(fullGrandTotal)}
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </div>
-        </div>
-      </div>
-      </PageSection>
-
-      <PageSection
-        id="subscription"
-        title="Subscription Snapshot"
-      >
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
-          <div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          {/* Server Charges */}
+          <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Subscription snapshot
+              Server Charges
             </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Unlimited HTTPS API Request – Plus Tier · Renews monthly.
-            </p>
-          </div>
-          <Badge variant="outline" className="rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
-            {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)} / month
-          </Badge>
-        </div>
-        <div className="space-y-4 p-6 pt-6">
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Subscribed services:
-            </p>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400 sm:grid-cols-3">
-              <li>HTTPS API Subscription</li>
-              {services
-                .filter((service) => currentTotals[service.name]?.count > 0)
-                .map((service) => (
-                  <li key={service.name} className="flex items-center gap-2">
-                    <span>{service.name}</span>
-                    <span className="text-xs text-slate-500">
-                      (×{currentTotals[service.name].count})
-                    </span>
-                  </li>
-                ))}
-            </ul>
-          </div>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Subscription billing is handled through Stripe; use the portal to adjust plan size, payment method, or invoice recipients.
-          </p>
-          <Button
-            variant="outline"
-            className="gap-2 rounded-full border-slate-200/80 px-5 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-            onClick={handleBillingClick}
-            isLoading={isLoading}
-            loadingText="Redirecting..."
-          >
-            <FiExternalLink className="h-4 w-4" />
-            Manage subscription
-          </Button>
-        </div>
-      </div>
-      </PageSection>
-
-      <PageSection
-        id="invoice-history"
-        title="Invoice History"
-        description="Direct links into Stripe for deeper detail or PDF exports."
-      >
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                  <TableHead>Month</TableHead>
-                  <TableHead>Invoice</TableHead>
-                  <TableHead>Payment date</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paymentHistory.map((record) => (
-                  <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                      {record.month.name}
-                    </TableCell>
-                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                      {record.invoiceId.slice(0, 12)}…
-                    </TableCell>
-                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                      {record.paymentDate}
-                    </TableCell>
-                    <TableCell className="text-xs text-slate-500 dark:text-slate-500">
-                      {record.paymentMethod}
-                    </TableCell>
-                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                      {record.description}
-                    </TableCell>
-                    <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
-                      {currencyFormatter.format(record.total)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        variant={record.status === "Succeeded" ? "success" : "warning"}
-                        className="rounded-full px-3 py-1 text-xs font-semibold"
-                      >
-                        {record.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-b-[28px] border-t border-slate-200/70 bg-white/70 p-6 dark:border-slate-700/60 dark:bg-slate-900/50">
-          <Button
-            variant="outline"
-            className="gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-            onClick={handleBillingClick}
-            isLoading={isLoading}
-            loadingText="Redirecting..."
-          >
-            <FiArrowUpRight className="h-4 w-4" />
-            Manage invoices in Stripe
-          </Button>
-          <span className="text-xs text-slate-500 dark:text-slate-500">
-            Stripe provides PDF exports, receipts, and VAT-compliant billing data.
-          </span>
-        </div>
-      </div>
-      </PageSection>
-
-      <PageSection
-        id="payment-method"
-        title="Payment method & billing address"
-        description="The saved card and remit-to details in Stripe today."
-      >
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-        <div className="grid gap-6 p-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
-              Default payment method
-            </p>
-            <p className="mt-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
-              American Express ending in 3007
-            </p>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Expires 11/2027</p>
-            <Button
-              variant="outline"
-              className="mt-4 gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-              onClick={handleBillingClick}
-              isLoading={isLoading}
-              loadingText="Redirecting..."
-            >
-              <FiCreditCard className="h-4 w-4" />
-              Update payment method
-            </Button>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
-              Billing address
-            </p>
-            <div className="mt-3 space-y-1 text-sm text-slate-600 dark:text-slate-400">
-              <p className="font-semibold text-slate-900 dark:text-slate-100">{billingAddress.name}</p>
-              <p>{billingAddress.line1}</p>
-              <p>
-                {billingAddress.city}, {billingAddress.state} {billingAddress.postalCode}
-              </p>
-              <p>{billingAddress.country}</p>
-              <p>{billingAddress.phone}</p>
-              <p>{billingAddress.email}</p>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                      <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                        <TableHead>Server</TableHead>
+                        <TableHead>IP</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Charged (USD)</TableHead>
+                        <TableHead className="text-right">Full (USD)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {currentActiveServers.map((server) => {
+                        const charged = perServerTotals[server.name] ?? 0
+                        const full = fullPricePerServerTotals[server.name] ?? 0
+                        return (
+                          <TableRow
+                            key={server.name}
+                            className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                          >
+                            <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                              {server.name}
+                            </TableCell>
+                            <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                              {server.ip}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={server.isTrial ? "outline" : "success"}
+                                className="rounded-full px-3 py-1 text-xs font-semibold"
+                              >
+                                {server.isTrial ? "Trial" : "Active"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                              {currencyFormatter.format(charged)}
+                            </TableCell>
+                            <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                              {currencyFormatter.format(full)}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Server total
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(grandTotal - SUBSCRIPTION_COST_PER_MONTH)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(fullGrandTotal - SUBSCRIPTION_COST_PER_MONTH)}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </div>
+              </div>
             </div>
-            <Button
-              variant="outline"
-              className="mt-4 gap-2 rounded-full border-slate-200/80 px-4 py-2 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-              onClick={handleBillingClick}
-              isLoading={isLoading}
-              loadingText="Redirecting..."
-            >
-              <FiArrowUpRight className="h-4 w-4" />
-              Manage billing address
-            </Button>
+          </div>
+
+          {/* Service Breakdown */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Service Breakdown
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
+                      <TableRow className="border-slate-200/70 dark:border-slate-700/60">
+                        <TableHead>Service</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead className="text-right">Charged (USD)</TableHead>
+                        <TableHead className="text-right">Full (USD)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {services.map((service) => (
+                        <TableRow key={service.name}>
+                          <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                            {service.name}
+                          </TableCell>
+                          <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                            × {currentTotals[service.name].count}
+                          </TableCell>
+                          <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                            {currencyFormatter.format(currentTotals[service.name].total)}
+                          </TableCell>
+                          <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                            {currencyFormatter.format(fullPriceTotals[service.name].total)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      <TableRow>
+                        <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                          HTTPS API Subscription (Plus)
+                        </TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-400">× 1</TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                          {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-50">
+                          {currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Total
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(grandTotal)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {currencyFormatter.format(fullGrandTotal)}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {/* Balance / Payment Status */}
+          <div className="space-y-4">
+             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Payment Status
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              {outstandingBalance > 0 ? (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-slate-600 dark:text-slate-400">Outstanding</span>
+                    <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">
+                      {currencyFormatter.format(outstandingBalance)}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded bg-amber-500/10 border border-amber-500/20 text-sm text-amber-700 dark:text-amber-200">
+                    Payment pending for {selectedMonth.name} usage.
+                  </div>
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleBillingClick}>
+                    Pay Now
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center py-6 space-y-3">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                    <FiCreditCard className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="font-medium text-slate-900 dark:text-slate-100">All caught up</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400">
+                      No outstanding balance
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Subscription Snapshot */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Subscription
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="flex flex-wrap items-center gap-4 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                    Enterprise
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    Managed hosting + API
+                  </p>
+                </div>
+                <Badge variant="outline" className="ml-auto rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
+                  Active
+                </Badge>
+              </div>
+              <div className="space-y-4 p-6 pt-6">
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Included:
+                  </p>
+                  <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                    <li className="flex justify-between">
+                      <span>HTTPS API (Plus)</span>
+                      <span className="font-mono">{currencyFormatter.format(SUBSCRIPTION_COST_PER_MONTH)}</span>
+                    </li>
+                    {services
+                      .filter((service) => currentTotals[service.name]?.count > 0)
+                      .map((service) => (
+                        <li key={service.name} className="flex justify-between">
+                          <span>{service.name} (×{currentTotals[service.name].count})</span>
+                          <span className="font-mono">{currencyFormatter.format(currentTotals[service.name].total)}</span>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 rounded-full border-slate-200/80 text-sm font-semibold shadow-sm hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+                  onClick={handleBillingClick}
+                >
+                  <FiExternalLink className="h-4 w-4" />
+                  Manage Plan
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Invoice History */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Recent Invoices
+            </h3>
+            <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+              <div className="p-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableBody>
+                      {succeededInvoices.slice(0, 5).map((record) => (
+                        <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
+                          <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                            <div className="flex flex-col">
+                              <span>{record.month.name}</span>
+                              <span className="text-xs text-slate-500 font-normal">{record.paymentDate}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            {currencyFormatter.format(record.total)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                <div className="p-4 border-t border-slate-200/70 dark:border-slate-700/60">
+                  <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                      onClick={handleBillingClick}
+                  >
+                    View All Invoices
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      </PageSection>
 
       <div className="flex justify-end">
         <Button
