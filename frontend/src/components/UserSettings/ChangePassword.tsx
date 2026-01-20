@@ -49,14 +49,14 @@ const ChangePassword = () => {
     ) : null
 
   return (
-    <Card className="border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
-      <CardHeader className="space-y-2">
-        <CardTitle className="text-xl">Change password</CardTitle>
-        <CardDescription>
+    <div className="rounded-[28px] border border-slate-200/70 bg-white/80 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.65)]">
+      <div className="space-y-2 border-b border-slate-200/70 p-6 dark:border-slate-700/60">
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Change password</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Update your account password to keep your workspace secure.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+      </div>
+      <div className="p-6">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <Label htmlFor="current_password" className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -106,8 +106,8 @@ const ChangePassword = () => {
             {isSubmitting || mutation.isPending ? "Saving…" : "Save password"}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

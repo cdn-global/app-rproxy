@@ -16,6 +16,28 @@ import {
 import { hostingServers } from "@/data/hosting"
 import useCustomToast from "@/hooks/useCustomToast"
 
+const PageSection = ({
+  id,
+  title,
+  description,
+  children,
+}: {
+  id: string
+  title: string
+  description: string
+  children: React.ReactNode
+}) => (
+  <section id={id} className="space-y-4">
+    <div className="space-y-1">
+      <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+        {title}
+      </h2>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
+    {children}
+  </section>
+)
+
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -290,7 +312,8 @@ function HostingIndexPage() {
             <p className="text-xs text-slate-500 dark:text-slate-500">
               Rotation, backup, monitoring, and managed support counts update alongside your dashboard tiles.
             </p>
-          </CardFooter>
+          </div>
+            </div>
           </div>
         </PageSection>
       </div>
