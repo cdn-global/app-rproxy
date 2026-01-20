@@ -373,7 +373,7 @@ const SocialLink = ({
 const SideNav = () => {
   return (
     <aside className="hidden w-full h-full flex-col border-r bg-sidebar p-4 sm:flex">
-      <div className="mb-8 pl-2">
+      <div className="mb-8">
         <RouterLink to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
           <div className="flex aspect-square h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-600/10">
             <FiShield className="h-7 w-7 fill-current" />
