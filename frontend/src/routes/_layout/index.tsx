@@ -817,7 +817,14 @@ const Dashboard = () => {
   } else if (activeSubscriptions.length === 0) {
     // If the workspace has no active subscriptions, still render key analytics
     // and tool directory so the homepage remains useful for onboarding and QA.
-    sections.push(
+    sections.push(      <PageSection
+        id="usage-insights"
+        title="Usage insights"
+        description="Key throughput, data transfer, and spend metrics (preview)."
+        key="usage-empty"
+      >
+        <StatHighlights stats={statHighlights} />
+      </PageSection>,
       <PageSection
         id="workspace-pulse"
         title="Workspace"
@@ -835,18 +842,19 @@ const Dashboard = () => {
         />
       </PageSection>,
       // chartsSection,
-      <PageSection
-        id="usage-insights"
-        title="Usage insights"
-        description="Key throughput, data transfer, and spend metrics (preview)."
-        key="usage-empty"
-      >
-        <StatHighlights stats={statHighlights} />
-      </PageSection>,
+
       toolDirectorySection,
     )
   } else {
-    sections.push(
+    sections.push( <PageSection
+        id="usage-insights"
+        title="Usage insights"
+        description="Key throughput, data transfer, and spend metrics refreshed automatically."
+        key="usage"
+      >
+        <UsageInsights stats={statHighlights} />
+      </PageSection>,
+
       <PageSection
         id="workspace-pulse"
         title="Workspace"
@@ -866,15 +874,7 @@ const Dashboard = () => {
 
       // chartsSection,
 
-      <PageSection
-        id="usage-insights"
-        title="Usage insights"
-        description="Key throughput, data transfer, and spend metrics refreshed automatically."
-        key="usage"
-      >
-        <UsageInsights stats={statHighlights} />
-      </PageSection>,
-
+     
       toolDirectorySection,
     )
   }
