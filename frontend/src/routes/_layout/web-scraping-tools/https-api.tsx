@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner"
 
 import { parseApiResponse } from "@/lib/api"
 import ProtectedComponent from "../../../components/Common/ProtectedComponent"
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 import PlaygroundHttpsProxy from "../../../components/ScrapingTools/PlaygroundHttps"
 import ApiKeyModule from "../../../components/ScrapingTools/ApiKey"
 import UsageInsights from "../../../components/Dashboard/UsageInsights"
@@ -85,8 +86,7 @@ const HttpsProxyApiPage = () => {
 
   return (
     <ProtectedComponent>
-      <div className="px-3 py-6 sm:px-4 lg:px-6"> 
-        <div className="mx-auto w-full max-w-7xl space-y-8">
+      <PageScaffold sidebar={null}>
         {isLoading ? (
           <div className="flex h-[40vh] items-center justify-center">
             <Spinner size={48} />
@@ -117,28 +117,31 @@ const HttpsProxyApiPage = () => {
               </Alert>
             ) : null}
 
-            <Card>
-              <CardHeader>
-                <div>
-                  <CardTitle>Usage Analytics & Insights</CardTitle>
-                  <CardDescription>An overview of your recent API usage and performance.</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="flex flex-col gap-6">
-                  <UsageInsights stats={calculateDashboardStats(1, 2, 3, [])} />
-                  <ChartsSection />
-                </div>
-              </CardContent>
-            </Card>
+            <PageSection
+              id="analytics"
+              title="Usage Analytics & Insights"
+              description="An overview of your recent API usage and performance."
+            >
+              <div className="flex flex-col gap-6">
+                <UsageInsights stats={calculateDashboardStats(1, 2, 3, [])} />
+                <ChartsSection />
+              </div>
+            </PageSection>
 
-            <Card className="border border-slate-200/70 bg-white/80 shadow-[0_40px_90px_-60px_rgba(15,23,42,0.55)] backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/70">
-              <CardContent className="p-0">
-                <PlaygroundHttpsProxy />
-              </CardContent>
-            </Card>
+            <PageSection
+              id="playground"
+              title="Interactive playground"
+              description="Experiment with live requests, inspect responses, and export ready-made snippets for your stack."
+            >
+              <PlaygroundHttpsProxy />
+            </PageSection>
 
-            <ApiKeyModule token={token} />
+            <PageSection
+              id="api-keys"
+              title=""
+            >
+              <ApiKeyModule token={token} />
+            </PageSection>
 
             {/* Decorative card moved outside the playground so tunneling text sits independently */}
             <Card className="relative overflow-hidden rounded-[28px] border border-transparent text-slate-900 shadow-[0_34px_88px_-48px_rgba(239,68,68,0.62)] dark:text-slate-100">
@@ -167,7 +170,7 @@ const HttpsProxyApiPage = () => {
             </Card>
           </div>
         )}
-      </div></div>
+      </PageScaffold>
     </ProtectedComponent>
   )
 }

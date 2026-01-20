@@ -431,7 +431,7 @@ const PlaygroundHttps = () => {
   }, [])
 
   const cardClassName = showLiveTest
-    ? "rounded-[32px] border border-slate-200/70 bg-white/95 shadow-[0_44px_110px_-66px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-950/85 pt-6"
+    ? "rounded-[32px] border border-slate-200/70 bg-white/95 shadow-[0_44px_110px_-66px_rgba(15,23,42,0.55)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-950/85"
     : "rounded-[32px] border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 shadow-[0_34px_95px_-58px_rgba(15,23,42,0.6)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-gradient-to-br dark:from-slate-950/88 dark:via-slate-900/78 dark:to-slate-900/68"
 
   return (
@@ -439,14 +439,6 @@ const PlaygroundHttps = () => {
       <div id="https-live-test" className={cardClassName}>
         {showLiveTest ? (
           <>
-            <div className="flex items-center justify-between px-8">
-               <div className="space-y-1">
-                <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Interactive playground</h3>
-                <p className="text-sm text-muted-foreground">
-                  Experiment with live requests, inspect responses, and export ready-made snippets for your stack.
-                </p>
-               </div>
-            </div>
             <div className="space-y-10 px-8 pb-0 pt-6">
               <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)]">
                 <div className="space-y-6">
