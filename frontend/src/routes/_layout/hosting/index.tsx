@@ -16,27 +16,7 @@ import {
 import { hostingServers } from "@/data/hosting"
 import useCustomToast from "@/hooks/useCustomToast"
 
-const PageSection = ({
-  id,
-  title,
-  description,
-  children,
-}: {
-  id: string
-  title: string
-  description: string
-  children: React.ReactNode
-}) => (
-  <section id={id} className="space-y-4">
-    <div className="space-y-1">
-      <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-        {title}
-      </h2>
-      <p className="text-sm text-muted-foreground">{description}</p>
-    </div>
-    {children}
-  </section>
-)
+import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 
 const numberFormatter = new Intl.NumberFormat("en-US")
@@ -119,7 +99,8 @@ function HostingIndexPage() {
     })
     .join(" ")
   return (
-    <div className="space-y-10 py-10">
+    <PageScaffold sidebar={null}>
+    <div className="space-y-10">
       <div className="space-y-8">
         <PageSection id="fleet" title="Fleet intelligence" description="Summaries of capacity, health, and monthly run rate.">
           <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
@@ -342,6 +323,7 @@ function HostingIndexPage() {
         </div>
       </div>
     </div>
+    </PageScaffold>
   )
 }
 
