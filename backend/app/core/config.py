@@ -44,6 +44,7 @@ class Settings(BaseSettings):
         origins = [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
         origins.append(self.FRONTEND_HOST.rstrip("/"))
         origins.append("https://staging-rproxy-820888259045.europe-west9.run.app")
+        origins.append("https://console.roamingproxy.com")
         return list(dict.fromkeys(origins))
 
     PROJECT_NAME: str
