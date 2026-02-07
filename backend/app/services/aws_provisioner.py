@@ -1,6 +1,8 @@
 """
 AWS EC2 provisioning service for remote servers (SSH, GPU, inference)
 """
+from __future__ import annotations
+
 import os
 import logging
 import uuid
@@ -203,7 +205,7 @@ class AWSProvisioner:
 
     def _get_or_create_key_pair(
         self, region: str, user_id: uuid.UUID, server_id: uuid.UUID
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """
         Get or create SSH key pair for user's server.
         Each user gets a unique key pair per server.
