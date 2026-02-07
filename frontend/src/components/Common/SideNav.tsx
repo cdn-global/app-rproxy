@@ -93,11 +93,6 @@ const navStructure: NavItem[] = [
         path: "/remote-terminals",
         description: "SSH, GPU, and inference servers with browser terminal.",
       },
-      {
-        title: "Managed Compute",
-        path: "/compute",
-        description: "Deploy and manage your managed cloud functions.",
-      },
     ],
   },
   {
