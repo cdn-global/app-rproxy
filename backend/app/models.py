@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional
 from pydantic import EmailStr
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, Column, JSON
 from datetime import datetime
 
 # Shared properties
@@ -126,3 +126,283 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
+
+
+# ============================================================================
+# HOSTING INFRASTRUCTURE MODELS
+# ============================================================================
+
+# Usage tracking for Stripe metered billing
+class UsageRecord(SQLModel, table=True):
+    """Tracks usage for Stripe metered billing"""
+    __tablename__ = "usage_record"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    resource_type: str = Field(max_length=50)  # "server", "database", "inference"
+    resource_id: uuid.UUID  # ID of the specific resource
+    quantity: float  # hours, GB, tokens
+    stripe_reported: bool = Field(default=False)
+    stripe_usage_record_id: Optional[str] = Field(default=None, max_length=255)
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationship to user
+    user: Optional[User] = Relationship()
+
+
+class UsageRecordPublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    resource_type: str
+    resource_id: uuid.UUID
+    quantity: float
+    stripe_reported: bool
+    timestamp: datetime
+
+
+# Remote server hosting (SSH, GPU, inference servers)
+class RemoteServer(SQLModel, table=True):
+    """Leased servers for users"""
+    __tablename__ = "remote_server"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    name: str = Field(max_length=255)
+    server_type: str = Field(max_length=50)  # "ssh", "gpu", "inference"
+    hosting_provider: str = Field(default="docker", max_length=50)  # "docker" or "aws"
+    cpu_cores: int = Field(default=1)
+    memory_gb: int = Field(default=2)
+    gpu_type: Optional[str] = Field(default=None, max_length=100)
+    status: str = Field(default="provisioning", max_length=50)  # provisioning, running, stopped, terminated, error
+    docker_container_id: Optional[str] = Field(default=None, max_length=255)
+    # AWS fields
+    aws_instance_id: Optional[str] = Field(default=None, max_length=255)
+    aws_instance_type: Optional[str] = Field(default=None, max_length=50)
+    aws_region: Optional[str] = Field(default=None, max_length=50)
+    aws_ami_id: Optional[str] = Field(default=None, max_length=255)
+    aws_key_pair_name: Optional[str] = Field(default=None, max_length=255)
+    aws_public_ip: Optional[str] = Field(default=None, max_length=50)
+    aws_security_group_id: Optional[str] = Field(default=None, max_length=255)
+    connection_string_encrypted: Optional[str] = Field(default=None)  # Encrypted connection details
+    hourly_rate: float = Field(default=0.0)  # Cost per hour
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    stopped_at: Optional[datetime] = Field(default=None)
+
+    # Relationship to user
+    user: Optional[User] = Relationship()
+
+
+class RemoteServerCreate(SQLModel):
+    name: str = Field(max_length=255)
+    server_type: str = Field(max_length=50)
+    hosting_provider: str = Field(default="docker", max_length=50)  # "docker" or "aws"
+    cpu_cores: int = Field(default=1, ge=1, le=96)
+    memory_gb: int = Field(default=2, ge=1, le=768)
+    gpu_type: Optional[str] = Field(default=None, max_length=100)
+    # AWS-specific options
+    aws_instance_type: Optional[str] = Field(default=None, max_length=50)
+    aws_region: Optional[str] = Field(default="us-east-1", max_length=50)
+
+
+class RemoteServerUpdate(SQLModel):
+    name: Optional[str] = Field(default=None, max_length=255)
+    status: Optional[str] = Field(default=None, max_length=50)
+
+
+class RemoteServerPublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    name: str
+    server_type: str
+    hosting_provider: str
+    cpu_cores: int
+    memory_gb: int
+    gpu_type: Optional[str]
+    status: str
+    aws_instance_type: Optional[str]
+    aws_region: Optional[str]
+    aws_public_ip: Optional[str]
+    hourly_rate: float
+    created_at: datetime
+    stopped_at: Optional[datetime]
+
+
+class RemoteServersPublic(SQLModel):
+    data: list[RemoteServerPublic]
+    count: int
+
+
+# Provisioning job tracking
+class ProvisioningJob(SQLModel, table=True):
+    """Tracks async provisioning jobs so users can poll for status"""
+    __tablename__ = "provisioning_job"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    resource_type: str = Field(max_length=50)  # "server", "database"
+    resource_id: uuid.UUID  # The server or database instance ID
+    status: str = Field(default="pending", max_length=50)  # pending, running, completed, failed
+    provider: str = Field(max_length=50)  # "docker", "aws"
+    error_message: Optional[str] = Field(default=None)
+    started_at: Optional[datetime] = Field(default=None)
+    completed_at: Optional[datetime] = Field(default=None)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    user: Optional[User] = Relationship()
+
+
+class ProvisioningJobPublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    resource_type: str
+    resource_id: uuid.UUID
+    status: str
+    provider: str
+    error_message: Optional[str]
+    started_at: Optional[datetime]
+    completed_at: Optional[datetime]
+    created_at: datetime
+
+
+# Database instance hosting
+class DatabaseInstance(SQLModel, table=True):
+    """Managed PostgreSQL instances"""
+    __tablename__ = "database_instance"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    instance_name: str = Field(max_length=255)
+    postgres_version: str = Field(default="16", max_length=10)
+    storage_gb: int = Field(default=10)
+    cpu_cores: int = Field(default=1)
+    memory_gb: int = Field(default=2)
+    status: str = Field(default="provisioning", max_length=50)  # provisioning, running, stopped, error
+    docker_container_id: Optional[str] = Field(default=None, max_length=255)
+    connection_string_encrypted: str  # Encrypted connection string with credentials
+    monthly_rate: float = Field(default=0.0)  # Base monthly rate
+    storage_rate_per_gb: float = Field(default=0.0)  # Additional cost per GB
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationship to user
+    user: Optional[User] = Relationship()
+
+
+class DatabaseInstanceCreate(SQLModel):
+    instance_name: str = Field(max_length=255)
+    postgres_version: str = Field(default="16", max_length=10)
+    storage_gb: int = Field(default=10, ge=1, le=1000)
+    cpu_cores: int = Field(default=1, ge=1, le=16)
+    memory_gb: int = Field(default=2, ge=1, le=128)
+
+
+class DatabaseInstanceUpdate(SQLModel):
+    instance_name: Optional[str] = Field(default=None, max_length=255)
+    status: Optional[str] = Field(default=None, max_length=50)
+    storage_gb: Optional[int] = Field(default=None, ge=1, le=1000)
+
+
+class DatabaseInstancePublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    instance_name: str
+    postgres_version: str
+    storage_gb: int
+    cpu_cores: int
+    memory_gb: int
+    status: str
+    monthly_rate: float
+    storage_rate_per_gb: float
+    created_at: datetime
+
+
+class DatabaseInstancesPublic(SQLModel):
+    data: list[DatabaseInstancePublic]
+    count: int
+
+
+# Inference model catalog
+class InferenceModel(SQLModel, table=True):
+    """Available inference models"""
+    __tablename__ = "inference_model"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    name: str = Field(max_length=255)
+    provider: str = Field(max_length=100)  # "openai", "anthropic", "huggingface", "self-hosted"
+    model_id: str = Field(max_length=255)  # e.g., "gpt-4", "claude-3-opus"
+    capabilities: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    pricing_per_1k_tokens: float = Field(default=0.0)
+    max_tokens: int = Field(default=4096)
+    is_active: bool = Field(default=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class InferenceModelCreate(SQLModel):
+    name: str = Field(max_length=255)
+    provider: str = Field(max_length=100)
+    model_id: str = Field(max_length=255)
+    capabilities: list[str] = Field(default_factory=list)
+    pricing_per_1k_tokens: float = Field(default=0.0)
+    max_tokens: int = Field(default=4096)
+    is_active: bool = Field(default=True)
+
+
+class InferenceModelPublic(SQLModel):
+    id: uuid.UUID
+    name: str
+    provider: str
+    model_id: str
+    capabilities: list[str]
+    pricing_per_1k_tokens: float
+    max_tokens: int
+    is_active: bool
+
+
+class InferenceModelsPublic(SQLModel):
+    data: list[InferenceModelPublic]
+    count: int
+
+
+# Model usage tracking
+class ModelUsage(SQLModel, table=True):
+    """Tracks inference API usage"""
+    __tablename__ = "model_usage"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    model_id: uuid.UUID = Field(foreign_key="inference_model.id", nullable=False)
+    prompt_tokens: int = Field(default=0)
+    completion_tokens: int = Field(default=0)
+    total_tokens: int = Field(default=0)
+    cost: float = Field(default=0.0)
+    latency_ms: int = Field(default=0)
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationships
+    user: Optional[User] = Relationship()
+    model: Optional[InferenceModel] = Relationship()
+
+
+class ModelUsagePublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    model_id: uuid.UUID
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
+    cost: float
+    latency_ms: int
+    timestamp: datetime
+
+
+# Inference API request/response models
+class InferenceRequest(SQLModel):
+    model_id: uuid.UUID
+    prompt: str
+    max_tokens: Optional[int] = Field(default=None)
+    temperature: Optional[float] = Field(default=0.7, ge=0.0, le=2.0)
+    stream: bool = Field(default=False)
+
+
+class InferenceResponse(SQLModel):
+    id: str
+    model_id: uuid.UUID
+    completion: str
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
+    cost: float
+    latency_ms: int

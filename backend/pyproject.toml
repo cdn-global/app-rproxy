@@ -26,7 +26,10 @@ dependencies = [
     "stripe>=10.0.0",
     "slowapi>=0.1.9",
     "alembic>=1.13.2",
-    "beautifulsoup4==4.13.4"
+    "beautifulsoup4==4.13.4",
+    "docker>=7.0.0",
+    "cryptography>=42.0.0",
+    "boto3>=1.34.0"
 ]
 
 [tool.uv]

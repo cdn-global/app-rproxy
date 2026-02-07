@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
 import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { databaseInstances } from "@/data/hosting"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
@@ -22,15 +22,44 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 })
 
+interface DatabaseInstance {
+  id: string
+  user_id: string
+  instance_name: string
+  postgres_version: string
+  storage_gb: number
+  cpu_cores: number
+  memory_gb: number
+  status: string
+  monthly_rate: number
+  storage_rate_per_gb: number
+  created_at: string
+}
+
 function ManagedDatabaseIndexPage() {
+  const { data, isLoading } = useQuery<{ data: DatabaseInstance[]; count: number }>({
+    queryKey: ["database-instances"],
+    queryFn: async () => {
+      const response = await fetch("/api/v2/database-instances/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      })
+      if (!response.ok) throw new Error("Failed to fetch database instances")
+      return response.json()
+    },
+  })
+
+  const instances = data?.data ?? []
+
   const databaseSummary = useMemo(() => {
-    return databaseInstances.reduce(
-      (acc, server) => {
+    return instances.reduce(
+      (acc, db) => {
         acc.totalDatabases += 1
-        acc.totalVCPUs += server.vCPUs ?? 0
-        acc.totalRAM += server.ramGB
-        acc.totalStorage += server.storageSizeGB
-        acc.monthlyPrice += server.monthlyComputePrice
+        acc.totalVCPUs += db.cpu_cores
+        acc.totalRAM += db.memory_gb
+        acc.totalStorage += db.storage_gb
+        acc.monthlyPrice += db.monthly_rate + db.storage_gb * db.storage_rate_per_gb
         return acc
       },
       {
@@ -41,7 +70,17 @@ function ManagedDatabaseIndexPage() {
         monthlyPrice: 0,
       },
     )
-  }, [])
+  }, [instances])
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      running: "default",
+      stopped: "secondary",
+      provisioning: "outline",
+      error: "destructive",
+    }
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>
+  }
 
   return (
     <PageScaffold sidebar={null}>
@@ -72,16 +111,20 @@ function ManagedDatabaseIndexPage() {
               />
               <SummaryTile
                 label="Avg vCPUs"
-                value={numberFormatter.format(
-                  databaseSummary.totalVCPUs / databaseSummary.totalDatabases,
-                )}
+                value={
+                  databaseSummary.totalDatabases > 0
+                    ? numberFormatter.format(databaseSummary.totalVCPUs / databaseSummary.totalDatabases)
+                    : "0"
+                }
                 description="Across all databases"
               />
               <SummaryTile
                 label="Avg RAM"
-                value={`${numberFormatter.format(
-                  databaseSummary.totalRAM / databaseSummary.totalDatabases,
-                )} GB`}
+                value={
+                  databaseSummary.totalDatabases > 0
+                    ? `${numberFormatter.format(databaseSummary.totalRAM / databaseSummary.totalDatabases)} GB`
+                    : "0 GB"
+                }
                 description="Across all databases"
               />
               <SummaryTile
@@ -105,8 +148,7 @@ function ManagedDatabaseIndexPage() {
                   <TableRow className="border-slate-200/70 dark:border-slate-700/60">
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>IP Address</TableHead>
-                    <TableHead>OS</TableHead>
+                    <TableHead>PostgreSQL</TableHead>
                     <TableHead>vCPUs</TableHead>
                     <TableHead>RAM</TableHead>
                     <TableHead>Storage</TableHead>
@@ -115,37 +157,48 @@ function ManagedDatabaseIndexPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {databaseInstances.map((server) => (
-                    <TableRow
-                      key={server.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        {server.name}
-                      </TableCell>
-                      <TableCell>{server.status}</TableCell>
-                      <TableCell>{server.ip}</TableCell>
-                      <TableCell>{server.os}</TableCell>
-                      <TableCell>{server.vCPUs}</TableCell>
-                      <TableCell>{server.ramGB}GB</TableCell>
-                      <TableCell>{server.storageSizeGB}GB</TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(server.monthlyComputePrice)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                          asChild
-                        >
-                          <Link to="/managed-database/instance">
-                            Details
-                          </Link>
-                        </Button>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center">Loading...</TableCell>
+                    </TableRow>
+                  ) : instances.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center text-muted-foreground">
+                        No database instances. Create your first one to get started.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    instances.map((db) => (
+                      <TableRow
+                        key={db.id}
+                        className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                      >
+                        <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
+                          {db.instance_name}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(db.status)}</TableCell>
+                        <TableCell>v{db.postgres_version}</TableCell>
+                        <TableCell>{db.cpu_cores}</TableCell>
+                        <TableCell>{db.memory_gb} GB</TableCell>
+                        <TableCell>{db.storage_gb} GB</TableCell>
+                        <TableCell>
+                          {currencyFormatter.format(db.monthly_rate + db.storage_gb * db.storage_rate_per_gb)}/mo
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
+                            asChild
+                          >
+                            <Link to="/managed-database/instance">
+                              Details
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>

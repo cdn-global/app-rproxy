@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.routes import items, login, private, users, utils,proxy,checkout,user_agent,subscription
+from app.api.routes import (
+    items, login, private, users, utils, proxy, checkout, user_agent, subscription,
+    billing, servers, database_instances, inference
+)
 from app.core.config import settings
 
 api_router = APIRouter()
@@ -10,11 +13,16 @@ api_router.include_router(login.router)
 api_router.include_router(users.router)
 api_router.include_router(utils.router)
 api_router.include_router(items.router)
-api_router.include_router(subscription.router)  
+api_router.include_router(subscription.router)
 api_router.include_router(checkout.router)
 api_router.include_router(user_agent.router)
 api_router.include_router(proxy.router)
 
+# Hosting infrastructure routes
+api_router.include_router(billing.router, prefix="/billing")
+api_router.include_router(servers.router, prefix="/servers")
+api_router.include_router(database_instances.router, prefix="/database-instances")
+api_router.include_router(inference.router, prefix="/inference")
 
 # Private routes for local environment
 if settings.ENVIRONMENT == "local":

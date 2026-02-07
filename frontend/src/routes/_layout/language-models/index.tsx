@@ -1,18 +1,10 @@
 
 import { useMemo } from "react";
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { FiArrowUpRight } from "react-icons/fi";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -21,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { languageModels } from "@/data/language-models";
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout";
 
 const numberFormatter = new Intl.NumberFormat("en-US");
@@ -29,30 +20,48 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 4,
 });
 
-function LanguageModelsIndexPage() {
-  const fleetSummary = useMemo(() => {
-    return languageModels.reduce(
-      (acc, model) => {
-        acc.totalModels += 1;
-        acc.totalSpeed += model.speed;
-        acc.avgInputPrice += model.inputTokenPrice;
-        acc.avgOutputPrice += model.outputTokenPrice;
-        return acc;
-      },
-      {
-        totalModels: 0,
-        totalSpeed: 0,
-        avgInputPrice: 0,
-        avgOutputPrice: 0,
-      },
-    );
-  }, []);
+interface InferenceModel {
+  id: string;
+  name: string;
+  provider: string;
+  model_id: string;
+  capabilities: string[];
+  pricing_per_1k_tokens: number;
+  max_tokens: number;
+  is_active: boolean;
+}
 
-  fleetSummary.avgInputPrice /= fleetSummary.totalModels;
-  fleetSummary.avgOutputPrice /= fleetSummary.totalModels;
+function LanguageModelsIndexPage() {
+  const { data, isLoading } = useQuery<{ data: InferenceModel[]; count: number }>({
+    queryKey: ["inference-models"],
+    queryFn: async () => {
+      const response = await fetch("/api/v2/inference/models", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch models");
+      return response.json();
+    },
+  });
+
+  const models = data?.data ?? [];
+
+  const fleetSummary = useMemo(() => {
+    if (models.length === 0) {
+      return { totalModels: 0, avgPricePer1k: 0, maxContext: 0, providers: 0 };
+    }
+    const providers = new Set(models.map((m) => m.provider));
+    return {
+      totalModels: models.length,
+      avgPricePer1k: models.reduce((a, m) => a + m.pricing_per_1k_tokens, 0) / models.length,
+      maxContext: Math.max(...models.map((m) => m.max_tokens)),
+      providers: providers.size,
+    };
+  }, [models]);
 
   return (
     <PageScaffold sidebar={null}>
@@ -82,26 +91,26 @@ function LanguageModelsIndexPage() {
                 description="All models active"
               />
               <SummaryTile
-                label="Avg Speed (Tokens/Second)"
-                value={numberFormatter.format(fleetSummary.totalSpeed / fleetSummary.totalModels)}
+                label="Providers"
+                value={numberFormatter.format(fleetSummary.providers)}
+                description="OpenAI, Anthropic, HuggingFace"
+              />
+              <SummaryTile
+                label="Avg price / 1K tokens"
+                value={currencyFormatter.format(fleetSummary.avgPricePer1k)}
                 description="Across all models"
               />
               <SummaryTile
-                label="Avg Input Token Price"
-                value={currencyFormatter.format(fleetSummary.avgInputPrice)}
-                description="Per Million Tokens"
-              />
-              <SummaryTile
-                label="Avg Output Token Price"
-                value={currencyFormatter.format(fleetSummary.avgOutputPrice)}
-                description="Per Million Tokens"
+                label="Max context"
+                value={`${numberFormatter.format(fleetSummary.maxContext / 1000)}K`}
+                description="Largest context window"
               />
             </div>
         </PageSection>
 
         <PageSection
           id="models"
-          title="AI Model"
+          title="AI Models"
           description="Pricing will be slightly upcharged for geo location and other support"
         >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
@@ -110,43 +119,66 @@ function LanguageModelsIndexPage() {
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
                   <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>AI Model</TableHead>
-                    <TableHead>Current Speed(Tokens per Second)</TableHead>
-                    <TableHead>Input Token Price(Per Million Tokens)</TableHead>
-                    <TableHead>Output Token Price(Per Million Tokens)</TableHead>
+                    <TableHead>Model</TableHead>
+                    <TableHead>Provider</TableHead>
+                    <TableHead>Capabilities</TableHead>
+                    <TableHead>Price / 1K tokens</TableHead>
+                    <TableHead>Max Tokens</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {languageModels.map((model) => (
-                    <TableRow
-                      key={model.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        {model.name}
-                      </TableCell>
-                      <TableCell>{model.speed} TPS</TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(model.inputTokenPrice)} ({model.tokensPerDollarInput})
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(model.outputTokenPrice)} ({model.tokensPerDollarOutput})
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                          asChild
-                        >
-                          <RouterLink to={`/language-models/${encodeURIComponent(model.name)}`}>
-                            Try Now
-                          </RouterLink>
-                        </Button>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center">Loading...</TableCell>
+                    </TableRow>
+                  ) : models.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center text-muted-foreground">
+                        No models available.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    models.map((model) => (
+                      <TableRow
+                        key={model.id}
+                        className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                      >
+                        <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
+                          {model.name}
+                        </TableCell>
+                        <TableCell className="capitalize">{model.provider}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {model.capabilities.map((cap) => (
+                              <span
+                                key={cap}
+                                className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                              >
+                                {cap}
+                              </span>
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {currencyFormatter.format(model.pricing_per_1k_tokens)}
+                        </TableCell>
+                        <TableCell>{numberFormatter.format(model.max_tokens)}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
+                            asChild
+                          >
+                            <RouterLink to={`/language-models/${encodeURIComponent(model.name)}`}>
+                              Try Now
+                            </RouterLink>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
