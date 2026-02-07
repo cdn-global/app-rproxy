@@ -14,7 +14,8 @@ from app.models import (
     User, InferenceModel, ModelUsage, UsageRecord,
     InferenceRequest, InferenceResponse, InferenceModelPublic, InferenceModelsPublic
 )
-from app.api.deps import get_current_user, SessionDep
+from app.api.deps import get_current_user, get_current_active_superuser, SessionDep
+from app.models import InferenceModelCreate
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +76,49 @@ async def list_models(
     count = len(models)
 
     return InferenceModelsPublic(data=list(models), count=count)
+
+
+@router.post("/models/seed")
+async def seed_models(
+    current_user: Annotated[User, Depends(get_current_active_superuser)],
+    session: SessionDep,
+) -> dict:
+    """Seed default inference models. Superuser only. Idempotent."""
+    default_models = [
+        {"name": "GPT-4o", "provider": "openai", "model_id": "gpt-4o", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.005, "max_tokens": 128000},
+        {"name": "GPT-4o Mini", "provider": "openai", "model_id": "gpt-4o-mini", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.00015, "max_tokens": 128000},
+        {"name": "Claude Sonnet 4.5", "provider": "anthropic", "model_id": "claude-sonnet-4-5-20250929", "capabilities": ["chat", "code", "vision", "analysis"], "pricing_per_1k_tokens": 0.003, "max_tokens": 200000},
+        {"name": "Claude Opus 4.6", "provider": "anthropic", "model_id": "claude-opus-4-6", "capabilities": ["chat", "code", "vision", "analysis", "reasoning"], "pricing_per_1k_tokens": 0.015, "max_tokens": 200000},
+        {"name": "Claude Haiku 4.5", "provider": "anthropic", "model_id": "claude-haiku-4-5-20251001", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0008, "max_tokens": 200000},
+        {"name": "Llama 3.3 70B", "provider": "huggingface", "model_id": "meta-llama/Llama-3.3-70B-Instruct", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0009, "max_tokens": 131072},
+        {"name": "Qwen 2.5 72B", "provider": "huggingface", "model_id": "Qwen/Qwen2.5-72B-Instruct", "capabilities": ["chat", "code", "math"], "pricing_per_1k_tokens": 0.0009, "max_tokens": 131072},
+    ]
+
+    created = 0
+    skipped = 0
+    for m in default_models:
+        existing = session.exec(
+            select(InferenceModel).where(InferenceModel.model_id == m["model_id"])
+        ).first()
+        if existing:
+            skipped += 1
+            continue
+        model = InferenceModel(
+            id=uuid.uuid4(),
+            name=m["name"],
+            provider=m["provider"],
+            model_id=m["model_id"],
+            capabilities=m["capabilities"],
+            pricing_per_1k_tokens=m["pricing_per_1k_tokens"],
+            max_tokens=m["max_tokens"],
+            is_active=True,
+            created_at=datetime.utcnow(),
+        )
+        session.add(model)
+        created += 1
+
+    session.commit()
+    return {"created": created, "skipped": skipped}
 
 
 @router.get("/models/{model_id}", response_model=InferenceModelPublic)
