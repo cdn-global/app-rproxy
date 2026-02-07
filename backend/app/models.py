@@ -406,3 +406,130 @@ class InferenceResponse(SQLModel):
     total_tokens: int
     cost: float
     latency_ms: int
+
+
+# ============================================================================
+# OBJECT STORAGE MODELS
+# ============================================================================
+
+# Storage bucket (S3-like)
+class StorageBucket(SQLModel, table=True):
+    """S3-compatible object storage buckets"""
+    __tablename__ = "storage_bucket"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    bucket_name: str = Field(max_length=255, unique=True, index=True)
+    region: str = Field(default="us-east-1", max_length=50)
+    storage_class: str = Field(default="standard", max_length=50)  # standard, glacier, intelligent
+    status: str = Field(default="active", max_length=50)  # active, archived, deleted
+    storage_backend: str = Field(default="minio", max_length=50)  # "minio" or "aws-s3"
+    # MinIO/S3 credentials
+    access_key: Optional[str] = Field(default=None, max_length=255)
+    secret_key_encrypted: Optional[str] = Field(default=None)
+    endpoint_url: Optional[str] = Field(default=None, max_length=512)
+    # Usage and pricing
+    storage_gb_used: float = Field(default=0.0)
+    object_count: int = Field(default=0)
+    monthly_rate_per_gb: float = Field(default=0.023)  # $0.023/GB like S3
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationships
+    user: Optional[User] = Relationship()
+
+
+class StorageBucketCreate(SQLModel):
+    bucket_name: str = Field(max_length=255, min_length=3)
+    region: str = Field(default="us-east-1", max_length=50)
+    storage_class: str = Field(default="standard", max_length=50)
+    storage_backend: str = Field(default="minio", max_length=50)
+
+
+class StorageBucketUpdate(SQLModel):
+    bucket_name: Optional[str] = Field(default=None, max_length=255)
+    storage_class: Optional[str] = Field(default=None, max_length=50)
+    status: Optional[str] = Field(default=None, max_length=50)
+
+
+class StorageBucketPublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    bucket_name: str
+    region: str
+    storage_class: str
+    status: str
+    storage_backend: str
+    endpoint_url: Optional[str]
+    storage_gb_used: float
+    object_count: int
+    monthly_rate_per_gb: float
+    created_at: datetime
+
+
+class StorageBucketsPublic(SQLModel):
+    data: list[StorageBucketPublic]
+    count: int
+
+
+# Storage object metadata
+class StorageObject(SQLModel, table=True):
+    """Metadata for stored objects"""
+    __tablename__ = "storage_object"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    bucket_id: uuid.UUID = Field(foreign_key="storage_bucket.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    object_key: str = Field(max_length=1024)  # S3 key path
+    size_bytes: int = Field(default=0)
+    content_type: Optional[str] = Field(default=None, max_length=255)
+    etag: Optional[str] = Field(default=None, max_length=255)
+    storage_class: str = Field(default="standard", max_length=50)
+    is_deleted: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    last_modified: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationships
+    user: Optional[User] = Relationship()
+
+
+class StorageObjectPublic(SQLModel):
+    id: uuid.UUID
+    bucket_id: uuid.UUID
+    object_key: str
+    size_bytes: int
+    content_type: Optional[str]
+    etag: Optional[str]
+    storage_class: str
+    created_at: datetime
+    last_modified: datetime
+
+
+class StorageObjectsPublic(SQLModel):
+    data: list[StorageObjectPublic]
+    count: int
+
+
+# Upload request/response models
+class PresignedUploadRequest(SQLModel):
+    bucket_id: uuid.UUID
+    object_key: str
+    content_type: Optional[str] = Field(default=None)
+    expires_in: int = Field(default=3600, ge=1, le=604800)  # 1 second to 7 days
+
+
+class PresignedUploadResponse(SQLModel):
+    presigned_url: str
+    expires_in: int
+    object_key: str
+    bucket_name: str
+
+
+class PresignedDownloadRequest(SQLModel):
+    bucket_id: uuid.UUID
+    object_key: str
+    expires_in: int = Field(default=3600, ge=1, le=604800)
+
+
+class PresignedDownloadResponse(SQLModel):
+    presigned_url: str
+    expires_in: int
+    object_key: str
+    size_bytes: int

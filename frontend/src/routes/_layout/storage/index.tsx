@@ -1,4 +1,3 @@
-import { useMemo } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
@@ -17,8 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { storageBuckets } from "@/data/hosting"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
+import { useStorageBuckets, useStorageUsageSummary } from "@/hooks/useStorageAPI"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -29,21 +28,26 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 })
 
 function StorageIndexPage() {
-  const storageSummary = useMemo(() => {
-    return storageBuckets.reduce(
-      (acc, server) => {
-        acc.totalBuckets += 1
-        acc.totalStorage += server.storageSizeGB
-        acc.monthlyPrice += server.monthlyComputePrice
-        return acc
-      },
-      {
-        totalBuckets: 0,
-        totalStorage: 0,
-        monthlyPrice: 0,
-      },
+  const { data: bucketsData, isLoading: bucketsLoading } = useStorageBuckets()
+  const { data: usageSummary, isLoading: summaryLoading } = useStorageUsageSummary()
+
+  const buckets = bucketsData?.data ?? []
+  const summary = usageSummary ?? {
+    total_buckets: 0,
+    total_storage_gb: 0,
+    total_objects: 0,
+    monthly_cost: 0,
+  }
+
+  if (bucketsLoading || summaryLoading) {
+    return (
+      <PageScaffold sidebar={null}>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-slate-500">Loading storage data...</div>
+        </div>
+      </PageScaffold>
     )
-  }, [])
+  }
 
   return (
     <PageScaffold sidebar={null}>
@@ -69,19 +73,17 @@ function StorageIndexPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <SummaryTile
                 label="Total buckets"
-                value={numberFormatter.format(storageSummary.totalBuckets)}
+                value={numberFormatter.format(summary.total_buckets)}
                 description="All buckets active"
               />
               <SummaryTile
                 label="Total storage"
-                value={`${numberFormatter.format(
-                  storageSummary.totalStorage,
-                )} GB`}
+                value={`${summary.total_storage_gb.toFixed(2)} GB`}
                 description="Across all buckets"
               />
               <SummaryTile
                 label="Monthly run rate"
-                value={currencyFormatter.format(storageSummary.monthlyPrice)}
+                value={currencyFormatter.format(summary.monthly_cost)}
                 description="Across all buckets"
               />
             </div>
@@ -106,33 +108,48 @@ function StorageIndexPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {storageBuckets.map((server) => (
-                    <TableRow
-                      key={server.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        {server.name}
-                      </TableCell>
-                      <TableCell>{server.status}</TableCell>
-                      <TableCell>{server.storageSizeGB}GB</TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(server.monthlyComputePrice)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                          asChild
-                        >
-                          <Link to="/storage/bucket">
-                            Details
-                          </Link>
-                        </Button>
+                  {buckets.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                        No storage buckets yet. Create your first bucket to get started.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    buckets.map((bucket) => (
+                      <TableRow
+                        key={bucket.id}
+                        className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                      >
+                        <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
+                          {bucket.bucket_name}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={bucket.status === "active" ? "default" : "outline"}
+                            className="capitalize"
+                          >
+                            {bucket.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{bucket.storage_gb_used.toFixed(2)} GB</TableCell>
+                        <TableCell>
+                          {currencyFormatter.format(bucket.storage_gb_used * bucket.monthly_rate_per_gb)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
+                            asChild
+                          >
+                            <Link to="/storage/bucket" search={{ bucketId: bucket.id }}>
+                              Details
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
