@@ -51,9 +51,11 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - .env      
+      - .env
     ports:
       - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - FRONTEND_HOST=${FRONTEND_HOST?Variable not set}
       - ENVIRONMENT=${ENVIRONMENT}
