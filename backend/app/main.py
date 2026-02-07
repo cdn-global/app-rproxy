@@ -11,7 +11,7 @@ from sqlmodel import Session, select
 from app.api.main import api_router
 from app.core.config import settings
 from app.core.db import engine
-from app.models import InferenceModel
+from app.models import InferenceModel, RemoteServer, User
 
 logger = logging.getLogger(__name__)
 
@@ -69,3 +69,45 @@ def seed_inference_models():
             logger.info(f"Seeded {len(default_models)} inference models")
     except Exception as e:
         logger.error(f"Failed to seed inference models: {e}")
+
+
+@app.on_event("startup")
+def seed_fleet_servers():
+    """Auto-seed existing VPS fleet as RemoteServer rows for the first superuser."""
+    fleet = [
+        {"name": "01-NYC-FID-8core-ssd", "cpu_cores": 1, "memory_gb": 2, "hourly_rate": 0.016, "created_at": "2025-07-01"},
+        {"name": "02-NYC-MTM-16core-ssd", "cpu_cores": 16, "memory_gb": 64, "hourly_rate": 0.624, "created_at": "2025-09-01"},
+        {"name": "03-NYC-BKN-4core-hdd", "cpu_cores": 4, "memory_gb": 4, "hourly_rate": 0.056, "created_at": "2025-09-01"},
+        {"name": "04-NJ-SEC-4core-ssd", "cpu_cores": 4, "memory_gb": 16, "hourly_rate": 0.063, "created_at": "2025-12-01"},
+        {"name": "05-NYC-FID-8core-hdd", "cpu_cores": 8, "memory_gb": 4, "hourly_rate": 0.060, "created_at": "2025-09-01"},
+        {"name": "06-NYC-MTM-2core-ssd", "cpu_cores": 2, "memory_gb": 8, "hourly_rate": 0.056, "created_at": "2025-09-01"},
+    ]
+    try:
+        with Session(engine) as session:
+            existing = session.exec(select(RemoteServer).limit(1)).first()
+            if existing:
+                return
+            # Find first superuser
+            superuser = session.exec(
+                select(User).where(User.is_superuser == True).limit(1)
+            ).first()
+            if not superuser:
+                logger.warning("No superuser found, skipping fleet seed")
+                return
+            for s in fleet:
+                session.add(RemoteServer(
+                    id=uuid.uuid4(),
+                    user_id=superuser.id,
+                    name=s["name"],
+                    server_type="ssh",
+                    hosting_provider="docker",
+                    cpu_cores=s["cpu_cores"],
+                    memory_gb=s["memory_gb"],
+                    status="running",
+                    hourly_rate=s["hourly_rate"],
+                    created_at=datetime.fromisoformat(s["created_at"]),
+                ))
+            session.commit()
+            logger.info(f"Seeded {len(fleet)} fleet servers for user {superuser.email}")
+    except Exception as e:
+        logger.error(f"Failed to seed fleet servers: {e}")
