@@ -60,6 +60,7 @@ function RemoteTerminalsPage() {
     <PageScaffold sidebar={null}>
       <div className="space-y-10">
         <PageSection
+          id="servers"
           title="Remote Servers"
           description="Manage your remote SSH, GPU, and inference servers"
           actions={
@@ -126,6 +127,7 @@ function RemoteTerminalsPage() {
         </PageSection>
 
         <PageSection
+          id="quickstart"
           title="Quick Start"
           description="Create a new remote server for your workload"
         >
