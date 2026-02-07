@@ -171,7 +171,7 @@ function LanguageModelsIndexPage() {
                             className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
                             asChild
                           >
-                            <RouterLink to={`/language-models/${encodeURIComponent(model.name)}`}>
+                            <RouterLink to="/language-models/llm-service">
                               Try Now
                             </RouterLink>
                           </Button>

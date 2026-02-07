@@ -13,13 +13,14 @@ export const Route = createFileRoute("/_layout/remote-terminals/terminal")({
 function TerminalPage() {
   const { serverId } = Route.useSearch()
   const [connected, setConnected] = useState(true)
+  const [error, setError] = useState("")
 
   if (!serverId) {
     return (
       <div className="flex h-[80vh] flex-col items-center justify-center gap-4">
         <p className="text-muted-foreground">No server selected.</p>
         <Button asChild variant="outline">
-          <Link to="/remote-terminals">Back to Servers</Link>
+          <Link to="/hosting">Back to Servers</Link>
         </Button>
       </div>
     )
@@ -30,32 +31,39 @@ function TerminalPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button asChild variant="outline" size="sm">
-            <Link to="/remote-terminals">Back</Link>
+            <Link to="/hosting">Back</Link>
           </Button>
           <h2 className="text-lg font-semibold">Terminal</h2>
           <span className="text-sm text-muted-foreground">
             Server: {serverId.slice(0, 8)}...
           </span>
-          <span className={`inline-block h-2 w-2 rounded-full ${connected ? "bg-green-500" : "bg-red-500"}`} />
+          <span className={`inline-block h-2 w-2 rounded-full ${connected && !error ? "bg-green-500" : "bg-red-500"}`} />
         </div>
-        {!connected && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setConnected(true)
-              window.location.reload()
-            }}
-          >
-            Reconnect
-          </Button>
+        {(!connected || error) && (
+          <div className="flex items-center gap-3">
+            {error && <span className="text-sm text-destructive">{error}</span>}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setConnected(true)
+                setError("")
+                window.location.reload()
+              }}
+            >
+              Reconnect
+            </Button>
+          </div>
         )}
       </div>
       <div className="flex-1 rounded-lg border border-slate-700 bg-[#0f172a] overflow-hidden">
         {connected && (
           <XTerminal
             serverId={serverId}
-            onDisconnect={() => setConnected(false)}
+            onDisconnect={() => {
+              setConnected(false)
+              setError("Connection closed. Server may not have terminal access configured.")
+            }}
           />
         )}
       </div>
