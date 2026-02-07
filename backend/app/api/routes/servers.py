@@ -50,8 +50,8 @@ async def create_server(
 ) -> RemoteServer:
     """Create and provision a new remote server"""
 
-    # Guard: require active infrastructure subscription
-    if not current_user.has_subscription:
+    # Guard: require active infrastructure subscription (superusers bypass)
+    if not current_user.has_subscription and not current_user.is_superuser:
         raise HTTPException(
             status_code=402,
             detail="Active infrastructure subscription required. Subscribe at /billing/subscribe first."

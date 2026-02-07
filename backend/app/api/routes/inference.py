@@ -148,8 +148,8 @@ async def run_inference(
 
     This is a proxy endpoint that routes requests to the appropriate model provider
     """
-    # Guard: require active infrastructure subscription
-    if not current_user.has_subscription:
+    # Guard: require active infrastructure subscription (superusers bypass)
+    if not current_user.has_subscription and not current_user.is_superuser:
         raise HTTPException(
             status_code=402,
             detail="Active infrastructure subscription required. Subscribe at /billing/subscribe first."
