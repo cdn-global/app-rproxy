@@ -74,6 +74,8 @@ def seed_inference_models():
 @app.on_event("startup")
 def seed_fleet_servers():
     """Auto-seed existing VPS fleet as RemoteServer rows for the first superuser."""
+    from sqlmodel import text as sql_text
+
     fleet = [
         {"name": "prod-use1-ssh-01", "cpu_cores": 1, "memory_gb": 2, "hourly_rate": 0.016, "created_at": "2025-07-01", "server_type": "ssh", "aws_region": "us-east-1"},
         {"name": "prod-use1-gpu-02", "cpu_cores": 16, "memory_gb": 64, "hourly_rate": 0.624, "created_at": "2025-09-01", "server_type": "gpu", "aws_region": "us-east-1"},
@@ -84,9 +86,17 @@ def seed_fleet_servers():
     ]
     try:
         with Session(engine) as session:
-            existing = session.exec(select(RemoteServer).limit(1)).first()
-            if existing:
-                return
+            # Ensure table exists
+            try:
+                existing = session.exec(select(RemoteServer).limit(1)).first()
+                if existing:
+                    logger.info("Fleet already seeded, skipping")
+                    return
+            except Exception:
+                logger.warning("remote_server table may not exist, creating via SQLModel")
+                from sqlmodel import SQLModel
+                SQLModel.metadata.create_all(engine, tables=[RemoteServer.__table__])
+
             # Find first superuser
             superuser = session.exec(
                 select(User).where(User.is_superuser == True).limit(1)
@@ -94,6 +104,8 @@ def seed_fleet_servers():
             if not superuser:
                 logger.warning("No superuser found, skipping fleet seed")
                 return
+
+            logger.info(f"Seeding fleet for superuser {superuser.email} (id={superuser.id})")
             for s in fleet:
                 session.add(RemoteServer(
                     id=uuid.uuid4(),
@@ -109,6 +121,7 @@ def seed_fleet_servers():
                     created_at=datetime.fromisoformat(s["created_at"]),
                 ))
             session.commit()
-            logger.info(f"Seeded {len(fleet)} fleet servers for user {superuser.email}")
+            logger.info(f"Seeded {len(fleet)} fleet servers successfully")
     except Exception as e:
-        logger.error(f"Failed to seed fleet servers: {e}")
+        import traceback
+        logger.error(f"Failed to seed fleet servers: {e}\n{traceback.format_exc()}")
