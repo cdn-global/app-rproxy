@@ -75,12 +75,12 @@ def seed_inference_models():
 def seed_fleet_servers():
     """Auto-seed existing VPS fleet as RemoteServer rows for the first superuser."""
     fleet = [
-        {"name": "01-NYC-FID-8core-ssd", "cpu_cores": 1, "memory_gb": 2, "hourly_rate": 0.016, "created_at": "2025-07-01"},
-        {"name": "02-NYC-MTM-16core-ssd", "cpu_cores": 16, "memory_gb": 64, "hourly_rate": 0.624, "created_at": "2025-09-01"},
-        {"name": "03-NYC-BKN-4core-hdd", "cpu_cores": 4, "memory_gb": 4, "hourly_rate": 0.056, "created_at": "2025-09-01"},
-        {"name": "04-NJ-SEC-4core-ssd", "cpu_cores": 4, "memory_gb": 16, "hourly_rate": 0.063, "created_at": "2025-12-01"},
-        {"name": "05-NYC-FID-8core-hdd", "cpu_cores": 8, "memory_gb": 4, "hourly_rate": 0.060, "created_at": "2025-09-01"},
-        {"name": "06-NYC-MTM-2core-ssd", "cpu_cores": 2, "memory_gb": 8, "hourly_rate": 0.056, "created_at": "2025-09-01"},
+        {"name": "us-east-1a-ssh-01", "cpu_cores": 1, "memory_gb": 2, "hourly_rate": 0.016, "created_at": "2025-07-01"},
+        {"name": "us-east-1b-gpu-02", "cpu_cores": 16, "memory_gb": 64, "hourly_rate": 0.624, "created_at": "2025-09-01"},
+        {"name": "us-east-1c-ssh-03", "cpu_cores": 4, "memory_gb": 4, "hourly_rate": 0.056, "created_at": "2025-09-01"},
+        {"name": "us-east-1d-ssh-04", "cpu_cores": 4, "memory_gb": 16, "hourly_rate": 0.063, "created_at": "2025-12-01"},
+        {"name": "us-west-2a-ssh-05", "cpu_cores": 8, "memory_gb": 4, "hourly_rate": 0.060, "created_at": "2025-09-01"},
+        {"name": "eu-west-1a-ssh-06", "cpu_cores": 2, "memory_gb": 8, "hourly_rate": 0.056, "created_at": "2025-09-01"},
     ]
     try:
         with Session(engine) as session:
