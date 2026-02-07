@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { FiArrowUpRight, FiCheck, FiCopy } from "react-icons/fi"
+import { FiArrowUpRight } from "react-icons/fi"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,14 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import useCustomToast from "@/hooks/useCustomToast"
 import CreateServer from "../../../components/Servers/CreateServer"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
@@ -54,7 +46,6 @@ function HostingIndexPage() {
   const showToast = useCustomToast()
   const queryClient = useQueryClient()
   const [createOpen, setCreateOpen] = useState(false)
-  const [deleteTarget, setDeleteTarget] = useState<RemoteServer | null>(null)
 
   const { data, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
     queryKey: ["remote-servers"],
@@ -98,23 +89,6 @@ function HostingIndexPage() {
     },
     onSuccess: () => {
       showToast("Success", "Server started.", "success")
-      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
-    },
-    onError: (err: Error) => showToast("Error", err.message, "error"),
-  })
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/servers/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
-      })
-      if (!response.ok) throw new Error("Failed to delete server")
-      return response.json()
-    },
-    onSuccess: () => {
-      showToast("Success", "Server deleted.", "success")
-      setDeleteTarget(null)
       queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
     },
     onError: (err: Error) => showToast("Error", err.message, "error"),
@@ -200,7 +174,6 @@ function HostingIndexPage() {
                   <TableRow className="border-slate-200/70 dark:border-slate-700/60">
                     <TableHead>Name</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead>Provider</TableHead>
                     <TableHead>CPU / RAM</TableHead>
                     <TableHead>Region</TableHead>
                     <TableHead>Status</TableHead>
@@ -212,11 +185,11 @@ function HostingIndexPage() {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center">Loading...</TableCell>
+                      <TableCell colSpan={8} className="text-center">Loading...</TableCell>
                     </TableRow>
                   ) : servers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center text-muted-foreground">
+                      <TableCell colSpan={8} className="text-center text-muted-foreground">
                         No servers found. Create your first server to get started.
                       </TableCell>
                     </TableRow>
@@ -230,11 +203,6 @@ function HostingIndexPage() {
                           {server.name}
                         </TableCell>
                         <TableCell className="capitalize">{server.server_type}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {server.hosting_provider === "aws" ? "AWS" : "Docker"}
-                          </Badge>
-                        </TableCell>
                         <TableCell>
                           {server.cpu_cores} vCPU / {server.memory_gb} GB
                         </TableCell>
@@ -285,14 +253,6 @@ function HostingIndexPage() {
                             {server.status === "provisioning" && (
                               <Badge variant="outline">Provisioning...</Badge>
                             )}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="rounded-full px-3 py-1 text-xs font-semibold text-destructive hover:text-destructive"
-                              onClick={() => setDeleteTarget(server)}
-                            >
-                              Delete
-                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -302,7 +262,7 @@ function HostingIndexPage() {
                 {servers.length > 0 && (
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={9} className="text-right text-sm font-semibold text-slate-600 dark:text-slate-400">
+                      <TableCell colSpan={8} className="text-right text-sm font-semibold text-slate-600 dark:text-slate-400">
                         {fleetSummary.totalServers} servers · {fleetSummary.running} running · {currencyFormatter.format(fleetSummary.totalMonthly)}/mo
                       </TableCell>
                     </TableRow>
@@ -344,28 +304,6 @@ function HostingIndexPage() {
 
     <CreateServer isOpen={createOpen} onClose={() => setCreateOpen(false)} />
 
-    <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Server</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete &quot;{deleteTarget?.name}&quot;? This action cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-3">
-          <Button
-            variant="destructive"
-            onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
-            disabled={deleteMutation.isPending}
-          >
-            {deleteMutation.isPending ? "Deleting..." : "Delete"}
-          </Button>
-          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-            Cancel
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
     </PageScaffold>
   )
 }

@@ -7,7 +7,7 @@ export interface HostingServer extends ServerNode {
 
 export const hostingServers: HostingServer[] = [
   {
-    name: "prod-use1-ssh-01",
+    name: "web-use1-01",
     email: "admin@roamingproxy.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -30,7 +30,7 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "prod-use1-gpu-02",
+    name: "ml-use1-02",
     email: "admin@roamingproxy.com",
     ip: "100.140.50.60",
     version: "1.88.0",
@@ -53,7 +53,7 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "prod-use1-ssh-03",
+    name: "api-use1-03",
     email: "admin@roamingproxy.com",
     ip: "100.100.95.61",
     version: "1.88.0",
@@ -76,7 +76,7 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "prod-use1-ssh-04",
+    name: "app-use1-04",
     email: "admin@roamingproxy.com",
     ip: "100.100.95.62",
     version: "1.88.0",
@@ -99,7 +99,7 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "prod-usw2-ssh-05",
+    name: "data-usw2-05",
     email: "admin@roamingproxy.com",
     ip: "100.100.95.63",
     version: "1.88.0",
@@ -122,7 +122,7 @@ export const hostingServers: HostingServer[] = [
     isTrial: true,
   },
   {
-    name: "prod-euw1-ssh-06",
+    name: "edge-euw1-06",
     email: "admin@roamingproxy.com",
     ip: "100.100.95.64",
     version: "1.88.0",
