@@ -85,13 +85,35 @@ async def seed_models(
 ) -> dict:
     """Seed default inference models. Superuser only. Idempotent."""
     default_models = [
+        # OpenAI Models
         {"name": "GPT-4o", "provider": "openai", "model_id": "gpt-4o", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.005, "max_tokens": 128000},
-        {"name": "GPT-4o Mini", "provider": "openai", "model_id": "gpt-4o-mini", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.00015, "max_tokens": 128000},
-        {"name": "Claude Sonnet 4.5", "provider": "anthropic", "model_id": "claude-sonnet-4-5-20250929", "capabilities": ["chat", "code", "vision", "analysis"], "pricing_per_1k_tokens": 0.003, "max_tokens": 200000},
+        {"name": "GPT-4o Mini", "provider": "openai", "model_id": "gpt-4o-mini", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.00015, "max_tokens": 128000},
+        {"name": "GPT-4 Turbo", "provider": "openai", "model_id": "gpt-4-turbo", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.01, "max_tokens": 128000},
+        {"name": "GPT-4", "provider": "openai", "model_id": "gpt-4", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.03, "max_tokens": 8192},
+        {"name": "GPT-3.5 Turbo", "provider": "openai", "model_id": "gpt-3.5-turbo", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0005, "max_tokens": 16385},
+        {"name": "o1", "provider": "openai", "model_id": "o1", "capabilities": ["reasoning", "math", "code"], "pricing_per_1k_tokens": 0.015, "max_tokens": 200000},
+        {"name": "o1-mini", "provider": "openai", "model_id": "o1-mini", "capabilities": ["reasoning", "math", "code"], "pricing_per_1k_tokens": 0.003, "max_tokens": 128000},
+        {"name": "o3-mini", "provider": "openai", "model_id": "o3-mini", "capabilities": ["reasoning", "math", "code"], "pricing_per_1k_tokens": 0.0011, "max_tokens": 200000},
+
+        # Anthropic Models
         {"name": "Claude Opus 4.6", "provider": "anthropic", "model_id": "claude-opus-4-6", "capabilities": ["chat", "code", "vision", "analysis", "reasoning"], "pricing_per_1k_tokens": 0.015, "max_tokens": 200000},
+        {"name": "Claude Sonnet 4.5", "provider": "anthropic", "model_id": "claude-sonnet-4-5-20250929", "capabilities": ["chat", "code", "vision", "analysis"], "pricing_per_1k_tokens": 0.003, "max_tokens": 200000},
         {"name": "Claude Haiku 4.5", "provider": "anthropic", "model_id": "claude-haiku-4-5-20251001", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0008, "max_tokens": 200000},
+        {"name": "Claude 3.5 Sonnet", "provider": "anthropic", "model_id": "claude-3-5-sonnet-20241022", "capabilities": ["chat", "code", "vision", "analysis"], "pricing_per_1k_tokens": 0.003, "max_tokens": 200000},
+        {"name": "Claude 3 Opus", "provider": "anthropic", "model_id": "claude-3-opus-20240229", "capabilities": ["chat", "code", "vision", "analysis"], "pricing_per_1k_tokens": 0.015, "max_tokens": 200000},
+        {"name": "Claude 3 Haiku", "provider": "anthropic", "model_id": "claude-3-haiku-20240307", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.00025, "max_tokens": 200000},
+
+        # HuggingFace Models (Open Source)
         {"name": "Llama 3.3 70B", "provider": "huggingface", "model_id": "meta-llama/Llama-3.3-70B-Instruct", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0009, "max_tokens": 131072},
+        {"name": "Llama 3.1 8B", "provider": "huggingface", "model_id": "meta-llama/Llama-3.1-8B-Instruct", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0001, "max_tokens": 131072},
+        {"name": "Llama 3.1 405B", "provider": "huggingface", "model_id": "meta-llama/Llama-3.1-405B-Instruct", "capabilities": ["chat", "code", "reasoning"], "pricing_per_1k_tokens": 0.005, "max_tokens": 131072},
         {"name": "Qwen 2.5 72B", "provider": "huggingface", "model_id": "Qwen/Qwen2.5-72B-Instruct", "capabilities": ["chat", "code", "math"], "pricing_per_1k_tokens": 0.0009, "max_tokens": 131072},
+        {"name": "Qwen 2.5 Coder 32B", "provider": "huggingface", "model_id": "Qwen/Qwen2.5-Coder-32B-Instruct", "capabilities": ["code"], "pricing_per_1k_tokens": 0.0004, "max_tokens": 131072},
+        {"name": "Mistral 7B", "provider": "huggingface", "model_id": "mistralai/Mistral-7B-Instruct-v0.3", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0001, "max_tokens": 32768},
+        {"name": "Mixtral 8x7B", "provider": "huggingface", "model_id": "mistralai/Mixtral-8x7B-Instruct-v0.1", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0007, "max_tokens": 32768},
+        {"name": "Mixtral 8x22B", "provider": "huggingface", "model_id": "mistralai/Mixtral-8x22B-Instruct-v0.1", "capabilities": ["chat", "code", "reasoning"], "pricing_per_1k_tokens": 0.0012, "max_tokens": 65536},
+        {"name": "DeepSeek V3", "provider": "huggingface", "model_id": "deepseek-ai/DeepSeek-V3", "capabilities": ["chat", "code", "math"], "pricing_per_1k_tokens": 0.0014, "max_tokens": 128000},
+        {"name": "Gemma 2 27B", "provider": "huggingface", "model_id": "google/gemma-2-27b-it", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.0003, "max_tokens": 8192},
     ]
 
     created = 0
