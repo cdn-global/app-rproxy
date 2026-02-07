@@ -148,10 +148,10 @@ export const hostingServers: HostingServer[] = [
 
 export const databaseInstances: HostingServer[] = [
   {
-    name: "db-primary-nyc-01",
-    email: "admin@database.com",
+    name: "primary-use1",
+    email: "admin@roamingproxy.com",
     ip: "10.0.1.50",
-    version: "14.5",
+    version: "16",
     kernel: "Linux 5.15-generic",
     status: "Active",
     type: "Database",
@@ -171,10 +171,10 @@ export const databaseInstances: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "db-replica-fra-01",
-    email: "admin@database.com",
+    name: "replica-euw1",
+    email: "admin@roamingproxy.com",
     ip: "10.0.2.50",
-    version: "14.5",
+    version: "16",
     kernel: "Linux 5.15-generic",
     status: "Standby",
     type: "Database",
@@ -194,10 +194,10 @@ export const databaseInstances: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "db-analytics-sfo-01",
-    email: "admin@database.com",
+    name: "analytics-usw2",
+    email: "admin@roamingproxy.com",
     ip: "10.0.3.50",
-    version: "14.5",
+    version: "15",
     kernel: "Linux 5.15-generic",
     status: "Active",
     type: "Database",

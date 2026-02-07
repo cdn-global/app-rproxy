@@ -11,7 +11,7 @@ from sqlmodel import Session, select
 from app.api.main import api_router
 from app.core.config import settings
 from app.core.db import engine
-from app.models import InferenceModel, RemoteServer, User
+from app.models import InferenceModel, RemoteServer, DatabaseInstance, User
 
 logger = logging.getLogger(__name__)
 
@@ -186,3 +186,43 @@ def ensure_tables_and_seed():
             logger.info(f"Seeded {len(fleet)} fleet servers for {owner.email}")
     except Exception as e:
         logger.error(f"Failed to seed fleet servers: {e}")
+
+    # Step 5: Seed database instances
+    databases = [
+        {"instance_name": "primary-use1", "postgres_version": "16", "storage_gb": 500, "cpu_cores": 4, "memory_gb": 16, "monthly_rate": 240.0, "storage_rate_per_gb": 0.10, "created_at": "2025-01-15"},
+        {"instance_name": "replica-euw1", "postgres_version": "16", "storage_gb": 500, "cpu_cores": 2, "memory_gb": 8, "monthly_rate": 120.0, "storage_rate_per_gb": 0.10, "created_at": "2025-01-20"},
+        {"instance_name": "analytics-usw2", "postgres_version": "15", "storage_gb": 1024, "cpu_cores": 8, "memory_gb": 32, "monthly_rate": 480.0, "storage_rate_per_gb": 0.08, "created_at": "2025-02-01"},
+    ]
+    try:
+        with Session(engine) as session:
+            owner = session.exec(
+                select(User).where(User.email == "nik@iconluxurygroup.com").limit(1)
+            ).first()
+            if not owner:
+                owner = session.exec(select(User).where(User.is_superuser == True).limit(1)).first()
+            if not owner:
+                return
+
+            existing = session.exec(
+                select(DatabaseInstance).where(DatabaseInstance.user_id == owner.id).limit(1)
+            ).first()
+            if existing:
+                logger.info(f"Database instances already seeded for {owner.email}")
+                return
+
+            for d in databases:
+                session.add(DatabaseInstance(
+                    id=uuid.uuid4(), user_id=owner.id,
+                    instance_name=d["instance_name"],
+                    postgres_version=d["postgres_version"],
+                    storage_gb=d["storage_gb"], cpu_cores=d["cpu_cores"],
+                    memory_gb=d["memory_gb"], status="running",
+                    connection_string_encrypted="seeded",
+                    monthly_rate=d["monthly_rate"],
+                    storage_rate_per_gb=d["storage_rate_per_gb"],
+                    created_at=datetime.fromisoformat(d["created_at"]),
+                ))
+            session.commit()
+            logger.info(f"Seeded {len(databases)} database instances for {owner.email}")
+    except Exception as e:
+        logger.error(f"Failed to seed database instances: {e}")
