@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { FiArrowUpRight, FiCheck, FiCopy } from "react-icons/fi"
 
 import { Badge } from "@/components/ui/badge"
@@ -13,11 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { hostingServers } from "@/data/hosting"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import useCustomToast from "@/hooks/useCustomToast"
-
+import CreateServer from "../../../components/Servers/CreateServer"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
-
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -27,77 +34,117 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 })
 
+interface RemoteServer {
+  id: string
+  name: string
+  server_type: string
+  hosting_provider: string
+  cpu_cores: number
+  memory_gb: number
+  gpu_type?: string
+  status: string
+  hourly_rate: number
+  created_at: string
+  aws_instance_type?: string
+  aws_region?: string
+  aws_public_ip?: string
+}
+
 function HostingIndexPage() {
   const showToast = useCustomToast()
-  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+  const queryClient = useQueryClient()
+  const [createOpen, setCreateOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<RemoteServer | null>(null)
+
+  const { data, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
+    queryKey: ["remote-servers"],
+    queryFn: async () => {
+      const response = await fetch("/api/v2/servers/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      })
+      if (!response.ok) throw new Error("Failed to fetch servers")
+      return response.json()
+    },
+  })
+
+  const servers = data?.data ?? []
+
+  const stopMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/servers/${id}/stop`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to stop server")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Server stopped.", "success")
+      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
+  const startMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/servers/${id}/start`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to start server")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Server started.", "success")
+      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/servers/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to delete server")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Server deleted.", "success")
+      setDeleteTarget(null)
+      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
 
   const fleetSummary = useMemo(() => {
-    return hostingServers.reduce(
+    return servers.reduce(
       (acc, server) => {
         acc.totalServers += 1
-        acc.connected += server.status === "Connected" ? 1 : 0
-        acc.trial += server.isTrial ? 1 : 0
-        acc.totalMonthlyCharged += server.isTrial ? 0 : server.monthlyComputePrice
-        acc.totalMonthlyList += server.fullMonthlyComputePrice
-        acc.totalVcpus += server.vCPUs ?? 0
-        acc.totalRam += server.ramGB
-        acc.totalStorage += server.storageSizeGB
-        acc.rotating += server.hasRotatingIP ? 1 : 0
-        acc.backup += server.hasBackup ? 1 : 0
-        acc.monitoring += server.hasMonitoring ? 1 : 0
-        acc.managed += server.hasManagedSupport ? 1 : 0
+        acc.running += server.status === "running" ? 1 : 0
+        acc.totalMonthly += server.hourly_rate * 730
+        acc.totalVcpus += server.cpu_cores
+        acc.totalRam += server.memory_gb
         return acc
       },
-      {
-        totalServers: 0,
-        connected: 0,
-        trial: 0,
-        totalMonthlyCharged: 0,
-        totalMonthlyList: 0,
-        totalVcpus: 0,
-        totalRam: 0,
-        totalStorage: 0,
-        rotating: 0,
-        backup: 0,
-        monitoring: 0,
-        managed: 0,
-      },
+      { totalServers: 0, running: 0, totalMonthly: 0, totalVcpus: 0, totalRam: 0 },
     )
-  }, [])
+  }, [servers])
 
-  const offlineCount = fleetSummary.totalServers - fleetSummary.connected
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      running: "default",
+      stopped: "secondary",
+      provisioning: "outline",
+      error: "destructive",
+      terminated: "destructive",
+    }
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>
+  }
 
-  const handleCopy = useCallback(
-    async (value: string, label: string, key: string) => {
-      try {
-        if (typeof navigator === "undefined" || !navigator.clipboard) {
-          throw new Error("Clipboard API unavailable")
-        }
-        await navigator.clipboard.writeText(value)
-        setCopiedKey(key)
-        showToast(`${label} copied`, value, "success")
-      } catch (error) {
-        console.error("Unable to copy value", error)
-        showToast("Copy failed", "We could not copy that value to your clipboard.", "error")
-      }
-    },
-    [showToast],
-  )
-
-  useEffect(() => {
-    if (!copiedKey) return
-    const timeout = window.setTimeout(() => setCopiedKey(null), 2000)
-    return () => window.clearTimeout(timeout)
-  }, [copiedKey])
-
-  const analyticsPoints = [38, 62, 54, 78, 92, 66, 105, 98]
-  const sparkPath = analyticsPoints
-    .map((point, index) => {
-      const x = (index / (analyticsPoints.length - 1)) * 180
-      const y = 110 - point
-      return `${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
-    })
-    .join(" ")
   return (
     <PageScaffold sidebar={null}>
     <div className="space-y-8">
@@ -107,14 +154,12 @@ function HostingIndexPage() {
           description="Summaries of capacity, health, and monthly run rate."
           actions={
             <Button
-              asChild
+              onClick={() => setCreateOpen(true)}
               variant="outline"
               className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
             >
-              <RouterLink to="billing">
-                <span>Open billing cycle</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </RouterLink>
+              <span>Create Server</span>
+              <FiArrowUpRight className="h-4 w-4" />
             </Button>
           }
         >
@@ -122,76 +167,30 @@ function HostingIndexPage() {
               <SummaryTile
                 label="Total servers"
                 value={numberFormatter.format(fleetSummary.totalServers)}
-                description={`Trial seats: ${numberFormatter.format(fleetSummary.trial)}`}
+                description={`${fleetSummary.running} running`}
               />
               <SummaryTile
-                label="Connected"
-                value={numberFormatter.format(fleetSummary.connected)}
-                description={offlineCount > 0 ? `${offlineCount} need attention` : "All nodes healthy"}
+                label="Running"
+                value={numberFormatter.format(fleetSummary.running)}
+                description={fleetSummary.totalServers - fleetSummary.running > 0 ? `${fleetSummary.totalServers - fleetSummary.running} stopped` : "All nodes healthy"}
               />
               <SummaryTile
                 label="Monthly run rate"
-                value={currencyFormatter.format(fleetSummary.totalMonthlyCharged)}
-                description={`List price ${currencyFormatter.format(fleetSummary.totalMonthlyList)}`}
+                value={currencyFormatter.format(fleetSummary.totalMonthly)}
+                description="Based on hourly rates"
               />
               <SummaryTile
                 label="Provisioned capacity"
                 value={`${numberFormatter.format(fleetSummary.totalVcpus)} vCPU`}
-                description={`${numberFormatter.format(fleetSummary.totalRam)} GB RAM · ${numberFormatter.format(fleetSummary.totalStorage)} GB storage`}
+                description={`${numberFormatter.format(fleetSummary.totalRam)} GB RAM`}
               />
             </div>
         </PageSection>
 
         <PageSection
-          id="analytics"
-          title="Active services"
-          description="Live metric cards, sparkline trends, and throughput breakdown."
-        >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-slate-200/70 bg-white/50 p-5 text-slate-900 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/50 dark:text-slate-50">
-                <div className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">Requests</div>
-                <div className="mt-2 text-2xl font-semibold">4.8M</div>
-                <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">+12.4% vs last 7 days</p>
-                <div className="mt-4">
-                  <svg viewBox="0 0 180 110" className="h-24 w-full">
-                    <path
-                      d={`${sparkPath} L 180 110 L 0 110 Z`}
-                      className="fill-chart-1/10 stroke-none"
-                    />
-                    <path
-                      d={sparkPath}
-                      className="stroke-chart-1"
-                      strokeWidth={3}
-                      fill="none"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/50 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/50">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Network mix</p>
-                  <div className="mt-2 flex items-baseline gap-2 text-2xl font-semibold">
-                    64%
-                    <span className="text-xs font-medium text-chart-2">
-                      target proximity
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm text-slate-600"><span>Datacenter</span><Badge className="rounded-full bg-chart-2/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-chart-2">42%</Badge></div>
-                  <div className="flex items-center justify-between text-sm text-slate-600"><span>Residential</span><Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">38%</Badge></div>
-                  <div className="flex items-center justify-between text-sm text-slate-600"><span>ISP</span><Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.16em]">20%</Badge></div>
-                </div>
-              </div>
-            </div>
-        </PageSection>
-
-        <PageSection
-          id="credentials"
-          title="Access credentials"
-          description="Copy-ready secrets and deep links into individual nodes."
+          id="servers"
+          title="Servers"
+          description="Manage your fleet of SSH, GPU, and inference servers."
         >
           <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
             <div className="space-y-6 pt-6">
@@ -199,159 +198,174 @@ function HostingIndexPage() {
               <Table>
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
                   <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>Device</TableHead>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Password</TableHead>
-                    <TableHead>OS</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Provider</TableHead>
+                    <TableHead>CPU / RAM</TableHead>
+                    <TableHead>Region</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Hourly Rate</TableHead>
+                    <TableHead>Created</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {hostingServers.map((server) => (
-                    <TableRow
-                      key={server.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        <div>{server.name}</div>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                          Active since {formatDate(server.activeSince)}
-                        </p>
-                      </TableCell>
-                      <TableCell className="align-top text-sm text-slate-700 dark:text-slate-300">
-                        <div className="font-medium text-slate-900 dark:text-slate-50">{server.ip}</div>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                          {server.os.toUpperCase()} · Kernel {server.kernel}
-                        </p>
-                      </TableCell>
-                      <TableCell>
-                        <CredentialCell
-                          label="Username"
-                          value={server.username}
-                          isCopied={copiedKey === `${server.name}-username`}
-                          onCopy={() => handleCopy(server.username, "Username", `${server.name}-username`)}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <CredentialCell
-                          label="Password"
-                          value={server.password}
-                          isCopied={copiedKey === `${server.name}-password`}
-                          onCopy={() => handleCopy(server.password, "Password", `${server.name}-password`)}
-                        />
-                      </TableCell>
-                      <TableCell className="text-sm text-slate-600 dark:text-slate-400">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={server.status === "Connected" ? "success" : "warning"}
-                            className="rounded-full px-3 py-1 text-xs font-semibold"
-                          >
-                            {server.status}
-                          </Badge>
-                          {server.isTrial ? (
-                            <Badge variant="outline" className="rounded-full border-amber-400/60 px-2.5 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-amber-500">
-                              Trial
-                            </Badge>
-                          ) : null}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                          asChild
-                        >
-                          <RouterLink to={`/hosting/${encodeURIComponent(server.name)}`}>
-                            View details
-                          </RouterLink>
-                        </Button>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center">Loading...</TableCell>
+                    </TableRow>
+                  ) : servers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center text-muted-foreground">
+                        No servers found. Create your first server to get started.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    servers.map((server) => (
+                      <TableRow
+                        key={server.id}
+                        className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                      >
+                        <TableCell className="font-medium text-slate-900 dark:text-slate-50">
+                          {server.name}
+                        </TableCell>
+                        <TableCell className="capitalize">{server.server_type}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {server.hosting_provider === "aws" ? "AWS" : "Docker"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {server.cpu_cores} vCPU / {server.memory_gb} GB
+                        </TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                          {server.aws_region || "-"}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(server.status)}</TableCell>
+                        <TableCell>${server.hourly_rate.toFixed(3)}/hr</TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                          {new Date(server.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            {server.status === "running" && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                                  asChild
+                                >
+                                  <RouterLink to="/remote-terminals/terminal" search={{ serverId: server.id }}>
+                                    Terminal
+                                  </RouterLink>
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                                  onClick={() => stopMutation.mutate(server.id)}
+                                  disabled={stopMutation.isPending}
+                                >
+                                  Stop
+                                </Button>
+                              </>
+                            )}
+                            {server.status === "stopped" && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-full px-3 py-1 text-xs font-semibold"
+                                onClick={() => startMutation.mutate(server.id)}
+                                disabled={startMutation.isPending}
+                              >
+                                Start
+                              </Button>
+                            )}
+                            {server.status === "provisioning" && (
+                              <Badge variant="outline">Provisioning...</Badge>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full px-3 py-1 text-xs font-semibold text-destructive hover:text-destructive"
+                              onClick={() => setDeleteTarget(server)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-right text-sm font-semibold text-slate-600 dark:text-slate-400">
-                      {fleetSummary.totalServers} servers · {numberFormatter.format(fleetSummary.connected)} connected · {numberFormatter.format(fleetSummary.trial)} trial
-                      {fleetSummary.trial === 1 ? " seat" : " seats"}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
+                {servers.length > 0 && (
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-right text-sm font-semibold text-slate-600 dark:text-slate-400">
+                        {fleetSummary.totalServers} servers · {fleetSummary.running} running · {currencyFormatter.format(fleetSummary.totalMonthly)}/mo
+                      </TableCell>
+                    </TableRow>
+                  </TableFooter>
+                )}
               </Table>
-          </div>
-          <div className="flex flex-wrap items-center gap-4 border-t border-slate-200/70 bg-white/70 py-6 text-sm text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-400">
-            <p>
-              Charged run rate {currencyFormatter.format(fleetSummary.totalMonthlyCharged)} · List price {currencyFormatter.format(fleetSummary.totalMonthlyList)}.
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500">
-              Rotation, backup, monitoring, and managed support counts update alongside your dashboard tiles.
-            </p>
-          </div>
+            </div>
             </div>
           </div>
         </PageSection>
-            <div className="mt-10 border-t border-slate-200/60 pt-10 dark:border-slate-800">
-              <div className="mb-6 space-y-1">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  Jump to
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Quick links to page sections.
-                </p>
+
+        <div className="mt-10 border-t border-slate-200/60 pt-10 dark:border-slate-800">
+          <div className="mb-6 space-y-1">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Jump to</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Quick links to page sections.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <RouterLink to="/" className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900">
+              <div className="space-y-1">
+                <div className="font-semibold text-slate-900 dark:text-slate-100">Workspace</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Subscriptions, average usage, and quick billing actions.</div>
               </div>
-
-              <div className="grid gap-4 sm:grid-cols-3">
-                <RouterLink
-                  to="/"
-                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
-                >
-                  <div className="space-y-1">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Workspace
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Subscriptions, average usage, and quick billing actions.
-                    </div>
-                  </div>
-                </RouterLink>
-
-                <a
-                  href="#analytics"
-                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
-                >
-                  <div className="space-y-1">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Usage insights
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Traffic, spend, and throughput metrics.
-                    </div>
-                  </div>
-                </a>
-
-                <RouterLink
-                  to="/"
-                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <div className="font-semibold text-slate-900 dark:text-slate-100">
-                        Tool directory
-                      </div>
-                       <span className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                        View
-                      </span>
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Explore every workspace module in one place.
-                    </div>
-                  </div>
-                </RouterLink>
+            </RouterLink>
+            <a href="#analytics" className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900">
+              <div className="space-y-1">
+                <div className="font-semibold text-slate-900 dark:text-slate-100">Usage insights</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Traffic, spend, and throughput metrics.</div>
               </div>
-            </div>
+            </a>
+            <RouterLink to="/" className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900">
+              <div className="space-y-1">
+                <div className="font-semibold text-slate-900 dark:text-slate-100">Tool directory</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Explore every workspace module in one place.</div>
+              </div>
+            </RouterLink>
+          </div>
+        </div>
     </div>
+
+    <CreateServer isOpen={createOpen} onClose={() => setCreateOpen(false)} />
+
+    <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete Server</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete &quot;{deleteTarget?.name}&quot;? This action cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="gap-3">
+          <Button
+            variant="destructive"
+            onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+            disabled={deleteMutation.isPending}
+          >
+            {deleteMutation.isPending ? "Deleting..." : "Delete"}
+          </Button>
+          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </PageScaffold>
   )
 }
@@ -373,45 +387,6 @@ const SummaryTile = ({
     <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{description}</p>
   </div>
 )
-
-const CredentialCell = ({
-  label,
-  value,
-  onCopy,
-  isCopied,
-}: {
-  label: string
-  value: string
-  onCopy: () => void
-  isCopied: boolean
-}) => (
-  <div className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
-    <span className="font-medium text-slate-900 dark:text-slate-100">{value}</span>
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8 rounded-full border border-transparent text-slate-500 transition hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
-      onClick={onCopy}
-      aria-label={`Copy ${label}`}
-    >
-      {isCopied ? <FiCheck className="h-4 w-4 text-emerald-500" /> : <FiCopy className="h-4 w-4" />}
-    </Button>
-  </div>
-)
-
-const formatDate = (isoDate: string) => {
-  try {
-    const date = new Date(isoDate)
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date)
-  } catch (error) {
-    return isoDate
-  }
-}
 
 export const Route = createFileRoute("/_layout/hosting/")({
   component: HostingIndexPage,

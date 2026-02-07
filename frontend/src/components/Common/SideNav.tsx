@@ -86,12 +86,7 @@ const navStructure: NavItem[] = [
       {
         title: "Managed VPS",
         path: "/hosting",
-        description: "Fully managed virtual private servers for your needs.",
-      },
-      {
-        title: "Remote Terminals",
-        path: "/remote-terminals",
-        description: "SSH, GPU, and inference servers with browser terminal.",
+        description: "Managed servers with terminal access, billing, and provisioning.",
       },
     ],
   },
