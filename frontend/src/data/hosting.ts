@@ -7,8 +7,8 @@ export interface HostingServer extends ServerNode {
 
 export const hostingServers: HostingServer[] = [
   {
-    name: "01-NYC-FID-8core-ssd",
-    email: "apis.popov@gmail.com",
+    name: "prod-use1-ssh-01",
+    email: "admin@roamingproxy.com",
     ip: "100.100.95.59",
     version: "1.82.0",
     kernel: "Linux 6.8.0-57-generic",
@@ -30,8 +30,8 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "02-NYC-MTM-16core-ssd",
-    email: "apis.popov@gmail.com",
+    name: "prod-use1-gpu-02",
+    email: "admin@roamingproxy.com",
     ip: "100.140.50.60",
     version: "1.88.0",
     kernel: "Linux 6.8.0-62-generic",
@@ -53,8 +53,8 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "03-NYC-BKN-4core-hdd",
-    email: "apis.popov@gmail.com",
+    name: "prod-use1-ssh-03",
+    email: "admin@roamingproxy.com",
     ip: "100.100.95.61",
     version: "1.88.0",
     kernel: "Linux 6.8.0-62-generic",
@@ -76,8 +76,8 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "04-NJ-SEC-4core-ssd",
-    email: "apis.popov@gmail.com",
+    name: "prod-use1-ssh-04",
+    email: "admin@roamingproxy.com",
     ip: "100.100.95.62",
     version: "1.88.0",
     kernel: "Linux 6.8.0-62-generic",
@@ -99,8 +99,8 @@ export const hostingServers: HostingServer[] = [
     isTrial: false,
   },
   {
-    name: "05-NYC-FID-8core-hdd",
-    email: "apis.popov@gmail.com",
+    name: "prod-usw2-ssh-05",
+    email: "admin@roamingproxy.com",
     ip: "100.100.95.63",
     version: "1.88.0",
     kernel: "Linux 6.8.0-62-generic",
@@ -122,8 +122,8 @@ export const hostingServers: HostingServer[] = [
     isTrial: true,
   },
   {
-    name: "06-NYC-MTM-2core-ssd",
-    email: "apis.popov@gmail.com",
+    name: "prod-euw1-ssh-06",
+    email: "admin@roamingproxy.com",
     ip: "100.100.95.64",
     version: "1.88.0",
     kernel: "Linux 6.8.0-62-generic",
