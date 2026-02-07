@@ -41,8 +41,36 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
 @app.on_event("startup")
-def seed_inference_models():
-    """Auto-seed default inference models if table is empty."""
+def ensure_tables_and_seed():
+    """Create missing tables and seed default data on startup."""
+    from sqlmodel import SQLModel, text
+
+    # Step 1: Drop orphaned PostgreSQL types that block CREATE TABLE
+    try:
+        with engine.connect() as conn:
+            for tname in [
+                "remote_server", "inference_model", "database_instance",
+                "usage_record", "provisioning_job", "model_usage",
+            ]:
+                conn.execute(text(
+                    f"DO $$ BEGIN "
+                    f"IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='{tname}') "
+                    f"AND EXISTS (SELECT 1 FROM pg_type WHERE typname='{tname}') "
+                    f"THEN EXECUTE 'DROP TYPE {tname} CASCADE'; END IF; END $$;"
+                ))
+            conn.commit()
+    except Exception as e:
+        logger.warning(f"Type cleanup: {e}")
+
+    # Step 2: Create all missing tables
+    try:
+        SQLModel.metadata.create_all(engine)
+        logger.info("Ensured all tables exist")
+    except Exception as e:
+        logger.error(f"Failed to create tables: {e}")
+        return
+
+    # Step 3: Seed inference models
     default_models = [
         {"name": "GPT-4o", "provider": "openai", "model_id": "gpt-4o", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.005, "max_tokens": 128000},
         {"name": "GPT-4o Mini", "provider": "openai", "model_id": "gpt-4o-mini", "capabilities": ["chat", "code"], "pricing_per_1k_tokens": 0.00015, "max_tokens": 128000},
@@ -54,28 +82,21 @@ def seed_inference_models():
     ]
     try:
         with Session(engine) as session:
-            existing = session.exec(select(InferenceModel).limit(1)).first()
-            if existing:
-                return
-            for m in default_models:
-                session.add(InferenceModel(
-                    id=uuid.uuid4(), name=m["name"], provider=m["provider"],
-                    model_id=m["model_id"], capabilities=m["capabilities"],
-                    pricing_per_1k_tokens=m["pricing_per_1k_tokens"],
-                    max_tokens=m["max_tokens"], is_active=True,
-                    created_at=datetime.utcnow(),
-                ))
-            session.commit()
-            logger.info(f"Seeded {len(default_models)} inference models")
+            if not session.exec(select(InferenceModel).limit(1)).first():
+                for m in default_models:
+                    session.add(InferenceModel(
+                        id=uuid.uuid4(), name=m["name"], provider=m["provider"],
+                        model_id=m["model_id"], capabilities=m["capabilities"],
+                        pricing_per_1k_tokens=m["pricing_per_1k_tokens"],
+                        max_tokens=m["max_tokens"], is_active=True,
+                        created_at=datetime.utcnow(),
+                    ))
+                session.commit()
+                logger.info(f"Seeded {len(default_models)} inference models")
     except Exception as e:
         logger.error(f"Failed to seed inference models: {e}")
 
-
-@app.on_event("startup")
-def seed_fleet_servers():
-    """Auto-seed existing VPS fleet as RemoteServer rows for the first superuser."""
-    from sqlmodel import text as sql_text
-
+    # Step 4: Seed fleet servers
     fleet = [
         {"name": "prod-use1-ssh-01", "cpu_cores": 1, "memory_gb": 2, "hourly_rate": 0.016, "created_at": "2025-07-01", "server_type": "ssh", "aws_region": "us-east-1"},
         {"name": "prod-use1-gpu-02", "cpu_cores": 16, "memory_gb": 64, "hourly_rate": 0.624, "created_at": "2025-09-01", "server_type": "gpu", "aws_region": "us-east-1"},
@@ -86,42 +107,23 @@ def seed_fleet_servers():
     ]
     try:
         with Session(engine) as session:
-            # Ensure table exists
-            try:
-                existing = session.exec(select(RemoteServer).limit(1)).first()
-                if existing:
-                    logger.info("Fleet already seeded, skipping")
+            if not session.exec(select(RemoteServer).limit(1)).first():
+                superuser = session.exec(
+                    select(User).where(User.is_superuser == True).limit(1)
+                ).first()
+                if not superuser:
+                    logger.warning("No superuser found, skipping fleet seed")
                     return
-            except Exception:
-                logger.warning("remote_server table may not exist, creating via SQLModel")
-                from sqlmodel import SQLModel
-                SQLModel.metadata.create_all(engine, tables=[RemoteServer.__table__])
-
-            # Find first superuser
-            superuser = session.exec(
-                select(User).where(User.is_superuser == True).limit(1)
-            ).first()
-            if not superuser:
-                logger.warning("No superuser found, skipping fleet seed")
-                return
-
-            logger.info(f"Seeding fleet for superuser {superuser.email} (id={superuser.id})")
-            for s in fleet:
-                session.add(RemoteServer(
-                    id=uuid.uuid4(),
-                    user_id=superuser.id,
-                    name=s["name"],
-                    server_type=s["server_type"],
-                    hosting_provider="aws",
-                    cpu_cores=s["cpu_cores"],
-                    memory_gb=s["memory_gb"],
-                    aws_region=s["aws_region"],
-                    status="running",
-                    hourly_rate=s["hourly_rate"],
-                    created_at=datetime.fromisoformat(s["created_at"]),
-                ))
-            session.commit()
-            logger.info(f"Seeded {len(fleet)} fleet servers successfully")
+                for s in fleet:
+                    session.add(RemoteServer(
+                        id=uuid.uuid4(), user_id=superuser.id, name=s["name"],
+                        server_type=s["server_type"], hosting_provider="aws",
+                        cpu_cores=s["cpu_cores"], memory_gb=s["memory_gb"],
+                        aws_region=s["aws_region"], status="running",
+                        hourly_rate=s["hourly_rate"],
+                        created_at=datetime.fromisoformat(s["created_at"]),
+                    ))
+                session.commit()
+                logger.info(f"Seeded {len(fleet)} fleet servers for {superuser.email}")
     except Exception as e:
-        import traceback
-        logger.error(f"Failed to seed fleet servers: {e}\n{traceback.format_exc()}")
+        logger.error(f"Failed to seed fleet servers: {e}")
