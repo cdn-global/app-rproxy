@@ -298,6 +298,21 @@ async def activate_account(request: ActivateRequest, db: Annotated[Session, Depe
     
     user.hashed_password = get_password_hash(request.new_password)
     user.is_active = True
+
+    # Auto-create Stripe customer if not already set
+    if not user.stripe_customer_id:
+        try:
+            customer = stripe.Customer.create(
+                email=user.email,
+                name=user.full_name or user.email.split("@")[0],
+                metadata={"user_id": str(user.id)},
+            )
+            user.stripe_customer_id = customer.id
+            logger.info(f"Created Stripe customer {customer.id} for user: {user.email}")
+        except stripe.StripeError as e:
+            logger.error(f"Failed to create Stripe customer for {user.email}: {e}")
+            # Don't fail activation if Stripe fails - they can retry later
+
     db.commit()
     logger.info(f"Account activated successfully for user: {user.email}")
     return {"message": "Account activated successfully"}

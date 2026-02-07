@@ -8,249 +8,645 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as ActivateRouteImport } from './routes/activate'
-import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
-import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
-import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
-import { Route as LayoutComponentlistRouteImport } from './routes/_layout/componentlist'
-import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
-import { Route as LayoutStorageIndexRouteImport } from './routes/_layout/storage/index'
-import { Route as LayoutServicesIndexRouteImport } from './routes/_layout/services/index'
-import { Route as LayoutManagedDatabaseIndexRouteImport } from './routes/_layout/managed-database/index'
-import { Route as LayoutLanguageModelsIndexRouteImport } from './routes/_layout/language-models/index'
-import { Route as LayoutInfrastructureIndexRouteImport } from './routes/_layout/infrastructure/index'
-import { Route as LayoutHostingIndexRouteImport } from './routes/_layout/hosting/index'
-import { Route as LayoutRemoteTerminalsIndexRouteImport } from './routes/_layout/remote-terminals/index'
-import { Route as LayoutComputeIndexRouteImport } from './routes/_layout/compute/index'
-import { Route as LayoutWebScrapingToolsUserAgentsRouteImport } from './routes/_layout/web-scraping-tools/user-agents'
-import { Route as LayoutWebScrapingToolsSerpApiRouteImport } from './routes/_layout/web-scraping-tools/serp-api'
-import { Route as LayoutWebScrapingToolsHttpsApiRouteImport } from './routes/_layout/web-scraping-tools/https-api'
-import { Route as LayoutWebScrapingToolsBillingRouteImport } from './routes/_layout/web-scraping-tools/billing'
-import { Route as LayoutWebScrapingToolsApiKeysRouteImport } from './routes/_layout/web-scraping-tools/api-keys'
-import { Route as LayoutStorageBucketRouteImport } from './routes/_layout/storage/bucket'
-import { Route as LayoutServicesServerlessComputeRouteImport } from './routes/_layout/services/serverless-compute'
-import { Route as LayoutServicesManagedStorageRouteImport } from './routes/_layout/services/managed-storage'
-import { Route as LayoutServicesManagedDatabaseRouteImport } from './routes/_layout/services/managed-database'
-import { Route as LayoutServicesLlmInferenceApiRouteImport } from './routes/_layout/services/llm-inference-api'
-import { Route as LayoutManagedDatabaseInstanceRouteImport } from './routes/_layout/managed-database/instance'
-import { Route as LayoutLanguageModelsLlmServiceRouteImport } from './routes/_layout/language-models/llm-service'
-import { Route as LayoutLanguageModelsBillingRouteImport } from './routes/_layout/language-models/billing'
-import { Route as LayoutInfrastructureBillingRouteImport } from './routes/_layout/infrastructure/billing'
-import { Route as LayoutHostingBillingRouteImport } from './routes/_layout/hosting/billing'
-import { Route as LayoutHostingDeviceNameRouteImport } from './routes/_layout/hosting/$deviceName'
-import { Route as LayoutComputeBillingRouteImport } from './routes/_layout/compute/billing'
-import { Route as LayoutComputeServiceNameRouteImport } from './routes/_layout/compute/$serviceName'
+// Import Routes
 
-const SignupRoute = SignupRouteImport.update({
+import { Route as rootRoute } from './routes/__root'
+import { Route as SignupImport } from './routes/signup'
+import { Route as ResetPasswordImport } from './routes/reset-password'
+import { Route as RecoverPasswordImport } from './routes/recover-password'
+import { Route as LoginImport } from './routes/login'
+import { Route as ActivateImport } from './routes/activate'
+import { Route as LayoutImport } from './routes/_layout'
+import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutSettingsImport } from './routes/_layout/settings'
+import { Route as LayoutItemsImport } from './routes/_layout/items'
+import { Route as LayoutComponentlistImport } from './routes/_layout/componentlist'
+import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutStorageIndexImport } from './routes/_layout/storage/index'
+import { Route as LayoutServicesIndexImport } from './routes/_layout/services/index'
+import { Route as LayoutRemoteTerminalsIndexImport } from './routes/_layout/remote-terminals/index'
+import { Route as LayoutManagedDatabaseIndexImport } from './routes/_layout/managed-database/index'
+import { Route as LayoutLanguageModelsIndexImport } from './routes/_layout/language-models/index'
+import { Route as LayoutInfrastructureIndexImport } from './routes/_layout/infrastructure/index'
+import { Route as LayoutHostingIndexImport } from './routes/_layout/hosting/index'
+import { Route as LayoutComputeIndexImport } from './routes/_layout/compute/index'
+import { Route as LayoutWebScrapingToolsUserAgentsImport } from './routes/_layout/web-scraping-tools/user-agents'
+import { Route as LayoutWebScrapingToolsSerpApiImport } from './routes/_layout/web-scraping-tools/serp-api'
+import { Route as LayoutWebScrapingToolsHttpsApiImport } from './routes/_layout/web-scraping-tools/https-api'
+import { Route as LayoutWebScrapingToolsBillingImport } from './routes/_layout/web-scraping-tools/billing'
+import { Route as LayoutWebScrapingToolsApiKeysImport } from './routes/_layout/web-scraping-tools/api-keys'
+import { Route as LayoutStorageBucketImport } from './routes/_layout/storage/bucket'
+import { Route as LayoutServicesServerlessComputeImport } from './routes/_layout/services/serverless-compute'
+import { Route as LayoutServicesManagedStorageImport } from './routes/_layout/services/managed-storage'
+import { Route as LayoutServicesManagedDatabaseImport } from './routes/_layout/services/managed-database'
+import { Route as LayoutServicesLlmInferenceApiImport } from './routes/_layout/services/llm-inference-api'
+import { Route as LayoutRemoteTerminalsTerminalImport } from './routes/_layout/remote-terminals/terminal'
+import { Route as LayoutManagedDatabaseInstanceImport } from './routes/_layout/managed-database/instance'
+import { Route as LayoutLanguageModelsLlmServiceImport } from './routes/_layout/language-models/llm-service'
+import { Route as LayoutLanguageModelsBillingImport } from './routes/_layout/language-models/billing'
+import { Route as LayoutInfrastructureBillingImport } from './routes/_layout/infrastructure/billing'
+import { Route as LayoutHostingBillingImport } from './routes/_layout/hosting/billing'
+import { Route as LayoutHostingDeviceNameImport } from './routes/_layout/hosting/$deviceName'
+import { Route as LayoutComputeBillingImport } from './routes/_layout/compute/billing'
+import { Route as LayoutComputeServiceNameImport } from './routes/_layout/compute/$serviceName'
+
+// Create/Update Routes
+
+const SignupRoute = SignupImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
+
+const ResetPasswordRoute = ResetPasswordImport.update({
   id: '/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const RecoverPasswordRoute = RecoverPasswordRouteImport.update({
+
+const RecoverPasswordRoute = RecoverPasswordImport.update({
   id: '/recover-password',
   path: '/recover-password',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const LoginRoute = LoginRouteImport.update({
+
+const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ActivateRoute = ActivateRouteImport.update({
+
+const ActivateRoute = ActivateImport.update({
   id: '/activate',
   path: '/activate',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const LayoutRoute = LayoutRouteImport.update({
+
+const LayoutRoute = LayoutImport.update({
   id: '/_layout',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
+
+const LayoutIndexRoute = LayoutIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
+
+const LayoutSettingsRoute = LayoutSettingsImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutItemsRoute = LayoutItemsRouteImport.update({
+
+const LayoutItemsRoute = LayoutItemsImport.update({
   id: '/items',
   path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutComponentlistRoute = LayoutComponentlistRouteImport.update({
+
+const LayoutComponentlistRoute = LayoutComponentlistImport.update({
   id: '/componentlist',
   path: '/componentlist',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutAdminRoute = LayoutAdminRouteImport.update({
+
+const LayoutAdminRoute = LayoutAdminImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutStorageIndexRoute = LayoutStorageIndexRouteImport.update({
+
+const LayoutStorageIndexRoute = LayoutStorageIndexImport.update({
   id: '/storage/',
   path: '/storage/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutServicesIndexRoute = LayoutServicesIndexRouteImport.update({
+
+const LayoutServicesIndexRoute = LayoutServicesIndexImport.update({
   id: '/services/',
   path: '/services/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutManagedDatabaseIndexRoute =
-  LayoutManagedDatabaseIndexRouteImport.update({
+
+const LayoutRemoteTerminalsIndexRoute = LayoutRemoteTerminalsIndexImport.update(
+  {
+    id: '/remote-terminals/',
+    path: '/remote-terminals/',
+    getParentRoute: () => LayoutRoute,
+  } as any,
+)
+
+const LayoutManagedDatabaseIndexRoute = LayoutManagedDatabaseIndexImport.update(
+  {
     id: '/managed-database/',
     path: '/managed-database/',
     getParentRoute: () => LayoutRoute,
-  } as any)
-const LayoutLanguageModelsIndexRoute =
-  LayoutLanguageModelsIndexRouteImport.update({
-    id: '/language-models/',
-    path: '/language-models/',
-    getParentRoute: () => LayoutRoute,
-  } as any)
-const LayoutInfrastructureIndexRoute =
-  LayoutInfrastructureIndexRouteImport.update({
-    id: '/infrastructure/',
-    path: '/infrastructure/',
-    getParentRoute: () => LayoutRoute,
-  } as any)
-const LayoutHostingIndexRoute = LayoutHostingIndexRouteImport.update({
+  } as any,
+)
+
+const LayoutLanguageModelsIndexRoute = LayoutLanguageModelsIndexImport.update({
+  id: '/language-models/',
+  path: '/language-models/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutInfrastructureIndexRoute = LayoutInfrastructureIndexImport.update({
+  id: '/infrastructure/',
+  path: '/infrastructure/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutHostingIndexRoute = LayoutHostingIndexImport.update({
   id: '/hosting/',
   path: '/hosting/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutRemoteTerminalsIndexRoute =
-  LayoutRemoteTerminalsIndexRouteImport.update({
-    id: '/remote-terminals/',
-    path: '/remote-terminals/',
-    getParentRoute: () => LayoutRoute,
-  } as any)
-const LayoutComputeIndexRoute = LayoutComputeIndexRouteImport.update({
+
+const LayoutComputeIndexRoute = LayoutComputeIndexImport.update({
   id: '/compute/',
   path: '/compute/',
   getParentRoute: () => LayoutRoute,
 } as any)
+
 const LayoutWebScrapingToolsUserAgentsRoute =
-  LayoutWebScrapingToolsUserAgentsRouteImport.update({
+  LayoutWebScrapingToolsUserAgentsImport.update({
     id: '/web-scraping-tools/user-agents',
     path: '/web-scraping-tools/user-agents',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutWebScrapingToolsSerpApiRoute =
-  LayoutWebScrapingToolsSerpApiRouteImport.update({
+  LayoutWebScrapingToolsSerpApiImport.update({
     id: '/web-scraping-tools/serp-api',
     path: '/web-scraping-tools/serp-api',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutWebScrapingToolsHttpsApiRoute =
-  LayoutWebScrapingToolsHttpsApiRouteImport.update({
+  LayoutWebScrapingToolsHttpsApiImport.update({
     id: '/web-scraping-tools/https-api',
     path: '/web-scraping-tools/https-api',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutWebScrapingToolsBillingRoute =
-  LayoutWebScrapingToolsBillingRouteImport.update({
+  LayoutWebScrapingToolsBillingImport.update({
     id: '/web-scraping-tools/billing',
     path: '/web-scraping-tools/billing',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutWebScrapingToolsApiKeysRoute =
-  LayoutWebScrapingToolsApiKeysRouteImport.update({
+  LayoutWebScrapingToolsApiKeysImport.update({
     id: '/web-scraping-tools/api-keys',
     path: '/web-scraping-tools/api-keys',
     getParentRoute: () => LayoutRoute,
   } as any)
-const LayoutStorageBucketRoute = LayoutStorageBucketRouteImport.update({
+
+const LayoutStorageBucketRoute = LayoutStorageBucketImport.update({
   id: '/storage/bucket',
   path: '/storage/bucket',
   getParentRoute: () => LayoutRoute,
 } as any)
+
 const LayoutServicesServerlessComputeRoute =
-  LayoutServicesServerlessComputeRouteImport.update({
+  LayoutServicesServerlessComputeImport.update({
     id: '/services/serverless-compute',
     path: '/services/serverless-compute',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutServicesManagedStorageRoute =
-  LayoutServicesManagedStorageRouteImport.update({
+  LayoutServicesManagedStorageImport.update({
     id: '/services/managed-storage',
     path: '/services/managed-storage',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutServicesManagedDatabaseRoute =
-  LayoutServicesManagedDatabaseRouteImport.update({
+  LayoutServicesManagedDatabaseImport.update({
     id: '/services/managed-database',
     path: '/services/managed-database',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutServicesLlmInferenceApiRoute =
-  LayoutServicesLlmInferenceApiRouteImport.update({
+  LayoutServicesLlmInferenceApiImport.update({
     id: '/services/llm-inference-api',
     path: '/services/llm-inference-api',
     getParentRoute: () => LayoutRoute,
   } as any)
+
+const LayoutRemoteTerminalsTerminalRoute =
+  LayoutRemoteTerminalsTerminalImport.update({
+    id: '/remote-terminals/terminal',
+    path: '/remote-terminals/terminal',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
 const LayoutManagedDatabaseInstanceRoute =
-  LayoutManagedDatabaseInstanceRouteImport.update({
+  LayoutManagedDatabaseInstanceImport.update({
     id: '/managed-database/instance',
     path: '/managed-database/instance',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutLanguageModelsLlmServiceRoute =
-  LayoutLanguageModelsLlmServiceRouteImport.update({
+  LayoutLanguageModelsLlmServiceImport.update({
     id: '/language-models/llm-service',
     path: '/language-models/llm-service',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutLanguageModelsBillingRoute =
-  LayoutLanguageModelsBillingRouteImport.update({
+  LayoutLanguageModelsBillingImport.update({
     id: '/language-models/billing',
     path: '/language-models/billing',
     getParentRoute: () => LayoutRoute,
   } as any)
+
 const LayoutInfrastructureBillingRoute =
-  LayoutInfrastructureBillingRouteImport.update({
+  LayoutInfrastructureBillingImport.update({
     id: '/infrastructure/billing',
     path: '/infrastructure/billing',
     getParentRoute: () => LayoutRoute,
   } as any)
-const LayoutHostingBillingRoute = LayoutHostingBillingRouteImport.update({
+
+const LayoutHostingBillingRoute = LayoutHostingBillingImport.update({
   id: '/hosting/billing',
   path: '/hosting/billing',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutHostingDeviceNameRoute = LayoutHostingDeviceNameRouteImport.update({
+
+const LayoutHostingDeviceNameRoute = LayoutHostingDeviceNameImport.update({
   id: '/hosting/$deviceName',
   path: '/hosting/$deviceName',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutComputeBillingRoute = LayoutComputeBillingRouteImport.update({
+
+const LayoutComputeBillingRoute = LayoutComputeBillingImport.update({
   id: '/compute/billing',
   path: '/compute/billing',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutComputeServiceNameRoute =
-  LayoutComputeServiceNameRouteImport.update({
-    id: '/compute/$serviceName',
-    path: '/compute/$serviceName',
-    getParentRoute: () => LayoutRoute,
-  } as any)
+
+const LayoutComputeServiceNameRoute = LayoutComputeServiceNameImport.update({
+  id: '/compute/$serviceName',
+  path: '/compute/$serviceName',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+// Populate the FileRoutesByPath interface
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/activate': {
+      id: '/activate'
+      path: '/activate'
+      fullPath: '/activate'
+      preLoaderRoute: typeof ActivateImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/recover-password': {
+      id: '/recover-password'
+      path: '/recover-password'
+      fullPath: '/recover-password'
+      preLoaderRoute: typeof RecoverPasswordImport
+      parentRoute: typeof rootRoute
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordImport
+      parentRoute: typeof rootRoute
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupImport
+      parentRoute: typeof rootRoute
+    }
+    '/_layout/admin': {
+      id: '/_layout/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof LayoutAdminImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/componentlist': {
+      id: '/_layout/componentlist'
+      path: '/componentlist'
+      fullPath: '/componentlist'
+      preLoaderRoute: typeof LayoutComponentlistImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/items': {
+      id: '/_layout/items'
+      path: '/items'
+      fullPath: '/items'
+      preLoaderRoute: typeof LayoutItemsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/settings': {
+      id: '/_layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof LayoutSettingsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/compute/$serviceName': {
+      id: '/_layout/compute/$serviceName'
+      path: '/compute/$serviceName'
+      fullPath: '/compute/$serviceName'
+      preLoaderRoute: typeof LayoutComputeServiceNameImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/compute/billing': {
+      id: '/_layout/compute/billing'
+      path: '/compute/billing'
+      fullPath: '/compute/billing'
+      preLoaderRoute: typeof LayoutComputeBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/hosting/$deviceName': {
+      id: '/_layout/hosting/$deviceName'
+      path: '/hosting/$deviceName'
+      fullPath: '/hosting/$deviceName'
+      preLoaderRoute: typeof LayoutHostingDeviceNameImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/hosting/billing': {
+      id: '/_layout/hosting/billing'
+      path: '/hosting/billing'
+      fullPath: '/hosting/billing'
+      preLoaderRoute: typeof LayoutHostingBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/infrastructure/billing': {
+      id: '/_layout/infrastructure/billing'
+      path: '/infrastructure/billing'
+      fullPath: '/infrastructure/billing'
+      preLoaderRoute: typeof LayoutInfrastructureBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/language-models/billing': {
+      id: '/_layout/language-models/billing'
+      path: '/language-models/billing'
+      fullPath: '/language-models/billing'
+      preLoaderRoute: typeof LayoutLanguageModelsBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/language-models/llm-service': {
+      id: '/_layout/language-models/llm-service'
+      path: '/language-models/llm-service'
+      fullPath: '/language-models/llm-service'
+      preLoaderRoute: typeof LayoutLanguageModelsLlmServiceImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/managed-database/instance': {
+      id: '/_layout/managed-database/instance'
+      path: '/managed-database/instance'
+      fullPath: '/managed-database/instance'
+      preLoaderRoute: typeof LayoutManagedDatabaseInstanceImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/remote-terminals/terminal': {
+      id: '/_layout/remote-terminals/terminal'
+      path: '/remote-terminals/terminal'
+      fullPath: '/remote-terminals/terminal'
+      preLoaderRoute: typeof LayoutRemoteTerminalsTerminalImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/llm-inference-api': {
+      id: '/_layout/services/llm-inference-api'
+      path: '/services/llm-inference-api'
+      fullPath: '/services/llm-inference-api'
+      preLoaderRoute: typeof LayoutServicesLlmInferenceApiImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/managed-database': {
+      id: '/_layout/services/managed-database'
+      path: '/services/managed-database'
+      fullPath: '/services/managed-database'
+      preLoaderRoute: typeof LayoutServicesManagedDatabaseImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/managed-storage': {
+      id: '/_layout/services/managed-storage'
+      path: '/services/managed-storage'
+      fullPath: '/services/managed-storage'
+      preLoaderRoute: typeof LayoutServicesManagedStorageImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/serverless-compute': {
+      id: '/_layout/services/serverless-compute'
+      path: '/services/serverless-compute'
+      fullPath: '/services/serverless-compute'
+      preLoaderRoute: typeof LayoutServicesServerlessComputeImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/storage/bucket': {
+      id: '/_layout/storage/bucket'
+      path: '/storage/bucket'
+      fullPath: '/storage/bucket'
+      preLoaderRoute: typeof LayoutStorageBucketImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/web-scraping-tools/api-keys': {
+      id: '/_layout/web-scraping-tools/api-keys'
+      path: '/web-scraping-tools/api-keys'
+      fullPath: '/web-scraping-tools/api-keys'
+      preLoaderRoute: typeof LayoutWebScrapingToolsApiKeysImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/web-scraping-tools/billing': {
+      id: '/_layout/web-scraping-tools/billing'
+      path: '/web-scraping-tools/billing'
+      fullPath: '/web-scraping-tools/billing'
+      preLoaderRoute: typeof LayoutWebScrapingToolsBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/web-scraping-tools/https-api': {
+      id: '/_layout/web-scraping-tools/https-api'
+      path: '/web-scraping-tools/https-api'
+      fullPath: '/web-scraping-tools/https-api'
+      preLoaderRoute: typeof LayoutWebScrapingToolsHttpsApiImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/web-scraping-tools/serp-api': {
+      id: '/_layout/web-scraping-tools/serp-api'
+      path: '/web-scraping-tools/serp-api'
+      fullPath: '/web-scraping-tools/serp-api'
+      preLoaderRoute: typeof LayoutWebScrapingToolsSerpApiImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/web-scraping-tools/user-agents': {
+      id: '/_layout/web-scraping-tools/user-agents'
+      path: '/web-scraping-tools/user-agents'
+      fullPath: '/web-scraping-tools/user-agents'
+      preLoaderRoute: typeof LayoutWebScrapingToolsUserAgentsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/compute/': {
+      id: '/_layout/compute/'
+      path: '/compute'
+      fullPath: '/compute'
+      preLoaderRoute: typeof LayoutComputeIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/hosting/': {
+      id: '/_layout/hosting/'
+      path: '/hosting'
+      fullPath: '/hosting'
+      preLoaderRoute: typeof LayoutHostingIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/infrastructure/': {
+      id: '/_layout/infrastructure/'
+      path: '/infrastructure'
+      fullPath: '/infrastructure'
+      preLoaderRoute: typeof LayoutInfrastructureIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/language-models/': {
+      id: '/_layout/language-models/'
+      path: '/language-models'
+      fullPath: '/language-models'
+      preLoaderRoute: typeof LayoutLanguageModelsIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/managed-database/': {
+      id: '/_layout/managed-database/'
+      path: '/managed-database'
+      fullPath: '/managed-database'
+      preLoaderRoute: typeof LayoutManagedDatabaseIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/remote-terminals/': {
+      id: '/_layout/remote-terminals/'
+      path: '/remote-terminals'
+      fullPath: '/remote-terminals'
+      preLoaderRoute: typeof LayoutRemoteTerminalsIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/services/': {
+      id: '/_layout/services/'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof LayoutServicesIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/storage/': {
+      id: '/_layout/storage/'
+      path: '/storage'
+      fullPath: '/storage'
+      preLoaderRoute: typeof LayoutStorageIndexImport
+      parentRoute: typeof LayoutImport
+    }
+  }
+}
+
+// Create and export the route tree
+
+interface LayoutRouteChildren {
+  LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutComponentlistRoute: typeof LayoutComponentlistRoute
+  LayoutItemsRoute: typeof LayoutItemsRoute
+  LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutComputeServiceNameRoute: typeof LayoutComputeServiceNameRoute
+  LayoutComputeBillingRoute: typeof LayoutComputeBillingRoute
+  LayoutHostingDeviceNameRoute: typeof LayoutHostingDeviceNameRoute
+  LayoutHostingBillingRoute: typeof LayoutHostingBillingRoute
+  LayoutInfrastructureBillingRoute: typeof LayoutInfrastructureBillingRoute
+  LayoutLanguageModelsBillingRoute: typeof LayoutLanguageModelsBillingRoute
+  LayoutLanguageModelsLlmServiceRoute: typeof LayoutLanguageModelsLlmServiceRoute
+  LayoutManagedDatabaseInstanceRoute: typeof LayoutManagedDatabaseInstanceRoute
+  LayoutRemoteTerminalsTerminalRoute: typeof LayoutRemoteTerminalsTerminalRoute
+  LayoutServicesLlmInferenceApiRoute: typeof LayoutServicesLlmInferenceApiRoute
+  LayoutServicesManagedDatabaseRoute: typeof LayoutServicesManagedDatabaseRoute
+  LayoutServicesManagedStorageRoute: typeof LayoutServicesManagedStorageRoute
+  LayoutServicesServerlessComputeRoute: typeof LayoutServicesServerlessComputeRoute
+  LayoutStorageBucketRoute: typeof LayoutStorageBucketRoute
+  LayoutWebScrapingToolsApiKeysRoute: typeof LayoutWebScrapingToolsApiKeysRoute
+  LayoutWebScrapingToolsBillingRoute: typeof LayoutWebScrapingToolsBillingRoute
+  LayoutWebScrapingToolsHttpsApiRoute: typeof LayoutWebScrapingToolsHttpsApiRoute
+  LayoutWebScrapingToolsSerpApiRoute: typeof LayoutWebScrapingToolsSerpApiRoute
+  LayoutWebScrapingToolsUserAgentsRoute: typeof LayoutWebScrapingToolsUserAgentsRoute
+  LayoutComputeIndexRoute: typeof LayoutComputeIndexRoute
+  LayoutHostingIndexRoute: typeof LayoutHostingIndexRoute
+  LayoutInfrastructureIndexRoute: typeof LayoutInfrastructureIndexRoute
+  LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
+  LayoutManagedDatabaseIndexRoute: typeof LayoutManagedDatabaseIndexRoute
+  LayoutRemoteTerminalsIndexRoute: typeof LayoutRemoteTerminalsIndexRoute
+  LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
+  LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutAdminRoute: LayoutAdminRoute,
+  LayoutComponentlistRoute: LayoutComponentlistRoute,
+  LayoutItemsRoute: LayoutItemsRoute,
+  LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutComputeServiceNameRoute: LayoutComputeServiceNameRoute,
+  LayoutComputeBillingRoute: LayoutComputeBillingRoute,
+  LayoutHostingDeviceNameRoute: LayoutHostingDeviceNameRoute,
+  LayoutHostingBillingRoute: LayoutHostingBillingRoute,
+  LayoutInfrastructureBillingRoute: LayoutInfrastructureBillingRoute,
+  LayoutLanguageModelsBillingRoute: LayoutLanguageModelsBillingRoute,
+  LayoutLanguageModelsLlmServiceRoute: LayoutLanguageModelsLlmServiceRoute,
+  LayoutManagedDatabaseInstanceRoute: LayoutManagedDatabaseInstanceRoute,
+  LayoutRemoteTerminalsTerminalRoute: LayoutRemoteTerminalsTerminalRoute,
+  LayoutServicesLlmInferenceApiRoute: LayoutServicesLlmInferenceApiRoute,
+  LayoutServicesManagedDatabaseRoute: LayoutServicesManagedDatabaseRoute,
+  LayoutServicesManagedStorageRoute: LayoutServicesManagedStorageRoute,
+  LayoutServicesServerlessComputeRoute: LayoutServicesServerlessComputeRoute,
+  LayoutStorageBucketRoute: LayoutStorageBucketRoute,
+  LayoutWebScrapingToolsApiKeysRoute: LayoutWebScrapingToolsApiKeysRoute,
+  LayoutWebScrapingToolsBillingRoute: LayoutWebScrapingToolsBillingRoute,
+  LayoutWebScrapingToolsHttpsApiRoute: LayoutWebScrapingToolsHttpsApiRoute,
+  LayoutWebScrapingToolsSerpApiRoute: LayoutWebScrapingToolsSerpApiRoute,
+  LayoutWebScrapingToolsUserAgentsRoute: LayoutWebScrapingToolsUserAgentsRoute,
+  LayoutComputeIndexRoute: LayoutComputeIndexRoute,
+  LayoutHostingIndexRoute: LayoutHostingIndexRoute,
+  LayoutInfrastructureIndexRoute: LayoutInfrastructureIndexRoute,
+  LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
+  LayoutManagedDatabaseIndexRoute: LayoutManagedDatabaseIndexRoute,
+  LayoutRemoteTerminalsIndexRoute: LayoutRemoteTerminalsIndexRoute,
+  LayoutServicesIndexRoute: LayoutServicesIndexRoute,
+  LayoutStorageIndexRoute: LayoutStorageIndexRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
 
 export interface FileRoutesByFullPath {
+  '': typeof LayoutRouteWithChildren
   '/activate': typeof ActivateRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
@@ -269,6 +665,7 @@ export interface FileRoutesByFullPath {
   '/language-models/billing': typeof LayoutLanguageModelsBillingRoute
   '/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
   '/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
+  '/remote-terminals/terminal': typeof LayoutRemoteTerminalsTerminalRoute
   '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -288,6 +685,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
 }
+
 export interface FileRoutesByTo {
   '/activate': typeof ActivateRoute
   '/login': typeof LoginRoute
@@ -307,6 +705,7 @@ export interface FileRoutesByTo {
   '/language-models/billing': typeof LayoutLanguageModelsBillingRoute
   '/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
   '/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
+  '/remote-terminals/terminal': typeof LayoutRemoteTerminalsTerminalRoute
   '/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -326,8 +725,9 @@ export interface FileRoutesByTo {
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
 }
+
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
+  __root__: typeof rootRoute
   '/_layout': typeof LayoutRouteWithChildren
   '/activate': typeof ActivateRoute
   '/login': typeof LoginRoute
@@ -347,6 +747,7 @@ export interface FileRoutesById {
   '/_layout/language-models/billing': typeof LayoutLanguageModelsBillingRoute
   '/_layout/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
   '/_layout/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
+  '/_layout/remote-terminals/terminal': typeof LayoutRemoteTerminalsTerminalRoute
   '/_layout/services/llm-inference-api': typeof LayoutServicesLlmInferenceApiRoute
   '/_layout/services/managed-database': typeof LayoutServicesManagedDatabaseRoute
   '/_layout/services/managed-storage': typeof LayoutServicesManagedStorageRoute
@@ -366,9 +767,11 @@ export interface FileRoutesById {
   '/_layout/services/': typeof LayoutServicesIndexRoute
   '/_layout/storage/': typeof LayoutStorageIndexRoute
 }
+
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | ''
     | '/activate'
     | '/login'
     | '/recover-password'
@@ -387,6 +790,7 @@ export interface FileRouteTypes {
     | '/language-models/billing'
     | '/language-models/llm-service'
     | '/managed-database/instance'
+    | '/remote-terminals/terminal'
     | '/services/llm-inference-api'
     | '/services/managed-database'
     | '/services/managed-storage'
@@ -425,6 +829,7 @@ export interface FileRouteTypes {
     | '/language-models/billing'
     | '/language-models/llm-service'
     | '/managed-database/instance'
+    | '/remote-terminals/terminal'
     | '/services/llm-inference-api'
     | '/services/managed-database'
     | '/services/managed-storage'
@@ -464,6 +869,7 @@ export interface FileRouteTypes {
     | '/_layout/language-models/billing'
     | '/_layout/language-models/llm-service'
     | '/_layout/managed-database/instance'
+    | '/_layout/remote-terminals/terminal'
     | '/_layout/services/llm-inference-api'
     | '/_layout/services/managed-database'
     | '/_layout/services/managed-storage'
@@ -484,6 +890,7 @@ export interface FileRouteTypes {
     | '/_layout/storage/'
   fileRoutesById: FileRoutesById
 }
+
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   ActivateRoute: typeof ActivateRoute
@@ -493,341 +900,6 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recover-password': {
-      id: '/recover-password'
-      path: '/recover-password'
-      fullPath: '/recover-password'
-      preLoaderRoute: typeof RecoverPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/activate': {
-      id: '/activate'
-      path: '/activate'
-      fullPath: '/activate'
-      preLoaderRoute: typeof ActivateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof LayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_layout/': {
-      id: '/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/settings': {
-      id: '/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof LayoutSettingsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/items': {
-      id: '/_layout/items'
-      path: '/items'
-      fullPath: '/items'
-      preLoaderRoute: typeof LayoutItemsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/componentlist': {
-      id: '/_layout/componentlist'
-      path: '/componentlist'
-      fullPath: '/componentlist'
-      preLoaderRoute: typeof LayoutComponentlistRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/admin': {
-      id: '/_layout/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof LayoutAdminRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/storage/': {
-      id: '/_layout/storage/'
-      path: '/storage'
-      fullPath: '/storage'
-      preLoaderRoute: typeof LayoutStorageIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/services/': {
-      id: '/_layout/services/'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof LayoutServicesIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/managed-database/': {
-      id: '/_layout/managed-database/'
-      path: '/managed-database'
-      fullPath: '/managed-database'
-      preLoaderRoute: typeof LayoutManagedDatabaseIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/remote-terminals/': {
-      id: '/_layout/remote-terminals/'
-      path: '/remote-terminals'
-      fullPath: '/remote-terminals'
-      preLoaderRoute: typeof LayoutRemoteTerminalsIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/language-models/': {
-      id: '/_layout/language-models/'
-      path: '/language-models'
-      fullPath: '/language-models'
-      preLoaderRoute: typeof LayoutLanguageModelsIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/infrastructure/': {
-      id: '/_layout/infrastructure/'
-      path: '/infrastructure'
-      fullPath: '/infrastructure'
-      preLoaderRoute: typeof LayoutInfrastructureIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/hosting/': {
-      id: '/_layout/hosting/'
-      path: '/hosting'
-      fullPath: '/hosting'
-      preLoaderRoute: typeof LayoutHostingIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/compute/': {
-      id: '/_layout/compute/'
-      path: '/compute'
-      fullPath: '/compute'
-      preLoaderRoute: typeof LayoutComputeIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/web-scraping-tools/user-agents': {
-      id: '/_layout/web-scraping-tools/user-agents'
-      path: '/web-scraping-tools/user-agents'
-      fullPath: '/web-scraping-tools/user-agents'
-      preLoaderRoute: typeof LayoutWebScrapingToolsUserAgentsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/web-scraping-tools/serp-api': {
-      id: '/_layout/web-scraping-tools/serp-api'
-      path: '/web-scraping-tools/serp-api'
-      fullPath: '/web-scraping-tools/serp-api'
-      preLoaderRoute: typeof LayoutWebScrapingToolsSerpApiRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/web-scraping-tools/https-api': {
-      id: '/_layout/web-scraping-tools/https-api'
-      path: '/web-scraping-tools/https-api'
-      fullPath: '/web-scraping-tools/https-api'
-      preLoaderRoute: typeof LayoutWebScrapingToolsHttpsApiRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/web-scraping-tools/billing': {
-      id: '/_layout/web-scraping-tools/billing'
-      path: '/web-scraping-tools/billing'
-      fullPath: '/web-scraping-tools/billing'
-      preLoaderRoute: typeof LayoutWebScrapingToolsBillingRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/web-scraping-tools/api-keys': {
-      id: '/_layout/web-scraping-tools/api-keys'
-      path: '/web-scraping-tools/api-keys'
-      fullPath: '/web-scraping-tools/api-keys'
-      preLoaderRoute: typeof LayoutWebScrapingToolsApiKeysRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/storage/bucket': {
-      id: '/_layout/storage/bucket'
-      path: '/storage/bucket'
-      fullPath: '/storage/bucket'
-      preLoaderRoute: typeof LayoutStorageBucketRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/services/serverless-compute': {
-      id: '/_layout/services/serverless-compute'
-      path: '/services/serverless-compute'
-      fullPath: '/services/serverless-compute'
-      preLoaderRoute: typeof LayoutServicesServerlessComputeRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/services/managed-storage': {
-      id: '/_layout/services/managed-storage'
-      path: '/services/managed-storage'
-      fullPath: '/services/managed-storage'
-      preLoaderRoute: typeof LayoutServicesManagedStorageRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/services/managed-database': {
-      id: '/_layout/services/managed-database'
-      path: '/services/managed-database'
-      fullPath: '/services/managed-database'
-      preLoaderRoute: typeof LayoutServicesManagedDatabaseRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/services/llm-inference-api': {
-      id: '/_layout/services/llm-inference-api'
-      path: '/services/llm-inference-api'
-      fullPath: '/services/llm-inference-api'
-      preLoaderRoute: typeof LayoutServicesLlmInferenceApiRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/managed-database/instance': {
-      id: '/_layout/managed-database/instance'
-      path: '/managed-database/instance'
-      fullPath: '/managed-database/instance'
-      preLoaderRoute: typeof LayoutManagedDatabaseInstanceRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/language-models/llm-service': {
-      id: '/_layout/language-models/llm-service'
-      path: '/language-models/llm-service'
-      fullPath: '/language-models/llm-service'
-      preLoaderRoute: typeof LayoutLanguageModelsLlmServiceRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/language-models/billing': {
-      id: '/_layout/language-models/billing'
-      path: '/language-models/billing'
-      fullPath: '/language-models/billing'
-      preLoaderRoute: typeof LayoutLanguageModelsBillingRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/infrastructure/billing': {
-      id: '/_layout/infrastructure/billing'
-      path: '/infrastructure/billing'
-      fullPath: '/infrastructure/billing'
-      preLoaderRoute: typeof LayoutInfrastructureBillingRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/hosting/billing': {
-      id: '/_layout/hosting/billing'
-      path: '/hosting/billing'
-      fullPath: '/hosting/billing'
-      preLoaderRoute: typeof LayoutHostingBillingRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/hosting/$deviceName': {
-      id: '/_layout/hosting/$deviceName'
-      path: '/hosting/$deviceName'
-      fullPath: '/hosting/$deviceName'
-      preLoaderRoute: typeof LayoutHostingDeviceNameRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/compute/billing': {
-      id: '/_layout/compute/billing'
-      path: '/compute/billing'
-      fullPath: '/compute/billing'
-      preLoaderRoute: typeof LayoutComputeBillingRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/compute/$serviceName': {
-      id: '/_layout/compute/$serviceName'
-      path: '/compute/$serviceName'
-      fullPath: '/compute/$serviceName'
-      preLoaderRoute: typeof LayoutComputeServiceNameRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-  }
-}
-
-interface LayoutRouteChildren {
-  LayoutAdminRoute: typeof LayoutAdminRoute
-  LayoutComponentlistRoute: typeof LayoutComponentlistRoute
-  LayoutItemsRoute: typeof LayoutItemsRoute
-  LayoutSettingsRoute: typeof LayoutSettingsRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutComputeServiceNameRoute: typeof LayoutComputeServiceNameRoute
-  LayoutComputeBillingRoute: typeof LayoutComputeBillingRoute
-  LayoutHostingDeviceNameRoute: typeof LayoutHostingDeviceNameRoute
-  LayoutHostingBillingRoute: typeof LayoutHostingBillingRoute
-  LayoutInfrastructureBillingRoute: typeof LayoutInfrastructureBillingRoute
-  LayoutLanguageModelsBillingRoute: typeof LayoutLanguageModelsBillingRoute
-  LayoutLanguageModelsLlmServiceRoute: typeof LayoutLanguageModelsLlmServiceRoute
-  LayoutManagedDatabaseInstanceRoute: typeof LayoutManagedDatabaseInstanceRoute
-  LayoutServicesLlmInferenceApiRoute: typeof LayoutServicesLlmInferenceApiRoute
-  LayoutServicesManagedDatabaseRoute: typeof LayoutServicesManagedDatabaseRoute
-  LayoutServicesManagedStorageRoute: typeof LayoutServicesManagedStorageRoute
-  LayoutServicesServerlessComputeRoute: typeof LayoutServicesServerlessComputeRoute
-  LayoutStorageBucketRoute: typeof LayoutStorageBucketRoute
-  LayoutWebScrapingToolsApiKeysRoute: typeof LayoutWebScrapingToolsApiKeysRoute
-  LayoutWebScrapingToolsBillingRoute: typeof LayoutWebScrapingToolsBillingRoute
-  LayoutWebScrapingToolsHttpsApiRoute: typeof LayoutWebScrapingToolsHttpsApiRoute
-  LayoutWebScrapingToolsSerpApiRoute: typeof LayoutWebScrapingToolsSerpApiRoute
-  LayoutWebScrapingToolsUserAgentsRoute: typeof LayoutWebScrapingToolsUserAgentsRoute
-  LayoutComputeIndexRoute: typeof LayoutComputeIndexRoute
-  LayoutHostingIndexRoute: typeof LayoutHostingIndexRoute
-  LayoutInfrastructureIndexRoute: typeof LayoutInfrastructureIndexRoute
-  LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
-  LayoutManagedDatabaseIndexRoute: typeof LayoutManagedDatabaseIndexRoute
-  LayoutRemoteTerminalsIndexRoute: typeof LayoutRemoteTerminalsIndexRoute
-  LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
-  LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
-}
-
-const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutAdminRoute: LayoutAdminRoute,
-  LayoutComponentlistRoute: LayoutComponentlistRoute,
-  LayoutItemsRoute: LayoutItemsRoute,
-  LayoutSettingsRoute: LayoutSettingsRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
-  LayoutComputeServiceNameRoute: LayoutComputeServiceNameRoute,
-  LayoutComputeBillingRoute: LayoutComputeBillingRoute,
-  LayoutHostingDeviceNameRoute: LayoutHostingDeviceNameRoute,
-  LayoutHostingBillingRoute: LayoutHostingBillingRoute,
-  LayoutInfrastructureBillingRoute: LayoutInfrastructureBillingRoute,
-  LayoutLanguageModelsBillingRoute: LayoutLanguageModelsBillingRoute,
-  LayoutLanguageModelsLlmServiceRoute: LayoutLanguageModelsLlmServiceRoute,
-  LayoutManagedDatabaseInstanceRoute: LayoutManagedDatabaseInstanceRoute,
-  LayoutServicesLlmInferenceApiRoute: LayoutServicesLlmInferenceApiRoute,
-  LayoutServicesManagedDatabaseRoute: LayoutServicesManagedDatabaseRoute,
-  LayoutServicesManagedStorageRoute: LayoutServicesManagedStorageRoute,
-  LayoutServicesServerlessComputeRoute: LayoutServicesServerlessComputeRoute,
-  LayoutStorageBucketRoute: LayoutStorageBucketRoute,
-  LayoutWebScrapingToolsApiKeysRoute: LayoutWebScrapingToolsApiKeysRoute,
-  LayoutWebScrapingToolsBillingRoute: LayoutWebScrapingToolsBillingRoute,
-  LayoutWebScrapingToolsHttpsApiRoute: LayoutWebScrapingToolsHttpsApiRoute,
-  LayoutWebScrapingToolsSerpApiRoute: LayoutWebScrapingToolsSerpApiRoute,
-  LayoutWebScrapingToolsUserAgentsRoute: LayoutWebScrapingToolsUserAgentsRoute,
-  LayoutComputeIndexRoute: LayoutComputeIndexRoute,
-  LayoutHostingIndexRoute: LayoutHostingIndexRoute,
-  LayoutInfrastructureIndexRoute: LayoutInfrastructureIndexRoute,
-  LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
-  LayoutManagedDatabaseIndexRoute: LayoutManagedDatabaseIndexRoute,
-  LayoutRemoteTerminalsIndexRoute: LayoutRemoteTerminalsIndexRoute,
-  LayoutServicesIndexRoute: LayoutServicesIndexRoute,
-  LayoutStorageIndexRoute: LayoutStorageIndexRoute,
-}
-
-const LayoutRouteWithChildren =
-  LayoutRoute._addFileChildren(LayoutRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   ActivateRoute: ActivateRoute,
@@ -836,6 +908,205 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
 }
-export const routeTree = rootRouteImport
+
+export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/_layout",
+        "/activate",
+        "/login",
+        "/recover-password",
+        "/reset-password",
+        "/signup"
+      ]
+    },
+    "/_layout": {
+      "filePath": "_layout.tsx",
+      "children": [
+        "/_layout/admin",
+        "/_layout/componentlist",
+        "/_layout/items",
+        "/_layout/settings",
+        "/_layout/",
+        "/_layout/compute/$serviceName",
+        "/_layout/compute/billing",
+        "/_layout/hosting/$deviceName",
+        "/_layout/hosting/billing",
+        "/_layout/infrastructure/billing",
+        "/_layout/language-models/billing",
+        "/_layout/language-models/llm-service",
+        "/_layout/managed-database/instance",
+        "/_layout/remote-terminals/terminal",
+        "/_layout/services/llm-inference-api",
+        "/_layout/services/managed-database",
+        "/_layout/services/managed-storage",
+        "/_layout/services/serverless-compute",
+        "/_layout/storage/bucket",
+        "/_layout/web-scraping-tools/api-keys",
+        "/_layout/web-scraping-tools/billing",
+        "/_layout/web-scraping-tools/https-api",
+        "/_layout/web-scraping-tools/serp-api",
+        "/_layout/web-scraping-tools/user-agents",
+        "/_layout/compute/",
+        "/_layout/hosting/",
+        "/_layout/infrastructure/",
+        "/_layout/language-models/",
+        "/_layout/managed-database/",
+        "/_layout/remote-terminals/",
+        "/_layout/services/",
+        "/_layout/storage/"
+      ]
+    },
+    "/activate": {
+      "filePath": "activate.tsx"
+    },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/recover-password": {
+      "filePath": "recover-password.tsx"
+    },
+    "/reset-password": {
+      "filePath": "reset-password.tsx"
+    },
+    "/signup": {
+      "filePath": "signup.tsx"
+    },
+    "/_layout/admin": {
+      "filePath": "_layout/admin.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/componentlist": {
+      "filePath": "_layout/componentlist.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/items": {
+      "filePath": "_layout/items.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/settings": {
+      "filePath": "_layout/settings.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/": {
+      "filePath": "_layout/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/compute/$serviceName": {
+      "filePath": "_layout/compute/$serviceName.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/compute/billing": {
+      "filePath": "_layout/compute/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/hosting/$deviceName": {
+      "filePath": "_layout/hosting/$deviceName.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/hosting/billing": {
+      "filePath": "_layout/hosting/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/infrastructure/billing": {
+      "filePath": "_layout/infrastructure/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/language-models/billing": {
+      "filePath": "_layout/language-models/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/language-models/llm-service": {
+      "filePath": "_layout/language-models/llm-service.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/managed-database/instance": {
+      "filePath": "_layout/managed-database/instance.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/remote-terminals/terminal": {
+      "filePath": "_layout/remote-terminals/terminal.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/llm-inference-api": {
+      "filePath": "_layout/services/llm-inference-api.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/managed-database": {
+      "filePath": "_layout/services/managed-database.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/managed-storage": {
+      "filePath": "_layout/services/managed-storage.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/serverless-compute": {
+      "filePath": "_layout/services/serverless-compute.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/storage/bucket": {
+      "filePath": "_layout/storage/bucket.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/web-scraping-tools/api-keys": {
+      "filePath": "_layout/web-scraping-tools/api-keys.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/web-scraping-tools/billing": {
+      "filePath": "_layout/web-scraping-tools/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/web-scraping-tools/https-api": {
+      "filePath": "_layout/web-scraping-tools/https-api.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/web-scraping-tools/serp-api": {
+      "filePath": "_layout/web-scraping-tools/serp-api.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/web-scraping-tools/user-agents": {
+      "filePath": "_layout/web-scraping-tools/user-agents.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/compute/": {
+      "filePath": "_layout/compute/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/hosting/": {
+      "filePath": "_layout/hosting/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/infrastructure/": {
+      "filePath": "_layout/infrastructure/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/language-models/": {
+      "filePath": "_layout/language-models/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/managed-database/": {
+      "filePath": "_layout/managed-database/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/remote-terminals/": {
+      "filePath": "_layout/remote-terminals/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/services/": {
+      "filePath": "_layout/services/index.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/storage/": {
+      "filePath": "_layout/storage/index.tsx",
+      "parent": "/_layout"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

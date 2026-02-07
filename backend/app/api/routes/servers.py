@@ -50,6 +50,13 @@ async def create_server(
 ) -> RemoteServer:
     """Create and provision a new remote server"""
 
+    # Guard: require active infrastructure subscription
+    if not current_user.has_subscription:
+        raise HTTPException(
+            status_code=402,
+            detail="Active infrastructure subscription required. Subscribe at /billing/subscribe first."
+        )
+
     # Create server record in database
     new_server = RemoteServer(
         id=uuid.uuid4(),

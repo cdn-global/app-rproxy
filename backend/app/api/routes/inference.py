@@ -104,6 +104,13 @@ async def run_inference(
 
     This is a proxy endpoint that routes requests to the appropriate model provider
     """
+    # Guard: require active infrastructure subscription
+    if not current_user.has_subscription:
+        raise HTTPException(
+            status_code=402,
+            detail="Active infrastructure subscription required. Subscribe at /billing/subscribe first."
+        )
+
     # Get model details
     statement = select(InferenceModel).where(InferenceModel.id == request.model_id)
     model = session.exec(statement).first()

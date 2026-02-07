@@ -1,6 +1,6 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
+import CreateDatabase from "../../../components/Database/CreateDatabase"
+import useCustomToast from "../../../hooks/useCustomToast"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -37,6 +47,11 @@ interface DatabaseInstance {
 }
 
 function ManagedDatabaseIndexPage() {
+  const [createOpen, setCreateOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<DatabaseInstance | null>(null)
+  const queryClient = useQueryClient()
+  const showToast = useCustomToast()
+
   const { data, isLoading } = useQuery<{ data: DatabaseInstance[]; count: number }>({
     queryKey: ["database-instances"],
     queryFn: async () => {
@@ -51,6 +66,68 @@ function ManagedDatabaseIndexPage() {
   })
 
   const instances = data?.data ?? []
+
+  const stopMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/database-instances/${id}/stop`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to stop database")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Database stopped.", "success")
+      queryClient.invalidateQueries({ queryKey: ["database-instances"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
+  const startMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/database-instances/${id}/start`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to start database")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Database started.", "success")
+      queryClient.invalidateQueries({ queryKey: ["database-instances"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/database-instances/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to delete database")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Database deleted.", "success")
+      setDeleteTarget(null)
+      queryClient.invalidateQueries({ queryKey: ["database-instances"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
+  const backupMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/v2/database-instances/${id}/backup`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      })
+      if (!response.ok) throw new Error("Failed to create backup")
+      return response.json()
+    },
+    onSuccess: () => showToast("Success", "Backup started.", "success"),
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
 
   const databaseSummary = useMemo(() => {
     return instances.reduce(
@@ -92,14 +169,12 @@ function ManagedDatabaseIndexPage() {
           description="Summaries of capacity, health, and monthly run rate."
           actions={
             <Button
-              asChild
+              onClick={() => setCreateOpen(true)}
               variant="outline"
               className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
             >
-              <Link to="/managed-database/instance">
-                <span>New Database</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </Link>
+              <span>New Database</span>
+              <FiArrowUpRight className="h-4 w-4" />
             </Button>
           }
         >
@@ -185,16 +260,49 @@ function ManagedDatabaseIndexPage() {
                           {currencyFormatter.format(db.monthly_rate + db.storage_gb * db.storage_rate_per_gb)}/mo
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                            asChild
-                          >
-                            <Link to="/managed-database/instance">
-                              Details
-                            </Link>
-                          </Button>
+                          <div className="flex justify-end gap-2">
+                            {db.status === "running" && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                                  onClick={() => stopMutation.mutate(db.id)}
+                                  disabled={stopMutation.isPending}
+                                >
+                                  Stop
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                                  onClick={() => backupMutation.mutate(db.id)}
+                                  disabled={backupMutation.isPending}
+                                >
+                                  Backup
+                                </Button>
+                              </>
+                            )}
+                            {db.status === "stopped" && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-full px-3 py-1 text-xs font-semibold"
+                                onClick={() => startMutation.mutate(db.id)}
+                                disabled={startMutation.isPending}
+                              >
+                                Start
+                              </Button>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full px-3 py-1 text-xs font-semibold text-destructive hover:text-destructive"
+                              onClick={() => setDeleteTarget(db)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
@@ -261,6 +369,31 @@ function ManagedDatabaseIndexPage() {
               </div>
             </div>
     </div>
+
+    <CreateDatabase isOpen={createOpen} onClose={() => setCreateOpen(false)} />
+
+    <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete Database</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete &quot;{deleteTarget?.instance_name}&quot;? All data will be permanently lost.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="gap-3">
+          <Button
+            variant="destructive"
+            onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+            disabled={deleteMutation.isPending}
+          >
+            {deleteMutation.isPending ? "Deleting..." : "Delete"}
+          </Button>
+          <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </PageScaffold>
   )
 }

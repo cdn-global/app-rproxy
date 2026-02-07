@@ -87,17 +87,17 @@ const navStructure: NavItem[] = [
         title: "Managed VPS",
         path: "/hosting",
         description: "Fully managed virtual private servers for your needs.",
-      },{
+      },
+      {
+        title: "Remote Terminals",
+        path: "/remote-terminals",
+        description: "SSH, GPU, and inference servers with browser terminal.",
+      },
+      {
         title: "Managed Compute",
         path: "/compute",
         description: "Deploy and manage your managed cloud functions.",
       },
-    //   {
-    //     title: "Serverless Compute",
-    //     path: "/serverless-compute",
-    //     description: "Deploy and manage your serverless cloud functions.",
-    //   },
-
     ],
   },
   {
@@ -138,6 +138,7 @@ const NavItems = () => {
       "Scraping Tools",
       "Hosting",
       "LLM Inference",
+      "Remote Terminals",
       "Storage",
       "Database",
       "Compute",

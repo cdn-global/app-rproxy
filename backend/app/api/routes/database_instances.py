@@ -47,6 +47,13 @@ async def create_database_instance(
 ) -> DatabaseInstance:
     """Create and provision a new PostgreSQL database instance"""
 
+    # Guard: require active infrastructure subscription
+    if not current_user.has_subscription:
+        raise HTTPException(
+            status_code=402,
+            detail="Active infrastructure subscription required. Subscribe at /billing/subscribe first."
+        )
+
     # Create instance record in database
     new_instance = DatabaseInstance(
         id=uuid.uuid4(),

@@ -9,7 +9,8 @@ import os
 import logging
 from datetime import datetime, timedelta
 from app.models import User, UsageRecord, UsageRecordPublic
-from app.api.deps import get_current_user, SessionDep
+from app.api.deps import get_current_user, get_current_active_superuser, SessionDep
+from app.services.usage_reporter import report_pending_usage
 
 logger = logging.getLogger(__name__)
 
@@ -199,3 +200,176 @@ async def get_usage_summary(
         "period_days": days,
         "summary": summary
     }
+
+
+@router.post("/setup-products")
+async def setup_stripe_products(
+    current_user: Annotated[User, Depends(get_current_active_superuser)],
+) -> dict:
+    """
+    Create Stripe Products + metered Prices for infrastructure billing.
+    Superuser only. Run once to bootstrap Stripe, then put the price IDs in .env.
+    """
+    products = []
+
+    # 1. Server Hours
+    server_product = stripe.Product.create(
+        name="Server Hours",
+        description="Metered billing for remote server compute hours",
+        metadata={"resource_type": "server"},
+    )
+    server_price = stripe.Price.create(
+        product=server_product.id,
+        currency="usd",
+        recurring={
+            "interval": "month",
+            "usage_type": "metered",
+            "aggregate_usage": "sum",
+        },
+        unit_amount=10,  # $0.10 per hour
+        billing_scheme="per_unit",
+    )
+    products.append({
+        "name": "Server Hours",
+        "product_id": server_product.id,
+        "price_id": server_price.id,
+        "env_key": "STRIPE_SERVER_HOURS_PRICE_ID",
+    })
+
+    # 2. Database Storage (GB-months)
+    db_product = stripe.Product.create(
+        name="Database Storage",
+        description="Metered billing for managed database storage (GB-months)",
+        metadata={"resource_type": "database"},
+    )
+    db_price = stripe.Price.create(
+        product=db_product.id,
+        currency="usd",
+        recurring={
+            "interval": "month",
+            "usage_type": "metered",
+            "aggregate_usage": "sum",
+        },
+        unit_amount=5,  # $0.05 per GB
+        billing_scheme="per_unit",
+    )
+    products.append({
+        "name": "Database Storage",
+        "product_id": db_product.id,
+        "price_id": db_price.id,
+        "env_key": "STRIPE_DB_STORAGE_PRICE_ID",
+    })
+
+    # 3. API Tokens (per 1K tokens)
+    api_product = stripe.Product.create(
+        name="Inference API Tokens",
+        description="Metered billing for LLM inference API usage (per 1K tokens)",
+        metadata={"resource_type": "inference"},
+    )
+    api_price = stripe.Price.create(
+        product=api_product.id,
+        currency="usd",
+        recurring={
+            "interval": "month",
+            "usage_type": "metered",
+            "aggregate_usage": "sum",
+        },
+        unit_amount=1,  # $0.01 per 1K tokens
+        billing_scheme="per_unit",
+    )
+    products.append({
+        "name": "Inference API Tokens",
+        "product_id": api_product.id,
+        "price_id": api_price.id,
+        "env_key": "STRIPE_API_TOKENS_PRICE_ID",
+    })
+
+    return {
+        "message": "Products and metered prices created in Stripe",
+        "products": products,
+        "instructions": "Add these price IDs to your .env file",
+    }
+
+
+@router.post("/report-all")
+async def report_all_usage(
+    current_user: Annotated[User, Depends(get_current_active_superuser)],
+) -> dict:
+    """
+    Admin endpoint to trigger batch usage reporting for ALL users.
+    Reports all unreported UsageRecords to Stripe.
+    """
+    results = report_pending_usage()
+    return results
+
+
+@router.post("/subscribe")
+async def subscribe_to_infrastructure(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+) -> dict:
+    """
+    Create a Stripe subscription with the 3 metered price items.
+    User can then create resources, billed at period end.
+    """
+    if not current_user.stripe_customer_id:
+        raise HTTPException(
+            status_code=400,
+            detail="No Stripe customer ID. Complete account setup first.",
+        )
+
+    # Check for existing active subscription
+    existing = stripe.Subscription.list(
+        customer=current_user.stripe_customer_id,
+        status="active",
+        limit=1,
+    )
+    if existing.data:
+        return {
+            "message": "Already subscribed",
+            "subscription_id": existing.data[0].id,
+        }
+
+    # Gather metered price IDs
+    price_ids = [
+        os.getenv("STRIPE_SERVER_HOURS_PRICE_ID"),
+        os.getenv("STRIPE_DB_STORAGE_PRICE_ID"),
+        os.getenv("STRIPE_API_TOKENS_PRICE_ID"),
+    ]
+    price_ids = [p for p in price_ids if p]
+
+    if not price_ids:
+        raise HTTPException(
+            status_code=500,
+            detail="Metered price IDs not configured. Admin must run /billing/setup-products first.",
+        )
+
+    items = [{"price": pid} for pid in price_ids]
+
+    try:
+        subscription = stripe.Subscription.create(
+            customer=current_user.stripe_customer_id,
+            items=items,
+            payment_behavior="default_incomplete",
+            expand=["latest_invoice.payment_intent"],
+        )
+
+        # Update user record
+        current_user.has_subscription = True
+        session.add(current_user)
+        session.commit()
+
+        return {
+            "message": "Infrastructure subscription created",
+            "subscription_id": subscription.id,
+            "status": subscription.status,
+            "client_secret": (
+                subscription.latest_invoice.payment_intent.client_secret
+                if subscription.latest_invoice
+                and subscription.latest_invoice.payment_intent
+                else None
+            ),
+        }
+    except stripe.StripeError as e:
+        logger.error(f"Failed to create subscription for user {current_user.id}: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
