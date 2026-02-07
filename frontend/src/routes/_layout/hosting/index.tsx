@@ -224,9 +224,9 @@ function HostingIndexPage() {
                                   className="rounded-full px-3 py-1 text-xs font-semibold"
                                   asChild
                                 >
-                                  <RouterLink to="/remote-terminals/terminal" search={{ serverId: server.id }}>
+                                  <a href={`/remote-terminals/terminal?serverId=${server.id}`}>
                                     Terminal
-                                  </RouterLink>
+                                  </a>
                                 </Button>
                                 <Button
                                   variant="outline"

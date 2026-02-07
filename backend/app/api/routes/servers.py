@@ -300,29 +300,21 @@ async def stop_server(
         hours_running = (datetime.utcnow() - server.created_at).total_seconds() / 3600
         record_server_usage(session, current_user.id, server.id, hours_running)
 
-    if server.hosting_provider == "aws":
-        # AWS stop path
-        if not server.aws_instance_id:
-            raise HTTPException(status_code=400, detail="Server has no AWS instance ID")
-
+    # Try to stop real infrastructure if it exists
+    success = True
+    if server.hosting_provider == "aws" and server.aws_instance_id:
         success = aws_provisioner.stop_server(
             server.aws_instance_id, server.aws_region or "us-east-1"
         )
-    else:
-        # Docker stop path (original)
-        if not server.docker_container_id:
-            raise HTTPException(status_code=400, detail="Server has no container ID")
-
+    elif server.docker_container_id:
         success = server_provisioner.stop_server(server.docker_container_id)
 
-    if success:
-        server.status = "stopped"
-        server.stopped_at = datetime.utcnow()
-        session.add(server)
-        session.commit()
-        session.refresh(server)
-    else:
-        raise HTTPException(status_code=500, detail="Failed to stop server")
+    # Update status regardless (managed/seeded servers have no real infra)
+    server.status = "stopped"
+    server.stopped_at = datetime.utcnow()
+    session.add(server)
+    session.commit()
+    session.refresh(server)
 
     return server
 
@@ -344,19 +336,13 @@ async def start_server(
     if not server:
         raise HTTPException(status_code=404, detail="Server not found")
 
-    if server.hosting_provider == "aws":
-        # AWS start path
-        if not server.aws_instance_id:
-            raise HTTPException(status_code=400, detail="Server has no AWS instance ID")
-
+    # Try to start real infrastructure if it exists
+    success = True
+    if server.hosting_provider == "aws" and server.aws_instance_id:
         success = aws_provisioner.start_server(
             server.aws_instance_id, server.aws_region or "us-east-1"
         )
-    else:
-        # Docker start path (original)
-        if not server.docker_container_id:
-            raise HTTPException(status_code=400, detail="Server has no container ID")
-
+    elif server.docker_container_id:
         success = server_provisioner.start_server(server.docker_container_id)
 
     if success:
