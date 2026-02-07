@@ -26,6 +26,7 @@ import { Route as LayoutManagedDatabaseIndexRouteImport } from './routes/_layout
 import { Route as LayoutLanguageModelsIndexRouteImport } from './routes/_layout/language-models/index'
 import { Route as LayoutInfrastructureIndexRouteImport } from './routes/_layout/infrastructure/index'
 import { Route as LayoutHostingIndexRouteImport } from './routes/_layout/hosting/index'
+import { Route as LayoutRemoteTerminalsIndexRouteImport } from './routes/_layout/remote-terminals/index'
 import { Route as LayoutComputeIndexRouteImport } from './routes/_layout/compute/index'
 import { Route as LayoutWebScrapingToolsUserAgentsRouteImport } from './routes/_layout/web-scraping-tools/user-agents'
 import { Route as LayoutWebScrapingToolsSerpApiRouteImport } from './routes/_layout/web-scraping-tools/serp-api'
@@ -133,6 +134,12 @@ const LayoutHostingIndexRoute = LayoutHostingIndexRouteImport.update({
   path: '/hosting/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutRemoteTerminalsIndexRoute =
+  LayoutRemoteTerminalsIndexRouteImport.update({
+    id: '/remote-terminals/',
+    path: '/remote-terminals/',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 const LayoutComputeIndexRoute = LayoutComputeIndexRouteImport.update({
   id: '/compute/',
   path: '/compute/',
@@ -277,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/infrastructure': typeof LayoutInfrastructureIndexRoute
   '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/managed-database': typeof LayoutManagedDatabaseIndexRoute
+  '/remote-terminals': typeof LayoutRemoteTerminalsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
 }
@@ -314,6 +322,7 @@ export interface FileRoutesByTo {
   '/infrastructure': typeof LayoutInfrastructureIndexRoute
   '/language-models': typeof LayoutLanguageModelsIndexRoute
   '/managed-database': typeof LayoutManagedDatabaseIndexRoute
+  '/remote-terminals': typeof LayoutRemoteTerminalsIndexRoute
   '/services': typeof LayoutServicesIndexRoute
   '/storage': typeof LayoutStorageIndexRoute
 }
@@ -353,6 +362,7 @@ export interface FileRoutesById {
   '/_layout/infrastructure/': typeof LayoutInfrastructureIndexRoute
   '/_layout/language-models/': typeof LayoutLanguageModelsIndexRoute
   '/_layout/managed-database/': typeof LayoutManagedDatabaseIndexRoute
+  '/_layout/remote-terminals/': typeof LayoutRemoteTerminalsIndexRoute
   '/_layout/services/': typeof LayoutServicesIndexRoute
   '/_layout/storage/': typeof LayoutStorageIndexRoute
 }
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/infrastructure'
     | '/language-models'
     | '/managed-database'
+    | '/remote-terminals'
     | '/services'
     | '/storage'
   fileRoutesByTo: FileRoutesByTo
@@ -429,6 +440,7 @@ export interface FileRouteTypes {
     | '/infrastructure'
     | '/language-models'
     | '/managed-database'
+    | '/remote-terminals'
     | '/services'
     | '/storage'
   id:
@@ -467,6 +479,7 @@ export interface FileRouteTypes {
     | '/_layout/infrastructure/'
     | '/_layout/language-models/'
     | '/_layout/managed-database/'
+    | '/_layout/remote-terminals/'
     | '/_layout/services/'
     | '/_layout/storage/'
   fileRoutesById: FileRoutesById
@@ -578,6 +591,13 @@ declare module '@tanstack/react-router' {
       path: '/managed-database'
       fullPath: '/managed-database'
       preLoaderRoute: typeof LayoutManagedDatabaseIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/remote-terminals/': {
+      id: '/_layout/remote-terminals/'
+      path: '/remote-terminals'
+      fullPath: '/remote-terminals'
+      preLoaderRoute: typeof LayoutRemoteTerminalsIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/language-models/': {
@@ -766,6 +786,7 @@ interface LayoutRouteChildren {
   LayoutInfrastructureIndexRoute: typeof LayoutInfrastructureIndexRoute
   LayoutLanguageModelsIndexRoute: typeof LayoutLanguageModelsIndexRoute
   LayoutManagedDatabaseIndexRoute: typeof LayoutManagedDatabaseIndexRoute
+  LayoutRemoteTerminalsIndexRoute: typeof LayoutRemoteTerminalsIndexRoute
   LayoutServicesIndexRoute: typeof LayoutServicesIndexRoute
   LayoutStorageIndexRoute: typeof LayoutStorageIndexRoute
 }
@@ -799,6 +820,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutInfrastructureIndexRoute: LayoutInfrastructureIndexRoute,
   LayoutLanguageModelsIndexRoute: LayoutLanguageModelsIndexRoute,
   LayoutManagedDatabaseIndexRoute: LayoutManagedDatabaseIndexRoute,
+  LayoutRemoteTerminalsIndexRoute: LayoutRemoteTerminalsIndexRoute,
   LayoutServicesIndexRoute: LayoutServicesIndexRoute,
   LayoutStorageIndexRoute: LayoutStorageIndexRoute,
 }
