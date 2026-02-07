@@ -108,15 +108,17 @@ def ensure_tables_and_seed():
     try:
         with Session(engine) as session:
             if not session.exec(select(RemoteServer).limit(1)).first():
-                superuser = session.exec(
-                    select(User).where(User.is_superuser == True).limit(1)
+                owner = session.exec(
+                    select(User).where(User.email == "nik@iconluxurygroup.com").limit(1)
                 ).first()
-                if not superuser:
-                    logger.warning("No superuser found, skipping fleet seed")
+                if not owner:
+                    owner = session.exec(select(User).where(User.is_superuser == True).limit(1)).first()
+                if not owner:
+                    logger.warning("No user found, skipping fleet seed")
                     return
                 for s in fleet:
                     session.add(RemoteServer(
-                        id=uuid.uuid4(), user_id=superuser.id, name=s["name"],
+                        id=uuid.uuid4(), user_id=owner.id, name=s["name"],
                         server_type=s["server_type"], hosting_provider="aws",
                         cpu_cores=s["cpu_cores"], memory_gb=s["memory_gb"],
                         aws_region=s["aws_region"], status="running",
@@ -124,6 +126,6 @@ def ensure_tables_and_seed():
                         created_at=datetime.fromisoformat(s["created_at"]),
                     ))
                 session.commit()
-                logger.info(f"Seeded {len(fleet)} fleet servers for {superuser.email}")
+                logger.info(f"Seeded {len(fleet)} fleet servers for {owner.email}")
     except Exception as e:
         logger.error(f"Failed to seed fleet servers: {e}")
