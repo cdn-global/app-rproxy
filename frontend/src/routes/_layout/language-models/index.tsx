@@ -38,7 +38,7 @@ function LanguageModelsIndexPage() {
   const { data, isLoading } = useQuery<{ data: InferenceModel[]; count: number }>({
     queryKey: ["inference-models"],
     queryFn: async () => {
-      const response = await fetch("/api/v2/inference/models", {
+      const response = await fetch("/v2/inference/models", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },

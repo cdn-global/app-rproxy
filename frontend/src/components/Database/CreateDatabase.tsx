@@ -48,7 +48,7 @@ const CreateDatabase = ({ isOpen, onClose }: CreateDatabaseProps) => {
 
   const mutation = useMutation({
     mutationFn: async (data: DatabaseCreateForm) => {
-      const response = await fetch("/api/v2/database-instances/", {
+      const response = await fetch("/v2/database-instances/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

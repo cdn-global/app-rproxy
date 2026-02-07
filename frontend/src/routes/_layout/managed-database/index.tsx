@@ -55,7 +55,7 @@ function ManagedDatabaseIndexPage() {
   const { data, isLoading } = useQuery<{ data: DatabaseInstance[]; count: number }>({
     queryKey: ["database-instances"],
     queryFn: async () => {
-      const response = await fetch("/api/v2/database-instances/", {
+      const response = await fetch("/v2/database-instances/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -69,7 +69,7 @@ function ManagedDatabaseIndexPage() {
 
   const stopMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/database-instances/${id}/stop`, {
+      const response = await fetch(`/v2/database-instances/${id}/stop`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -85,7 +85,7 @@ function ManagedDatabaseIndexPage() {
 
   const startMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/database-instances/${id}/start`, {
+      const response = await fetch(`/v2/database-instances/${id}/start`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -101,7 +101,7 @@ function ManagedDatabaseIndexPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/database-instances/${id}`, {
+      const response = await fetch(`/v2/database-instances/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -118,7 +118,7 @@ function ManagedDatabaseIndexPage() {
 
   const backupMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/database-instances/${id}/backup`, {
+      const response = await fetch(`/v2/database-instances/${id}/backup`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })

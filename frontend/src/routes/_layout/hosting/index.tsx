@@ -59,7 +59,7 @@ function HostingIndexPage() {
   const { data, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
     queryKey: ["remote-servers"],
     queryFn: async () => {
-      const response = await fetch("/api/v2/servers/", {
+      const response = await fetch("/v2/servers/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -73,7 +73,7 @@ function HostingIndexPage() {
 
   const stopMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/servers/${id}/stop`, {
+      const response = await fetch(`/v2/servers/${id}/stop`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -89,7 +89,7 @@ function HostingIndexPage() {
 
   const startMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/servers/${id}/start`, {
+      const response = await fetch(`/v2/servers/${id}/start`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -105,7 +105,7 @@ function HostingIndexPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/v2/servers/${id}`, {
+      const response = await fetch(`/v2/servers/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })

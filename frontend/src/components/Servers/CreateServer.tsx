@@ -57,7 +57,7 @@ const CreateServer = ({ isOpen, onClose }: CreateServerProps) => {
 
   const mutation = useMutation({
     mutationFn: async (data: ServerCreateForm) => {
-      const response = await fetch("/api/v2/servers/", {
+      const response = await fetch("/v2/servers/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

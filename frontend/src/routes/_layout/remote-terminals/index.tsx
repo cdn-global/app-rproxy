@@ -52,7 +52,7 @@ function RemoteTerminalsPage() {
   const { data: servers, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
     queryKey: ["remote-servers"],
     queryFn: async () => {
-      const response = await fetch("/api/v2/servers/", {
+      const response = await fetch("/v2/servers/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -64,7 +64,7 @@ function RemoteTerminalsPage() {
 
   const stopMutation = useMutation({
     mutationFn: async (serverId: string) => {
-      const response = await fetch(`/api/v2/servers/${serverId}/stop`, {
+      const response = await fetch(`/v2/servers/${serverId}/stop`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -82,7 +82,7 @@ function RemoteTerminalsPage() {
 
   const startMutation = useMutation({
     mutationFn: async (serverId: string) => {
-      const response = await fetch(`/api/v2/servers/${serverId}/start`, {
+      const response = await fetch(`/v2/servers/${serverId}/start`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -100,7 +100,7 @@ function RemoteTerminalsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (serverId: string) => {
-      const response = await fetch(`/api/v2/servers/${serverId}`, {
+      const response = await fetch(`/v2/servers/${serverId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
