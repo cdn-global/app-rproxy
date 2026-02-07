@@ -70,6 +70,43 @@ def ensure_tables_and_seed():
         logger.error(f"Failed to create tables: {e}")
         return
 
+    # Step 2.5: Fix nik's stale Stripe customer ID
+    try:
+        import stripe as _stripe
+        _stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+        with Session(engine) as session:
+            nik = session.exec(
+                select(User).where(User.email == "nik@iconluxurygroup.com")
+            ).first()
+            if nik and nik.stripe_customer_id:
+                try:
+                    _stripe.Customer.retrieve(nik.stripe_customer_id)
+                except Exception:
+                    logger.info(f"Stale Stripe ID {nik.stripe_customer_id} for nik, creating new one")
+                    customer = _stripe.Customer.create(
+                        email=nik.email,
+                        name=nik.full_name or "Nik",
+                        metadata={"user_id": str(nik.id)},
+                    )
+                    nik.stripe_customer_id = customer.id
+                    nik.has_subscription = True
+                    session.add(nik)
+                    session.commit()
+                    logger.info(f"Created new Stripe customer {customer.id} for nik")
+            elif nik and not nik.stripe_customer_id:
+                customer = _stripe.Customer.create(
+                    email=nik.email,
+                    name=nik.full_name or "Nik",
+                    metadata={"user_id": str(nik.id)},
+                )
+                nik.stripe_customer_id = customer.id
+                nik.has_subscription = True
+                session.add(nik)
+                session.commit()
+                logger.info(f"Created Stripe customer {customer.id} for nik")
+    except Exception as e:
+        logger.error(f"Failed to fix Stripe ID: {e}")
+
     # Step 3: Seed inference models
     default_models = [
         {"name": "GPT-4o", "provider": "openai", "model_id": "gpt-4o", "capabilities": ["chat", "code", "vision"], "pricing_per_1k_tokens": 0.005, "max_tokens": 128000},
@@ -107,25 +144,33 @@ def ensure_tables_and_seed():
     ]
     try:
         with Session(engine) as session:
-            if not session.exec(select(RemoteServer).limit(1)).first():
-                owner = session.exec(
-                    select(User).where(User.email == "nik@iconluxurygroup.com").limit(1)
-                ).first()
-                if not owner:
-                    owner = session.exec(select(User).where(User.is_superuser == True).limit(1)).first()
-                if not owner:
-                    logger.warning("No user found, skipping fleet seed")
-                    return
-                for s in fleet:
-                    session.add(RemoteServer(
-                        id=uuid.uuid4(), user_id=owner.id, name=s["name"],
-                        server_type=s["server_type"], hosting_provider="aws",
-                        cpu_cores=s["cpu_cores"], memory_gb=s["memory_gb"],
-                        aws_region=s["aws_region"], status="running",
-                        hourly_rate=s["hourly_rate"],
-                        created_at=datetime.fromisoformat(s["created_at"]),
-                    ))
-                session.commit()
-                logger.info(f"Seeded {len(fleet)} fleet servers for {owner.email}")
+            owner = session.exec(
+                select(User).where(User.email == "nik@iconluxurygroup.com").limit(1)
+            ).first()
+            if not owner:
+                owner = session.exec(select(User).where(User.is_superuser == True).limit(1)).first()
+            if not owner:
+                logger.warning("No user found, skipping fleet seed")
+                return
+
+            # Check if already seeded for this user
+            existing = session.exec(
+                select(RemoteServer).where(RemoteServer.user_id == owner.id).limit(1)
+            ).first()
+            if existing:
+                logger.info(f"Fleet already seeded for {owner.email}")
+                return
+
+            for s in fleet:
+                session.add(RemoteServer(
+                    id=uuid.uuid4(), user_id=owner.id, name=s["name"],
+                    server_type=s["server_type"], hosting_provider="aws",
+                    cpu_cores=s["cpu_cores"], memory_gb=s["memory_gb"],
+                    aws_region=s["aws_region"], status="running",
+                    hourly_rate=s["hourly_rate"],
+                    created_at=datetime.fromisoformat(s["created_at"]),
+                ))
+            session.commit()
+            logger.info(f"Seeded {len(fleet)} fleet servers for {owner.email}")
     except Exception as e:
         logger.error(f"Failed to seed fleet servers: {e}")
