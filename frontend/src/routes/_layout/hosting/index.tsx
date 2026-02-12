@@ -18,6 +18,7 @@ import useCustomToast from "@/hooks/useCustomToast"
 import CreateServer from "../../../components/Servers/CreateServer"
 import ConfigureConnection from "../../../components/Servers/ConfigureConnection"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
+import { oneClickApps } from "../../../data/oneClickApps"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -44,6 +45,7 @@ interface RemoteServer {
   aws_region?: string
   aws_public_ip?: string
   has_connection?: boolean
+  app_slug?: string
 }
 
 function HostingIndexPage() {
@@ -278,7 +280,17 @@ function HostingIndexPage() {
                         className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
                       >
                         <TableCell className="font-medium text-slate-900 dark:text-slate-50">
-                          {server.name}
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const app = oneClickApps.find(a => a.slug === server.app_slug)
+                              if (app) {
+                                const Icon = app.icon
+                                return <Icon className="h-4 w-4 text-primary" title={app.name} />
+                              }
+                              return null
+                            })()}
+                            {server.name}
+                          </div>
                         </TableCell>
                         <TableCell className="capitalize">{server.server_type}</TableCell>
                         <TableCell>
