@@ -2,11 +2,13 @@
 Routes for PostgreSQL database instance management
 """
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from pydantic import BaseModel
 from sqlmodel import Session, select
 from typing import Annotated
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
 from app.models import (
     User, DatabaseInstance, DatabaseInstanceCreate, DatabaseInstanceUpdate,
     DatabaseInstancePublic, DatabaseInstancesPublic, UsageRecord
@@ -320,3 +322,69 @@ async def backup_database_instance(
         return {"message": "Backup created successfully", "backup_file": backup_file}
     else:
         raise HTTPException(status_code=500, detail="Failed to create backup")
+
+
+class QueryLogEntry(BaseModel):
+    id: str
+    query: str
+    duration_ms: float
+    timestamp: str
+    rows_affected: int
+    source: str
+
+
+class QueryLogsResponse(BaseModel):
+    data: list[QueryLogEntry]
+    count: int
+    instance_id: str
+
+
+@router.get("/{instance_id}/logs", response_model=QueryLogsResponse)
+async def get_database_query_logs(
+    instance_id: uuid.UUID,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+    limit: int = 50,
+) -> QueryLogsResponse:
+    """Get simulated query logs for a database instance"""
+    statement = select(DatabaseInstance).where(
+        DatabaseInstance.id == instance_id,
+        DatabaseInstance.user_id == current_user.id
+    )
+    instance = session.exec(statement).first()
+    if not instance:
+        raise HTTPException(status_code=404, detail="Database instance not found")
+
+    sample_queries = [
+        "SELECT * FROM users WHERE id = $1",
+        "INSERT INTO orders (user_id, total, created_at) VALUES ($1, $2, NOW())",
+        "UPDATE products SET stock = stock - $1 WHERE id = $2",
+        "SELECT o.id, o.total, u.email FROM orders o JOIN users u ON o.user_id = u.id WHERE o.created_at > $1",
+        "DELETE FROM sessions WHERE expired_at < NOW()",
+        "SELECT COUNT(*) FROM analytics WHERE event_type = $1 AND created_at > $2",
+        "CREATE INDEX CONCURRENTLY idx_orders_user ON orders (user_id)",
+        "VACUUM ANALYZE users",
+        "SELECT pg_size_pretty(pg_database_size(current_database()))",
+        "SELECT * FROM pg_stat_activity WHERE state = 'active'",
+    ]
+    sources = ["app", "admin", "cron", "migration", "monitoring"]
+
+    logs = []
+    for i in range(min(limit, 50)):
+        log_time = datetime.utcnow() - timedelta(minutes=random.randint(1, 1440))
+        logs.append(QueryLogEntry(
+            id=str(uuid.uuid4()),
+            query=random.choice(sample_queries),
+            duration_ms=round(random.uniform(0.5, 850.0), 2),
+            timestamp=log_time.isoformat() + "Z",
+            rows_affected=random.randint(0, 500),
+            source=random.choice(sources),
+        ))
+
+    logs.sort(key=lambda x: x.timestamp, reverse=True)
+
+    return QueryLogsResponse(
+        data=logs,
+        count=len(logs),
+        instance_id=str(instance_id),
+    )

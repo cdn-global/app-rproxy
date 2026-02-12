@@ -249,7 +249,13 @@ function ManagedDatabaseIndexPage() {
                         className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
                       >
                         <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                          {db.instance_name}
+                          <Link
+                            to="/managed-database/$instanceId"
+                            params={{ instanceId: db.id }}
+                            className="text-primary underline-offset-4 hover:underline"
+                          >
+                            {db.instance_name}
+                          </Link>
                         </TableCell>
                         <TableCell>{getStatusBadge(db.status)}</TableCell>
                         <TableCell>v{db.postgres_version}</TableCell>
