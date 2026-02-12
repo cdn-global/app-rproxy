@@ -173,15 +173,15 @@ const ChatInterface = ({ conversationId }: ChatInterfaceProps) => {
             <FiAlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
             <div className="flex-1 min-w-0">
               <h4 className="font-semibold text-amber-900 dark:text-amber-100">
-                API Key Required
+                Provider API Key Required
               </h4>
               <p className="mt-1 text-sm text-amber-800 dark:text-amber-200">
-                Configure your provider API key to start using language models.{" "}
+                You need to configure your provider API key (Anthropic, OpenAI, or Google) to use language models.{" "}
                 <Link
                   to="/profile"
                   className="font-semibold underline hover:no-underline"
                 >
-                  Configure in Settings →
+                  Configure Provider Keys →
                 </Link>
               </p>
             </div>
@@ -338,7 +338,7 @@ const ChatInterface = ({ conversationId }: ChatInterfaceProps) => {
               <span>
                 No models available.{" "}
                 <Link to="/profile" className="font-semibold underline hover:no-underline">
-                  Configure API keys
+                  Configure provider keys
                 </Link>{" "}
                 to get started.
               </span>

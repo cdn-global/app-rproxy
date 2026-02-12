@@ -125,7 +125,7 @@ function LanguageModelsIndexPage() {
         <PageSection
           id="overview"
           title="Model Overview"
-          description="Configure API keys in profile settings to activate models."
+          description="Configure provider API keys in profile settings to activate models."
           actions={
             <div className="flex items-center gap-2">
               <Button
@@ -136,7 +136,7 @@ function LanguageModelsIndexPage() {
               >
                 <RouterLink to="/profile">
                   <FiSettings className="h-4 w-4" />
-                  <span>API Keys</span>
+                  <span>Provider Keys</span>
                 </RouterLink>
               </Button>
             </div>
@@ -344,9 +344,9 @@ function LanguageModelsIndexPage() {
             description="Integration guides and examples"
           />
           <QuickLink
-            to="/profile"
+            to="/language-models/keys"
             title="API Keys"
-            description="Manage provider API keys"
+            description="Manage REST API keys for programmatic access"
           />
         </div>
       </div>

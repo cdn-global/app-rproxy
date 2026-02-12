@@ -115,7 +115,7 @@ function ModelChatPage() {
                     to="/profile"
                     className="font-semibold underline hover:no-underline"
                   >
-                    Configure your API key →
+                    Configure provider key →
                   </Link>
                 </p>
               </div>
