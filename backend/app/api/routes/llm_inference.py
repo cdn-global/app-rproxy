@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from typing import List, Optional, AsyncGenerator
 from pydantic import BaseModel
@@ -73,7 +73,6 @@ async def create_chat_completion(
     session: SessionDep,
     current_user: CurrentUser,
     auth_source: AuthSource,
-    background_tasks: BackgroundTasks,
 ):
     """Create chat completion (follows proxy.py subscription check pattern)"""
 
@@ -213,37 +212,21 @@ async def create_chat_completion(
             cost=cost,
         )
         session.add(assistant_msg)
+
+        # 9. Log usage inline to ensure it's always saved
+        usage = LLMUsageLog(
+            user_id=current_user.id,
+            model_id=model.id,
+            conversation_id=conversation.id,
+            message_id=assistant_msg.id,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            total_cost=cost,
+            source=auth_source,
+        )
+        session.add(usage)
         session.commit()
         session.refresh(assistant_msg)
-
-        # 9. Log usage in background (like proxy.py line 393)
-        # Capture IDs before background task to avoid DetachedInstanceError
-        user_id = current_user.id
-        model_id = model.id
-        conversation_id = conversation.id
-        message_id = assistant_msg.id
-
-        def log_usage():
-            # Create a new session for the background task to avoid thread-safety issues
-            try:
-                with Session(engine) as bg_session:
-                    usage = LLMUsageLog(
-                        user_id=user_id,
-                        model_id=model_id,
-                        conversation_id=conversation_id,
-                        message_id=message_id,
-                        input_tokens=input_tokens,
-                        output_tokens=output_tokens,
-                        total_cost=cost,
-                        source=auth_source,
-                    )
-                    bg_session.add(usage)
-                    bg_session.commit()
-            except Exception as e:
-                import logging
-                logging.getLogger(__name__).error(f"Failed to log LLM usage: {e}")
-
-        background_tasks.add_task(log_usage)
 
         return ChatCompletionResponse(
             id=response_id,
