@@ -44,8 +44,6 @@ def resolve_model(session: Session, model_identifier: str) -> Optional[LLMModel]
 def resolve_google_model_id(model_id: str) -> str:
     """Map legacy Gemini model IDs to currently supported names."""
     google_model_aliases = {
-        "gemini-1.5-pro": "gemini-1.5-pro-latest",
-        "gemini-1.5-flash": "gemini-1.5-flash-latest",
         "gemini-2.0-flash-exp": "gemini-2.0-flash",
     }
     return google_model_aliases.get(model_id, model_id)

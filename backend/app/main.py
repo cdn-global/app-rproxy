@@ -220,7 +220,7 @@ def ensure_tables_and_seed():
         {"provider": "openai", "name": "gpt-4o-mini", "model_id": "gpt-4o-mini", "display_name": "GPT-4o Mini", "input_token_price": 0.1875, "output_token_price": 0.75, "max_tokens": 128000},
         {"provider": "openai", "name": "o1-preview", "model_id": "o1-preview", "display_name": "O1 Preview", "input_token_price": 18.75, "output_token_price": 75.00, "max_tokens": 128000},
         {"provider": "openai", "name": "o1-mini", "model_id": "o1-mini", "display_name": "O1 Mini", "input_token_price": 3.75, "output_token_price": 15.00, "max_tokens": 128000},
-        {"provider": "google", "name": "gemini-2.0-flash", "model_id": "gemini-2.0-flash", "display_name": "Gemini 2.0 Flash", "input_token_price": 0.00, "output_token_price": 0.00, "max_tokens": 1048576},
+        {"provider": "google", "name": "gemini-2.0-flash", "model_id": "gemini-2.0-flash", "display_name": "Gemini 2.0 Flash", "input_token_price": 0.125, "output_token_price": 0.50, "max_tokens": 1048576},
         {"provider": "google", "name": "gemini-1.5-pro", "model_id": "gemini-1.5-pro", "display_name": "Gemini 1.5 Pro", "input_token_price": 1.5625, "output_token_price": 6.25, "max_tokens": 2097152},
         {"provider": "google", "name": "gemini-1.5-flash", "model_id": "gemini-1.5-flash", "display_name": "Gemini 1.5 Flash", "input_token_price": 0.09375, "output_token_price": 0.375, "max_tokens": 1048576},
     ]
