@@ -46,6 +46,7 @@ def resolve_google_model_id(model_id: str) -> str:
     google_model_aliases = {
         "gemini-1.5-pro": "gemini-1.5-pro-latest",
         "gemini-1.5-flash": "gemini-1.5-flash-latest",
+        "gemini-2.0-flash-exp": "gemini-2.0-flash",
     }
     return google_model_aliases.get(model_id, model_id)
 
