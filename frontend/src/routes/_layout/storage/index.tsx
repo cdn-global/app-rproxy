@@ -1,13 +1,9 @@
+import { useState } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
+import { useQueryClient } from "@tanstack/react-query"
 import { FiArrowUpRight } from "react-icons/fi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -17,7 +13,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
-import { useStorageBuckets, useStorageUsageSummary } from "@/hooks/useStorageAPI"
+import { useStorageBuckets, useStorageUsageSummary, useDeleteBucket } from "@/hooks/useStorageAPI"
+import useCustomToast from "@/hooks/useCustomToast"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -28,8 +25,40 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 })
 
 function StorageIndexPage() {
-  const { data: bucketsData, isLoading: bucketsLoading } = useStorageBuckets()
+  const showToast = useCustomToast()
+  const queryClient = useQueryClient()
+  const [seeding, setSeeding] = useState(false)
+
+  const authHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  })
+
+  const { data: bucketsData, isLoading: bucketsLoading } = useStorageBuckets({
+    onSuccessCallback: async (result: { data: unknown[]; count: number }) => {
+      if (result.count === 0 && !seeding) {
+        setSeeding(true)
+        try {
+          const seedResp = await fetch("/v2/storage/seed", {
+            method: "POST",
+            headers: authHeaders(),
+          })
+          if (seedResp.ok) {
+            const seedData = await seedResp.json()
+            if (seedData.created > 0) {
+              queryClient.invalidateQueries({ queryKey: ["storage-buckets"] })
+              queryClient.invalidateQueries({ queryKey: ["storage-usage-summary"] })
+            }
+          }
+        } catch {
+          // Seed failed silently
+        } finally {
+          setSeeding(false)
+        }
+      }
+    },
+  })
   const { data: usageSummary, isLoading: summaryLoading } = useStorageUsageSummary()
+  const deleteBucket = useDeleteBucket()
 
   const buckets = bucketsData?.data ?? []
   const summary = usageSummary ?? {
@@ -39,11 +68,13 @@ function StorageIndexPage() {
     monthly_cost: 0,
   }
 
-  if (bucketsLoading || summaryLoading) {
+  if (bucketsLoading || summaryLoading || seeding) {
     return (
       <PageScaffold sidebar={null}>
         <div className="flex items-center justify-center py-12">
-          <div className="text-slate-500">Loading storage data...</div>
+          <div className="text-slate-500">
+            {seeding ? "Setting up your file store..." : "Loading storage data..."}
+          </div>
         </div>
       </PageScaffold>
     )
@@ -70,7 +101,7 @@ function StorageIndexPage() {
             </Button>
           }
         >
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
                 label="Total buckets"
                 value={numberFormatter.format(summary.total_buckets)}
@@ -80,6 +111,11 @@ function StorageIndexPage() {
                 label="Total storage"
                 value={`${summary.total_storage_gb.toFixed(2)} GB`}
                 description="Across all buckets"
+              />
+              <SummaryTile
+                label="Total objects"
+                value={numberFormatter.format(summary.total_objects)}
+                description="Files stored"
               />
               <SummaryTile
                 label="Monthly run rate"
@@ -92,7 +128,7 @@ function StorageIndexPage() {
         <PageSection
           id="buckets"
           title="Storage Buckets"
-          description="Scalable object storage for your needs."
+          description="S3-compatible object storage provisioned via AWS."
         >
         <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
           <div className="p-0">
@@ -101,8 +137,11 @@ function StorageIndexPage() {
                 <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
                   <TableRow className="border-slate-200/70 dark:border-slate-700/60">
                     <TableHead>Name</TableHead>
+                    <TableHead>Region</TableHead>
+                    <TableHead>Backend</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Storage</TableHead>
+                    <TableHead>Objects</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -110,7 +149,7 @@ function StorageIndexPage() {
                 <TableBody>
                   {buckets.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                      <TableCell colSpan={8} className="text-center py-8 text-slate-500">
                         No storage buckets yet. Create your first bucket to get started.
                       </TableCell>
                     </TableRow>
@@ -123,29 +162,56 @@ function StorageIndexPage() {
                         <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
                           {bucket.bucket_name}
                         </TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-400">
+                          {bucket.region}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize text-xs">
+                            {bucket.storage_backend}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Badge
-                            variant={bucket.status === "active" ? "default" : "outline"}
+                            variant={bucket.status === "active" ? "default" : bucket.status === "error" ? "destructive" : "outline"}
                             className="capitalize"
                           >
                             {bucket.status}
                           </Badge>
                         </TableCell>
                         <TableCell>{bucket.storage_gb_used.toFixed(2)} GB</TableCell>
+                        <TableCell>{numberFormatter.format(bucket.object_count)}</TableCell>
                         <TableCell>
                           {currencyFormatter.format(bucket.storage_gb_used * bucket.monthly_rate_per_gb)}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
-                            asChild
-                          >
-                            <Link to="/storage/bucket" search={{ bucketId: bucket.id }}>
-                              Details
-                            </Link>
-                          </Button>
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
+                              asChild
+                            >
+                              <Link to="/storage/bucket" search={{ bucketId: bucket.id }}>
+                                Details
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
+                              onClick={() => {
+                                if (confirm(`Delete bucket "${bucket.bucket_name}"?`)) {
+                                  deleteBucket.mutate(bucket.id, {
+                                    onSuccess: () => showToast("Success", "Bucket deleted.", "success"),
+                                    onError: (err: Error) => showToast("Error", err.message, "error"),
+                                  })
+                                }
+                              }}
+                              disabled={deleteBucket.isPending}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
@@ -182,30 +248,30 @@ function StorageIndexPage() {
                   </div>
                 </Link>
 
-                <a
-                  href="#analytics"
+                <Link
+                  to="/hosting"
                   className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
                 >
                   <div className="space-y-1">
                     <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Usage insights
+                      Hosting
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Traffic, spend, and throughput metrics.
+                      Manage servers and compute infrastructure.
                     </div>
                   </div>
-                </a>
+                </Link>
 
                 <Link
-                  to="/"
+                  to="/settings"
                   className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
                 >
                   <div className="space-y-1">
                     <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Tool directory
+                      Settings
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Explore every workspace module in one place.
+                      Configure storage defaults and API keys.
                     </div>
                   </div>
                 </Link>

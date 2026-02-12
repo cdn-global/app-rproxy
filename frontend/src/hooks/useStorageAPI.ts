@@ -15,8 +15,25 @@ export interface StorageBucket {
   created_at: string
 }
 
+export interface StorageObject {
+  id: string
+  bucket_id: string
+  object_key: string
+  size_bytes: number
+  content_type: string | null
+  etag: string | null
+  storage_class: string
+  created_at: string
+  last_modified: string
+}
+
 export interface StorageBucketsResponse {
   data: StorageBucket[]
+  count: number
+}
+
+export interface StorageObjectsResponse {
+  data: StorageObject[]
   count: number
 }
 
@@ -51,7 +68,9 @@ function getAuthHeaders() {
   }
 }
 
-export function useStorageBuckets() {
+export function useStorageBuckets(options?: {
+  onSuccessCallback?: (data: StorageBucketsResponse) => void
+}) {
   return useQuery<StorageBucketsResponse>({
     queryKey: ["storage-buckets"],
     queryFn: async () => {
@@ -61,7 +80,9 @@ export function useStorageBuckets() {
       if (!res.ok) {
         throw new Error("Failed to fetch storage buckets")
       }
-      return res.json()
+      const data = await res.json()
+      options?.onSuccessCallback?.(data)
+      return data
     },
   })
 }
@@ -75,6 +96,38 @@ export function useStorageUsageSummary() {
       })
       if (!res.ok) {
         throw new Error("Failed to fetch storage usage summary")
+      }
+      return res.json()
+    },
+  })
+}
+
+export function useBucketObjects(bucketId: string | undefined) {
+  return useQuery<StorageObjectsResponse>({
+    queryKey: ["storage-objects", bucketId],
+    enabled: !!bucketId,
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/buckets/${bucketId}/objects`, {
+        headers: getAuthHeaders(),
+      })
+      if (!res.ok) {
+        throw new Error("Failed to fetch bucket objects")
+      }
+      return res.json()
+    },
+  })
+}
+
+export function useBucketDetail(bucketId: string | undefined) {
+  return useQuery<StorageBucket>({
+    queryKey: ["storage-bucket", bucketId],
+    enabled: !!bucketId,
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/buckets/${bucketId}`, {
+        headers: getAuthHeaders(),
+      })
+      if (!res.ok) {
+        throw new Error("Failed to fetch bucket details")
       }
       return res.json()
     },

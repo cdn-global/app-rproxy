@@ -25,6 +25,42 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["storage"])
 
 
+@router.post("/seed")
+async def seed_storage(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+) -> dict:
+    """Seed a default storage bucket for current user. Idempotent."""
+    existing = session.exec(
+        select(StorageBucket).where(
+            StorageBucket.user_id == current_user.id,
+            StorageBucket.status != "deleted",
+        ).limit(1)
+    ).first()
+    if existing:
+        return {"message": "Storage already seeded", "created": 0}
+
+    bucket = StorageBucket(
+        id=uuid.uuid4(),
+        user_id=current_user.id,
+        bucket_name=f"files-{current_user.id.hex[:8]}",
+        region="us-east-1",
+        storage_class="standard",
+        storage_backend="aws-s3",
+        status="active",
+        access_key=None,
+        secret_key_encrypted=None,
+        endpoint_url=None,
+        storage_gb_used=1.24,
+        object_count=47,
+        monthly_rate_per_gb=0.023,
+        created_at=datetime.utcnow(),
+    )
+    session.add(bucket)
+    session.commit()
+    return {"message": "Storage seeded", "created": 1}
+
+
 @router.get("/buckets", response_model=StorageBucketsPublic)
 async def list_buckets(
     current_user: Annotated[User, Depends(get_current_user)],

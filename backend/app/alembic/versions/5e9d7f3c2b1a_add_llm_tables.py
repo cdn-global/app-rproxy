@@ -102,15 +102,14 @@ def upgrade():
     provider_id = str(uuid.uuid4())
     op.execute(f"""
         INSERT INTO llm_provider (id, name, display_name, description, website_url, is_active)
-        VALUES (
+        SELECT
             '{provider_id}',
             'anthropic',
             'Anthropic',
             'Anthropic AI - Creators of Claude',
             'https://www.anthropic.com',
             true
-        )
-        ON CONFLICT DO NOTHING
+        WHERE NOT EXISTS (SELECT 1 FROM llm_provider WHERE name = 'anthropic')
     """)
 
     # Insert Claude models

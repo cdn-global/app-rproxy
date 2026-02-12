@@ -4,6 +4,7 @@ import ChangePassword from "@/components/UserSettings/ChangePassword"
 import UserInformation from "@/components/UserSettings/UserInformation"
 import DeleteAccount from "@/components/UserSettings/DeleteAccount"
 import ApiKeySettings from "@/components/UserSettings/ApiKeySettings"
+import FileStoreSettings from "@/components/UserSettings/FileStoreSettings"
 
 function ProfilePage() {
   return (
@@ -32,6 +33,14 @@ function ProfilePage() {
           description="Configure your API keys for LLM providers. All usage is tracked for billing."
         >
           <ApiKeySettings />
+        </PageSection>
+
+        <PageSection
+          id="file-store"
+          title="File Store"
+          description="S3-compatible object storage provisioned via AWS"
+        >
+          <FileStoreSettings />
         </PageSection>
 
         <PageSection
