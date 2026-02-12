@@ -57,10 +57,13 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
 
     term.writeln("\x1b[1;32mConnecting to server...\x1b[0m")
 
-    // Connect WebSocket via same origin (Vite proxy forwards /v2 → backend)
+    // In dev, Vite proxies /v2 to the backend (same origin).
+    // In production, the API lives on a separate host.
     const token = localStorage.getItem("access_token")
-    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    const wsUrl = `${wsProtocol}//${window.location.host}/v2/terminal/ws/${serverId}?token=${token}`
+    const apiBase = import.meta.env.DEV
+      ? `${window.location.protocol}//${window.location.host}`
+      : "https://api.roamingproxy.com"
+    const wsUrl = apiBase.replace(/^http/, "ws") + `/v2/terminal/ws/${serverId}?token=${token}`
 
     const ws = new WebSocket(wsUrl)
     wsRef.current = ws
