@@ -19,10 +19,14 @@ depends_on = None
 
 
 def upgrade():
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    
     # Create llm_provider table
-    op.create_table(
-        'llm_provider',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+    if not inspector.has_table('llm_provider'):
+        op.create_table(
+            'llm_provider',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
         sa.Column('name', sa.String(length=100), nullable=False, index=True),
         sa.Column('display_name', sa.String(length=200), nullable=False),
         sa.Column('description', sa.String(length=500), nullable=True),
@@ -30,50 +34,54 @@ def upgrade():
         sa.Column('is_active', sa.Boolean(), nullable=False, default=True),
     )
 
-    # Create llm_model table
-    op.create_table(
-        'llm_model',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-        sa.Column('provider_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('name', sa.String(length=100), nullable=False, index=True),
-        sa.Column('model_id', sa.String(length=200), nullable=False),
-        sa.Column('display_name', sa.String(length=200), nullable=False),
-        sa.Column('input_token_price', sa.Float(), nullable=False, default=0.0),
-        sa.Column('output_token_price', sa.Float(), nullable=False, default=0.0),
-        sa.Column('max_tokens', sa.Integer(), nullable=False, default=8192),
-        sa.Column('is_active', sa.Boolean(), nullable=False, default=True),
-        sa.ForeignKeyConstraint(['provider_id'], ['llm_provider.id'], ),
-    )
+    if not inspector.has_table('llm_model'):
+        # Create llm_model table
+        op.create_table(
+            'llm_model',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+            sa.Column('provider_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('name', sa.String(length=100), nullable=False, index=True),
+            sa.Column('model_id', sa.String(length=200), nullable=False),
+            sa.Column('display_name', sa.String(length=200), nullable=False),
+            sa.Column('input_token_price', sa.Float(), nullable=False, default=0.0),
+            sa.Column('output_token_price', sa.Float(), nullable=False, default=0.0),
+            sa.Column('max_tokens', sa.Integer(), nullable=False, default=8192),
+            sa.Column('is_active', sa.Boolean(), nullable=False, default=True),
+            sa.ForeignKeyConstraint(['provider_id'], ['llm_provider.id'], ),
+        )
 
-    # Create conversation table
-    op.create_table(
-        'conversation',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-        sa.Column('owner_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('title', sa.String(length=255), nullable=False),
-        sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
-        sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
-        sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ondelete='CASCADE'),
-    )
+    if not inspector.has_table('conversation'):
+        # Create conversation table
+        op.create_table(
+            'conversation',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+            sa.Column('owner_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('title', sa.String(length=255), nullable=False),
+            sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
+            sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
+            sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ondelete='CASCADE'),
+        )
 
-    # Create llm_message table
-    op.create_table(
-        'llm_message',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-        sa.Column('conversation_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('model_id', postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column('role', sa.String(length=50), nullable=False),
-        sa.Column('content', sa.Text(), nullable=False),
-        sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
-        sa.Column('input_tokens', sa.Integer(), nullable=False, default=0),
-        sa.Column('output_tokens', sa.Integer(), nullable=False, default=0),
-        sa.Column('cost', sa.Float(), nullable=False, default=0.0),
-        sa.ForeignKeyConstraint(['conversation_id'], ['conversation.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['model_id'], ['llm_model.id'], ),
-    )
+    if not inspector.has_table('llm_message'):
+        # Create llm_message table
+        op.create_table(
+            'llm_message',
+            sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
+            sa.Column('conversation_id', postgresql.UUID(as_uuid=True), nullable=False),
+            sa.Column('model_id', postgresql.UUID(as_uuid=True), nullable=True),
+            sa.Column('role', sa.String(length=50), nullable=False),
+            sa.Column('content', sa.Text(), nullable=False),
+            sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
+            sa.Column('input_tokens', sa.Integer(), nullable=False, default=0),
+            sa.Column('output_tokens', sa.Integer(), nullable=False, default=0),
+            sa.Column('cost', sa.Float(), nullable=False, default=0.0),
+            sa.ForeignKeyConstraint(['conversation_id'], ['conversation.id'], ondelete='CASCADE'),
+            sa.ForeignKeyConstraint(['model_id'], ['llm_model.id'], ),
+        )
 
-    # Create llm_usage_log table
-    op.create_table(
+    if not inspector.has_table('llm_usage_log'):
+        # Create llm_usage_log table
+        op.create_table(
         'llm_usage_log',
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
         sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False, index=True),
