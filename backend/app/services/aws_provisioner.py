@@ -3,13 +3,13 @@ AWS EC2 provisioning service for remote servers (SSH, GPU, inference)
 """
 from __future__ import annotations
 
-import os
 import logging
 import uuid
 from typing import Optional
-from cryptography.fernet import Fernet
 import boto3
 from botocore.exceptions import ClientError, BotoCoreError
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -53,13 +53,13 @@ class AWSProvisioner:
     PRICING_MARKUP = 1.3
 
     def __init__(self):
-        """Initialize AWS provisioner with credentials from environment"""
-        self.aws_access_key = os.environ.get("AWS_ACCESS_KEY_ID")
-        self.aws_secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-        self.aws_default_region = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+        """Initialize AWS provisioner with credentials from settings"""
+        self.aws_access_key = settings.AWS_ACCESS_KEY_ID
+        self.aws_secret_key = settings.AWS_SECRET_ACCESS_KEY
+        self.aws_default_region = settings.AWS_DEFAULT_REGION
 
         if not self.aws_access_key or not self.aws_secret_key:
-            logger.warning("AWS credentials not found in environment variables")
+            logger.warning("AWS credentials not configured in settings")
 
     def _get_ec2_client(self, region: str):
         """Get boto3 EC2 client for specified region"""
@@ -73,32 +73,6 @@ class AWSProvisioner:
         except Exception as e:
             logger.error(f"Failed to create EC2 client for region {region}: {e}")
             raise Exception(f"Failed to initialize AWS client: {str(e)}")
-
-    def _generate_encryption_key(self) -> bytes:
-        """Generate encryption key for private keys"""
-        return Fernet.generate_key()
-
-    def _encrypt_private_key(self, private_key: str, key: bytes) -> str:
-        """Encrypt private key"""
-        f = Fernet(key)
-        return f.encrypt(private_key.encode()).decode()
-
-    @staticmethod
-    def decrypt_private_key(connection_blob: str) -> str:
-        """
-        Decrypt the private key PEM from the stored connection_string_encrypted.
-
-        The blob format is "fernet_key_b64:encrypted_pem_b64".
-
-        Args:
-            connection_blob: The value stored in RemoteServer.connection_string_encrypted
-
-        Returns:
-            The decrypted PEM private key string
-        """
-        key_b64, encrypted_pem = connection_blob.split(":", 1)
-        f = Fernet(key_b64.encode())
-        return f.decrypt(encrypted_pem.encode()).decode()
 
     def calculate_hourly_rate(self, instance_type: str) -> float:
         """
@@ -324,7 +298,7 @@ class AWSProvisioner:
                 {"Key": "UserId", "Value": str(user_id)},
                 {"Key": "ServerId", "Value": str(server_id)},
                 {"Key": "ServerType", "Value": server_type},
-                {"Key": "Environment", "Value": os.environ.get("ENVIRONMENT", "production")},
+                {"Key": "Environment", "Value": settings.ENVIRONMENT},
             ]
             if gpu_type:
                 tags.append({"Key": "GPUType", "Value": gpu_type})
@@ -387,14 +361,6 @@ class AWSProvisioner:
                 f"Successfully provisioned EC2 instance {instance_id} with IP {public_ip}"
             )
 
-            # Encrypt the private key PEM for secure storage in the database.
-            # Format: "encryption_key_b64:encrypted_pem_b64" so it can be
-            # decrypted later.  The encryption key is stored alongside the
-            # ciphertext -- for production, move this to AWS KMS or Vault.
-            encryption_key = self._generate_encryption_key()
-            encrypted_private_key = self._encrypt_private_key(private_key_pem, encryption_key)
-            connection_blob = f"{encryption_key.decode()}:{encrypted_private_key}"
-
             return {
                 "instance_id": instance_id,
                 "public_ip": public_ip,
@@ -404,7 +370,7 @@ class AWSProvisioner:
                 "key_pair_name": key_pair_name,
                 "security_group_id": security_group_id,
                 "hourly_rate": hourly_rate,
-                "connection_string_encrypted": connection_blob,
+                "private_key_pem": private_key_pem,
             }
 
         except (ClientError, BotoCoreError) as e:

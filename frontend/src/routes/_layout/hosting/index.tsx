@@ -57,6 +57,10 @@ function HostingIndexPage() {
 
   const { data, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
     queryKey: ["remote-servers"],
+    refetchInterval: (query) => {
+      const servers = query.state.data?.data ?? []
+      return servers.some((s) => s.status === "provisioning") ? 5000 : false
+    },
     queryFn: async () => {
       const response = await fetch("/v2/servers/", {
         headers: authHeaders(),
@@ -122,6 +126,25 @@ function HostingIndexPage() {
     },
     onSuccess: () => {
       showToast("Success", "Server started.", "success")
+      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
+  const provisionMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/v2/servers/${id}/provision`, {
+        method: "POST",
+        headers: authHeaders(),
+      })
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err.detail || "Failed to provision server")
+      }
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Server provisioning started. This may take a minute.", "success")
       queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
     },
     onError: (err: Error) => showToast("Error", err.message, "error"),
@@ -253,16 +276,28 @@ function HostingIndexPage() {
                           <div className="flex justify-end gap-2">
                             {server.status === "running" && (
                               <>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="rounded-full px-3 py-1 text-xs font-semibold"
-                                  asChild
-                                >
-                                  <a href={`/remote-terminals/terminal?serverId=${server.id}`}>
-                                    Terminal
-                                  </a>
-                                </Button>
+                                {server.has_connection ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="rounded-full px-3 py-1 text-xs font-semibold"
+                                    asChild
+                                  >
+                                    <a href={`/remote-terminals/terminal?serverId=${server.id}`}>
+                                      Terminal
+                                    </a>
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="rounded-full px-3 py-1 text-xs font-semibold"
+                                    onClick={() => provisionMutation.mutate(server.id)}
+                                    disabled={provisionMutation.isPending}
+                                  >
+                                    {provisionMutation.isPending ? "Provisioning..." : "Provision"}
+                                  </Button>
+                                )}
                                 <Button
                                   variant="outline"
                                   size="sm"

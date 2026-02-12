@@ -442,3 +442,63 @@ async def configure_server_connection(
     p = RemoteServerPublic.model_validate(server)
     p.has_connection = True
     return p
+
+
+@router.post("/{server_id}/provision", response_model=RemoteServerPublic)
+async def provision_server_aws(
+    server_id: uuid.UUID,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+    background_tasks: BackgroundTasks,
+) -> RemoteServerPublic:
+    """
+    Provision an existing server record on AWS.
+
+    Uses system-level AWS credentials from .env (whitelabel).
+    The user just clicks "Provision" — no cloud credentials needed from them.
+    """
+    from app.core.config import settings as app_settings
+
+    if not app_settings.AWS_ACCESS_KEY_ID or not app_settings.AWS_SECRET_ACCESS_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="AWS provisioning is not available. System credentials not configured.",
+        )
+
+    statement = select(RemoteServer).where(
+        RemoteServer.id == server_id,
+        RemoteServer.user_id == current_user.id,
+    )
+    server = session.exec(statement).first()
+    if not server:
+        raise HTTPException(status_code=404, detail="Server not found")
+
+    if server.aws_instance_id:
+        raise HTTPException(status_code=409, detail="Server is already provisioned on AWS")
+
+    # Mark as provisioning
+    server.status = "provisioning"
+    server.hosting_provider = "aws"
+    session.add(server)
+    session.commit()
+    session.refresh(server)
+
+    # Build a minimal object that run_aws_provisioning expects
+    class _ProvisionData:
+        name = server.name
+        server_type = server.server_type
+        aws_instance_type = server.aws_instance_type or "t3.medium"
+        aws_region = server.aws_region or "us-east-1"
+        gpu_type = server.gpu_type if hasattr(server, "gpu_type") else None
+
+    background_tasks.add_task(
+        run_aws_provisioning,
+        server_id=server.id,
+        user_id=current_user.id,
+        server_data=_ProvisionData(),
+        db_url="",
+    )
+
+    p = RemoteServerPublic.model_validate(server)
+    p.has_connection = False
+    return p

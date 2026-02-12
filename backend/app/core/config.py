@@ -101,6 +101,11 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str | None = None
     GOOGLE_API_KEY: str | None = None
 
+    # AWS (system-level, whitelabel — users never see these)
+    AWS_ACCESS_KEY_ID: str | None = None
+    AWS_SECRET_ACCESS_KEY: str | None = None
+    AWS_DEFAULT_REGION: str = "us-east-1"
+
     # MinIO / S3 Storage
     MINIO_ENDPOINT: str | None = None
     MINIO_ROOT_USER: str | None = None
