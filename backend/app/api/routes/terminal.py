@@ -47,6 +47,9 @@ async def terminal_websocket(
     - Docker servers: connects via docker exec
     - AWS servers: connects via asyncssh
     """
+    # Must accept before we can send close codes to the client
+    await websocket.accept()
+
     # Authenticate
     user = await authenticate_ws(token)
     if not user:
@@ -68,8 +71,6 @@ async def terminal_websocket(
     if server.status != "running":
         await websocket.close(code=4003, reason="Server is not running")
         return
-
-    await websocket.accept()
 
     try:
         if server.hosting_provider == "docker" and server.docker_container_id:

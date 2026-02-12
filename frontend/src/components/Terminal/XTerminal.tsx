@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useCallback } from "react"
 import { Terminal } from "@xterm/xterm"
 import { FitAddon } from "@xterm/addon-fit"
 import { WebLinksAddon } from "@xterm/addon-web-links"
@@ -14,9 +14,15 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
   const termRef = useRef<Terminal | null>(null)
   const wsRef = useRef<WebSocket | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
+  // Store callback in a ref so the effect doesn't re-run when it changes
+  const onDisconnectRef = useRef(onDisconnect)
+  onDisconnectRef.current = onDisconnect
 
   useEffect(() => {
     if (!terminalRef.current) return
+
+    // Guard against StrictMode double-mount: track intentional cleanup
+    let intentionalClose = false
 
     const term = new Terminal({
       cursorBlink: true,
@@ -68,8 +74,10 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
     }
 
     ws.onclose = (event) => {
+      // Don't fire onDisconnect if we closed intentionally during cleanup
+      if (intentionalClose) return
       term.writeln(`\r\n\x1b[1;31mDisconnected (code: ${event.code})\x1b[0m`)
-      onDisconnect?.(event.code, event.reason)
+      onDisconnectRef.current?.(event.code, event.reason)
     }
 
     ws.onerror = () => {
@@ -96,11 +104,12 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
     window.addEventListener("resize", handleResize)
 
     return () => {
+      intentionalClose = true
       window.removeEventListener("resize", handleResize)
       ws.close()
       term.dispose()
     }
-  }, [serverId, onDisconnect])
+  }, [serverId]) // onDisconnect removed — accessed via ref
 
   return (
     <div
