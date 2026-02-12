@@ -7,6 +7,7 @@ import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 
@@ -32,15 +33,20 @@ app = FastAPI(
 )
 
 
-# Global exception handler to ensure JSON body is always returned (prevents
+# Catch-all middleware that ensures JSON body is always returned (prevents
 # empty-body responses that cause JSON.parse failures on the frontend).
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled exception on {request.method} {request.url}: {exc}")
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error"},
-    )
+# Registered AFTER CORSMiddleware so it sits inside CORS in the middleware
+# chain, guaranteeing CORS headers are added even to 500 responses.
+class CatchAllExceptionMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        try:
+            return await call_next(request)
+        except Exception as exc:
+            logger.error(f"Unhandled exception on {request.method} {request.url}: {exc}")
+            return JSONResponse(
+                status_code=500,
+                content={"detail": "Internal server error"},
+            )
 
 
 # Set all CORS enabled origins
@@ -61,6 +67,9 @@ elif settings.all_cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+# Added last so it's innermost — runs inside CORSMiddleware.
+app.add_middleware(CatchAllExceptionMiddleware)
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
