@@ -76,8 +76,8 @@ async def terminal_websocket(
         elif server.hosting_provider == "aws" and server.aws_public_ip:
             await _handle_ssh_terminal(websocket, server)
         else:
-            await websocket.send_text("Error: Server has no connection endpoint\r\n")
-            await websocket.close()
+            await websocket.send_text("Error: Server has no connection endpoint configured.\r\n")
+            await websocket.close(code=4005, reason="Terminal access not configured")
     except WebSocketDisconnect:
         logger.info(f"Terminal disconnected for server {server_id}")
     except Exception as e:

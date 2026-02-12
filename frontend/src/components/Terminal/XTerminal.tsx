@@ -6,7 +6,7 @@ import "@xterm/xterm/css/xterm.css"
 
 interface XTerminalProps {
   serverId: string
-  onDisconnect?: () => void
+  onDisconnect?: (code?: number, reason?: string) => void
 }
 
 const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
@@ -72,7 +72,7 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
 
     ws.onclose = (event) => {
       term.writeln(`\r\n\x1b[1;31mDisconnected (code: ${event.code})\x1b[0m`)
-      onDisconnect?.()
+      onDisconnect?.(event.code, event.reason)
     }
 
     ws.onerror = () => {

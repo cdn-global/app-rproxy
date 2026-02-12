@@ -14,6 +14,7 @@ function TerminalPage() {
   const { serverId } = Route.useSearch()
   const [connected, setConnected] = useState(true)
   const [error, setError] = useState("")
+  const [notConfigured, setNotConfigured] = useState(false)
 
   if (!serverId) {
     return (
@@ -37,9 +38,16 @@ function TerminalPage() {
           <span className="text-sm text-muted-foreground">
             Server: {serverId.slice(0, 8)}...
           </span>
-          <span className={`inline-block h-2 w-2 rounded-full ${connected && !error ? "bg-green-500" : "bg-red-500"}`} />
+          <span className={`inline-block h-2 w-2 rounded-full ${connected && !error && !notConfigured ? "bg-green-500" : notConfigured ? "bg-yellow-500" : "bg-red-500"}`} />
         </div>
-        {(!connected || error) && (
+        {notConfigured ? (
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-yellow-500">Terminal access not configured</span>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/hosting">Configure Server</Link>
+            </Button>
+          </div>
+        ) : (!connected || error) ? (
           <div className="flex items-center gap-3">
             {error && <span className="text-sm text-destructive">{error}</span>}
             <Button
@@ -54,17 +62,32 @@ function TerminalPage() {
               Reconnect
             </Button>
           </div>
-        )}
+        ) : null}
       </div>
-      <div className="flex-1 rounded-lg border border-slate-700 bg-[#0f172a] overflow-hidden">
+      <div className="flex-1 rounded-lg border border-slate-700 bg-[#0f172a] overflow-hidden relative">
         {connected && (
           <XTerminal
             serverId={serverId}
-            onDisconnect={() => {
+            onDisconnect={(code, reason) => {
               setConnected(false)
-              setError("Connection closed. Server may not have terminal access configured.")
+              if (code === 4005) {
+                setNotConfigured(true)
+              } else {
+                setError(`Connection closed (code: ${code ?? "unknown"}).`)
+              }
             }}
           />
+        )}
+        {notConfigured && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[#0f172a]/90">
+            <p className="text-yellow-400 text-lg font-semibold">Terminal Access Not Configured</p>
+            <p className="text-slate-400 text-sm max-w-md text-center">
+              This server does not have a connection endpoint configured. Please set up SSH or Docker access for this server to use the terminal.
+            </p>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/hosting">Go to Server Settings</Link>
+            </Button>
+          </div>
         )}
       </div>
     </div>
