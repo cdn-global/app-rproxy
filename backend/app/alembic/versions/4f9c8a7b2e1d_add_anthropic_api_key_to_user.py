@@ -18,7 +18,11 @@ depends_on = None
 
 def upgrade():
     # Add anthropic_api_key column to user table
-    op.add_column('user', sa.Column('anthropic_api_key', sa.String(length=500), nullable=True))
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = [c['name'] for c in inspector.get_columns('user')]
+    if 'anthropic_api_key' not in columns:
+        op.add_column('user', sa.Column('anthropic_api_key', sa.String(length=500), nullable=True))
 
 
 def downgrade():
