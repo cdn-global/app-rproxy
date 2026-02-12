@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlmodel import Session, create_engine, select
 
 from app import crud
@@ -20,7 +21,7 @@ engine = create_engine(
 def init_db(session: Session) -> None:
     user = session.exec(
         select(User.id, User.email, User.is_active, User.is_superuser)
-        .where(User.email == settings.FIRST_SUPERUSER)
+        .where(func.lower(User.email) == settings.FIRST_SUPERUSER.lower())
     ).first()
     if not user:
         user_in = UserCreate(
