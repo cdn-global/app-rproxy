@@ -21,6 +21,15 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 6,
 });
 
+interface SourceUsage {
+  source: string;
+  total_requests: number;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_tokens: number;
+  total_cost: number;
+}
+
 interface UserUsageSummary {
   user_id: string;
   user_email: string;
@@ -30,6 +39,7 @@ interface UserUsageSummary {
   total_tokens: number;
   total_cost: number;
   models_used: string[];
+  by_source: SourceUsage[];
 }
 
 function LanguageModelsBillingPage() {
@@ -160,6 +170,42 @@ function LanguageModelsBillingPage() {
           </div>
         )}
         </PageSection>
+
+        {/* Source Breakdown */}
+        {!isLoading && usageData?.by_source && usageData.by_source.length > 0 && (
+          <PageSection
+            id="source-breakdown"
+            title="Usage by Source"
+            description="Breakdown of usage from playground vs REST API."
+          >
+            <div className="grid gap-4 sm:grid-cols-2">
+              {usageData.by_source.map((src) => (
+                <div
+                  key={src.source}
+                  className="rounded-[28px] border border-slate-200/70 bg-white/95 p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]"
+                >
+                  <div className="mb-4 flex items-center gap-2">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                      src.source === "playground"
+                        ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
+                        : src.source === "api"
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                        : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                    }`}>
+                      {src.source === "playground" ? "Playground" : src.source === "api" ? "REST API" : "Other"}
+                    </span>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <SummaryTile label="Requests" value={numberFormatter.format(src.total_requests)} description="Calls made" />
+                    <SummaryTile label="Tokens" value={numberFormatter.format(src.total_tokens)} description="Total tokens" />
+                    <SummaryTile label="Input" value={numberFormatter.format(src.total_input_tokens)} description="Input tokens" />
+                    <SummaryTile label="Cost" value={currencyFormatter.format(src.total_cost)} description="Amount billed" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </PageSection>
+        )}
 
         <PageSection
           id="models-used"

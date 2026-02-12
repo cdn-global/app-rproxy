@@ -4,7 +4,8 @@ import uuid
 from datetime import datetime
 
 import sentry_sdk
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
@@ -29,6 +30,19 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
+
+
+# Global exception handler to ensure JSON body is always returned (prevents
+# empty-body responses that cause JSON.parse failures on the frontend).
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception on {request.method} {request.url}: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+    )
+
+
 # Set all CORS enabled origins
 if settings.ENVIRONMENT == "local":
     # Allow all origins in development

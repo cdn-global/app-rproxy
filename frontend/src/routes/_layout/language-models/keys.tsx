@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table"
 import PageScaffold, { PageSection } from "@/components/Common/PageLayout"
 import useCustomToast from "@/hooks/useCustomToast"
+import { getApiBaseUrl, safeJson } from "@/lib/utils"
 
 interface ApiKey {
   id: string
@@ -28,10 +29,7 @@ interface ApiKeyCreated extends ApiKey {
   full_key: string
 }
 
-const baseUrl =
-  window.location.hostname === "localhost"
-    ? "http://localhost:8000"
-    : `https://${window.location.hostname.replace("-5173", "-8000")}`
+const baseUrl = getApiBaseUrl()
 
 function ApiKeysPage() {
   const showToast = useCustomToast()

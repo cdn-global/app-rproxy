@@ -11,7 +11,7 @@ import json
 from datetime import datetime
 from sqlmodel import Session, select
 
-from app.api.deps import SessionDep, CurrentUser
+from app.api.deps import SessionDep, CurrentUser, AuthSource
 from app.core.db import engine
 from app.core.config import settings
 from app.models import LLMModel, LLMUsageLog, Conversation, LLMMessage
@@ -50,6 +50,7 @@ async def create_chat_completion(
     request: ChatCompletionRequest,
     session: SessionDep,
     current_user: CurrentUser,
+    auth_source: AuthSource,
     background_tasks: BackgroundTasks,
 ):
     """Create chat completion (follows proxy.py subscription check pattern)"""
@@ -211,6 +212,7 @@ async def create_chat_completion(
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
                     total_cost=cost,
+                    source=auth_source,
                 )
                 bg_session.add(usage)
                 bg_session.commit()
@@ -237,6 +239,7 @@ async def create_chat_completion_stream(
     request: ChatCompletionRequest,
     session: SessionDep,
     current_user: CurrentUser,
+    auth_source: AuthSource,
 ):
     """Create streaming chat completion with SSE support for Anthropic, OpenAI, and Google"""
 
@@ -447,6 +450,7 @@ async def create_chat_completion_stream(
                     input_tokens=int(input_tokens),
                     output_tokens=int(output_tokens),
                     total_cost=cost,
+                    source=auth_source,
                 )
                 stream_session.add(usage)
                 stream_session.commit()

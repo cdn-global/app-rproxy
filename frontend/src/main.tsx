@@ -8,12 +8,10 @@ import { routeTree } from "./routeTree.gen"
 import "./styles/global.css"
 import { Toaster } from "./components/ui/toaster"
 
-// Use local backend in development, production API in prod
-OpenAPI.BASE = import.meta.env.MODE === "production"
-  ? "https://api.ROAMINGPROXY.com"
-  : window.location.hostname === "localhost"
-    ? "http://localhost:8000"
-    : `https://${window.location.hostname.replace("-5173", "-8000")}`
+// In Vite dev mode the dev-server proxy forwards /v2 → localhost:8000,
+// so we use "" (same-origin relative paths) to avoid CORS entirely.
+// In production builds we hit the real API.
+OpenAPI.BASE = import.meta.env.DEV ? "" : "https://api.ROAMINGPROXY.com"
 OpenAPI.TOKEN = async () => localStorage.getItem("access_token") || ""
 
 console.log("🔧 API Base URL:", OpenAPI.BASE)

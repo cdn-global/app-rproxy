@@ -726,4 +726,5 @@ class LLMUsageLog(SQLModel, table=True):
     input_tokens: int = Field(default=0)
     output_tokens: int = Field(default=0)
     total_cost: float = Field(default=0.0)
+    source: Optional[str] = Field(default=None, max_length=20, index=True)  # "playground" | "api"
     created_at: datetime = Field(default_factory=datetime.utcnow, index=True)

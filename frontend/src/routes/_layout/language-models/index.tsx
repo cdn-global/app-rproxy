@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FiSearch, FiSettings, FiCpu, FiZap, FiDollarSign } from "react-icons/fi";
+import { FiSearch, FiSettings, FiCpu, FiZap, FiDollarSign, FiKey, FiBarChart2 } from "react-icons/fi";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getApiBaseUrl, safeJson } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -38,26 +39,55 @@ interface InferenceModel {
   is_active: boolean;
 }
 
+interface SourceUsage {
+  source: string;
+  total_requests: number;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_tokens: number;
+  total_cost: number;
+}
+
+interface UsageSummary {
+  total_requests: number;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_tokens: number;
+  total_cost: number;
+  models_used: string[];
+  by_source: SourceUsage[];
+}
+
 function LanguageModelsIndexPage() {
   const [showInactive, setShowInactive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { data: usageData } = useQuery<UsageSummary>({
+    queryKey: ["llm-usage-summary"],
+    queryFn: async () => {
+      const response = await fetch(`${getApiBaseUrl()}/v2/billing/usage/my-usage?days=30`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch usage");
+      return safeJson(response, {
+        total_requests: 0, total_input_tokens: 0, total_output_tokens: 0,
+        total_tokens: 0, total_cost: 0, models_used: [], by_source: [],
+      });
+    },
+  });
+
   const { data, isLoading } = useQuery<{ data: InferenceModel[]; count: number }>({
     queryKey: ["inference-models"],
     queryFn: async () => {
-      const baseUrl = window.location.hostname === "localhost"
-        ? "http://localhost:8000"
-        : `https://${window.location.hostname.replace("-5173", "-8000")}`;
-
-      const url = `${baseUrl}/v2/llm-models/`;
-
-      const response = await fetch(url, {
+      const response = await fetch(`${getApiBaseUrl()}/v2/llm-models/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
       if (!response.ok) throw new Error("Failed to fetch models");
-      return response.json();
+      return safeJson(response, { data: [], count: 0 });
     },
   });
 
@@ -134,6 +164,17 @@ function LanguageModelsIndexPage() {
                 size="sm"
                 className="gap-2 rounded-full"
               >
+                <RouterLink to="/language-models/keys">
+                  <FiKey className="h-4 w-4" />
+                  <span>REST API Keys</span>
+                </RouterLink>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-full"
+              >
                 <RouterLink to="/profile">
                   <FiSettings className="h-4 w-4" />
                   <span>Provider Keys</span>
@@ -173,6 +214,43 @@ function LanguageModelsIndexPage() {
             />
           </div>
         </PageSection>
+
+        {/* Usage Summary */}
+        {usageData && usageData.total_requests > 0 && (
+          <PageSection
+            id="usage"
+            title="Your Usage (Last 30 Days)"
+            description="Token consumption and costs across playground and API."
+            actions={
+              <Button asChild variant="outline" size="sm" className="gap-2 rounded-full">
+                <RouterLink to="/language-models/billing">
+                  <FiBarChart2 className="h-4 w-4" />
+                  <span>Full Report</span>
+                </RouterLink>
+              </Button>
+            }
+          >
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <StatCard
+                icon={FiBarChart2}
+                label="Total Requests"
+                value={numberFormatter.format(usageData.total_requests)}
+                description={`${currencyFormatter.format(usageData.total_cost)} total cost`}
+                variant="primary"
+              />
+              {usageData.by_source.map((src) => (
+                <StatCard
+                  key={src.source}
+                  icon={src.source === "playground" ? FiCpu : FiZap}
+                  label={src.source === "playground" ? "Playground" : src.source === "api" ? "REST API" : "Other"}
+                  value={numberFormatter.format(src.total_requests)}
+                  description={`${currencyFormatter.format(src.total_cost)} cost`}
+                  variant="default"
+                />
+              ))}
+            </div>
+          </PageSection>
+        )}
 
         {/* Models Table */}
         <PageSection

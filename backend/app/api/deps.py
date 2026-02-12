@@ -91,6 +91,16 @@ def _resolve_api_key(session: Session, token: str) -> User:
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
+def get_auth_source(token: TokenDep) -> str:
+    """Return 'api' if token is an rp_ API key, otherwise 'playground'."""
+    if token.startswith("rp_"):
+        return "api"
+    return "playground"
+
+
+AuthSource = Annotated[str, Depends(get_auth_source)]
+
+
 def get_current_active_superuser(current_user: CurrentUser) -> User:
     if not current_user.is_superuser:
         raise HTTPException(

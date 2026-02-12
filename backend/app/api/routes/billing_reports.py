@@ -13,6 +13,15 @@ from app.models import User, LLMUsageLog, LLMModel, LLMProvider
 router = APIRouter(prefix="/billing", tags=["billing"])
 
 
+class SourceUsageSummary(BaseModel):
+    source: str  # "playground", "api", or "unknown"
+    total_requests: int
+    total_input_tokens: int
+    total_output_tokens: int
+    total_tokens: int
+    total_cost: float
+
+
 class UserUsageSummary(BaseModel):
     user_id: str
     user_email: str
@@ -22,6 +31,7 @@ class UserUsageSummary(BaseModel):
     total_tokens: int
     total_cost: float
     models_used: list[str]
+    by_source: list[SourceUsageSummary]
 
 
 class ModelUsageSummary(BaseModel):
@@ -77,6 +87,34 @@ async def get_my_usage(
         if model:
             models_used.append(model.display_name)
 
+    # Group by source
+    source_map: dict[str, dict] = {}
+    for log in logs:
+        src = log.source or "unknown"
+        if src not in source_map:
+            source_map[src] = {
+                "total_requests": 0,
+                "total_input_tokens": 0,
+                "total_output_tokens": 0,
+                "total_cost": 0.0,
+            }
+        source_map[src]["total_requests"] += 1
+        source_map[src]["total_input_tokens"] += log.input_tokens
+        source_map[src]["total_output_tokens"] += log.output_tokens
+        source_map[src]["total_cost"] += log.total_cost
+
+    by_source = [
+        SourceUsageSummary(
+            source=src,
+            total_requests=data["total_requests"],
+            total_input_tokens=data["total_input_tokens"],
+            total_output_tokens=data["total_output_tokens"],
+            total_tokens=data["total_input_tokens"] + data["total_output_tokens"],
+            total_cost=data["total_cost"],
+        )
+        for src, data in source_map.items()
+    ]
+
     return UserUsageSummary(
         user_id=str(current_user.id),
         user_email=current_user.email,
@@ -85,7 +123,8 @@ async def get_my_usage(
         total_output_tokens=total_output_tokens,
         total_tokens=total_input_tokens + total_output_tokens,
         total_cost=total_cost,
-        models_used=models_used
+        models_used=models_used,
+        by_source=sorted(by_source, key=lambda x: x.total_cost, reverse=True),
     )
 
 
