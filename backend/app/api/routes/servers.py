@@ -24,10 +24,10 @@ router = APIRouter(tags=["servers"])
 
 @router.post("/seed")
 async def seed_fleet(
-    current_user: Annotated[User, Depends(get_current_active_superuser)],
+    current_user: Annotated[User, Depends(get_current_user)],
     session: SessionDep,
 ) -> dict:
-    """Seed fleet servers for current user. Superuser only. Idempotent."""
+    """Seed fleet servers for current user. Idempotent."""
     existing = session.exec(select(RemoteServer).where(
         RemoteServer.user_id == current_user.id
     ).limit(1)).first()

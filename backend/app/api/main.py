@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.routes import (
     items, login, private, users, utils, proxy, checkout, user_agent, subscription,
-    billing, servers, database_instances, inference, terminal, storage,
+    billing, servers, database_instances, inference, terminal, terminal_test, storage,
     llm_models, llm_inference, conversations, billing_reports, admin_llm_keys,
     api_keys,
 )
@@ -26,6 +26,7 @@ api_router.include_router(servers.router, prefix="/servers")
 api_router.include_router(database_instances.router, prefix="/database-instances")
 api_router.include_router(inference.router, prefix="/inference")
 api_router.include_router(terminal.router, prefix="/terminal")
+api_router.include_router(terminal_test.router, prefix="/terminal")
 api_router.include_router(storage.router, prefix="/storage")
 
 # LLM routes

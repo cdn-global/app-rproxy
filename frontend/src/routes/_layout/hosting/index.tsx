@@ -46,17 +46,47 @@ function HostingIndexPage() {
   const showToast = useCustomToast()
   const queryClient = useQueryClient()
   const [createOpen, setCreateOpen] = useState(false)
+  const [seeding, setSeeding] = useState(false)
+
+  const authHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  })
 
   const { data, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
     queryKey: ["remote-servers"],
     queryFn: async () => {
       const response = await fetch("/v2/servers/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to fetch servers")
-      return response.json()
+      const result = await response.json()
+
+      // Auto-seed if the user has no servers yet
+      if (result.count === 0 && !seeding) {
+        setSeeding(true)
+        try {
+          const seedResp = await fetch("/v2/servers/seed", {
+            method: "POST",
+            headers: authHeaders(),
+          })
+          if (seedResp.ok) {
+            const seedData = await seedResp.json()
+            if (seedData.created > 0) {
+              // Re-fetch to get the seeded servers
+              const refetch = await fetch("/v2/servers/", {
+                headers: authHeaders(),
+              })
+              if (refetch.ok) return refetch.json()
+            }
+          }
+        } catch {
+          // Seed failed silently — user can still create manually
+        } finally {
+          setSeeding(false)
+        }
+      }
+
+      return result
     },
   })
 
@@ -66,7 +96,7 @@ function HostingIndexPage() {
     mutationFn: async (id: string) => {
       const response = await fetch(`/v2/servers/${id}/stop`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to stop server")
       return response.json()
@@ -82,7 +112,7 @@ function HostingIndexPage() {
     mutationFn: async (id: string) => {
       const response = await fetch(`/v2/servers/${id}/start`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to start server")
       return response.json()
@@ -183,9 +213,11 @@ function HostingIndexPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
+                  {isLoading || seeding ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center">Loading...</TableCell>
+                      <TableCell colSpan={8} className="text-center">
+                        {seeding ? "Setting up your fleet..." : "Loading..."}
+                      </TableCell>
                     </TableRow>
                   ) : servers.length === 0 ? (
                     <TableRow>

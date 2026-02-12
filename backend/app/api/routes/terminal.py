@@ -14,6 +14,7 @@ from sqlmodel import Session, select
 from app.models import RemoteServer, User
 from app.core.security import verify_access_token
 from app.core.db import engine
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +76,10 @@ async def terminal_websocket(
             await _handle_docker_terminal(websocket, server.docker_container_id)
         elif server.hosting_provider == "aws" and server.aws_public_ip:
             await _handle_ssh_terminal(websocket, server)
+        elif settings.ENVIRONMENT == "local":
+            # Local dev: provide a real shell via PTY
+            await websocket.send_text(f"[dev] No remote endpoint for {server.name}, opening local shell...\r\n")
+            await _handle_local_pty(websocket)
         else:
             await websocket.send_text("Error: Server has no connection endpoint configured.\r\n")
             await websocket.close(code=4005, reason="Terminal access not configured")
@@ -240,3 +245,91 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
         await asyncio.gather(read_task, write_task, return_exceptions=True)
     finally:
         conn.close()
+
+
+async def _handle_local_pty(websocket: WebSocket):
+    """Spawn a local PTY shell and bridge it to the WebSocket (dev only)."""
+    import fcntl
+    import os
+    import pty
+    import select as _select
+    import struct
+    import termios
+
+    master_fd, slave_fd = pty.openpty()
+
+    pid = os.fork()
+    if pid == 0:
+        # Child: become session leader, attach to slave PTY, exec shell
+        os.close(master_fd)
+        os.setsid()
+        fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
+        os.dup2(slave_fd, 0)
+        os.dup2(slave_fd, 1)
+        os.dup2(slave_fd, 2)
+        os.close(slave_fd)
+        os.execvp("/bin/bash", ["/bin/bash", "--login"])
+
+    # Parent
+    os.close(slave_fd)
+
+    loop = asyncio.get_event_loop()
+
+    def _blocking_read():
+        """Block until data is available on the PTY master, then read it."""
+        while True:
+            ready, _, _ = _select.select([master_fd], [], [], 0.5)
+            if ready:
+                return os.read(master_fd, 4096)
+            # Timeout — check if child is still alive
+            try:
+                result = os.waitpid(pid, os.WNOHANG)
+                if result[0] != 0:
+                    return b""
+            except ChildProcessError:
+                return b""
+
+    async def read_from_pty():
+        while True:
+            try:
+                data = await loop.run_in_executor(None, _blocking_read)
+                if not data:
+                    break
+                await websocket.send_text(data.decode("utf-8", errors="replace"))
+            except OSError:
+                break
+            except Exception:
+                break
+
+    async def write_to_pty():
+        while True:
+            try:
+                data = await websocket.receive_text()
+                try:
+                    msg = json.loads(data)
+                    if msg.get("type") == "resize":
+                        winsize = struct.pack(
+                            "HHHH", msg.get("rows", 24), msg.get("cols", 80), 0, 0
+                        )
+                        fcntl.ioctl(master_fd, termios.TIOCSWINSZ, winsize)
+                        continue
+                except (json.JSONDecodeError, KeyError):
+                    pass
+                os.write(master_fd, data.encode("utf-8"))
+            except WebSocketDisconnect:
+                break
+            except Exception:
+                break
+
+    read_task = asyncio.create_task(read_from_pty())
+    write_task = asyncio.create_task(write_to_pty())
+
+    try:
+        await asyncio.gather(read_task, write_task, return_exceptions=True)
+    finally:
+        os.close(master_fd)
+        try:
+            os.kill(pid, 9)
+            os.waitpid(pid, 0)
+        except OSError:
+            pass

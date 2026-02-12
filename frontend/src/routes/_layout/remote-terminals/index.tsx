@@ -46,19 +46,46 @@ interface RemoteServer {
 function RemoteTerminalsPage() {
   const [createOpen, setCreateOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<RemoteServer | null>(null)
+  const [seeding, setSeeding] = useState(false)
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
+
+  const authHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  })
 
   const { data: servers, isLoading } = useQuery<{ data: RemoteServer[]; count: number }>({
     queryKey: ["remote-servers"],
     queryFn: async () => {
       const response = await fetch("/v2/servers/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to fetch servers")
-      return response.json()
+      const result = await response.json()
+
+      // Auto-seed if the user has no servers yet
+      if (result.count === 0 && !seeding) {
+        setSeeding(true)
+        try {
+          const seedResp = await fetch("/v2/servers/seed", {
+            method: "POST",
+            headers: authHeaders(),
+          })
+          if (seedResp.ok) {
+            const seedData = await seedResp.json()
+            if (seedData.created > 0) {
+              const refetch = await fetch("/v2/servers/", { headers: authHeaders() })
+              if (refetch.ok) return refetch.json()
+            }
+          }
+        } catch {
+          // Seed failed silently
+        } finally {
+          setSeeding(false)
+        }
+      }
+
+      return result
     },
   })
 
@@ -66,9 +93,7 @@ function RemoteTerminalsPage() {
     mutationFn: async (serverId: string) => {
       const response = await fetch(`/v2/servers/${serverId}/stop`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to stop server")
       return response.json()
@@ -84,9 +109,7 @@ function RemoteTerminalsPage() {
     mutationFn: async (serverId: string) => {
       const response = await fetch(`/v2/servers/${serverId}/start`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to start server")
       return response.json()
@@ -102,9 +125,7 @@ function RemoteTerminalsPage() {
     mutationFn: async (serverId: string) => {
       const response = await fetch(`/v2/servers/${serverId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+        headers: authHeaders(),
       })
       if (!response.ok) throw new Error("Failed to delete server")
       return response.json()
@@ -145,8 +166,10 @@ function RemoteTerminalsPage() {
             </Button>
           }
         >
-          {isLoading ? (
-            <div>Loading...</div>
+          {isLoading || seeding ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              {seeding ? "Setting up your fleet..." : "Loading..."}
+            </div>
           ) : (
             <div className="rounded-md border">
               <Table>

@@ -39,6 +39,10 @@ app = FastAPI(
 # chain, guaranteeing CORS headers are added even to 500 responses.
 class CatchAllExceptionMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        # Skip WebSocket requests — BaseHTTPMiddleware cannot handle them
+        # and will corrupt close frames (browser sees code 1006).
+        if request.scope.get("type") == "websocket":
+            return await call_next(request)
         try:
             return await call_next(request)
         except Exception as exc:
