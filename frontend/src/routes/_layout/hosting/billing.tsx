@@ -590,7 +590,8 @@ const BillingPage = () => {
 
   const billingAddress = {
     name: "Nik Popov",
-    email: "apispopov@gmail.com",
+    email: "nik@iconluxurygroup.com",
+    subscriptionId: "sub_1RCL5ELqozOkbqR8Th4HaVMb",
     line1: "599 Broadway, floor 3",
     city: "New York",
     state: "NY",
@@ -834,7 +835,7 @@ const BillingPage = () => {
                     Enterprise
                   </h3>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Managed hosting + API
+                    Managed hosting + API • <span className="font-mono">{billingAddress.subscriptionId}</span>
                   </p>
                 </div>
                 <Badge variant="outline" className="ml-auto rounded-full border-slate-200/70 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600/60 dark:text-slate-300">
