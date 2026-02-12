@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useQuery, useMutation } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import useCustomToast from "../../hooks/useCustomToast"
@@ -9,21 +10,33 @@ interface InferenceModel {
   name: string
   provider: string
   model_id: string
-  capabilities: string[]
-  pricing_per_1k_tokens: number
+  capabilities?: string[]
+  input_token_price?: number
+  output_token_price?: number
   max_tokens: number
+  is_active: boolean
 }
 
-function LlmService() {
+interface LlmServiceProps {
+  initialModelId?: string
+}
+
+function LlmService({ initialModelId }: LlmServiceProps) {
   const showToast = useCustomToast()
-  const [selectedModelId, setSelectedModelId] = useState<string>("")
+  const [selectedModelId, setSelectedModelId] = useState<string>(initialModelId ?? "")
   const [prompt, setPrompt] = useState("")
   const [response, setResponse] = useState("")
 
   const { data: modelsData } = useQuery<{ data: InferenceModel[]; count: number }>({
-    queryKey: ["inference-models"],
+    queryKey: ["llm-models"],
     queryFn: async () => {
-      const res = await fetch("/v2/inference/models", {
+      // Use the base URL from window location
+      const baseUrl = window.location.hostname === "localhost"
+        ? "http://localhost:8000"
+        : `https://${window.location.hostname.replace("-5173", "-8000")}`;
+
+      // Only fetch active models for the playground
+      const res = await fetch(`${baseUrl}/v2/llm-models/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
       if (!res.ok) throw new Error("Failed to fetch models")
@@ -31,10 +44,10 @@ function LlmService() {
     },
   })
 
-  const models = modelsData?.data ?? []
+  const models = (modelsData?.data ?? []).filter(m => m.is_active)
 
-  // Auto-select first model
-  if (models.length > 0 && !selectedModelId) {
+  // Auto-select: use initialModelId if valid, otherwise first active model
+  if (models.length > 0 && !models.find(m => m.id === selectedModelId)) {
     setSelectedModelId(models[0].id)
   }
 
@@ -42,7 +55,7 @@ function LlmService() {
 
   const inferMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch("/v2/inference/infer", {
+      const res = await fetch("/v2/llm/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +63,7 @@ function LlmService() {
         },
         body: JSON.stringify({
           model_id: selectedModelId,
-          prompt,
+          messages: [{ role: "user", content: prompt }],
           max_tokens: 1024,
           temperature: 0.7,
         }),
@@ -62,7 +75,7 @@ function LlmService() {
       return res.json()
     },
     onSuccess: (data) => {
-      setResponse(data.completion)
+      setResponse(data.content)
     },
     onError: (err: Error) => {
       showToast("Error", err.message, "error")
@@ -71,11 +84,21 @@ function LlmService() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Inference Playground</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Send prompts to any model and see responses in real time.
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Inference Playground</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Send prompts to any model and see responses in real time.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/language-models">← Back to Models</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/language-models/billing">View Billing</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
@@ -103,21 +126,25 @@ function LlmService() {
                 <p className="text-sm font-medium capitalize">{selectedModel.provider}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Price / 1K tokens</p>
-                <p className="text-sm font-medium">${selectedModel.pricing_per_1k_tokens.toFixed(4)}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Pricing (per 1M tokens)</p>
+                <p className="text-sm font-medium">
+                  ${(selectedModel.input_token_price || 0).toFixed(2)} in / ${(selectedModel.output_token_price || 0).toFixed(2)} out
+                </p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Max tokens</p>
                 <p className="text-sm font-medium">{selectedModel.max_tokens.toLocaleString()}</p>
               </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Capabilities</p>
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {selectedModel.capabilities.map((cap) => (
-                    <Badge key={cap} variant="outline" className="text-xs">{cap}</Badge>
-                  ))}
+              {selectedModel.capabilities && selectedModel.capabilities.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Capabilities</p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {selectedModel.capabilities.map((cap) => (
+                      <Badge key={cap} variant="outline" className="text-xs">{cap}</Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>
@@ -153,11 +180,15 @@ function LlmService() {
           )}
 
           {inferMutation.data && (
-            <div className="flex gap-4 text-xs text-slate-500">
-              <span>Prompt tokens: {inferMutation.data.prompt_tokens}</span>
-              <span>Completion tokens: {inferMutation.data.completion_tokens}</span>
-              <span>Cost: ${inferMutation.data.cost.toFixed(4)}</span>
-              <span>Latency: {inferMutation.data.latency_ms}ms</span>
+            <div className="space-y-2">
+              <div className="flex gap-4 text-xs text-slate-500">
+                <span>Input tokens: {inferMutation.data.input_tokens}</span>
+                <span>Output tokens: {inferMutation.data.output_tokens}</span>
+                <span>Cost: ${inferMutation.data.cost.toFixed(6)}</span>
+              </div>
+              <p className="text-xs text-green-600 dark:text-green-400">
+                ✓ Usage tracked in billing report
+              </p>
             </div>
           )}
         </div>

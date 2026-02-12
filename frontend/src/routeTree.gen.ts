@@ -19,6 +19,7 @@ import { Route as ActivateImport } from './routes/activate'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
+import { Route as LayoutProfileImport } from './routes/_layout/profile'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutComponentlistImport } from './routes/_layout/componentlist'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
@@ -43,7 +44,10 @@ import { Route as LayoutServicesLlmInferenceApiImport } from './routes/_layout/s
 import { Route as LayoutRemoteTerminalsTerminalImport } from './routes/_layout/remote-terminals/terminal'
 import { Route as LayoutManagedDatabaseInstanceImport } from './routes/_layout/managed-database/instance'
 import { Route as LayoutLanguageModelsLlmServiceImport } from './routes/_layout/language-models/llm-service'
+import { Route as LayoutLanguageModelsKeysImport } from './routes/_layout/language-models/keys'
 import { Route as LayoutLanguageModelsBillingImport } from './routes/_layout/language-models/billing'
+import { Route as LayoutLanguageModelsApiImport } from './routes/_layout/language-models/api'
+import { Route as LayoutLanguageModelsModelNameImport } from './routes/_layout/language-models/$modelName'
 import { Route as LayoutInfrastructureBillingImport } from './routes/_layout/infrastructure/billing'
 import { Route as LayoutHostingBillingImport } from './routes/_layout/hosting/billing'
 import { Route as LayoutHostingDeviceNameImport } from './routes/_layout/hosting/$deviceName'
@@ -96,6 +100,12 @@ const LayoutIndexRoute = LayoutIndexImport.update({
 const LayoutSettingsRoute = LayoutSettingsImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutProfileRoute = LayoutProfileImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -259,10 +269,29 @@ const LayoutLanguageModelsLlmServiceRoute =
     getParentRoute: () => LayoutRoute,
   } as any)
 
+const LayoutLanguageModelsKeysRoute = LayoutLanguageModelsKeysImport.update({
+  id: '/language-models/keys',
+  path: '/language-models/keys',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutLanguageModelsBillingRoute =
   LayoutLanguageModelsBillingImport.update({
     id: '/language-models/billing',
     path: '/language-models/billing',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutLanguageModelsApiRoute = LayoutLanguageModelsApiImport.update({
+  id: '/language-models/api',
+  path: '/language-models/api',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutLanguageModelsModelNameRoute =
+  LayoutLanguageModelsModelNameImport.update({
+    id: '/language-models/$modelName',
+    path: '/language-models/$modelName',
     getParentRoute: () => LayoutRoute,
   } as any)
 
@@ -364,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutItemsImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/profile': {
+      id: '/_layout/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof LayoutProfileImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
@@ -413,11 +449,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutInfrastructureBillingImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/language-models/$modelName': {
+      id: '/_layout/language-models/$modelName'
+      path: '/language-models/$modelName'
+      fullPath: '/language-models/$modelName'
+      preLoaderRoute: typeof LayoutLanguageModelsModelNameImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/language-models/api': {
+      id: '/_layout/language-models/api'
+      path: '/language-models/api'
+      fullPath: '/language-models/api'
+      preLoaderRoute: typeof LayoutLanguageModelsApiImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/language-models/billing': {
       id: '/_layout/language-models/billing'
       path: '/language-models/billing'
       fullPath: '/language-models/billing'
       preLoaderRoute: typeof LayoutLanguageModelsBillingImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/language-models/keys': {
+      id: '/_layout/language-models/keys'
+      path: '/language-models/keys'
+      fullPath: '/language-models/keys'
+      preLoaderRoute: typeof LayoutLanguageModelsKeysImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/language-models/llm-service': {
@@ -576,6 +633,7 @@ interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutComponentlistRoute: typeof LayoutComponentlistRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
+  LayoutProfileRoute: typeof LayoutProfileRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutComputeServiceNameRoute: typeof LayoutComputeServiceNameRoute
@@ -583,7 +641,10 @@ interface LayoutRouteChildren {
   LayoutHostingDeviceNameRoute: typeof LayoutHostingDeviceNameRoute
   LayoutHostingBillingRoute: typeof LayoutHostingBillingRoute
   LayoutInfrastructureBillingRoute: typeof LayoutInfrastructureBillingRoute
+  LayoutLanguageModelsModelNameRoute: typeof LayoutLanguageModelsModelNameRoute
+  LayoutLanguageModelsApiRoute: typeof LayoutLanguageModelsApiRoute
   LayoutLanguageModelsBillingRoute: typeof LayoutLanguageModelsBillingRoute
+  LayoutLanguageModelsKeysRoute: typeof LayoutLanguageModelsKeysRoute
   LayoutLanguageModelsLlmServiceRoute: typeof LayoutLanguageModelsLlmServiceRoute
   LayoutManagedDatabaseInstanceRoute: typeof LayoutManagedDatabaseInstanceRoute
   LayoutRemoteTerminalsTerminalRoute: typeof LayoutRemoteTerminalsTerminalRoute
@@ -611,6 +672,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutComponentlistRoute: LayoutComponentlistRoute,
   LayoutItemsRoute: LayoutItemsRoute,
+  LayoutProfileRoute: LayoutProfileRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutComputeServiceNameRoute: LayoutComputeServiceNameRoute,
@@ -618,7 +680,10 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutHostingDeviceNameRoute: LayoutHostingDeviceNameRoute,
   LayoutHostingBillingRoute: LayoutHostingBillingRoute,
   LayoutInfrastructureBillingRoute: LayoutInfrastructureBillingRoute,
+  LayoutLanguageModelsModelNameRoute: LayoutLanguageModelsModelNameRoute,
+  LayoutLanguageModelsApiRoute: LayoutLanguageModelsApiRoute,
   LayoutLanguageModelsBillingRoute: LayoutLanguageModelsBillingRoute,
+  LayoutLanguageModelsKeysRoute: LayoutLanguageModelsKeysRoute,
   LayoutLanguageModelsLlmServiceRoute: LayoutLanguageModelsLlmServiceRoute,
   LayoutManagedDatabaseInstanceRoute: LayoutManagedDatabaseInstanceRoute,
   LayoutRemoteTerminalsTerminalRoute: LayoutRemoteTerminalsTerminalRoute,
@@ -655,6 +720,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof LayoutAdminRoute
   '/componentlist': typeof LayoutComponentlistRoute
   '/items': typeof LayoutItemsRoute
+  '/profile': typeof LayoutProfileRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/compute/$serviceName': typeof LayoutComputeServiceNameRoute
@@ -662,7 +728,10 @@ export interface FileRoutesByFullPath {
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
   '/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
+  '/language-models/$modelName': typeof LayoutLanguageModelsModelNameRoute
+  '/language-models/api': typeof LayoutLanguageModelsApiRoute
   '/language-models/billing': typeof LayoutLanguageModelsBillingRoute
+  '/language-models/keys': typeof LayoutLanguageModelsKeysRoute
   '/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
   '/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
   '/remote-terminals/terminal': typeof LayoutRemoteTerminalsTerminalRoute
@@ -695,6 +764,7 @@ export interface FileRoutesByTo {
   '/admin': typeof LayoutAdminRoute
   '/componentlist': typeof LayoutComponentlistRoute
   '/items': typeof LayoutItemsRoute
+  '/profile': typeof LayoutProfileRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/compute/$serviceName': typeof LayoutComputeServiceNameRoute
@@ -702,7 +772,10 @@ export interface FileRoutesByTo {
   '/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/hosting/billing': typeof LayoutHostingBillingRoute
   '/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
+  '/language-models/$modelName': typeof LayoutLanguageModelsModelNameRoute
+  '/language-models/api': typeof LayoutLanguageModelsApiRoute
   '/language-models/billing': typeof LayoutLanguageModelsBillingRoute
+  '/language-models/keys': typeof LayoutLanguageModelsKeysRoute
   '/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
   '/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
   '/remote-terminals/terminal': typeof LayoutRemoteTerminalsTerminalRoute
@@ -737,6 +810,7 @@ export interface FileRoutesById {
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/componentlist': typeof LayoutComponentlistRoute
   '/_layout/items': typeof LayoutItemsRoute
+  '/_layout/profile': typeof LayoutProfileRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/compute/$serviceName': typeof LayoutComputeServiceNameRoute
@@ -744,7 +818,10 @@ export interface FileRoutesById {
   '/_layout/hosting/$deviceName': typeof LayoutHostingDeviceNameRoute
   '/_layout/hosting/billing': typeof LayoutHostingBillingRoute
   '/_layout/infrastructure/billing': typeof LayoutInfrastructureBillingRoute
+  '/_layout/language-models/$modelName': typeof LayoutLanguageModelsModelNameRoute
+  '/_layout/language-models/api': typeof LayoutLanguageModelsApiRoute
   '/_layout/language-models/billing': typeof LayoutLanguageModelsBillingRoute
+  '/_layout/language-models/keys': typeof LayoutLanguageModelsKeysRoute
   '/_layout/language-models/llm-service': typeof LayoutLanguageModelsLlmServiceRoute
   '/_layout/managed-database/instance': typeof LayoutManagedDatabaseInstanceRoute
   '/_layout/remote-terminals/terminal': typeof LayoutRemoteTerminalsTerminalRoute
@@ -780,6 +857,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/componentlist'
     | '/items'
+    | '/profile'
     | '/settings'
     | '/'
     | '/compute/$serviceName'
@@ -787,7 +865,10 @@ export interface FileRouteTypes {
     | '/hosting/$deviceName'
     | '/hosting/billing'
     | '/infrastructure/billing'
+    | '/language-models/$modelName'
+    | '/language-models/api'
     | '/language-models/billing'
+    | '/language-models/keys'
     | '/language-models/llm-service'
     | '/managed-database/instance'
     | '/remote-terminals/terminal'
@@ -819,6 +900,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/componentlist'
     | '/items'
+    | '/profile'
     | '/settings'
     | '/'
     | '/compute/$serviceName'
@@ -826,7 +908,10 @@ export interface FileRouteTypes {
     | '/hosting/$deviceName'
     | '/hosting/billing'
     | '/infrastructure/billing'
+    | '/language-models/$modelName'
+    | '/language-models/api'
     | '/language-models/billing'
+    | '/language-models/keys'
     | '/language-models/llm-service'
     | '/managed-database/instance'
     | '/remote-terminals/terminal'
@@ -859,6 +944,7 @@ export interface FileRouteTypes {
     | '/_layout/admin'
     | '/_layout/componentlist'
     | '/_layout/items'
+    | '/_layout/profile'
     | '/_layout/settings'
     | '/_layout/'
     | '/_layout/compute/$serviceName'
@@ -866,7 +952,10 @@ export interface FileRouteTypes {
     | '/_layout/hosting/$deviceName'
     | '/_layout/hosting/billing'
     | '/_layout/infrastructure/billing'
+    | '/_layout/language-models/$modelName'
+    | '/_layout/language-models/api'
     | '/_layout/language-models/billing'
+    | '/_layout/language-models/keys'
     | '/_layout/language-models/llm-service'
     | '/_layout/managed-database/instance'
     | '/_layout/remote-terminals/terminal'
@@ -933,6 +1022,7 @@ export const routeTree = rootRoute
         "/_layout/admin",
         "/_layout/componentlist",
         "/_layout/items",
+        "/_layout/profile",
         "/_layout/settings",
         "/_layout/",
         "/_layout/compute/$serviceName",
@@ -940,7 +1030,10 @@ export const routeTree = rootRoute
         "/_layout/hosting/$deviceName",
         "/_layout/hosting/billing",
         "/_layout/infrastructure/billing",
+        "/_layout/language-models/$modelName",
+        "/_layout/language-models/api",
         "/_layout/language-models/billing",
+        "/_layout/language-models/keys",
         "/_layout/language-models/llm-service",
         "/_layout/managed-database/instance",
         "/_layout/remote-terminals/terminal",
@@ -991,6 +1084,10 @@ export const routeTree = rootRoute
       "filePath": "_layout/items.tsx",
       "parent": "/_layout"
     },
+    "/_layout/profile": {
+      "filePath": "_layout/profile.tsx",
+      "parent": "/_layout"
+    },
     "/_layout/settings": {
       "filePath": "_layout/settings.tsx",
       "parent": "/_layout"
@@ -1019,8 +1116,20 @@ export const routeTree = rootRoute
       "filePath": "_layout/infrastructure/billing.tsx",
       "parent": "/_layout"
     },
+    "/_layout/language-models/$modelName": {
+      "filePath": "_layout/language-models/$modelName.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/language-models/api": {
+      "filePath": "_layout/language-models/api.tsx",
+      "parent": "/_layout"
+    },
     "/_layout/language-models/billing": {
       "filePath": "_layout/language-models/billing.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/language-models/keys": {
+      "filePath": "_layout/language-models/keys.tsx",
       "parent": "/_layout"
     },
     "/_layout/language-models/llm-service": {

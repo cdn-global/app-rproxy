@@ -1,4 +1,5 @@
 import logging
+import os
 import uuid
 from datetime import datetime
 
@@ -29,7 +30,16 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 # Set all CORS enabled origins
-if settings.all_cors_origins:
+if settings.ENVIRONMENT == "local":
+    # Allow all origins in development
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+elif settings.all_cors_origins:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.all_cors_origins,

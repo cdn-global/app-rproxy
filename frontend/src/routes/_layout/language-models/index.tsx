@@ -1,5 +1,5 @@
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FiArrowUpRight } from "react-icons/fi";
@@ -26,19 +26,33 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 interface InferenceModel {
   id: string;
   name: string;
-  provider: string;
+  provider?: string;
+  provider_id?: string;
   model_id: string;
-  capabilities: string[];
-  pricing_per_1k_tokens: number;
+  display_name?: string;
+  capabilities?: string[];
+  pricing_per_1k_tokens?: number;
+  input_token_price?: number;
+  output_token_price?: number;
   max_tokens: number;
   is_active: boolean;
 }
 
 function LanguageModelsIndexPage() {
+  const [showInactive, setShowInactive] = useState(false);
+
   const { data, isLoading } = useQuery<{ data: InferenceModel[]; count: number }>({
     queryKey: ["inference-models"],
     queryFn: async () => {
-      const response = await fetch("/v2/inference/models", {
+      // Get base URL from window location or OpenAPI config
+      const baseUrl = window.location.hostname === "localhost"
+        ? "http://localhost:8000"
+        : `https://${window.location.hostname.replace("-5173", "-8000")}`;
+
+      // Always fetch all models - backend will compute is_active based on API keys
+      const url = `${baseUrl}/v2/llm-models/`;
+
+      const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -48,20 +62,33 @@ function LanguageModelsIndexPage() {
     },
   });
 
-  const models = data?.data ?? [];
+  const allModels = data?.data ?? [];
+
+  // Filter models based on showInactive toggle
+  const models = useMemo(() => {
+    if (showInactive) {
+      return allModels;
+    }
+    return allModels.filter(m => m.is_active);
+  }, [allModels, showInactive]);
 
   const fleetSummary = useMemo(() => {
-    if (models.length === 0) {
-      return { totalModels: 0, avgPricePer1k: 0, maxContext: 0, providers: 0 };
+    if (allModels.length === 0) {
+      return { totalModels: 0, activeModels: 0, avgPricePer1k: 0, maxContext: 0, providers: 0 };
     }
-    const providers = new Set(models.map((m) => m.provider));
+    const activeModels = allModels.filter(m => m.is_active);
+    const providers = new Set(allModels.map((m) => m.provider).filter(Boolean));
+    const avgPrice = activeModels.length > 0
+      ? activeModels.reduce((a, m) => a + (m.pricing_per_1k_tokens || m.input_token_price || 0), 0) / activeModels.length
+      : 0;
     return {
-      totalModels: models.length,
-      avgPricePer1k: models.reduce((a, m) => a + m.pricing_per_1k_tokens, 0) / models.length,
-      maxContext: Math.max(...models.map((m) => m.max_tokens)),
+      totalModels: allModels.length,
+      activeModels: activeModels.length,
+      avgPricePer1k: avgPrice,
+      maxContext: Math.max(...allModels.map((m) => m.max_tokens)),
       providers: providers.size,
     };
-  }, [models]);
+  }, [allModels]);
 
   return (
     <PageScaffold sidebar={null}>
@@ -70,25 +97,44 @@ function LanguageModelsIndexPage() {
         <PageSection
           id="fleet"
           title="Fleet intelligence"
-          description="Summaries of capacity, health, and monthly run rate."
+          description="Active models are those with configured API keys. Configure your keys in profile settings."
           actions={
-            <Button
-              asChild
-              variant="outline"
-              className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-            >
-              <RouterLink to="billing">
-                <span>Open billing cycle</span>
-                <FiArrowUpRight className="h-4 w-4" />
-              </RouterLink>
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowInactive(!showInactive)}
+                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+              >
+                {showInactive ? "Show Active Only" : "Show All Models"}
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+              >
+                <RouterLink to="api">
+                  <span>API Docs</span>
+                  <FiArrowUpRight className="h-4 w-4" />
+                </RouterLink>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+              >
+                <RouterLink to="billing">
+                  <span>Billing</span>
+                  <FiArrowUpRight className="h-4 w-4" />
+                </RouterLink>
+              </Button>
+            </div>
           }
         >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryTile
-                label="Total models"
-                value={numberFormatter.format(fleetSummary.totalModels)}
-                description="All models active"
+                label="Active models"
+                value={numberFormatter.format(fleetSummary.activeModels)}
+                description={`${fleetSummary.totalModels} total models`}
               />
               <SummaryTile
                 label="Providers"
@@ -121,6 +167,7 @@ function LanguageModelsIndexPage() {
                   <TableRow className="border-slate-200/70 dark:border-slate-700/60">
                     <TableHead>Model</TableHead>
                     <TableHead>Provider</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Capabilities</TableHead>
                     <TableHead>Price / 1K tokens</TableHead>
                     <TableHead>Max Tokens</TableHead>
@@ -145,23 +192,40 @@ function LanguageModelsIndexPage() {
                         className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
                       >
                         <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                          {model.name}
+                          {model.display_name || model.name}
                         </TableCell>
-                        <TableCell className="capitalize">{model.provider}</TableCell>
+                        <TableCell className="capitalize">{model.provider || "Anthropic"}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                              model.is_active
+                                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400"
+                            }`}
+                          >
+                            {model.is_active ? "Active" : "Inactive"}
+                          </span>
+                        </TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {model.capabilities.map((cap) => (
-                              <span
-                                key={cap}
-                                className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                              >
-                                {cap}
-                              </span>
-                            ))}
+                            {model.capabilities && model.capabilities.length > 0 ? (
+                              model.capabilities.map((cap) => (
+                                <span
+                                  key={cap}
+                                  className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                                >
+                                  {cap}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-xs text-slate-400">Text generation</span>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
-                          {currencyFormatter.format(model.pricing_per_1k_tokens)}
+                          {currencyFormatter.format(
+                            (model.pricing_per_1k_tokens || model.input_token_price || 0) / 1000
+                          )}
                         </TableCell>
                         <TableCell>{numberFormatter.format(model.max_tokens)}</TableCell>
                         <TableCell className="text-right">
@@ -170,8 +234,9 @@ function LanguageModelsIndexPage() {
                             size="sm"
                             className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
                             asChild
+                            disabled={!model.is_active}
                           >
-                            <RouterLink to="/language-models/llm-service">
+                            <RouterLink to="/language-models/llm-service" search={{ modelId: model.id }}>
                               Try Now
                             </RouterLink>
                           </Button>

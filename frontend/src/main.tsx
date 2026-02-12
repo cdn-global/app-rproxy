@@ -8,8 +8,15 @@ import { routeTree } from "./routeTree.gen"
 import "./styles/global.css"
 import { Toaster } from "./components/ui/toaster"
 
-OpenAPI.BASE = "https://api.ROAMINGPROXY.com"
+// Use local backend in development, production API in prod
+OpenAPI.BASE = import.meta.env.MODE === "production"
+  ? "https://api.ROAMINGPROXY.com"
+  : window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : `https://${window.location.hostname.replace("-5173", "-8000")}`
 OpenAPI.TOKEN = async () => localStorage.getItem("access_token") || ""
+
+console.log("🔧 API Base URL:", OpenAPI.BASE)
 
 const queryClient = new QueryClient()
 const router = createRouter({ routeTree })

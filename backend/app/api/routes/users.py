@@ -26,6 +26,8 @@ from app.models import (
     UserUpdate,
     UserUpdateMe,
 )
+from pydantic import BaseModel
+from typing import Optional
 from app.utils import generate_new_account_email, send_email
 
 logging.basicConfig(level=logging.DEBUG)
@@ -123,9 +125,9 @@ def update_user_me(
 
 @router.patch("/me/password", response_model=Message)
 def update_password_me(
-    *, 
-    session: SessionDep, 
-    body: UpdatePassword, 
+    *,
+    session: SessionDep,
+    body: UpdatePassword,
     current_user: CurrentUser
 ) -> Any:
     logger.debug(f"Updating password for: {current_user.email}")
@@ -135,7 +137,7 @@ def update_password_me(
     if body.current_password == body.new_password:
         logger.info("New password same as current")
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="New password cannot be the same as the current one"
         )
     hashed_password = get_password_hash(body.new_password)
@@ -144,6 +146,77 @@ def update_password_me(
     session.commit()
     logger.debug("Password updated")
     return Message(message="Password updated successfully")
+
+
+class UpdateAPIKeys(BaseModel):
+    anthropic_api_key: Optional[str] = None
+    openai_api_key: Optional[str] = None
+    google_api_key: Optional[str] = None
+
+
+@router.patch("/me/api-key", response_model=Message)
+def update_api_keys(
+    *,
+    session: SessionDep,
+    body: UpdateAPIKeys,
+    current_user: CurrentUser
+) -> Any:
+    """Update user's LLM provider API keys"""
+    logger.info(f"[API_KEY_UPDATE] User: {current_user.email}, Request body: anthropic={bool(body.anthropic_api_key)}, openai={bool(body.openai_api_key)}, google={bool(body.google_api_key)}")
+
+    # Update only the keys that are provided
+    if body.anthropic_api_key is not None:
+        current_user.anthropic_api_key = body.anthropic_api_key if body.anthropic_api_key else None
+        logger.info(f"[API_KEY_UPDATE] Set Anthropic API key for {current_user.email}")
+    if body.openai_api_key is not None:
+        current_user.openai_api_key = body.openai_api_key if body.openai_api_key else None
+        logger.info(f"[API_KEY_UPDATE] Set OpenAI API key for {current_user.email}")
+    if body.google_api_key is not None:
+        current_user.google_api_key = body.google_api_key if body.google_api_key else None
+        logger.info(f"[API_KEY_UPDATE] Set Google API key for {current_user.email}")
+
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    logger.info(f"[API_KEY_UPDATE] Successfully updated API keys for {current_user.email}")
+    return Message(message="API keys updated successfully")
+
+
+@router.delete("/me/api-key", response_model=Message)
+def delete_api_keys(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser
+) -> Any:
+    """Delete all user's LLM provider API keys"""
+    logger.debug(f"Deleting API keys for: {current_user.email}")
+
+    current_user.anthropic_api_key = None
+    current_user.openai_api_key = None
+    current_user.google_api_key = None
+
+    session.add(current_user)
+    session.commit()
+    logger.debug("API keys deleted")
+    return Message(message="API keys removed successfully")
+
+
+class APIKeyStatus(BaseModel):
+    has_anthropic_key: bool
+    has_openai_key: bool
+    has_google_key: bool
+
+
+@router.get("/me/api-key-status", response_model=APIKeyStatus)
+def get_api_key_status(
+    current_user: CurrentUser
+) -> Any:
+    """Get status of which API keys are configured (without exposing the actual keys)"""
+    return APIKeyStatus(
+        has_anthropic_key=bool(current_user.anthropic_api_key),
+        has_openai_key=bool(current_user.openai_api_key),
+        has_google_key=bool(current_user.google_api_key)
+    )
 
 @router.get("/me", response_model=UserPublic)
 def read_user_me(current_user: CurrentUser) -> Any:

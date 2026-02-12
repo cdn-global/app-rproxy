@@ -1,6 +1,6 @@
 import uuid
 from typing import Optional
-from pydantic import EmailStr
+from pydantic import EmailStr, ConfigDict
 from sqlmodel import Field, Relationship, SQLModel, Column, JSON
 from datetime import datetime
 
@@ -43,6 +43,9 @@ class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
     expiry_date: Optional[datetime] = Field(default=None)
+    anthropic_api_key: Optional[str] = Field(default=None, max_length=500)
+    openai_api_key: Optional[str] = Field(default=None, max_length=500)
+    google_api_key: Optional[str] = Field(default=None, max_length=500)
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
 
 # Properties to return via API
@@ -319,6 +322,7 @@ class DatabaseInstancesPublic(SQLModel):
 # Inference model catalog
 class InferenceModel(SQLModel, table=True):
     """Available inference models"""
+    model_config = ConfigDict(protected_namespaces=())
     __tablename__ = "inference_model"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str = Field(max_length=255)
@@ -332,6 +336,7 @@ class InferenceModel(SQLModel, table=True):
 
 
 class InferenceModelCreate(SQLModel):
+    model_config = ConfigDict(protected_namespaces=())
     name: str = Field(max_length=255)
     provider: str = Field(max_length=100)
     model_id: str = Field(max_length=255)
@@ -342,6 +347,7 @@ class InferenceModelCreate(SQLModel):
 
 
 class InferenceModelPublic(SQLModel):
+    model_config = ConfigDict(protected_namespaces=())
     id: uuid.UUID
     name: str
     provider: str
@@ -360,6 +366,7 @@ class InferenceModelsPublic(SQLModel):
 # Model usage tracking
 class ModelUsage(SQLModel, table=True):
     """Tracks inference API usage"""
+    model_config = ConfigDict(protected_namespaces=())
     __tablename__ = "model_usage"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
@@ -377,6 +384,7 @@ class ModelUsage(SQLModel, table=True):
 
 
 class ModelUsagePublic(SQLModel):
+    model_config = ConfigDict(protected_namespaces=())
     id: uuid.UUID
     user_id: uuid.UUID
     model_id: uuid.UUID
@@ -390,6 +398,7 @@ class ModelUsagePublic(SQLModel):
 
 # Inference API request/response models
 class InferenceRequest(SQLModel):
+    model_config = ConfigDict(protected_namespaces=())
     model_id: uuid.UUID
     prompt: str
     max_tokens: Optional[int] = Field(default=None)
@@ -398,6 +407,7 @@ class InferenceRequest(SQLModel):
 
 
 class InferenceResponse(SQLModel):
+    model_config = ConfigDict(protected_namespaces=())
     id: str
     model_id: uuid.UUID
     completion: str
@@ -533,3 +543,187 @@ class PresignedDownloadResponse(SQLModel):
     expires_in: int
     object_key: str
     size_bytes: int
+
+
+# LLM Provider models
+class LLMProviderBase(SQLModel):
+    name: str = Field(max_length=100, index=True)
+    display_name: str = Field(max_length=200)
+    description: Optional[str] = Field(default=None, max_length=500)
+    website_url: Optional[str] = Field(default=None, max_length=500)
+    is_active: bool = Field(default=True)
+
+
+class LLMProvider(LLMProviderBase, table=True):
+    __tablename__ = "llm_provider"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    models: list["LLMModel"] = Relationship(back_populates="provider")
+
+
+class LLMProviderPublic(LLMProviderBase):
+    id: uuid.UUID
+
+
+# LLM Model models
+class LLMModelBase(SQLModel):
+    model_config = {"protected_namespaces": ()}
+
+    name: str = Field(max_length=100, index=True)
+    model_id: str = Field(max_length=200)  # e.g., "claude-sonnet-4-5-20250929"
+    display_name: str = Field(max_length=200)
+    input_token_price: float = Field(default=0.0)  # USD per million tokens
+    output_token_price: float = Field(default=0.0)
+    max_tokens: int = Field(default=8192)
+    is_active: bool = Field(default=True)
+
+
+class LLMModel(LLMModelBase, table=True):
+    __tablename__ = "llm_model"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    provider_id: uuid.UUID = Field(foreign_key="llm_provider.id", nullable=False)
+    provider: Optional[LLMProvider] = Relationship(back_populates="models")
+
+
+class LLMModelPublic(LLMModelBase):
+    id: uuid.UUID
+    provider_id: uuid.UUID
+    provider: Optional[str] = None  # Provider name (e.g., "openai", "anthropic")
+
+
+class LLMModelsPublic(SQLModel):
+    data: list[LLMModelPublic]
+    count: int
+
+
+# Conversation models
+class ConversationBase(SQLModel):
+    title: str = Field(max_length=255)
+
+
+class ConversationCreate(ConversationBase):
+    pass
+
+
+class ConversationUpdate(SQLModel):
+    title: Optional[str] = Field(default=None, max_length=255)
+
+
+class Conversation(ConversationBase, table=True):
+    __tablename__ = "conversation"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    owner_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    owner: Optional[User] = Relationship()
+    messages: list["LLMMessage"] = Relationship(back_populates="conversation", cascade_delete=True)
+
+
+class ConversationPublic(ConversationBase):
+    id: uuid.UUID
+    owner_id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class ConversationsPublic(SQLModel):
+    data: list[ConversationPublic]
+    count: int
+
+
+# Message models
+class MessageBase(SQLModel):
+    model_config = {"protected_namespaces": ()}
+
+    role: str = Field(max_length=50)  # "user" | "assistant"
+    content: str
+
+
+class MessageCreate(MessageBase):
+    conversation_id: uuid.UUID
+    model_id: Optional[uuid.UUID] = None
+
+
+class LLMMessage(MessageBase, table=True):
+    __tablename__ = "llm_message"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    conversation_id: uuid.UUID = Field(foreign_key="conversation.id", nullable=False, ondelete="CASCADE")
+    conversation: Optional[Conversation] = Relationship(back_populates="messages")
+    model_id: Optional[uuid.UUID] = Field(foreign_key="llm_model.id", nullable=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    input_tokens: int = Field(default=0)
+    output_tokens: int = Field(default=0)
+    cost: float = Field(default=0.0)
+
+
+class MessagePublic(MessageBase):
+    id: uuid.UUID
+    conversation_id: uuid.UUID
+    created_at: datetime
+    input_tokens: int
+    output_tokens: int
+    cost: float
+
+
+class MessagesPublic(SQLModel):
+    data: list[MessagePublic]
+    count: int
+
+
+# ============================================================================
+# USER API KEY MANAGEMENT
+# ============================================================================
+
+class UserApiKey(SQLModel, table=True):
+    """API keys that users create to access the product REST API"""
+    __tablename__ = "user_api_key"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True)
+    name: str = Field(max_length=100)
+    key_prefix: str = Field(max_length=10)  # e.g. "rp_a1b2c3"
+    hashed_key: str = Field(max_length=255)
+    request_count: int = Field(default=0)
+    last_used_at: Optional[datetime] = Field(default=None)
+    is_active: bool = Field(default=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    user: Optional[User] = Relationship()
+
+
+class UserApiKeyCreate(SQLModel):
+    name: str = Field(max_length=100, min_length=1)
+
+
+class UserApiKeyPublic(SQLModel):
+    id: uuid.UUID
+    name: str
+    key_prefix: str
+    request_count: int
+    last_used_at: Optional[datetime]
+    is_active: bool
+    created_at: datetime
+
+
+class UserApiKeyCreated(UserApiKeyPublic):
+    """Returned only on creation - includes the full key (shown once)"""
+    full_key: str
+
+
+class UserApiKeysPublic(SQLModel):
+    data: list[UserApiKeyPublic]
+    count: int
+
+
+# LLM Usage Tracking
+class LLMUsageLog(SQLModel, table=True):
+    model_config = {"protected_namespaces": ()}
+
+    __tablename__ = "llm_usage_log"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True)
+    model_id: uuid.UUID = Field(foreign_key="llm_model.id", nullable=False)
+    conversation_id: Optional[uuid.UUID] = Field(foreign_key="conversation.id", nullable=True)
+    message_id: Optional[uuid.UUID] = Field(foreign_key="llm_message.id", nullable=True)
+    input_tokens: int = Field(default=0)
+    output_tokens: int = Field(default=0)
+    total_cost: float = Field(default=0.0)
+    created_at: datetime = Field(default_factory=datetime.utcnow, index=True)

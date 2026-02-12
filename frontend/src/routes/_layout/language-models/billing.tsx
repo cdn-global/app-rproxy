@@ -1,5 +1,6 @@
-import { useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   Table,
@@ -9,174 +10,188 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { languageModels } from "@/data/language-models";
-import { compoundTools, gptOssTools } from "@/data/language-model-tools";
+import { Button } from "@/components/ui/button";
 import PageScaffold, { PageSection } from "@/components/Common/PageLayout";
 
+const numberFormatter = new Intl.NumberFormat("en-US");
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 6,
 });
 
-function LanguageModelsBillingPage() {
-  const billingSummary = useMemo(() => {
-    return languageModels.reduce(
-      (acc, model) => {
-        acc.totalInputCost += model.inputTokenPrice;
-        acc.totalOutputCost += model.outputTokenPrice;
-        return acc;
-      },
-      {
-        totalInputCost: 0,
-        totalOutputCost: 0,
-        totalCost: 0,
-      },
-    );
-  }, []);
+interface UserUsageSummary {
+  user_id: string;
+  user_email: string;
+  total_requests: number;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_tokens: number;
+  total_cost: number;
+  models_used: string[];
+}
 
-  billingSummary.totalCost = billingSummary.totalInputCost + billingSummary.totalOutputCost;
+function LanguageModelsBillingPage() {
+  const [days, setDays] = useState(30);
+
+  const { data: usageData, isLoading } = useQuery<UserUsageSummary>({
+    queryKey: ["llm-usage", days],
+    queryFn: async () => {
+      const baseUrl = window.location.hostname === "localhost"
+        ? "http://localhost:8000"
+        : `https://${window.location.hostname.replace("-5173", "-8000")}`;
+
+      const response = await fetch(`${baseUrl}/v2/billing/usage/my-usage?days=${days}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch usage data");
+      return response.json();
+    },
+  });
+
+  const billingSummary = useMemo(() => {
+    if (!usageData) {
+      return {
+        totalRequests: 0,
+        totalInputTokens: 0,
+        totalOutputTokens: 0,
+        totalTokens: 0,
+        totalCost: 0,
+        modelsUsed: [],
+      };
+    }
+    return {
+      totalRequests: usageData.total_requests,
+      totalInputTokens: usageData.total_input_tokens,
+      totalOutputTokens: usageData.total_output_tokens,
+      totalTokens: usageData.total_tokens,
+      totalCost: usageData.total_cost,
+      modelsUsed: usageData.models_used,
+    };
+  }, [usageData]);
 
   return (
     <PageScaffold sidebar={null}>
       <div className="space-y-10">
         <PageSection
           id="billing-summary"
-          title="Billing Summary"
-          description="A summary of your current billing period."
+          title="Usage & Billing"
+          description={`Your LLM usage for the last ${days} days.`}
+          actions={
+            <div className="flex gap-3">
+              <Button variant="outline" asChild className="rounded-full px-4 py-2 text-sm font-semibold">
+                <Link to="/language-models">← Back to Models</Link>
+              </Button>
+              <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
+              <Button
+                variant="outline"
+                onClick={() => setDays(7)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                  days === 7
+                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                    : "border-slate-200/80 bg-white/60 dark:border-slate-700/60 dark:bg-slate-900/60"
+                }`}
+              >
+                7 Days
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setDays(30)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                  days === 30
+                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                    : "border-slate-200/80 bg-white/60 dark:border-slate-700/60 dark:bg-slate-900/60"
+                }`}
+              >
+                30 Days
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setDays(90)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                  days === 90
+                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                    : "border-slate-200/80 bg-white/60 dark:border-slate-700/60 dark:bg-slate-900/60"
+                }`}
+              >
+                90 Days
+              </Button>
+            </div>
+          }
         >
-        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-6">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <SummaryTile
-                label="Total Input Cost"
-                value={currencyFormatter.format(billingSummary.totalInputCost)}
-                description="Per Million Tokens"
-              />
-              <SummaryTile
-                label="Total Output Cost"
-                value={currencyFormatter.format(billingSummary.totalOutputCost)}
-                description="Per Million Tokens"
-              />
-              <SummaryTile
-                label="Total Cost"
-                value={currencyFormatter.format(billingSummary.totalCost)}
-                description="For the current period"
-              />
+        {isLoading ? (
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-8 text-center dark:border-slate-700/60 dark:bg-slate-900/70">
+            <p className="text-slate-600 dark:text-slate-400">Loading usage data...</p>
+          </div>
+        ) : (
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+            <div className="p-6">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                <SummaryTile
+                  label="Total Requests"
+                  value={numberFormatter.format(billingSummary.totalRequests)}
+                  description="API calls made"
+                />
+                <SummaryTile
+                  label="Input Tokens"
+                  value={numberFormatter.format(billingSummary.totalInputTokens)}
+                  description="Tokens processed"
+                />
+                <SummaryTile
+                  label="Output Tokens"
+                  value={numberFormatter.format(billingSummary.totalOutputTokens)}
+                  description="Tokens generated"
+                />
+                <SummaryTile
+                  label="Total Tokens"
+                  value={numberFormatter.format(billingSummary.totalTokens)}
+                  description="All tokens used"
+                />
+                <SummaryTile
+                  label="Total Cost"
+                  value={currencyFormatter.format(billingSummary.totalCost)}
+                  description="Billed amount"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
         </PageSection>
 
         <PageSection
-          id="detailed-costs"
-          title="Detailed Costs"
-          description="Detailed cost breakdown for each language model."
+          id="models-used"
+          title="Models Used"
+          description="Language models you've used during this period."
         >
-        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>AI Model</TableHead>
-                    <TableHead>Input Token Price</TableHead>
-                    <TableHead>Output Token Price</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {languageModels.map((model) => (
-                    <TableRow
-                      key={model.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        {model.name}
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(model.inputTokenPrice)}
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(model.outputTokenPrice)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+        {isLoading ? (
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-8 text-center dark:border-slate-700/60 dark:bg-slate-900/70">
+            <p className="text-slate-600 dark:text-slate-400">Loading models data...</p>
+          </div>
+        ) : billingSummary.modelsUsed.length === 0 ? (
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 p-8 text-center dark:border-slate-700/60 dark:bg-slate-900/70">
+            <p className="text-slate-600 dark:text-slate-400">
+              No models used in the selected time period. Start using LLM models to see usage statistics here.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
+            <div className="p-6">
+              <div className="flex flex-wrap gap-3">
+                {billingSummary.modelsUsed.map((modelName) => (
+                  <div
+                    key={modelName}
+                    className="rounded-full border border-slate-200/70 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-700/60 dark:bg-slate-800/50 dark:text-slate-300"
+                  >
+                    {modelName}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        </PageSection>
-
-        <PageSection
-          id="compound-tools"
-          title="Built-In Tools (Compound)"
-        >
-        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>Tool</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Parameter</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {compoundTools.map((tool) => (
-                    <TableRow
-                      key={tool.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        {tool.name}
-                      </TableCell>
-                      <TableCell>{tool.price}</TableCell>
-                      <TableCell>{tool.parameter}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        </div>
-        </PageSection>
-
-        <PageSection
-          id="gpt-oss-tools"
-          title="Built-In Tools (GPT-OSS)"
-        >
-        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>Tool</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Parameter</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {gptOssTools.map((tool) => (
-                    <TableRow
-                      key={tool.name}
-                      className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
-                    >
-                      <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                        {tool.name}
-                      </TableCell>
-                      <TableCell>{tool.price}</TableCell>
-                      <TableCell>{tool.parameter}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        </div>
+        )}
         </PageSection>
       </div>
     </PageScaffold>

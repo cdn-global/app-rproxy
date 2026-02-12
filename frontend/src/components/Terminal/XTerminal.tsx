@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react"
-import { Terminal } from "xterm"
+import { Terminal } from "@xterm/xterm"
 import { FitAddon } from "@xterm/addon-fit"
 import { WebLinksAddon } from "@xterm/addon-web-links"
-import "xterm/css/xterm.css"
+import "@xterm/xterm/css/xterm.css"
 
 interface XTerminalProps {
   serverId: string
@@ -56,7 +56,7 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
     const wsHost = window.location.hostname === "localhost"
       ? "localhost:8000"
-      : "api.roamingproxy.com"
+      : `${window.location.hostname.replace("-5173", "-8000")}`
     const wsUrl = `${wsProtocol}//${wsHost}/v2/terminal/ws/${serverId}?token=${token}`
 
     const ws = new WebSocket(wsUrl)

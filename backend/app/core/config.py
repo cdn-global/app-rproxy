@@ -96,6 +96,11 @@ class Settings(BaseSettings):
     GITHUB_CLIENT_ID: str | None = None
     GITHUB_CLIENT_SECRET: str | None = None
 
+    # LLM Provider API Keys (System-wide fallback keys)
+    ANTHROPIC_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
+    GOOGLE_API_KEY: str | None = None
+
     # MinIO / S3 Storage
     MINIO_ENDPOINT: str | None = None
     MINIO_ROOT_USER: str | None = None
