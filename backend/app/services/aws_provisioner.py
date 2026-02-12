@@ -74,6 +74,81 @@ class AWSProvisioner:
             logger.error(f"Failed to create EC2 client for region {region}: {e}")
             raise Exception(f"Failed to initialize AWS client: {str(e)}")
 
+    def _get_user_data_script(self, app_slug: Optional[str]) -> str:
+        """Get the User Data script to install the selected app on first boot"""
+        if not app_slug:
+            return ""
+
+        base_script = """#!/bin/bash
+        apt-get update
+        apt-get install -y docker.io docker-compose
+        systemctl start docker
+        systemctl enable docker
+        usermod -aG docker ubuntu
+        """
+        
+        apps = {
+            "wordpress": """
+        mkdir -p /opt/wordpress
+        cat <<EOF > /opt/wordpress/docker-compose.yml
+version: '3.1'
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress_password
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress:/var/www/html
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress_password
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  wordpress:
+  db:
+EOF
+        cd /opt/wordpress
+        docker-compose up -d
+            """,
+            "docker": "", # Base script already installs docker
+            "nodejs": """
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        apt-get install -y nodejs
+        npm install -g pm2
+            """,
+            "nginx": """
+        apt-get install -y nginx mysql-server php-fpm php-mysql
+        systemctl enable nginx
+        systemctl start nginx
+            """,
+            "postgres": """
+        apt-get install -y postgresql postgresql-contrib
+        systemctl enable postgresql
+        systemctl start postgresql
+            """,
+            "redis": """
+        apt-get install -y redis-server
+        systemctl enable redis-server
+        systemctl start redis-server
+            """
+        }
+        
+        return base_script + apps.get(app_slug, "")
+
     def calculate_hourly_rate(self, instance_type: str) -> float:
         """
         Calculate hourly rate with markup over AWS on-demand pricing
@@ -240,6 +315,7 @@ class AWSProvisioner:
         aws_instance_type: str,
         aws_region: str,
         gpu_type: Optional[str] = None,
+        app_slug: Optional[str] = None,
     ) -> dict:
         """
         Provision a new EC2 instance.
@@ -280,6 +356,9 @@ class AWSProvisioner:
                 )
                 ami_id = response["Parameter"]["Value"]
 
+            # Get User Data script
+            user_data = self._get_user_data_script(app_slug)
+
             # Get or create security group
             security_group_id = self._get_or_create_security_group(aws_region, server_type)
 
@@ -299,13 +378,14 @@ class AWSProvisioner:
                 {"Key": "ServerId", "Value": str(server_id)},
                 {"Key": "ServerType", "Value": server_type},
                 {"Key": "Environment", "Value": settings.ENVIRONMENT},
+                {"Key": "AppSlug", "Value": app_slug or "os-only"},
             ]
             if gpu_type:
                 tags.append({"Key": "GPUType", "Value": gpu_type})
 
             # Launch EC2 instance
             logger.info(
-                f"Launching EC2 instance {aws_instance_type} in {aws_region} for server {server_id}"
+                f"Launching EC2 instance {aws_instance_type} in {aws_region} for server {server_id} with app {app_slug}"
             )
 
             run_instances_params = {
@@ -332,6 +412,9 @@ class AWSProvisioner:
                     }
                 ],
             }
+
+            if user_data:
+                run_instances_params["UserData"] = user_data
 
             # For GPU instances, ensure we're using an instance type that supports GPUs
             # (no additional configuration needed for GPU support in run_instances)

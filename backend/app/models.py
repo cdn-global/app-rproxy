@@ -228,12 +228,12 @@ class RemoteServerPublic(SQLModel):
     hosting_provider: str
     cpu_cores: int
     memory_gb: int
-    gpu_type: Optional[str]
-    app_slug: Optional[str]
+    gpu_type: Optional[str] = None
+    app_slug: Optional[str] = None
     status: str
-    aws_instance_type: Optional[str]
-    aws_region: Optional[str]
-    aws_public_ip: Optional[str]
+    aws_instance_type: Optional[str] = None
+    aws_region: Optional[str] = None
+    aws_public_ip: Optional[str] = None
     hourly_rate: float
     created_at: datetime
     stopped_at: Optional[datetime]
