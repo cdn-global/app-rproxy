@@ -113,6 +113,9 @@ async def create_server(
     if server_data.hosting_provider == "aws":
         new_server.aws_instance_type = server_data.aws_instance_type
         new_server.aws_region = server_data.aws_region or "us-east-1"
+    
+    if server_data.app_slug:
+        new_server.app_slug = server_data.app_slug
 
     session.add(new_server)
     session.commit()

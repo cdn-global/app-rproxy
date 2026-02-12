@@ -174,6 +174,7 @@ class RemoteServer(SQLModel, table=True):
     cpu_cores: int = Field(default=1)
     memory_gb: int = Field(default=2)
     gpu_type: Optional[str] = Field(default=None, max_length=100)
+    app_slug: Optional[str] = Field(default=None, max_length=50)
     status: str = Field(default="provisioning", max_length=50)  # provisioning, running, stopped, terminated, error
     docker_container_id: Optional[str] = Field(default=None, max_length=255)
     # AWS fields
@@ -200,6 +201,7 @@ class RemoteServerCreate(SQLModel):
     cpu_cores: int = Field(default=1, ge=1, le=96)
     memory_gb: int = Field(default=2, ge=1, le=768)
     gpu_type: Optional[str] = Field(default=None, max_length=100)
+    app_slug: Optional[str] = Field(default=None, max_length=50)
     # AWS-specific options
     aws_instance_type: Optional[str] = Field(default=None, max_length=50)
     aws_region: Optional[str] = Field(default="us-east-1", max_length=50)
@@ -227,6 +229,7 @@ class RemoteServerPublic(SQLModel):
     cpu_cores: int
     memory_gb: int
     gpu_type: Optional[str]
+    app_slug: Optional[str]
     status: str
     aws_instance_type: Optional[str]
     aws_region: Optional[str]

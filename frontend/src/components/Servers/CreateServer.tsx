@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import useCustomToast from "../../hooks/useCustomToast"
+import { oneClickApps } from "../../data/oneClickApps"
 
 interface CreateServerProps {
   isOpen: boolean
@@ -27,6 +28,7 @@ interface ServerCreateForm {
   gpu_type?: string
   aws_instance_type?: string
   aws_region?: string
+  app_slug?: string
 }
 
 const CreateServer = ({ isOpen, onClose }: CreateServerProps) => {
@@ -50,6 +52,7 @@ const CreateServer = ({ isOpen, onClose }: CreateServerProps) => {
       gpu_type: "",
       aws_instance_type: "t3.medium",
       aws_region: "us-east-1",
+      app_slug: "",
     },
   })
 
@@ -143,6 +146,22 @@ const CreateServer = ({ isOpen, onClose }: CreateServerProps) => {
                 <option value="aws">AWS EC2 (Dedicated)</option>
               </select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="app_slug">One-Click App (Optional)</Label>
+            <select
+              id="app_slug"
+              {...register("app_slug")}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">-- None (OS Only) --</option>
+              {oneClickApps.map((app) => (
+                <option key={app.id} value={app.slug}>
+                  {app.name} - {app.description.substring(0, 50)}...
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
