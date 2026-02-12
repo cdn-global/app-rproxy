@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { FiArrowUpRight } from "react-icons/fi"
+import { getApiBaseUrl } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +25,7 @@ import PageScaffold, { PageSection } from "../../../components/Common/PageLayout
 import CreateDatabase from "../../../components/Database/CreateDatabase"
 import useCustomToast from "../../../hooks/useCustomToast"
 
+const baseUrl = getApiBaseUrl()
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -55,7 +57,7 @@ function ManagedDatabaseIndexPage() {
   const { data, isLoading } = useQuery<{ data: DatabaseInstance[]; count: number }>({
     queryKey: ["database-instances"],
     queryFn: async () => {
-      const response = await fetch("/v2/database-instances/", {
+      const response = await fetch(`${baseUrl}/v2/database-instances/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -69,7 +71,7 @@ function ManagedDatabaseIndexPage() {
 
   const stopMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}/stop`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}/stop`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -85,7 +87,7 @@ function ManagedDatabaseIndexPage() {
 
   const startMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}/start`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}/start`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -101,7 +103,7 @@ function ManagedDatabaseIndexPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })
@@ -118,7 +120,7 @@ function ManagedDatabaseIndexPage() {
 
   const backupMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}/backup`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}/backup`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       })

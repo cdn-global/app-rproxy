@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getApiBaseUrl } from "@/lib/utils"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface CreateDatabaseProps {
@@ -48,7 +49,7 @@ const CreateDatabase = ({ isOpen, onClose }: CreateDatabaseProps) => {
 
   const mutation = useMutation({
     mutationFn: async (data: DatabaseCreateForm) => {
-      const response = await fetch("/v2/database-instances/", {
+      const response = await fetch(`${getApiBaseUrl()}/v2/database-instances/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

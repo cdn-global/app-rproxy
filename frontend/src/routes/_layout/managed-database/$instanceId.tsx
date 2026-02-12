@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react"
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { FiArrowLeft, FiCopy, FiCheck } from "react-icons/fi"
+import { getApiBaseUrl } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -71,6 +72,8 @@ const getStatusVariant = (
   return variants[status] || "outline"
 }
 
+const baseUrl = getApiBaseUrl()
+
 function InstanceDetailsPage() {
   const { instanceId } = Route.useParams()
   const queryClient = useQueryClient()
@@ -109,7 +112,7 @@ function InstanceDetailsPage() {
     queryKey: ["database-instance", instanceId],
     queryFn: async () => {
       const response = await fetch(
-        `/v2/database-instances/${instanceId}`,
+        `${baseUrl}/v2/database-instances/${instanceId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -128,7 +131,7 @@ function InstanceDetailsPage() {
     queryKey: ["database-instance-logs", instanceId],
     queryFn: async () => {
       const response = await fetch(
-        `/v2/database-instances/${instanceId}/logs`,
+        `${baseUrl}/v2/database-instances/${instanceId}/logs`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -144,7 +147,7 @@ function InstanceDetailsPage() {
 
   const stopMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}/stop`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}/stop`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -165,7 +168,7 @@ function InstanceDetailsPage() {
 
   const startMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}/start`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}/start`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -186,7 +189,7 @@ function InstanceDetailsPage() {
 
   const backupMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}/backup`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}/backup`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -201,7 +204,7 @@ function InstanceDetailsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/v2/database-instances/${id}`, {
+      const response = await fetch(`${baseUrl}/v2/database-instances/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
