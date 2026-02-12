@@ -17,6 +17,7 @@ from app.models import User, Message, Token, UserPublic, NewPassword
 from app.api.deps import get_db, get_current_user, get_current_active_superuser, CurrentUser, SessionDep
 from app.core.security import create_access_token, get_password_hash, verify_access_token
 from app.core.config import settings
+from app.services.stripe_utils import ensure_stripe_customer, find_stripe_customer_by_email
 from app import crud
 import emails
 
@@ -172,8 +173,19 @@ async def create_user_if_not_exists(
     user = db.query(User).filter(User.email == email).first()
     if user:
         logger.info(f"User already exists: {email}")
+        # Ensure Stripe customer is mapped (uses email lookup if missing)
+        if not user.stripe_customer_id and customer_id:
+            user.stripe_customer_id = customer_id
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            logger.info(f"Mapped Stripe customer {customer_id} to existing user {email}")
+        elif not user.stripe_customer_id:
+            ensure_stripe_customer(user, db)
+            db.commit()
+            db.refresh(user)
         return user
-    
+
     user_id = str(uuid.uuid4())
     temporary_password = secrets.token_urlsafe(12)
     user = User(
@@ -186,10 +198,16 @@ async def create_user_if_not_exists(
         subscription_id=subscription_id
     )
     db.add(user)
+    db.flush()
+
+    # If no customer_id from webhook, find or create via email lookup
+    if not customer_id:
+        ensure_stripe_customer(user, db)
+
     db.commit()
     db.refresh(user)
-    logger.info(f"Created new user: {email}")
-    
+    logger.info(f"Created new user: {email} (stripe_customer_id={user.stripe_customer_id})")
+
     if background_tasks:
         try:
             activation_token = create_access_token(
@@ -211,7 +229,7 @@ async def create_user_if_not_exists(
         except Exception as e:
             logger.error(f"Failed to generate or schedule activation email for {email}: {str(e)}")
             raise
-    
+
     return user
 
 # Authentication routes
@@ -299,19 +317,8 @@ async def activate_account(request: ActivateRequest, db: Annotated[Session, Depe
     user.hashed_password = get_password_hash(request.new_password)
     user.is_active = True
 
-    # Auto-create Stripe customer if not already set
-    if not user.stripe_customer_id:
-        try:
-            customer = stripe.Customer.create(
-                email=user.email,
-                name=user.full_name or user.email.split("@")[0],
-                metadata={"user_id": str(user.id)},
-            )
-            user.stripe_customer_id = customer.id
-            logger.info(f"Created Stripe customer {customer.id} for user: {user.email}")
-        except stripe.StripeError as e:
-            logger.error(f"Failed to create Stripe customer for {user.email}: {e}")
-            # Don't fail activation if Stripe fails - they can retry later
+    # Find existing Stripe customer by email or create a new one
+    ensure_stripe_customer(user, db, name=user.full_name or user.email.split("@")[0])
 
     db.commit()
     logger.info(f"Account activated successfully for user: {user.email}")
@@ -320,12 +327,17 @@ async def activate_account(request: ActivateRequest, db: Annotated[Session, Depe
 @router.get("/customer-portal")
 async def create_customer_portal(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        raise HTTPException(status_code=404, detail="No Stripe customer associated with this user")
-    
+        # Try to find existing Stripe customer by email
+        resolved = ensure_stripe_customer(current_user, db)
+        db.commit()
+        if not resolved:
+            logger.warning(f"No Stripe customer ID for user: {current_user.email}")
+            raise HTTPException(status_code=404, detail="No Stripe customer associated with this user")
+
     try:
         portal_session = stripe.billing_portal.Session.create(
             customer=current_user.stripe_customer_id,
@@ -510,7 +522,20 @@ async def update_user_subscription(db: Session, stripe_customer_id: str, subscri
     try:
         user = db.query(User).filter(User.stripe_customer_id == stripe_customer_id).first()
         if not user:
-            logger.warning(f"No user found with Stripe customer ID: {stripe_customer_id}")
+            # Fallback: look up the Stripe customer to get their email, then find the local user
+            try:
+                customer = stripe.Customer.retrieve(stripe_customer_id)
+                if customer and customer.email:
+                    user = db.query(User).filter(User.email == customer.email).first()
+                    if user:
+                        user.stripe_customer_id = stripe_customer_id
+                        db.add(user)
+                        db.flush()
+                        logger.info(f"Mapped Stripe customer {stripe_customer_id} to user {customer.email} via email lookup")
+            except stripe.StripeError as e:
+                logger.error(f"Failed to retrieve Stripe customer {stripe_customer_id}: {e}")
+        if not user:
+            logger.warning(f"No user found for Stripe customer ID: {stripe_customer_id}")
             return
         
         logger.info(f"Updating subscription for user: {user.email}")

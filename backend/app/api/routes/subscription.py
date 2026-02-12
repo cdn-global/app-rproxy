@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
+from sqlalchemy.orm import Session
 from app.models import SubscriptionStatus, User
 from typing import Annotated, List
 from pydantic import BaseModel
@@ -7,7 +8,8 @@ from stripe import StripeError
 import os
 import logging
 from datetime import datetime
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, get_db, SessionDep
+from app.services.stripe_utils import ensure_stripe_customer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -49,7 +51,10 @@ class ProxyApiAccessResponse(BaseModel):
     message: str | None
 
 @router.get("/customer", response_model=CustomerResponse)
-async def get_customer(current_user: Annotated[User, Depends(get_current_user)]):
+async def get_customer(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
     """
     Fetch the Stripe customer details for the authenticated user.
     """
@@ -60,8 +65,10 @@ async def get_customer(current_user: Annotated[User, Depends(get_current_user)])
         raise HTTPException(status_code=500, detail="Server configuration error: Missing Stripe API key")
 
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        raise HTTPException(status_code=404, detail="No Stripe customer associated with this user")
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            raise HTTPException(status_code=404, detail="No Stripe customer associated with this user")
 
     try:
         customer = stripe.Customer.retrieve(current_user.stripe_customer_id)
@@ -84,7 +91,10 @@ async def get_customer(current_user: Annotated[User, Depends(get_current_user)])
 
 # MODIFIED FUNCTION
 @router.get("/customer/subscriptions", response_model=List[SubscriptionResponse])
-async def get_customer_subscriptions(current_user: Annotated[User, Depends(get_current_user)]):
+async def get_customer_subscriptions(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
     """
     Fetch all subscriptions for the authenticated user's Stripe customer.
     This includes tier details and a list of enabled features based on product metadata tags set to "true".
@@ -96,8 +106,10 @@ async def get_customer_subscriptions(current_user: Annotated[User, Depends(get_c
         raise HTTPException(status_code=500, detail="Server configuration error: Missing Stripe API key")
 
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        raise HTTPException(status_code=404, detail="No Stripe customer associated with this user")
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            raise HTTPException(status_code=404, detail="No Stripe customer associated with this user")
 
     try:
         subscriptions = stripe.Subscription.list(
@@ -160,7 +172,10 @@ async def get_customer_subscriptions(current_user: Annotated[User, Depends(get_c
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.get("/subscription-status", response_model=SubscriptionStatus)
-async def get_subscription_status(current_user: Annotated[User, Depends(get_current_user)]):
+async def get_subscription_status(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
     """
     Retrieve the subscription status for the authenticated user from Stripe.
     """
@@ -171,12 +186,14 @@ async def get_subscription_status(current_user: Annotated[User, Depends(get_curr
         raise HTTPException(status_code=500, detail="Server configuration error: Missing Stripe API key")
 
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        return SubscriptionStatus(
-            hasSubscription=False,
-            isTrial=False,
-            isDeactivated=True
-        )
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            return SubscriptionStatus(
+                hasSubscription=False,
+                isTrial=False,
+                isDeactivated=True
+            )
 
     try:
         subscriptions = stripe.Subscription.list(
@@ -213,7 +230,10 @@ async def get_subscription_status(current_user: Annotated[User, Depends(get_curr
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.get("/proxy-api/access", response_model=ProxyApiAccessResponse)
-async def check_proxy_api_access(current_user: Annotated[User, Depends(get_current_user)]):
+async def check_proxy_api_access(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
     """
     Check if the user has access to proxy API features based on the proxy-api tag in subscription metadata.
     """
@@ -224,11 +244,13 @@ async def check_proxy_api_access(current_user: Annotated[User, Depends(get_curre
         raise HTTPException(status_code=500, detail="Server configuration error: Missing Stripe API key")
 
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        return ProxyApiAccessResponse(
-            has_access=False,
-            message="No subscription found. Please subscribe to a plan with proxy API features."
-        )
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            return ProxyApiAccessResponse(
+                has_access=False,
+                message="No subscription found. Please subscribe to a plan with proxy API features."
+            )
 
     try:
         subscriptions = stripe.Subscription.list(
@@ -279,7 +301,10 @@ async def check_proxy_api_access(current_user: Annotated[User, Depends(get_curre
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.get("/serp-api/access", response_model=ProxyApiAccessResponse)
-async def check_serp_api_access(current_user: Annotated[User, Depends(get_current_user)]):
+async def check_serp_api_access(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
     """
     Check if the user has access to SERP API features based on a 'serp-api'
     tag in their active, trialing, or past_due subscription's product metadata.
@@ -290,13 +315,15 @@ async def check_serp_api_access(current_user: Annotated[User, Depends(get_curren
     if not stripe.api_key:
         logger.error("Stripe API key is not configured")
         raise HTTPException(status_code=500, detail="Server configuration error: Missing Stripe API key")
-    
+
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        return ProxyApiAccessResponse(
-            has_access=False,
-            message="No subscription found. Please subscribe to a plan with SERP API features."
-        )
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            return ProxyApiAccessResponse(
+                has_access=False,
+                message="No subscription found. Please subscribe to a plan with SERP API features."
+            )
 
     try:
         # 2. Fetch all subscriptions for the customer to check all relevant statuses.
@@ -355,7 +382,8 @@ async def check_serp_api_access(current_user: Annotated[User, Depends(get_curren
 @router.get("/api/access/{feature_name}", response_model=ProxyApiAccessResponse)
 async def check_multi_feature_access(
     feature_name: Annotated[str, Path(..., description="The metadata tag to check for access, e.g., 'serp-api' or 'advanced-analytics'.")],
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
 ):
     """
     Check if the user has access to a specific feature based on a corresponding
@@ -372,13 +400,15 @@ async def check_multi_feature_access(
     if not stripe.api_key:
         logger.error("Stripe API key is not configured")
         raise HTTPException(status_code=500, detail="Server configuration error: Missing Stripe API key")
-    
+
     if not current_user.stripe_customer_id:
-        logger.warning(f"No Stripe customer ID for user: {current_user.email}")
-        return ProxyApiAccessResponse(
-            has_access=False,
-            message=f"No subscription found. Please subscribe to a plan with the '{feature_name}' feature."
-        )
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            return ProxyApiAccessResponse(
+                has_access=False,
+                message=f"No subscription found. Please subscribe to a plan with the '{feature_name}' feature."
+            )
 
     try:
         # 2. Fetch subscriptions with expanded product data

@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from app.models import User, UsageRecord, UsageRecordPublic
 from app.api.deps import get_current_user, get_current_active_superuser, SessionDep
 from app.services.usage_reporter import report_pending_usage
+from app.services.stripe_utils import ensure_stripe_customer
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,10 @@ async def report_usage_to_stripe(
     Should be called periodically (hourly/daily) by a background job.
     """
     if not current_user.stripe_customer_id:
-        raise HTTPException(status_code=400, detail="User does not have a Stripe customer ID")
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            raise HTTPException(status_code=400, detail="User does not have a Stripe customer ID")
 
     # Get user's subscription
     try:
@@ -313,10 +317,13 @@ async def subscribe_to_infrastructure(
     User can then create resources, billed at period end.
     """
     if not current_user.stripe_customer_id:
-        raise HTTPException(
-            status_code=400,
-            detail="No Stripe customer ID. Complete account setup first.",
-        )
+        resolved = ensure_stripe_customer(current_user, session)
+        session.commit()
+        if not resolved:
+            raise HTTPException(
+                status_code=400,
+                detail="No Stripe customer ID. Complete account setup first.",
+            )
 
     # Check for existing active subscription
     existing = stripe.Subscription.list(

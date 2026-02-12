@@ -70,10 +70,7 @@ def delete_user_agent(session: Session, user_agent_id: uuid.UUID) -> bool:
     return True
 
 def create_user(session: Session, user_create: UserCreate, is_trial: bool = False) -> User:
-    import stripe
-    import os
-    import logging
-    _logger = logging.getLogger(__name__)
+    from app.services.stripe_utils import ensure_stripe_customer
 
     hashed_password = get_password_hash(user_create.password)
     db_obj = User(
@@ -89,21 +86,16 @@ def create_user(session: Session, user_create: UserCreate, is_trial: bool = Fals
         expiry_date=datetime.utcnow() + timedelta(days=30) if is_trial else None
     )
 
-    # Auto-create Stripe customer for new users
-    try:
-        stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-        if stripe.api_key:
-            customer = stripe.Customer.create(
-                email=user_create.email,
-                name=user_create.full_name or user_create.email.split("@")[0],
-                metadata={"user_id": str(db_obj.id)},
-            )
-            db_obj.stripe_customer_id = customer.id
-            _logger.info(f"Created Stripe customer {customer.id} for {user_create.email}")
-    except Exception as e:
-        _logger.error(f"Failed to create Stripe customer for {user_create.email}: {e}")
-
     session.add(db_obj)
+    session.flush()
+
+    # Find existing Stripe customer by email or create a new one
+    ensure_stripe_customer(
+        db_obj,
+        session,
+        name=user_create.full_name or user_create.email.split("@")[0],
+    )
+
     session.commit()
     session.refresh(db_obj)
     return db_obj

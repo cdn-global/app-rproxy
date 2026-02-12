@@ -16,6 +16,13 @@ services:
       - --providers.docker
       - --providers.docker.exposedbydefault=false
       - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      - --entrypoints.http.http.redirections.entrypoint.to=https
+      - --entrypoints.http.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL:-admin@roamingproxy.com}
+      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
       - --accesslog
       - --log
       - --api
