@@ -1,7 +1,9 @@
 """
 Server provisioning service for remote servers (SSH, GPU, inference)
 """
+import base64
 import docker
+import hashlib
 import logging
 import secrets
 import uuid
@@ -13,6 +15,13 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+
+def _derive_fernet_key() -> bytes:
+    """Derive a stable Fernet key from SECRET_KEY so we can always decrypt."""
+    digest = hashlib.sha256(settings.SECRET_KEY.encode()).digest()
+    return base64.urlsafe_b64encode(digest)
+
+
 class ServerProvisioner:
     """Handles provisioning and management of remote servers"""
 
@@ -22,20 +31,15 @@ class ServerProvisioner:
         except Exception as e:
             logger.error(f"Failed to initialize Docker client: {e}")
             self.docker_client = None
+        self._fernet = Fernet(_derive_fernet_key())
 
-    def _generate_encryption_key(self) -> bytes:
-        """Generate encryption key for connection strings"""
-        return Fernet.generate_key()
+    def encrypt_connection_string(self, plaintext: str) -> str:
+        """Encrypt a connection JSON string."""
+        return self._fernet.encrypt(plaintext.encode()).decode()
 
-    def _encrypt_connection_string(self, connection_string: str, key: bytes) -> str:
-        """Encrypt connection string"""
-        f = Fernet(key)
-        return f.encrypt(connection_string.encode()).decode()
-
-    def _decrypt_connection_string(self, encrypted: str, key: bytes) -> str:
-        """Decrypt connection string"""
-        f = Fernet(key)
-        return f.decrypt(encrypted.encode()).decode()
+    def decrypt_connection_string(self, encrypted: str) -> str:
+        """Decrypt a connection JSON string."""
+        return self._fernet.decrypt(encrypted.encode()).decode()
 
     def calculate_hourly_rate(self, server_type: str, cpu_cores: int, memory_gb: int, gpu_type: Optional[str] = None) -> float:
         """Calculate hourly rate based on server specs"""
@@ -151,8 +155,7 @@ class ServerProvisioner:
             connection_string = f"ssh://user_{user_id}:{ssh_password}@localhost:{host_port}"
 
             # Encrypt connection string
-            encryption_key = self._generate_encryption_key()
-            encrypted_connection = self._encrypt_connection_string(connection_string, encryption_key)
+            encrypted_connection = self.encrypt_connection_string(connection_string)
 
             logger.info(f"Successfully provisioned server {server_id} (container: {container.id})")
 

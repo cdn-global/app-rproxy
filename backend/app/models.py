@@ -210,6 +210,14 @@ class RemoteServerUpdate(SQLModel):
     status: Optional[str] = Field(default=None, max_length=50)
 
 
+class RemoteServerConnectionConfig(SQLModel):
+    """Configure SSH connection details for a server."""
+    ssh_host: str = Field(max_length=255)
+    ssh_port: int = Field(default=22, ge=1, le=65535)
+    ssh_username: str = Field(default="root", max_length=100)
+    private_key: str  # PEM-encoded private key
+
+
 class RemoteServerPublic(SQLModel):
     id: uuid.UUID
     user_id: uuid.UUID
@@ -226,6 +234,7 @@ class RemoteServerPublic(SQLModel):
     hourly_rate: float
     created_at: datetime
     stopped_at: Optional[datetime]
+    has_connection: bool = False
 
 
 class RemoteServersPublic(SQLModel):

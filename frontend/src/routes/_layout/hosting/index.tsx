@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table"
 import useCustomToast from "@/hooks/useCustomToast"
 import CreateServer from "../../../components/Servers/CreateServer"
+import ConfigureConnection from "../../../components/Servers/ConfigureConnection"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
@@ -40,6 +41,7 @@ interface RemoteServer {
   aws_instance_type?: string
   aws_region?: string
   aws_public_ip?: string
+  has_connection?: boolean
 }
 
 function HostingIndexPage() {
@@ -47,6 +49,7 @@ function HostingIndexPage() {
   const queryClient = useQueryClient()
   const [createOpen, setCreateOpen] = useState(false)
   const [seeding, setSeeding] = useState(false)
+  const [configureServer, setConfigureServer] = useState<RemoteServer | null>(null)
 
   const authHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -264,6 +267,14 @@ function HostingIndexPage() {
                                   variant="outline"
                                   size="sm"
                                   className="rounded-full px-3 py-1 text-xs font-semibold"
+                                  onClick={() => setConfigureServer(server)}
+                                >
+                                  {server.has_connection ? "Reconfigure" : "Configure"}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full px-3 py-1 text-xs font-semibold"
                                   onClick={() => stopMutation.mutate(server.id)}
                                   disabled={stopMutation.isPending}
                                 >
@@ -335,6 +346,15 @@ function HostingIndexPage() {
     </div>
 
     <CreateServer isOpen={createOpen} onClose={() => setCreateOpen(false)} />
+
+    {configureServer && (
+      <ConfigureConnection
+        isOpen={true}
+        onClose={() => setConfigureServer(null)}
+        serverId={configureServer.id}
+        serverName={configureServer.name}
+      />
+    )}
 
     </PageScaffold>
   )

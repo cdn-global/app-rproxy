@@ -88,7 +88,8 @@ async def terminal_websocket(
     try:
         if server.hosting_provider == "docker" and server.docker_container_id:
             await _handle_docker_terminal(websocket, server.docker_container_id)
-        elif server.hosting_provider == "aws" and server.aws_public_ip:
+        elif server.aws_public_ip and server.connection_string_encrypted:
+            # SSH — works for AWS-provisioned or manually-configured servers
             await _handle_ssh_terminal(websocket, server)
         elif settings.ENVIRONMENT == "local":
             # Local dev: provide a real shell via PTY
@@ -179,7 +180,7 @@ async def _handle_docker_terminal(websocket: WebSocket, container_id: str):
 
 
 async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
-    """Handle terminal for AWS servers via SSH using asyncssh"""
+    """Handle terminal via SSH (AWS-provisioned or manually-configured servers)"""
     try:
         import asyncssh
     except ImportError:
@@ -200,6 +201,7 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
         return
 
     host = server.aws_public_ip
+    port = connection_data.get("port", 22)
     username = connection_data.get("username", "ubuntu")
     private_key_pem = connection_data.get("private_key", "")
 
@@ -211,6 +213,7 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
         private_key = asyncssh.import_private_key(private_key_pem)
         conn = await asyncssh.connect(
             host,
+            port=port,
             username=username,
             client_keys=[private_key],
             known_hosts=None,

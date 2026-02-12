@@ -10,7 +10,7 @@ from datetime import datetime
 from app.models import (
     User, RemoteServer, RemoteServerCreate, RemoteServerUpdate,
     RemoteServerPublic, RemoteServersPublic, UsageRecord,
-    ProvisioningJob, ProvisioningJobPublic
+    ProvisioningJob, ProvisioningJobPublic, RemoteServerConnectionConfig
 )
 from app.api.deps import get_current_user, get_current_active_superuser, SessionDep
 from app.services.server_provisioner import server_provisioner
@@ -185,7 +185,13 @@ async def list_servers(
     servers = session.exec(statement).all()
     count = len(servers)
 
-    return RemoteServersPublic(data=list(servers), count=count)
+    public = []
+    for s in servers:
+        p = RemoteServerPublic.model_validate(s)
+        p.has_connection = bool(s.connection_string_encrypted and (s.aws_public_ip or s.docker_container_id))
+        public.append(p)
+
+    return RemoteServersPublic(data=public, count=count)
 
 
 @router.get("/jobs/{job_id}", response_model=ProvisioningJobPublic)
@@ -244,7 +250,9 @@ async def get_server(
             session.commit()
             session.refresh(server)
 
-    return server
+    p = RemoteServerPublic.model_validate(server)
+    p.has_connection = bool(server.connection_string_encrypted and (server.aws_public_ip or server.docker_container_id))
+    return p
 
 
 @router.patch("/{server_id}", response_model=RemoteServerPublic)
@@ -399,3 +407,38 @@ async def delete_server(
     session.commit()
 
     return {"message": "Server deleted successfully"}
+
+
+@router.post("/{server_id}/configure", response_model=RemoteServerPublic)
+async def configure_server_connection(
+    server_id: uuid.UUID,
+    config: RemoteServerConnectionConfig,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+) -> RemoteServerPublic:
+    """Configure SSH connection details so the terminal can connect."""
+    import json
+
+    statement = select(RemoteServer).where(
+        RemoteServer.id == server_id,
+        RemoteServer.user_id == current_user.id,
+    )
+    server = session.exec(statement).first()
+    if not server:
+        raise HTTPException(status_code=404, detail="Server not found")
+
+    connection_data = json.dumps({
+        "username": config.ssh_username,
+        "private_key": config.private_key,
+        "port": config.ssh_port,
+    })
+    server.connection_string_encrypted = server_provisioner.encrypt_connection_string(connection_data)
+    server.aws_public_ip = config.ssh_host  # reuse field for SSH host
+
+    session.add(server)
+    session.commit()
+    session.refresh(server)
+
+    p = RemoteServerPublic.model_validate(server)
+    p.has_connection = True
+    return p

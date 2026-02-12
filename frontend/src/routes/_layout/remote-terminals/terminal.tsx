@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import XTerminal from "../../../components/Terminal/XTerminal"
+import ConfigureConnection from "../../../components/Servers/ConfigureConnection"
 
 export const Route = createFileRoute("/_layout/remote-terminals/terminal")({
   component: TerminalPage,
@@ -23,6 +24,7 @@ interface ServerInfo {
   aws_region?: string
   aws_public_ip?: string
   hourly_rate: number
+  has_connection?: boolean
 }
 
 function TerminalPage() {
@@ -32,6 +34,7 @@ function TerminalPage() {
   const [error, setError] = useState("")
   const [notConfigured, setNotConfigured] = useState(false)
   const [connectAttempt, setConnectAttempt] = useState(0)
+  const [configureOpen, setConfigureOpen] = useState(false)
 
   const { data: server } = useQuery<ServerInfo>({
     queryKey: ["server", serverId],
@@ -93,8 +96,8 @@ function TerminalPage() {
         {notConfigured ? (
           <div className="flex items-center gap-3">
             <span className="text-sm text-yellow-500">Terminal access not configured</span>
-            <Button asChild variant="outline" size="sm">
-              <Link to="/hosting">Configure Server</Link>
+            <Button variant="outline" size="sm" onClick={() => setConfigureOpen(true)}>
+              Configure Connection
             </Button>
           </div>
         ) : (!connected && ready) || error ? (
@@ -139,14 +142,32 @@ function TerminalPage() {
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-[#0f172a]/90">
             <p className="text-yellow-400 text-lg font-semibold">Terminal Access Not Configured</p>
             <p className="text-slate-400 text-sm max-w-md text-center">
-              This server does not have a connection endpoint configured. Please set up SSH or Docker access for this server to use the terminal.
+              This server does not have SSH credentials configured. Add your SSH host and private key to enable terminal access.
             </p>
-            <Button asChild variant="outline" size="sm">
-              <Link to="/hosting">Go to Server Settings</Link>
+            <Button variant="outline" size="sm" onClick={() => setConfigureOpen(true)}>
+              Configure Connection
             </Button>
           </div>
         )}
       </div>
+
+      {server && (
+        <ConfigureConnection
+          isOpen={configureOpen}
+          onClose={() => {
+            setConfigureOpen(false)
+            // After configuring, retry the connection
+            if (notConfigured) {
+              setNotConfigured(false)
+              setConnectAttempt((n) => n + 1)
+              setConnected(true)
+              setError("")
+            }
+          }}
+          serverId={serverId}
+          serverName={server.name}
+        />
+      )}
     </div>
   )
 }
