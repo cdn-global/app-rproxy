@@ -41,6 +41,15 @@ def resolve_model(session: Session, model_identifier: str) -> Optional[LLMModel]
     return session.exec(stmt).first()
 
 
+def resolve_google_model_id(model_id: str) -> str:
+    """Map legacy Gemini model IDs to currently supported names."""
+    google_model_aliases = {
+        "gemini-1.5-pro": "gemini-1.5-pro-latest",
+        "gemini-1.5-flash": "gemini-1.5-flash-latest",
+    }
+    return google_model_aliases.get(model_id, model_id)
+
+
 class ChatMessage(BaseModel):
     role: str  # "user" | "assistant"
     content: str
@@ -163,7 +172,8 @@ async def create_chat_completion(
 
         elif provider_name == "google":
             genai.configure(api_key=api_key)
-            gemini_model = genai.GenerativeModel(model.model_id)
+            google_model_id = resolve_google_model_id(model.model_id)
+            gemini_model = genai.GenerativeModel(google_model_id)
 
             # Convert messages to Gemini format
             chat_history = []
@@ -392,7 +402,8 @@ async def create_chat_completion_stream(
             elif provider_name == "google":
                 # Google Gemini streaming
                 genai.configure(api_key=api_key)
-                gemini_model = genai.GenerativeModel(model_identifier)
+                google_model_id = resolve_google_model_id(model_identifier)
+                gemini_model = genai.GenerativeModel(google_model_id)
 
                 # Convert messages to Gemini format
                 chat_history = []
