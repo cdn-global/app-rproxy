@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["terminal"])
 
+KEEPALIVE_INTERVAL = 25  # seconds
+
 
 async def authenticate_ws(token: Optional[str]) -> Optional[User]:
     """Authenticate WebSocket connection via query param token"""
@@ -33,6 +35,16 @@ async def authenticate_ws(token: Optional[str]) -> Optional[User]:
     with Session(engine) as session:
         user = session.get(User, user_id)
         return user
+
+
+async def _keepalive(websocket: WebSocket):
+    """Send periodic pings to keep the connection alive through proxies."""
+    try:
+        while True:
+            await asyncio.sleep(KEEPALIVE_INTERVAL)
+            await websocket.send_text("\x06")  # ACK control char — xterm ignores it
+    except Exception:
+        pass
 
 
 @router.websocket("/ws/{server_id}")
@@ -72,6 +84,7 @@ async def terminal_websocket(
         await websocket.close(code=4003, reason="Server is not running")
         return
 
+    keepalive_task = asyncio.create_task(_keepalive(websocket))
     try:
         if server.hosting_provider == "docker" and server.docker_container_id:
             await _handle_docker_terminal(websocket, server.docker_container_id)
@@ -84,13 +97,21 @@ async def terminal_websocket(
         else:
             await websocket.send_text("Error: Server has no connection endpoint configured.\r\n")
             await websocket.close(code=4005, reason="Terminal access not configured")
+            return
     except WebSocketDisconnect:
         logger.info(f"Terminal disconnected for server {server_id}")
+        return  # client already gone — nothing to close
     except Exception as e:
-        logger.error(f"Terminal error for server {server_id}: {e}")
+        logger.error(f"Terminal error for server {server_id}: {e}", exc_info=True)
         try:
             await websocket.send_text(f"\r\nError: {str(e)}\r\n")
-            await websocket.close()
+        except Exception:
+            pass
+    finally:
+        keepalive_task.cancel()
+        # Always send a proper close frame so the client doesn't see 1006
+        try:
+            await websocket.close(code=1000, reason="Session ended")
         except Exception:
             pass
 
@@ -163,7 +184,6 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
         import asyncssh
     except ImportError:
         await websocket.send_text("Error: asyncssh not installed\r\n")
-        await websocket.close()
         return
 
     # Decrypt private key from connection_string_encrypted
@@ -177,7 +197,6 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
         )
     except Exception as e:
         await websocket.send_text(f"Error decrypting credentials: {e}\r\n")
-        await websocket.close()
         return
 
     host = server.aws_public_ip
@@ -186,7 +205,6 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
 
     if not private_key_pem:
         await websocket.send_text("Error: No SSH key available\r\n")
-        await websocket.close()
         return
 
     try:
@@ -199,7 +217,6 @@ async def _handle_ssh_terminal(websocket: WebSocket, server: RemoteServer):
         )
     except Exception as e:
         await websocket.send_text(f"SSH connection failed: {e}\r\n")
-        await websocket.close()
         return
 
     try:

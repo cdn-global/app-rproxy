@@ -31,6 +31,7 @@ function TerminalPage() {
   const [ready, setReady] = useState(false)
   const [error, setError] = useState("")
   const [notConfigured, setNotConfigured] = useState(false)
+  const [connectAttempt, setConnectAttempt] = useState(0)
 
   const { data: server } = useQuery<ServerInfo>({
     queryKey: ["server", serverId],
@@ -103,6 +104,7 @@ function TerminalPage() {
               variant="outline"
               size="sm"
               onClick={() => {
+                setConnectAttempt((n) => n + 1)
                 setConnected(true)
                 setError("")
                 setNotConfigured(false)
@@ -116,6 +118,7 @@ function TerminalPage() {
       <div className="flex-1 rounded-lg border border-slate-700 bg-[#0f172a] overflow-hidden relative">
         {connected && ready && (
           <XTerminal
+            key={connectAttempt}
             serverId={serverId}
             onDisconnect={(code, _reason) => {
               setConnected(false)

@@ -70,6 +70,8 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
     }
 
     ws.onmessage = (event) => {
+      // Filter out keepalive ACK bytes from server
+      if (event.data === "\x06") return
       term.write(event.data)
     }
 
