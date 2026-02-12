@@ -1,10 +1,10 @@
-
 import { useMemo, useState } from "react";
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FiArrowUpRight } from "react-icons/fi";
+import { FiSearch, FiSettings, FiCpu, FiZap, FiDollarSign } from "react-icons/fi";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -20,7 +20,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   minimumFractionDigits: 2,
-  maximumFractionDigits: 4,
+  maximumFractionDigits: 6,
 });
 
 interface InferenceModel {
@@ -40,16 +40,15 @@ interface InferenceModel {
 
 function LanguageModelsIndexPage() {
   const [showInactive, setShowInactive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading } = useQuery<{ data: InferenceModel[]; count: number }>({
     queryKey: ["inference-models"],
     queryFn: async () => {
-      // Get base URL from window location or OpenAPI config
       const baseUrl = window.location.hostname === "localhost"
         ? "http://localhost:8000"
         : `https://${window.location.hostname.replace("-5173", "-8000")}`;
 
-      // Always fetch all models - backend will compute is_active based on API keys
       const url = `${baseUrl}/v2/llm-models/`;
 
       const response = await fetch(url, {
@@ -64,180 +63,255 @@ function LanguageModelsIndexPage() {
 
   const allModels = data?.data ?? [];
 
-  // Filter models based on showInactive toggle
+  // Filter models based on showInactive toggle and search
   const models = useMemo(() => {
-    if (showInactive) {
-      return allModels;
+    let filtered = allModels;
+
+    if (!showInactive) {
+      filtered = filtered.filter(m => m.is_active);
     }
-    return allModels.filter(m => m.is_active);
-  }, [allModels, showInactive]);
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(m =>
+        (m.display_name || m.name).toLowerCase().includes(query) ||
+        (m.provider || "").toLowerCase().includes(query) ||
+        (m.model_id || "").toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  }, [allModels, showInactive, searchQuery]);
 
   const fleetSummary = useMemo(() => {
     if (allModels.length === 0) {
-      return { totalModels: 0, activeModels: 0, avgPricePer1k: 0, maxContext: 0, providers: 0 };
+      return { totalModels: 0, activeModels: 0, avgInputPrice: 0, avgOutputPrice: 0, maxContext: 0, providers: [] };
     }
     const activeModels = allModels.filter(m => m.is_active);
-    const providers = new Set(allModels.map((m) => m.provider).filter(Boolean));
-    const avgPrice = activeModels.length > 0
-      ? activeModels.reduce((a, m) => a + (m.pricing_per_1k_tokens || m.input_token_price || 0), 0) / activeModels.length
+    const providers = Array.from(new Set(allModels.map((m) => m.provider || "Anthropic").filter(Boolean)));
+
+    const avgInputPrice = activeModels.length > 0
+      ? activeModels.reduce((a, m) => a + (m.input_token_price || 0), 0) / activeModels.length
       : 0;
+
+    const avgOutputPrice = activeModels.length > 0
+      ? activeModels.reduce((a, m) => a + (m.output_token_price || 0), 0) / activeModels.length
+      : 0;
+
     return {
       totalModels: allModels.length,
       activeModels: activeModels.length,
-      avgPricePer1k: avgPrice,
+      avgInputPrice,
+      avgOutputPrice,
       maxContext: Math.max(...allModels.map((m) => m.max_tokens)),
-      providers: providers.size,
+      providers,
     };
   }, [allModels]);
 
   return (
     <PageScaffold sidebar={null}>
-    <div className="space-y-10">
       <div className="space-y-8">
+        {/* Header */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+            Language Models
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400">
+            Access leading AI models from multiple providers with transparent pricing and unified API.
+          </p>
+        </div>
+
+        {/* Overview Cards */}
         <PageSection
-          id="fleet"
-          title="Fleet intelligence"
-          description="Active models are those with configured API keys. Configure your keys in profile settings."
+          id="overview"
+          title="Model Overview"
+          description="Configure API keys in profile settings to activate models."
           actions={
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowInactive(!showInactive)}
-                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-              >
-                {showInactive ? "Show Active Only" : "Show All Models"}
-              </Button>
+            <div className="flex items-center gap-2">
               <Button
                 asChild
                 variant="outline"
-                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
+                size="sm"
+                className="gap-2 rounded-full"
               >
-                <RouterLink to="api">
-                  <span>API Docs</span>
-                  <FiArrowUpRight className="h-4 w-4" />
-                </RouterLink>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="gap-2 rounded-full border-slate-200/80 bg-white/60 px-5 py-2 text-sm font-semibold shadow-sm transition hover:border-slate-300 hover:bg-white dark:border-slate-700/60 dark:bg-slate-900/60 dark:hover:border-slate-600"
-              >
-                <RouterLink to="billing">
-                  <span>Billing</span>
-                  <FiArrowUpRight className="h-4 w-4" />
+                <RouterLink to="/profile">
+                  <FiSettings className="h-4 w-4" />
+                  <span>API Keys</span>
                 </RouterLink>
               </Button>
             </div>
           }
         >
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <SummaryTile
-                label="Active models"
-                value={numberFormatter.format(fleetSummary.activeModels)}
-                description={`${fleetSummary.totalModels} total models`}
-              />
-              <SummaryTile
-                label="Providers"
-                value={numberFormatter.format(fleetSummary.providers)}
-                description="OpenAI, Anthropic, HuggingFace"
-              />
-              <SummaryTile
-                label="Avg price / 1K tokens"
-                value={currencyFormatter.format(fleetSummary.avgPricePer1k)}
-                description="Across all models"
-              />
-              <SummaryTile
-                label="Max context"
-                value={`${numberFormatter.format(fleetSummary.maxContext / 1000)}K`}
-                description="Largest context window"
-              />
-            </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={FiCpu}
+              label="Active Models"
+              value={numberFormatter.format(fleetSummary.activeModels)}
+              description={`${fleetSummary.totalModels} total available`}
+              variant="primary"
+            />
+            <StatCard
+              icon={FiZap}
+              label="Providers"
+              value={numberFormatter.format(fleetSummary.providers.length)}
+              description={fleetSummary.providers.slice(0, 2).join(", ")}
+              variant="default"
+            />
+            <StatCard
+              icon={FiDollarSign}
+              label="Avg Input Price"
+              value={`$${(fleetSummary.avgInputPrice).toFixed(2)}`}
+              description="Per million tokens"
+              variant="default"
+            />
+            <StatCard
+              icon={FiCpu}
+              label="Max Context"
+              value={`${numberFormatter.format(Math.floor(fleetSummary.maxContext / 1000))}K`}
+              description="Tokens per request"
+              variant="default"
+            />
+          </div>
         </PageSection>
 
+        {/* Models Table */}
         <PageSection
           id="models"
-          title="AI Models"
-          description="Pricing will be slightly upcharged for geo location and other support"
+          title="Available Models"
+          description="All usage is metered and billed based on actual token consumption."
         >
-        <div className="rounded-[28px] border border-slate-200/70 bg-white/95 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70 dark:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.65)]">
-          <div className="p-0">
+          {/* Search and Filters */}
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative flex-1 max-w-md">
+              <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                type="text"
+                placeholder="Search models..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={showInactive ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowInactive(!showInactive)}
+                className="rounded-full"
+              >
+                {showInactive ? "Show Active Only" : "Show All"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/70">
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="bg-slate-100/60 dark:bg-slate-800/40">
-                  <TableRow className="border-slate-200/70 dark:border-slate-700/60">
-                    <TableHead>Model</TableHead>
-                    <TableHead>Provider</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Capabilities</TableHead>
-                    <TableHead>Price / 1K tokens</TableHead>
-                    <TableHead>Max Tokens</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                <TableHeader>
+                  <TableRow className="border-slate-200/70 bg-slate-50/50 dark:border-slate-700/60 dark:bg-slate-800/30">
+                    <TableHead className="font-semibold">Model</TableHead>
+                    <TableHead className="font-semibold">Provider</TableHead>
+                    <TableHead className="font-semibold">Status</TableHead>
+                    <TableHead className="font-semibold">Pricing (per 1M tokens)</TableHead>
+                    <TableHead className="font-semibold">Max Tokens</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center">Loading...</TableCell>
+                      <TableCell colSpan={6} className="h-32 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600 dark:border-slate-600 dark:border-t-slate-300" />
+                          <span className="text-slate-600 dark:text-slate-400">Loading models...</span>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ) : models.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground">
-                        No models available.
+                      <TableCell colSpan={6} className="h-32 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <FiSearch className="h-8 w-8 text-slate-400" />
+                          <p className="text-slate-600 dark:text-slate-400">
+                            {searchQuery ? "No models match your search" : "No models available"}
+                          </p>
+                          {!showInactive && (
+                            <Button
+                              variant="link"
+                              size="sm"
+                              onClick={() => setShowInactive(true)}
+                              className="text-xs"
+                            >
+                              Show all models
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : (
                     models.map((model) => (
                       <TableRow
                         key={model.id}
-                        className="border-slate-200/70 transition-colors hover:bg-slate-100/60 dark:border-slate-700/60 dark:hover:bg-slate-800/50"
+                        className="border-slate-200/70 transition-colors hover:bg-slate-50/50 dark:border-slate-700/60 dark:hover:bg-slate-800/30"
                       >
-                        <TableCell className="align-top font-medium text-slate-900 dark:text-slate-50">
-                          {model.display_name || model.name}
-                        </TableCell>
-                        <TableCell className="capitalize">{model.provider || "Anthropic"}</TableCell>
-                        <TableCell>
-                          <span
-                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                              model.is_active
-                                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400"
-                            }`}
-                          >
-                            {model.is_active ? "Active" : "Inactive"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {model.capabilities && model.capabilities.length > 0 ? (
-                              model.capabilities.map((cap) => (
-                                <span
-                                  key={cap}
-                                  className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                                >
-                                  {cap}
-                                </span>
-                              ))
-                            ) : (
-                              <span className="text-xs text-slate-400">Text generation</span>
-                            )}
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-slate-900 dark:text-slate-50">
+                              {model.display_name || model.name}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              {model.model_id}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
-                          {currencyFormatter.format(
-                            (model.pricing_per_1k_tokens || model.input_token_price || 0) / 1000
-                          )}
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium capitalize text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                            {model.provider || "Anthropic"}
+                          </span>
                         </TableCell>
-                        <TableCell>{numberFormatter.format(model.max_tokens)}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                              model.is_active
+                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                            }`}
+                          >
+                            <span className={`h-1.5 w-1.5 rounded-full ${model.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
+                            {model.is_active ? "Active" : "Configure Key"}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-0.5 text-sm">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-slate-500 dark:text-slate-400">In:</span>
+                              <span className="font-mono font-medium">
+                                {currencyFormatter.format(model.input_token_price || 0)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-slate-500 dark:text-slate-400">Out:</span>
+                              <span className="font-mono font-medium">
+                                {currencyFormatter.format(model.output_token_price || 0)}
+                              </span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-mono text-sm">
+                            {numberFormatter.format(model.max_tokens)}
+                          </span>
+                        </TableCell>
                         <TableCell className="text-right">
                           <Button
-                            variant="outline"
+                            variant={model.is_active ? "default" : "outline"}
                             size="sm"
-                            className="rounded-full border-slate-300/80 px-3 py-1 text-xs font-semibold hover:border-slate-400"
+                            className="rounded-full"
                             asChild
                             disabled={!model.is_active}
                           >
                             <RouterLink to="/language-models/llm-service" search={{ modelId: model.id }}>
-                              Try Now
+                              {model.is_active ? "Try Model" : "Unavailable"}
                             </RouterLink>
                           </Button>
                         </TableCell>
@@ -248,84 +322,97 @@ function LanguageModelsIndexPage() {
               </Table>
             </div>
           </div>
-        </div>
-        </PageSection>
-      </div>
-            <div className="mt-10 border-t border-slate-200/60 pt-10 dark:border-slate-800">
-              <div className="mb-6 space-y-1">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  Jump to
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Quick links to page sections.
-                </p>
-              </div>
 
-              <div className="grid gap-4 sm:grid-cols-3">
-                <RouterLink
-                  to="/"
-                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
-                >
-                  <div className="space-y-1">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Workspace
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Subscriptions, average usage, and quick billing actions.
-                    </div>
-                  </div>
-                </RouterLink>
-
-                <a
-                  href="#analytics"
-                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
-                >
-                  <div className="space-y-1">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Usage insights
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Traffic, spend, and throughput metrics.
-                    </div>
-                  </div>
-                </a>
-
-                <RouterLink
-                  to="/"
-                  className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white/50 p-4 transition-all hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-900"
-                >
-                  <div className="space-y-1">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100">
-                      Tool directory
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Explore every workspace module in one place.
-                    </div>
-                  </div>
-                </RouterLink>
-              </div>
+          {/* Model Count Summary */}
+          {!isLoading && models.length > 0 && (
+            <div className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
+              Showing {models.length} of {allModels.length} models
             </div>
-    </div>
+          )}
+        </PageSection>
+
+        {/* Quick Links */}
+        <div className="grid gap-4 border-t border-slate-200/60 pt-8 sm:grid-cols-3 dark:border-slate-800">
+          <QuickLink
+            to="/language-models/billing"
+            title="Billing & Usage"
+            description="View detailed usage metrics and costs"
+          />
+          <QuickLink
+            to="/language-models/api"
+            title="API Documentation"
+            description="Integration guides and examples"
+          />
+          <QuickLink
+            to="/profile"
+            title="API Keys"
+            description="Manage provider API keys"
+          />
+        </div>
+      </div>
     </PageScaffold>
   );
 }
 
-const SummaryTile = ({
+const StatCard = ({
+  icon: Icon,
   label,
   value,
   description,
+  variant = "default",
 }: {
+  icon: React.ElementType;
   label: string;
   value: string;
   description: string;
+  variant?: "default" | "primary";
 }) => (
-  <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_40px_-35px_rgba(15,23,42,0.45)] dark:border-slate-700/60 dark:bg-slate-900/60">
-    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-500">
-      {label}
-    </p>
-    <p className="mt-3 text-2xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
-    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{description}</p>
+  <div className={`rounded-2xl border p-5 shadow-sm transition-all hover:shadow-md ${
+    variant === "primary"
+      ? "border-blue-200/70 bg-gradient-to-br from-blue-50 to-white dark:border-blue-900/30 dark:from-blue-950/30 dark:to-slate-900"
+      : "border-slate-200/70 bg-white dark:border-slate-700/60 dark:bg-slate-900/60"
+  }`}>
+    <div className="flex items-center gap-3">
+      <div className={`rounded-xl p-2.5 ${
+        variant === "primary"
+          ? "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
+          : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+      }`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+          {label}
+        </p>
+        <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100 truncate">{value}</p>
+        <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400 truncate">{description}</p>
+      </div>
+    </div>
   </div>
+);
+
+const QuickLink = ({
+  to,
+  title,
+  description,
+}: {
+  to: string;
+  title: string;
+  description: string;
+}) => (
+  <RouterLink
+    to={to}
+    className="group flex flex-col justify-between space-y-2 rounded-xl border border-slate-200/60 bg-white p-5 transition-all hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-slate-700"
+  >
+    <div className="space-y-1">
+      <div className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+        {title}
+      </div>
+      <div className="text-sm text-slate-600 dark:text-slate-400">
+        {description}
+      </div>
+    </div>
+  </RouterLink>
 );
 
 export const Route = createFileRoute("/_layout/language-models/")({

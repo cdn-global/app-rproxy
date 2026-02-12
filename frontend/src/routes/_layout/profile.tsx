@@ -36,7 +36,7 @@ function ProfilePage() {
 
         <PageSection
           id="security"
-          title="whatSecurity"
+          title="Security"
           description="Update your password and manage account security"
         >
           <ChangePassword />
