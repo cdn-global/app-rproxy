@@ -18,8 +18,14 @@ depends_on = None
 
 def upgrade():
     # Add OpenAI and Google API key columns to user table
-    op.add_column('user', sa.Column('openai_api_key', sa.String(length=500), nullable=True))
-    op.add_column('user', sa.Column('google_api_key', sa.String(length=500), nullable=True))
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [col['name'] for col in inspector.get_columns('user')]
+    
+    if 'openai_api_key' not in columns:
+        op.add_column('user', sa.Column('openai_api_key', sa.String(length=500), nullable=True))
+    if 'google_api_key' not in columns:
+        op.add_column('user', sa.Column('google_api_key', sa.String(length=500), nullable=True))
 
 
 def downgrade():

@@ -17,11 +17,16 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column(
-        'llm_usage_log',
-        sa.Column('source', sa.String(length=20), nullable=True),
-    )
-    op.create_index('ix_llm_usage_log_source', 'llm_usage_log', ['source'])
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    columns = [col['name'] for col in inspector.get_columns('llm_usage_log')]
+
+    if 'source' not in columns:
+        op.add_column(
+            'llm_usage_log',
+            sa.Column('source', sa.String(length=20), nullable=True),
+        )
+        op.create_index('ix_llm_usage_log_source', 'llm_usage_log', ['source'])
 
 
 def downgrade():
