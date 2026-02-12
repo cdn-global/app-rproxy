@@ -213,16 +213,16 @@ def ensure_tables_and_seed():
         {"name": "google", "display_name": "Google", "description": "Google AI - Creators of Gemini", "website_url": "https://ai.google.dev"},
     ]
     llm_models = [
-        {"provider": "anthropic", "name": "claude-sonnet-4.5", "model_id": "claude-sonnet-4-5-20250929", "display_name": "Claude Sonnet 4.5", "input_token_price": 3.00, "output_token_price": 15.00, "max_tokens": 8192},
-        {"provider": "anthropic", "name": "claude-opus-4.6", "model_id": "claude-opus-4-6", "display_name": "Claude Opus 4.6", "input_token_price": 15.00, "output_token_price": 75.00, "max_tokens": 8192},
-        {"provider": "anthropic", "name": "claude-haiku-4.5", "model_id": "claude-haiku-4-5-20251001", "display_name": "Claude Haiku 4.5", "input_token_price": 0.80, "output_token_price": 4.00, "max_tokens": 8192},
-        {"provider": "openai", "name": "gpt-4o", "model_id": "gpt-4o", "display_name": "GPT-4o", "input_token_price": 2.50, "output_token_price": 10.00, "max_tokens": 128000},
-        {"provider": "openai", "name": "gpt-4o-mini", "model_id": "gpt-4o-mini", "display_name": "GPT-4o Mini", "input_token_price": 0.15, "output_token_price": 0.60, "max_tokens": 128000},
-        {"provider": "openai", "name": "o1-preview", "model_id": "o1-preview", "display_name": "O1 Preview", "input_token_price": 15.00, "output_token_price": 60.00, "max_tokens": 128000},
-        {"provider": "openai", "name": "o1-mini", "model_id": "o1-mini", "display_name": "O1 Mini", "input_token_price": 3.00, "output_token_price": 12.00, "max_tokens": 128000},
+        {"provider": "anthropic", "name": "claude-sonnet-4.5", "model_id": "claude-sonnet-4-5-20250929", "display_name": "Claude Sonnet 4.5", "input_token_price": 3.75, "output_token_price": 18.75, "max_tokens": 8192},
+        {"provider": "anthropic", "name": "claude-opus-4.6", "model_id": "claude-opus-4-6", "display_name": "Claude Opus 4.6", "input_token_price": 18.75, "output_token_price": 93.75, "max_tokens": 8192},
+        {"provider": "anthropic", "name": "claude-haiku-4.5", "model_id": "claude-haiku-4-5-20251001", "display_name": "Claude Haiku 4.5", "input_token_price": 1.00, "output_token_price": 5.00, "max_tokens": 8192},
+        {"provider": "openai", "name": "gpt-4o", "model_id": "gpt-4o", "display_name": "GPT-4o", "input_token_price": 3.125, "output_token_price": 12.50, "max_tokens": 128000},
+        {"provider": "openai", "name": "gpt-4o-mini", "model_id": "gpt-4o-mini", "display_name": "GPT-4o Mini", "input_token_price": 0.1875, "output_token_price": 0.75, "max_tokens": 128000},
+        {"provider": "openai", "name": "o1-preview", "model_id": "o1-preview", "display_name": "O1 Preview", "input_token_price": 18.75, "output_token_price": 75.00, "max_tokens": 128000},
+        {"provider": "openai", "name": "o1-mini", "model_id": "o1-mini", "display_name": "O1 Mini", "input_token_price": 3.75, "output_token_price": 15.00, "max_tokens": 128000},
         {"provider": "google", "name": "gemini-2.0-flash", "model_id": "gemini-2.0-flash", "display_name": "Gemini 2.0 Flash", "input_token_price": 0.00, "output_token_price": 0.00, "max_tokens": 1048576},
-        {"provider": "google", "name": "gemini-1.5-pro", "model_id": "gemini-1.5-pro", "display_name": "Gemini 1.5 Pro", "input_token_price": 1.25, "output_token_price": 5.00, "max_tokens": 2097152},
-        {"provider": "google", "name": "gemini-1.5-flash", "model_id": "gemini-1.5-flash", "display_name": "Gemini 1.5 Flash", "input_token_price": 0.075, "output_token_price": 0.30, "max_tokens": 1048576},
+        {"provider": "google", "name": "gemini-1.5-pro", "model_id": "gemini-1.5-pro", "display_name": "Gemini 1.5 Pro", "input_token_price": 1.5625, "output_token_price": 6.25, "max_tokens": 2097152},
+        {"provider": "google", "name": "gemini-1.5-flash", "model_id": "gemini-1.5-flash", "display_name": "Gemini 1.5 Flash", "input_token_price": 0.09375, "output_token_price": 0.375, "max_tokens": 1048576},
     ]
     try:
         with Session(engine) as session:

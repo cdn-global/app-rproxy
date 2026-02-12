@@ -23,13 +23,13 @@ import PageScaffold, { PageSection } from "../../../components/Common/PageLayout
 
 const servers: HostingServer[] = hostingServers
 
-const ELASTIC_IP_FEE_PER_MONTH = 5
-const STORAGE_COST_PER_GB_MONTH = 0.2
-const ROTATING_IP_FEE_PER_MONTH = 7.0
-const BACKUP_FEE_PER_MONTH = 7.0
-const MONITORING_FEE_PER_MONTH = 11.0
-const MANAGED_SUPPORT_FEE_PER_MONTH = 40.0
-const SUBSCRIPTION_COST_PER_MONTH = 299
+const ELASTIC_IP_FEE_PER_MONTH = 6.25
+const STORAGE_COST_PER_GB_MONTH = 0.25
+const ROTATING_IP_FEE_PER_MONTH = 8.75
+const BACKUP_FEE_PER_MONTH = 8.75
+const MONITORING_FEE_PER_MONTH = 13.75
+const MANAGED_SUPPORT_FEE_PER_MONTH = 50.0
+const SUBSCRIPTION_COST_PER_MONTH = 373.75
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
