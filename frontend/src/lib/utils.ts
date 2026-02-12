@@ -22,5 +22,6 @@ export async function safeJson<T = unknown>(res: Response, fallback: T = {} as T
  * In production builds we hit the real API.
  */
 export function getApiBaseUrl(): string {
-  return ""  // Always relative — nginx proxies /v2/ to the backend
+  if (import.meta.env.DEV) return ""
+  return "https://api.roamingproxy.com"
 }

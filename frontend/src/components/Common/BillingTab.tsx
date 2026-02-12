@@ -7,7 +7,7 @@ import useCustomToast from "../../hooks/useCustomToast"
 // --- Helper function for Billing ---
 const fetchBillingPortal = async (token: string) => {
   const response = await fetch(
-    "/v2/customer-portal",
+    "https://api.roamingproxy.com/v2/customer-portal",
     {
       method: "GET",
       headers: {

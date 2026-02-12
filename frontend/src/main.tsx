@@ -8,8 +8,7 @@ import { routeTree } from "./routeTree.gen"
 import "./styles/global.css"
 import { Toaster } from "./components/ui/toaster"
 
-// Always relative — nginx proxies /v2/ to the backend (no CORS needed).
-OpenAPI.BASE = ""
+OpenAPI.BASE = import.meta.env.DEV ? "" : "https://api.roamingproxy.com"
 OpenAPI.TOKEN = async () => localStorage.getItem("access_token") || ""
 
 console.log("🔧 API Base URL:", OpenAPI.BASE)

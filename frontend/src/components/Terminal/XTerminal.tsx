@@ -58,7 +58,9 @@ const XTerminal = ({ serverId, onDisconnect }: XTerminalProps) => {
     term.writeln("\x1b[1;32mConnecting to server...\x1b[0m")
 
     const token = localStorage.getItem("access_token")
-    const apiBase = `${window.location.protocol}//${window.location.host}`
+    const apiBase = import.meta.env.DEV
+      ? `${window.location.protocol}//${window.location.host}`
+      : "https://api.roamingproxy.com"
     const wsUrl = apiBase.replace(/^http/, "ws") + `/v2/terminal/ws/${serverId}?token=${token}`
 
     const ws = new WebSocket(wsUrl)

@@ -43,7 +43,7 @@ interface ApiKeyProps {
   variant?: "card" | "plain"
 }
 
-const API_URL = "/v2/proxy"
+const API_URL = "https://api.roamingproxy.com/v2/proxy"
 
 // --- START: New helper function to truncate the key display ---
 /**
@@ -130,7 +130,7 @@ const ApiKeyModule = ({ token, variant = "card" }: ApiKeyProps) => {
     if (!token) return
     try {
       const response = await fetch(
-        "/v2/proxy-api/access",
+        "https://api.roamingproxy.com/v2/proxy-api/access",
         {
           headers: { Authorization: `Bearer ${token}` },
         },
