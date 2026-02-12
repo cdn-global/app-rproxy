@@ -218,11 +218,7 @@ const ApiKeyModule = ({ token, variant = "card" }: ApiKeyProps) => {
     setError(null)
 
     try {
-      const parts = key.key_preview.split("...")
-      if (parts.length !== 2 || parts[1].length !== 8)
-        throw new Error("Invalid key preview format.")
-
-      const response = await fetch(`${API_URL}/api-keys/${parts[1]}`, {
+      const response = await fetch(`${API_URL}/api-keys/${encodeURIComponent(key.key_preview)}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
