@@ -180,6 +180,17 @@ function LanguageModelsIndexPage() {
                   <span>Provider Keys</span>
                 </RouterLink>
               </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-full"
+              >
+                <RouterLink to="/language-models/billing">
+                  <FiBarChart2 className="h-4 w-4" />
+                  <span>Full Report</span>
+                </RouterLink>
+              </Button>
             </div>
           }
         >
@@ -206,51 +217,14 @@ function LanguageModelsIndexPage() {
               variant="default"
             />
             <StatCard
-              icon={FiCpu}
-              label="Max Context"
-              value={`${numberFormatter.format(Math.floor(fleetSummary.maxContext / 1000))}K`}
-              description="Tokens per request"
+              icon={FiBarChart2}
+              label="Requests (30d)"
+              value={numberFormatter.format(usageData?.total_requests ?? 0)}
+              description={usageData?.total_cost ? `${currencyFormatter.format(usageData.total_cost)} cost` : "No usage yet"}
               variant="default"
             />
           </div>
         </PageSection>
-
-        {/* Usage Summary */}
-        {usageData && usageData.total_requests > 0 && (
-          <PageSection
-            id="usage"
-            title="Your Usage (Last 30 Days)"
-            description="Token consumption and costs across playground and API."
-            actions={
-              <Button asChild variant="outline" size="sm" className="gap-2 rounded-full">
-                <RouterLink to="/language-models/billing">
-                  <FiBarChart2 className="h-4 w-4" />
-                  <span>Full Report</span>
-                </RouterLink>
-              </Button>
-            }
-          >
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <StatCard
-                icon={FiBarChart2}
-                label="Total Requests"
-                value={numberFormatter.format(usageData.total_requests)}
-                description={`${currencyFormatter.format(usageData.total_cost)} total cost`}
-                variant="primary"
-              />
-              {usageData.by_source.map((src) => (
-                <StatCard
-                  key={src.source}
-                  icon={src.source === "playground" ? FiCpu : FiZap}
-                  label={src.source === "playground" ? "Playground" : src.source === "api" ? "REST API" : "Other"}
-                  value={numberFormatter.format(src.total_requests)}
-                  description={`${currencyFormatter.format(src.total_cost)} cost`}
-                  variant="default"
-                />
-              ))}
-            </div>
-          </PageSection>
-        )}
 
         {/* Models Table */}
         <PageSection
