@@ -203,19 +203,23 @@ async def create_chat_completion(
 
         def log_usage():
             # Create a new session for the background task to avoid thread-safety issues
-            with Session(engine) as bg_session:
-                usage = LLMUsageLog(
-                    user_id=user_id,
-                    model_id=model_id,
-                    conversation_id=conversation_id,
-                    message_id=message_id,
-                    input_tokens=input_tokens,
-                    output_tokens=output_tokens,
-                    total_cost=cost,
-                    source=auth_source,
-                )
-                bg_session.add(usage)
-                bg_session.commit()
+            try:
+                with Session(engine) as bg_session:
+                    usage = LLMUsageLog(
+                        user_id=user_id,
+                        model_id=model_id,
+                        conversation_id=conversation_id,
+                        message_id=message_id,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        total_cost=cost,
+                        source=auth_source,
+                    )
+                    bg_session.add(usage)
+                    bg_session.commit()
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Failed to log LLM usage: {e}")
 
         background_tasks.add_task(log_usage)
 

@@ -100,21 +100,34 @@ def ensure_tables_and_seed():
 
     # Step 1b: Add columns that may be missing from existing tables.
     # create_all only creates new tables; it won't ALTER existing ones.
+    _missing_columns = [
+        # user table
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS has_subscription BOOLEAN DEFAULT FALSE',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS is_trial BOOLEAN DEFAULT FALSE',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS is_deactivated BOOLEAN DEFAULT FALSE',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS expiry_date TIMESTAMP',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS anthropic_api_key VARCHAR(500)',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS openai_api_key VARCHAR(500)',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS google_api_key VARCHAR(500)',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR',
+        # llm_usage_log table
+        'ALTER TABLE llm_usage_log ADD COLUMN IF NOT EXISTS source VARCHAR(20)',
+        # remote_server table
+        "ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS hosting_provider VARCHAR(50) DEFAULT 'docker'",
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_instance_id VARCHAR(255)',
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_instance_type VARCHAR(50)',
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_region VARCHAR(50)',
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_ami_id VARCHAR(255)',
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_key_pair_name VARCHAR(255)',
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_public_ip VARCHAR(50)',
+        'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_security_group_id VARCHAR(255)',
+    ]
     try:
         with engine.connect() as conn:
-            for stmt in [
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS has_subscription BOOLEAN DEFAULT FALSE",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS is_trial BOOLEAN DEFAULT FALSE",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS is_deactivated BOOLEAN DEFAULT FALSE",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS expiry_date TIMESTAMP",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS anthropic_api_key VARCHAR(500)",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS openai_api_key VARCHAR(500)",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS google_api_key VARCHAR(500)",
-                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR",
-            ]:
+            for stmt in _missing_columns:
                 conn.execute(text(stmt))
             conn.commit()
-        logger.info("Ensured user table columns are up to date")
+        logger.info("Ensured all table columns are up to date")
     except Exception as e:
         logger.warning(f"Column migration: {e}")
 
