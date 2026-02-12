@@ -7,7 +7,7 @@ export interface ComputeServer extends ServerNode {
 
 export const computeServers: ComputeServer[] = [
   {
-    name: "compute-01-NYC-FID-8core-ssd",
+    name: "compute-nyc-01",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -30,7 +30,7 @@ export const computeServers: ComputeServer[] = [
     isTrial: false,
   },
   {
-    name: "compute-02-NYC-MTM-16core-ssd",
+    name: "compute-nyc-02",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
@@ -53,7 +53,7 @@ export const computeServers: ComputeServer[] = [
     isTrial: false,
   },
   {
-    name: "compute-03-SFO-FID-32core-ssd",
+    name: "compute-sfo-01",
     email: "apis.popov@gmail.com",
     ip: "100.120.70.80",
     version: "1.90.0",
@@ -76,7 +76,7 @@ export const computeServers: ComputeServer[] = [
     isTrial: false,
   },
   {
-    name: "compute-04-LON-MTM-8core-ssd",
+    name: "compute-lon-01",
     email: "apis.popov@gmail.com",
     ip: "100.160.90.100",
     version: "1.85.0",
@@ -99,7 +99,7 @@ export const computeServers: ComputeServer[] = [
     isTrial: true,
   },
   {
-    name: "compute-05-FRA-MTM-4core-ssd",
+    name: "compute-fra-01",
     email: "apis.popov@gmail.com",
     ip: "100.180.110.120",
     version: "1.89.0",

@@ -7,7 +7,7 @@ export interface InfrastructureServer extends ServerNode {
 
 export const infrastructureServers: InfrastructureServer[] = [
   {
-    name: "infra-01-NYC-FID-8core-ssd",
+    name: "infra-nyc-01",
     email: "apis.popov@gmail.com",
     ip: "100.100.95.59",
     version: "1.82.0",
@@ -30,7 +30,7 @@ export const infrastructureServers: InfrastructureServer[] = [
     isTrial: false,
   },
   {
-    name: "infra-02-NYC-MTM-16core-ssd",
+    name: "infra-nyc-02",
     email: "apis.popov@gmail.com",
     ip: "100.140.50.60",
     version: "1.88.0",
