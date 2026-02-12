@@ -98,24 +98,26 @@ def upgrade():
         sa.ForeignKeyConstraint(['message_id'], ['llm_message.id'], ),
     )
 
-    # Insert default Anthropic provider
-    op.execute("""
+    # Insert default Anthropic provider (generate UUIDs in Python for portability)
+    provider_id = str(uuid.uuid4())
+    op.execute(f"""
         INSERT INTO llm_provider (id, name, display_name, description, website_url, is_active)
         VALUES (
-            gen_random_uuid(),
+            '{provider_id}',
             'anthropic',
             'Anthropic',
             'Anthropic AI - Creators of Claude',
             'https://www.anthropic.com',
             true
         )
+        ON CONFLICT DO NOTHING
     """)
 
     # Insert Claude models
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'claude-sonnet-4.5',
             'claude-sonnet-4-5-20250929',
@@ -125,12 +127,13 @@ def upgrade():
             8192,
             true
         FROM llm_provider p WHERE p.name = 'anthropic'
+        AND NOT EXISTS (SELECT 1 FROM llm_model WHERE model_id = 'claude-sonnet-4-5-20250929')
     """)
 
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'claude-opus-4.6',
             'claude-opus-4-6',
@@ -140,12 +143,13 @@ def upgrade():
             8192,
             true
         FROM llm_provider p WHERE p.name = 'anthropic'
+        AND NOT EXISTS (SELECT 1 FROM llm_model WHERE model_id = 'claude-opus-4-6')
     """)
 
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'claude-haiku-4.5',
             'claude-haiku-4-5-20251001',
@@ -155,6 +159,7 @@ def upgrade():
             8192,
             true
         FROM llm_provider p WHERE p.name = 'anthropic'
+        AND NOT EXISTS (SELECT 1 FROM llm_model WHERE model_id = 'claude-haiku-4-5-20251001')
     """)
 
 

@@ -7,6 +7,7 @@ Create Date: 2026-02-12 04:30:00.000000
 """
 from alembic import op
 import sqlalchemy as sa
+import uuid
 
 
 # revision identifiers, used by Alembic.
@@ -18,25 +19,25 @@ depends_on = None
 
 def upgrade():
     # Insert OpenAI provider (only if not exists)
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_provider (id, name, display_name, description, website_url, is_active)
-        SELECT gen_random_uuid(), 'openai', 'OpenAI', 'OpenAI - Creators of GPT models', 'https://openai.com', true
+        SELECT '{uuid.uuid4()}', 'openai', 'OpenAI', 'OpenAI - Creators of GPT models', 'https://openai.com', true
         WHERE NOT EXISTS (SELECT 1 FROM llm_provider WHERE name = 'openai')
     """)
 
     # Insert Google provider (only if not exists)
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_provider (id, name, display_name, description, website_url, is_active)
-        SELECT gen_random_uuid(), 'google', 'Google', 'Google AI - Creators of Gemini', 'https://ai.google.dev', true
+        SELECT '{uuid.uuid4()}', 'google', 'Google', 'Google AI - Creators of Gemini', 'https://ai.google.dev', true
         WHERE NOT EXISTS (SELECT 1 FROM llm_provider WHERE name = 'google')
     """)
 
     # Insert OpenAI models
     # GPT-4o
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'gpt-4o',
             'gpt-4o',
@@ -51,10 +52,10 @@ def upgrade():
     """)
 
     # GPT-4o-mini
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'gpt-4o-mini',
             'gpt-4o-mini',
@@ -69,10 +70,10 @@ def upgrade():
     """)
 
     # GPT-4 Turbo
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'gpt-4-turbo',
             'gpt-4-turbo-2024-04-09',
@@ -87,10 +88,10 @@ def upgrade():
     """)
 
     # o1-preview
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'o1-preview',
             'o1-preview',
@@ -105,10 +106,10 @@ def upgrade():
     """)
 
     # o1-mini
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'o1-mini',
             'o1-mini',
@@ -124,10 +125,10 @@ def upgrade():
 
     # Insert Google Gemini models
     # Gemini 2.0 Flash
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'gemini-2.0-flash',
             'gemini-2.0-flash-exp',
@@ -142,10 +143,10 @@ def upgrade():
     """)
 
     # Gemini 1.5 Pro
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'gemini-1.5-pro',
             'gemini-1.5-pro',
@@ -160,10 +161,10 @@ def upgrade():
     """)
 
     # Gemini 1.5 Flash
-    op.execute("""
+    op.execute(f"""
         INSERT INTO llm_model (id, provider_id, name, model_id, display_name, input_token_price, output_token_price, max_tokens, is_active)
         SELECT
-            gen_random_uuid(),
+            '{uuid.uuid4()}',
             p.id,
             'gemini-1.5-flash',
             'gemini-1.5-flash',
