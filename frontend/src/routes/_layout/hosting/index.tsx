@@ -131,6 +131,22 @@ function HostingIndexPage() {
     onError: (err: Error) => showToast("Error", err.message, "error"),
   })
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/v2/servers/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      })
+      if (!response.ok) throw new Error("Failed to delete server")
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Server deleted.", "success")
+      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
   const provisionMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/v2/servers/${id}/provision`, {
@@ -330,6 +346,21 @@ function HostingIndexPage() {
                             )}
                             {server.status === "provisioning" && (
                               <Badge variant="outline">Provisioning...</Badge>
+                            )}
+                            {(server.status === "error" || server.status === "stopped") && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-full px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
+                                onClick={() => {
+                                  if (confirm(`Delete server "${server.name}"?`)) {
+                                    deleteMutation.mutate(server.id)
+                                  }
+                                }}
+                                disabled={deleteMutation.isPending}
+                              >
+                                Delete
+                              </Button>
                             )}
                           </div>
                         </TableCell>

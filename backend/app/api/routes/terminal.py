@@ -120,9 +120,26 @@ async def terminal_websocket(
 async def _handle_docker_terminal(websocket: WebSocket, container_id: str):
     """Handle terminal for Docker containers using docker exec"""
     import docker
+    from docker.errors import NotFound, APIError
 
-    client = docker.from_env()
-    container = client.containers.get(container_id)
+    try:
+        client = docker.from_env()
+    except Exception as e:
+        await websocket.send_text(f"Error: Docker is not available — {e}\r\n")
+        return
+
+    try:
+        container = client.containers.get(container_id)
+    except NotFound:
+        await websocket.send_text(f"Error: Container {container_id[:12]} no longer exists. Reconfigure this server.\r\n")
+        return
+    except APIError as e:
+        await websocket.send_text(f"Error: Docker API error — {e}\r\n")
+        return
+
+    if container.status != "running":
+        await websocket.send_text(f"Error: Container is {container.status}, not running.\r\n")
+        return
 
     # Create exec instance with TTY
     exec_instance = container.exec_run(
