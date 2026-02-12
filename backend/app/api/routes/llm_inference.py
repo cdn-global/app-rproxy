@@ -19,6 +19,28 @@ from app.models import LLMModel, LLMUsageLog, Conversation, LLMMessage
 router = APIRouter(prefix="/llm", tags=["llm-inference"])
 
 
+def resolve_model(session: Session, model_identifier: str) -> Optional[LLMModel]:
+    """Resolve a model by UUID, model_id string, or name."""
+    # Try UUID lookup first
+    try:
+        model_uuid = uuid.UUID(model_identifier)
+        model = session.get(LLMModel, model_uuid)
+        if model:
+            return model
+    except ValueError:
+        pass
+
+    # Try by model_id (e.g. "claude-sonnet-4-5-20250929", "gpt-4o")
+    stmt = select(LLMModel).where(LLMModel.model_id == model_identifier)
+    model = session.exec(stmt).first()
+    if model:
+        return model
+
+    # Try by name (e.g. "claude-sonnet-4.5", "gpt-4o")
+    stmt = select(LLMModel).where(LLMModel.name == model_identifier)
+    return session.exec(stmt).first()
+
+
 class ChatMessage(BaseModel):
     role: str  # "user" | "assistant"
     content: str
@@ -27,7 +49,7 @@ class ChatMessage(BaseModel):
 class ChatCompletionRequest(BaseModel):
     model_config = {"protected_namespaces": ()}
 
-    model_id: uuid.UUID
+    model_id: str  # Accepts UUID or model name/identifier (e.g. "claude-sonnet-4-5-20250929", "gpt-4o")
     messages: List[ChatMessage]
     conversation_id: Optional[uuid.UUID] = None
     max_tokens: int = 4096
@@ -67,9 +89,9 @@ async def create_chat_completion(
         )
 
     # 2. Get model config
-    model = session.get(LLMModel, request.model_id)
+    model = resolve_model(session, request.model_id)
     if not model or not model.is_active:
-        raise HTTPException(status_code=404, detail="Model not found")
+        raise HTTPException(status_code=404, detail=f"Model not found: {request.model_id}")
 
     # 3. Get/create conversation
     if request.conversation_id:
@@ -259,9 +281,9 @@ async def create_chat_completion_stream(
         )
 
     # 2. Get model config
-    model = session.get(LLMModel, request.model_id)
+    model = resolve_model(session, request.model_id)
     if not model or not model.is_active:
-        raise HTTPException(status_code=404, detail="Model not found")
+        raise HTTPException(status_code=404, detail=f"Model not found: {request.model_id}")
 
     # 3. Get/create conversation
     if request.conversation_id:
