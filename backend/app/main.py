@@ -98,6 +98,26 @@ def ensure_tables_and_seed():
     except Exception as e:
         logger.warning(f"Type cleanup: {e}")
 
+    # Step 1b: Add columns that may be missing from existing tables.
+    # create_all only creates new tables; it won't ALTER existing ones.
+    try:
+        with engine.connect() as conn:
+            for stmt in [
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS has_subscription BOOLEAN DEFAULT FALSE",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS is_trial BOOLEAN DEFAULT FALSE",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS is_deactivated BOOLEAN DEFAULT FALSE",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS expiry_date TIMESTAMP",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS anthropic_api_key VARCHAR(500)",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS openai_api_key VARCHAR(500)",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS google_api_key VARCHAR(500)",
+                "ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR",
+            ]:
+                conn.execute(text(stmt))
+            conn.commit()
+        logger.info("Ensured user table columns are up to date")
+    except Exception as e:
+        logger.warning(f"Column migration: {e}")
+
     # Step 2: Create all missing tables
     try:
         SQLModel.metadata.create_all(engine)
