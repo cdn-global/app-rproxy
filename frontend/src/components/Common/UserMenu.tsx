@@ -27,7 +27,7 @@ async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {
   try {
     const token = localStorage.getItem("access_token")
     const response = await fetch(
-      "https://api.ROAMINGPROXY.com/v2/subscription-status",
+      "/v2/subscription-status",
       {
         method: "GET",
         headers: {

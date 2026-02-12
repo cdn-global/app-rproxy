@@ -45,7 +45,7 @@ interface SerpResult {
 }
 
 // CORRECTED: Changed endpoint to match the backend router prefix
-const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy/serp"
+const API_URL = "/v2/proxy/serp"
 
 const CodeBlock = ({ code }: { code: string }) => (
   <SyntaxHighlighter

@@ -213,7 +213,7 @@ function calculateTotalsForMonth(month: Month) {
 const fetchBillingPortal = async (token: string) => {
   try {
     const response = await fetch(
-      "https://api.ROAMINGPROXY.com/v2/customer-portal",
+      "/v2/customer-portal",
       {
         method: "GET",
         headers: {

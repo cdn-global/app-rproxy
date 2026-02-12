@@ -8,10 +8,8 @@ import { routeTree } from "./routeTree.gen"
 import "./styles/global.css"
 import { Toaster } from "./components/ui/toaster"
 
-// In Vite dev mode the dev-server proxy forwards /v2 → localhost:8000,
-// so we use "" (same-origin relative paths) to avoid CORS entirely.
-// In production builds we hit the real API.
-OpenAPI.BASE = import.meta.env.DEV ? "" : "https://api.roamingproxy.com"
+// Always relative — nginx proxies /v2/ to the backend (no CORS needed).
+OpenAPI.BASE = ""
 OpenAPI.TOKEN = async () => localStorage.getItem("access_token") || ""
 
 console.log("🔧 API Base URL:", OpenAPI.BASE)

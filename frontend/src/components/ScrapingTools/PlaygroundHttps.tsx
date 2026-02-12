@@ -59,7 +59,7 @@ const REGIONS = [
   "middle-east",
 ]
 
-const API_URL = "https://api.ROAMINGPROXY.com/v2/proxy"
+const API_URL = "/v2/proxy"
 
 const CODE_TEMPLATES = [
   {

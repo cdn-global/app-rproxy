@@ -469,7 +469,7 @@ async function fetchSubscriptions(): Promise<Subscription[]> {
   const token = localStorage.getItem("access_token")
   if (!token) throw new Error("No access token found. Please log in again.")
   const response = await fetch(
-    "https://api.ROAMINGPROXY.com/v2/customer/subscriptions",
+    "/v2/customer/subscriptions",
     {
       headers: {
         "Content-Type": "application/json",
@@ -488,7 +488,7 @@ async function fetchSubscriptions(): Promise<Subscription[]> {
 
 async function fetchBillingPortal(token: string): Promise<string> {
   const response = await fetch(
-    "https://api.ROAMINGPROXY.com/v2/customer-portal",
+    "/v2/customer-portal",
     {
       headers: {
         "Content-Type": "application/json",
@@ -506,7 +506,7 @@ async function fetchBillingPortal(token: string): Promise<string> {
 
 async function fetchApiKeys(token: string): Promise<ApiKey[]> {
   const response = await fetch(
-    "https://api.ROAMINGPROXY.com/v2/proxy/api-keys",
+    "/v2/proxy/api-keys",
     {
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
     },

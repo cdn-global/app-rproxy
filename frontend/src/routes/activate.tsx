@@ -27,11 +27,7 @@ export const Route = createFileRoute("/activate")({
 })
 
 async function activateAccount(data: { new_password: string; token: string }) {
-  const baseUrl = "https://api.ROAMINGPROXY.com"
-  if (!baseUrl) {
-    console.error("base url is not defined")
-    throw new Error("API URL is not configured")
-  }
+  const baseUrl = ""
   const apiUrl = `${baseUrl}/v2/activate`
   console.log("Sending request to:", apiUrl, "with data:", data)
   const response = await fetch(apiUrl, {

@@ -19,7 +19,7 @@ interface ProxyApiAccess {
   message: string | null
 }
 
-const API_URL = "https://api.ROAMINGPROXY.com/v2"
+const API_URL = "/v2"
 
 async function requestFromApi<T>(endpoint: string, token: string) {
   if (!token) {

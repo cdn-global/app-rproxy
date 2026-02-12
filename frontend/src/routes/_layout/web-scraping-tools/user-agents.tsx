@@ -50,7 +50,7 @@ import useCustomToast from "@/hooks/useCustomToast"
 import type { UserPublic } from "@/client/types.gen"
 import { parseApiResponse } from "@/lib/api"
 
-const API_BASE_URL = "https://api.ROAMINGPROXY.com/v2"
+const API_BASE_URL = "/v2"
 const PAGE_SIZE = 50
 
 type DeviceCategory = "all" | "desktop" | "mobile" | "other"
