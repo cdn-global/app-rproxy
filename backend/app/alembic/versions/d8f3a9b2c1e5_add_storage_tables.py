@@ -9,6 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 import sqlmodel
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.engine import reflection
 import uuid
 
 # revision identifiers, used by Alembic.
@@ -19,31 +20,36 @@ depends_on = None
 
 
 def upgrade():
+    bind = op.get_bind()
+    inspector = reflection.Inspector.from_engine(bind)
+
     # Create storage_bucket table
-    op.create_table(
-        'storage_bucket',
-        sa.Column('id', sa.Uuid(), nullable=False),
-        sa.Column('user_id', sa.Uuid(), nullable=False),
-        sa.Column('bucket_name', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False),
-        sa.Column('region', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
-        sa.Column('storage_class', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
-        sa.Column('status', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
-        sa.Column('storage_backend', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
-        sa.Column('access_key', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
-        sa.Column('secret_key_encrypted', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
-        sa.Column('endpoint_url', sqlmodel.sql.sqltypes.AutoString(length=512), nullable=True),
-        sa.Column('storage_gb_used', sa.Float(), nullable=False),
-        sa.Column('object_count', sa.Integer(), nullable=False),
-        sa.Column('monthly_rate_per_gb', sa.Float(), nullable=False),
-        sa.Column('created_at', sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-        sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_storage_bucket_bucket_name'), 'storage_bucket', ['bucket_name'], unique=True)
+    if not inspector.has_table('storage_bucket'):
+        op.create_table(
+            'storage_bucket',
+            sa.Column('id', sa.Uuid(), nullable=False),
+            sa.Column('user_id', sa.Uuid(), nullable=False),
+            sa.Column('bucket_name', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False),
+            sa.Column('region', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
+            sa.Column('storage_class', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
+            sa.Column('status', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
+            sa.Column('storage_backend', sqlmodel.sql.sqltypes.AutoString(length=50), nullable=False),
+            sa.Column('access_key', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
+            sa.Column('secret_key_encrypted', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+            sa.Column('endpoint_url', sqlmodel.sql.sqltypes.AutoString(length=512), nullable=True),
+            sa.Column('storage_gb_used', sa.Float(), nullable=False),
+            sa.Column('object_count', sa.Integer(), nullable=False),
+            sa.Column('monthly_rate_per_gb', sa.Float(), nullable=False),
+            sa.Column('created_at', sa.DateTime(), nullable=False),
+            sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+            sa.PrimaryKeyConstraint('id')
+        )
+        op.create_index(op.f('ix_storage_bucket_bucket_name'), 'storage_bucket', ['bucket_name'], unique=True)
 
     # Create storage_object table
-    op.create_table(
-        'storage_object',
+    if not inspector.has_table('storage_object'):
+        op.create_table(
+            'storage_object',
         sa.Column('id', sa.Uuid(), nullable=False),
         sa.Column('bucket_id', sa.Uuid(), nullable=False),
         sa.Column('user_id', sa.Uuid(), nullable=False),
