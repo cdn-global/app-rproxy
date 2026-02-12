@@ -49,9 +49,15 @@ class CatchAllExceptionMiddleware(BaseHTTPMiddleware):
             )
 
 
-# Set all CORS enabled origins
+# Register exception middleware FIRST so it ends up innermost.
+# Starlette's add_middleware uses insert(0), so the LAST registered
+# middleware becomes the OUTERMOST wrapper. By registering the exception
+# catcher first and CORS second, the chain becomes:
+#   ServerErrorMiddleware → CORSMiddleware → CatchAllExceptionMiddleware → App
+# This guarantees CORS headers are added even to 500 responses.
+app.add_middleware(CatchAllExceptionMiddleware)
+
 if settings.ENVIRONMENT == "local":
-    # Allow all origins in development
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -67,9 +73,6 @@ elif settings.all_cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-# Added last so it's innermost — runs inside CORSMiddleware.
-app.add_middleware(CatchAllExceptionMiddleware)
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
