@@ -27,6 +27,8 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 })
 
+const SUBSCRIPTION_COST_PER_MONTH = 373.75
+
 interface RemoteServer {
   id: string
   name: string
@@ -167,7 +169,7 @@ function HostingIndexPage() {
   })
 
   const fleetSummary = useMemo(() => {
-    return servers.reduce(
+    const summary = servers.reduce(
       (acc, server) => {
         acc.totalServers += 1
         acc.running += server.status === "running" ? 1 : 0
@@ -178,6 +180,8 @@ function HostingIndexPage() {
       },
       { totalServers: 0, running: 0, totalMonthly: 0, totalVcpus: 0, totalRam: 0 },
     )
+    summary.totalMonthly += SUBSCRIPTION_COST_PER_MONTH
+    return summary
   }, [servers])
 
   const getStatusBadge = (status: string) => {
@@ -223,7 +227,7 @@ function HostingIndexPage() {
               <SummaryTile
                 label="Monthly run rate"
                 value={currencyFormatter.format(fleetSummary.totalMonthly)}
-                description="Based on hourly rates"
+                description="Include platform subscription & compute"
               />
               <SummaryTile
                 label="Provisioned capacity"
