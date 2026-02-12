@@ -9,7 +9,6 @@ from alembic import op
 import sqlalchemy as sa
 import sqlmodel
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.engine import reflection
 import uuid
 
 # revision identifiers, used by Alembic.
@@ -21,7 +20,7 @@ depends_on = None
 
 def upgrade():
     bind = op.get_bind()
-    inspector = reflection.Inspector.from_engine(bind)
+    inspector = sa.inspect(bind)
 
     # Create storage_bucket table
     if not inspector.has_table('storage_bucket'):
