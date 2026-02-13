@@ -151,6 +151,31 @@ function HostingIndexPage() {
     onError: (err: Error) => showToast("Error", err.message, "error"),
   })
 
+  const [resizingServer, setResizingServer] = useState<string | null>(null)
+  const [resizeType, setResizeType] = useState<string>("")
+
+  const resizeMutation = useMutation({
+    mutationFn: async ({ id, instanceType }: { id: string; instanceType: string }) => {
+      const response = await fetch(`/v2/servers/${id}`, {
+        method: "PATCH",
+        headers: { ...authHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ aws_instance_type: instanceType }),
+      })
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err.detail || "Failed to resize server")
+      }
+      return response.json()
+    },
+    onSuccess: () => {
+      showToast("Success", "Instance type updated.", "success")
+      setResizingServer(null)
+      setResizeType("")
+      queryClient.invalidateQueries({ queryKey: ["remote-servers"] })
+    },
+    onError: (err: Error) => showToast("Error", err.message, "error"),
+  })
+
   const provisionMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/v2/servers/${id}/provision`, {
@@ -350,15 +375,67 @@ function HostingIndexPage() {
                               </>
                             )}
                             {server.status === "stopped" && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="rounded-full px-3 py-1 text-xs font-semibold"
-                                onClick={() => startMutation.mutate(server.id)}
-                                disabled={startMutation.isPending}
-                              >
-                                Start
-                              </Button>
+                              <>
+                                {resizingServer === server.id ? (
+                                  <div className="flex items-center gap-1">
+                                    <select
+                                      value={resizeType}
+                                      onChange={(e) => setResizeType(e.target.value)}
+                                      className="h-7 rounded-md border border-input bg-background px-2 text-xs"
+                                    >
+                                      <option value="">Select type</option>
+                                      <option value="t3.micro">t3.micro (2 vCPU, 1 GB)</option>
+                                      <option value="t3.small">t3.small (2 vCPU, 2 GB)</option>
+                                      <option value="t3.medium">t3.medium (2 vCPU, 4 GB)</option>
+                                      <option value="t3.large">t3.large (2 vCPU, 8 GB)</option>
+                                      <option value="t3.xlarge">t3.xlarge (4 vCPU, 16 GB)</option>
+                                      <option value="m5.large">m5.large (2 vCPU, 8 GB)</option>
+                                      <option value="m5.xlarge">m5.xlarge (4 vCPU, 16 GB)</option>
+                                      <option value="c5.xlarge">c5.xlarge (4 vCPU, 8 GB)</option>
+                                      <option value="g4dn.xlarge">g4dn.xlarge (4 vCPU, 16 GB, T4 GPU)</option>
+                                    </select>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="rounded-full px-3 py-1 text-xs font-semibold"
+                                      onClick={() => {
+                                        if (resizeType) {
+                                          resizeMutation.mutate({ id: server.id, instanceType: resizeType })
+                                        }
+                                      }}
+                                      disabled={!resizeType || resizeMutation.isPending}
+                                    >
+                                      {resizeMutation.isPending ? "Applying..." : "Apply"}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="rounded-full px-3 py-1 text-xs font-semibold"
+                                      onClick={() => { setResizingServer(null); setResizeType("") }}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="rounded-full px-3 py-1 text-xs font-semibold"
+                                    onClick={() => { setResizingServer(server.id); setResizeType(server.aws_instance_type || "") }}
+                                  >
+                                    Resize
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                                  onClick={() => startMutation.mutate(server.id)}
+                                  disabled={startMutation.isPending}
+                                >
+                                  Start
+                                </Button>
+                              </>
                             )}
                             {server.status === "provisioning" && (
                               <Badge variant="outline">Provisioning...</Badge>

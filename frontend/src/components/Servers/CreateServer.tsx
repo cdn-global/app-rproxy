@@ -50,7 +50,7 @@ const CreateServer = ({ isOpen, onClose }: CreateServerProps) => {
       cpu_cores: 2,
       memory_gb: 4,
       gpu_type: "",
-      aws_instance_type: "t3.medium",
+      aws_instance_type: "t3.micro",
       aws_region: "us-east-1",
       app_slug: "",
     },
@@ -202,6 +202,8 @@ const CreateServer = ({ isOpen, onClose }: CreateServerProps) => {
                   {...register("aws_instance_type")}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
+                  <option value="t3.micro">t3.micro (2 vCPU, 1 GB)</option>
+                  <option value="t3.small">t3.small (2 vCPU, 2 GB)</option>
                   <option value="t3.medium">t3.medium (2 vCPU, 4 GB)</option>
                   <option value="t3.large">t3.large (2 vCPU, 8 GB)</option>
                   <option value="t3.xlarge">t3.xlarge (4 vCPU, 16 GB)</option>

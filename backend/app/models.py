@@ -210,6 +210,7 @@ class RemoteServerCreate(SQLModel):
 class RemoteServerUpdate(SQLModel):
     name: Optional[str] = Field(default=None, max_length=255)
     status: Optional[str] = Field(default=None, max_length=50)
+    aws_instance_type: Optional[str] = Field(default=None, max_length=50)
 
 
 class RemoteServerConnectionConfig(SQLModel):

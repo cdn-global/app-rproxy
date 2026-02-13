@@ -531,6 +531,39 @@ EOF
             logger.error(f"Failed to start instance {instance_id}: {e}")
             return False
 
+    def modify_instance_type(
+        self, instance_id: str, region: str, new_instance_type: str
+    ) -> bool:
+        """
+        Change the instance type of a stopped EC2 instance.
+
+        The instance MUST be in a stopped state before calling this.
+
+        Args:
+            instance_id: EC2 instance ID
+            region: AWS region
+            new_instance_type: New EC2 instance type (e.g., "t3.small")
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            ec2 = self._get_ec2_client(region)
+            ec2.modify_instance_attribute(
+                InstanceId=instance_id,
+                InstanceType={"Value": new_instance_type},
+            )
+            logger.info(
+                f"EC2 instance {instance_id} type changed to {new_instance_type}"
+            )
+            return True
+
+        except (ClientError, BotoCoreError) as e:
+            logger.error(
+                f"Failed to modify instance type for {instance_id}: {e}"
+            )
+            return False
+
     def terminate_server(self, instance_id: str, region: str) -> bool:
         """
         Terminate an EC2 instance (permanent deletion).

@@ -282,6 +282,32 @@ async def update_server(
     if server_update.status is not None:
         server.status = server_update.status
 
+    # Allow instance type change only when the server is stopped
+    if server_update.aws_instance_type is not None:
+        if server.status != "stopped":
+            raise HTTPException(
+                status_code=409,
+                detail="Server must be stopped before changing instance type.",
+            )
+
+        # Apply the change on the real EC2 instance if one exists
+        if server.hosting_provider == "aws" and server.aws_instance_id:
+            success = aws_provisioner.modify_instance_type(
+                server.aws_instance_id,
+                server.aws_region or "us-east-1",
+                server_update.aws_instance_type,
+            )
+            if not success:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Failed to change instance type on AWS.",
+                )
+
+        server.aws_instance_type = server_update.aws_instance_type
+        server.hourly_rate = aws_provisioner.calculate_hourly_rate(
+            server_update.aws_instance_type
+        )
+
     session.add(server)
     session.commit()
     session.refresh(server)
@@ -490,7 +516,7 @@ async def provision_server_aws(
     class _ProvisionData:
         name = server.name
         server_type = server.server_type
-        aws_instance_type = server.aws_instance_type or "t3.medium"
+        aws_instance_type = server.aws_instance_type or "t3.micro"
         aws_region = server.aws_region or "us-east-1"
         gpu_type = server.gpu_type if hasattr(server, "gpu_type") else None
 

@@ -67,7 +67,7 @@ def run_aws_provisioning(
             user_id=user_id,
             name=server_data.name,
             server_type=server_data.server_type,
-            aws_instance_type=server_data.aws_instance_type or "t3.medium",
+            aws_instance_type=server_data.aws_instance_type or "t3.micro",
             aws_region=server_data.aws_region or "us-east-1",
             gpu_type=server_data.gpu_type,
         )
