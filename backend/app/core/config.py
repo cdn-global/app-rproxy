@@ -101,6 +101,7 @@ class Settings(BaseSettings):
     # LLM Provider API Keys (System-wide fallback keys)
     ANTHROPIC_API_KEY: str | None = None
     OPENAI_API_KEY: str | None = None
+    OPENAI_BASE_URL: str | None = None
     GOOGLE_API_KEY: str | None = None
 
     # AWS (system-level, whitelabel — users never see these)

@@ -155,7 +155,7 @@ async def create_chat_completion(
             response_id = response.id
 
         elif provider_name == "openai":
-            client = openai.OpenAI(api_key=api_key)
+            client = openai.OpenAI(api_key=api_key, base_url=settings.OPENAI_BASE_URL)
             response = client.chat.completions.create(
                 model=model.model_id,
                 max_tokens=request.max_tokens,
@@ -368,7 +368,7 @@ async def create_chat_completion_stream(
 
             elif provider_name == "openai":
                 # OpenAI streaming
-                client = openai.OpenAI(api_key=api_key)
+                client = openai.OpenAI(api_key=api_key, base_url=settings.OPENAI_BASE_URL)
 
                 stream = client.chat.completions.create(
                     model=model_identifier,

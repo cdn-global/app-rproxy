@@ -503,6 +503,11 @@ async def delete_api_key(
     if not token:
         logger.info(f"API key deletion attempted but not found. User: {current_user.id}, Preview: {key_preview}")
         raise HTTPException(status_code=404, detail="API key not found")
+    if token.request_count > 0:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Cannot delete API key with {token.request_count} logged requests. Disable it instead.",
+        )
     token_data = {
         "token_preview": f"{token.token[:FRONT_PREVIEW_LENGTH]}...{token.token[-END_PREVIEW_LENGTH:]}",
         "request_count": token.request_count
