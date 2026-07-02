@@ -532,6 +532,7 @@ export default function DisputeCasePanel() {
   const [error, setError] = useState<string | null>(null)
   const [newCaseOpen, setNewCaseOpen] = useState(false)
   const [selectedCase, setSelectedCase] = useState<string | null>(null)
+  const [importing, setImporting] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -549,6 +550,27 @@ export default function DisputeCasePanel() {
 
   useEffect(() => { load() }, [load])
 
+  const importFromStripe = async () => {
+    setImporting(true)
+    try {
+      const res = await fetch(`${API_BASE}/v2/admin/disputes/import-from-stripe`, {
+        method: "POST",
+        headers: authHeaders(),
+      })
+      const r = await res.json()
+      if (!res.ok) throw new Error(r.detail || "Import failed")
+      alert(
+        `Imported ${r.imported} case(s). ${r.skipped} already existed. ` +
+        `${r.snapshots_generated} evidence snapshot(s) generated.`,
+      )
+      load()
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Stripe import failed")
+    } finally {
+      setImporting(false)
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -557,7 +579,13 @@ export default function DisputeCasePanel() {
             {cases.length} dispute case{cases.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button size="sm" onClick={() => setNewCaseOpen(true)}>Open New Case</Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={importFromStripe} disabled={importing} className="gap-2">
+            {importing ? <Spinner size={14} /> : null}
+            {importing ? "Importing…" : "Import from Stripe"}
+          </Button>
+          <Button size="sm" onClick={() => setNewCaseOpen(true)}>Open New Case</Button>
+        </div>
       </div>
 
       {loading && <div className="flex h-32 items-center justify-center"><Spinner size={28} /></div>}

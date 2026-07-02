@@ -48,6 +48,7 @@ app.post("/cases", async (c) => {
     stripe_dispute_id?: string
     stripe_charge_id?: string
     reason?: string
+    status?: string
     disputed_amount_usd?: number
     currency?: string
     response_due_date?: string
@@ -59,8 +60,8 @@ app.post("/cases", async (c) => {
   await c.env.DISPUTE_DB.prepare(`
     INSERT INTO dispute_case
       (id, user_id, user_email, user_full_name, stripe_dispute_id, stripe_charge_id,
-       reason, disputed_amount_usd, currency, response_due_date, notes, created_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       reason, status, disputed_amount_usd, currency, response_due_date, notes, created_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     id,
     body.user_id ?? null,
@@ -69,6 +70,7 @@ app.post("/cases", async (c) => {
     body.stripe_dispute_id ?? null,
     body.stripe_charge_id ?? null,
     body.reason ?? "other",
+    body.status ?? "open",
     body.disputed_amount_usd ?? 0,
     body.currency ?? "USD",
     body.response_due_date ?? null,

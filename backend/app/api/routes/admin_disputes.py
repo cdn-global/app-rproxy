@@ -443,6 +443,13 @@ def get_user_evidence(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    return build_evidence_pack(session, user, days, current_user.email)
+
+
+def build_evidence_pack(session, user: User, days: int, generated_by: str) -> dict:
+    """Build the full EvidencePack dict (live PostgreSQL + Stripe + fraud analysis)."""
+    uid = user.id
+
     since = datetime.utcnow() - timedelta(days=days)
 
     login_rows = session.exec(
@@ -585,7 +592,7 @@ def get_user_evidence(
         "stripe_subscriptions": stripe_subscriptions,
         "stripe_usage_records": stripe_usage_records,
         "generated_at": datetime.utcnow().isoformat(),
-        "generated_by": current_user.email,
+        "generated_by": generated_by,
     }
 
     # ── Fraud-analysis enrichment ─────────────────────────────────────────────
@@ -643,6 +650,125 @@ def get_user_evidence(
 @router.get("/{case_id}/seed/summary")
 def seed_summary_route(case_id: str, current_user: SuperUser) -> Any:
     return dispute_service.seed_summary(case_id)
+
+
+# ── Auto-import disputes from Stripe ──────────────────────────────────────────
+
+STRIPE_REASON_MAP = {
+    "fraudulent": "fraud",
+    "duplicate": "duplicate",
+    "subscription_canceled": "subscription_cancelled",
+    "product_not_received": "not_received",
+}
+STRIPE_STATUS_MAP = {
+    "needs_response": "open",
+    "warning_needs_response": "open",
+    "under_review": "under_review",
+    "warning_under_review": "under_review",
+    "won": "won",
+    "lost": "lost",
+    "warning_closed": "withdrawn",
+    "charge_refunded": "withdrawn",
+}
+
+
+@router.post("/import-from-stripe", status_code=201)
+def import_from_stripe(
+    current_user: SuperUser,
+    session: SessionDep,
+    limit: int = Query(default=100, ge=1, le=100),
+    auto_snapshot: bool = Query(default=True),
+) -> Any:
+    """
+    Pull ALL disputes from Stripe and auto-create dispute cases in D1.
+    - De-duplicates by stripe_dispute_id (safe to re-run)
+    - Resolves the user by stripe_customer_id, then billing email
+    - Unmatched disputes are still created with a note
+    - Optionally auto-generates an evidence snapshot for each matched user
+    """
+    sk = os.getenv("STRIPE_SECRET_KEY")
+    if not sk:
+        raise HTTPException(status_code=503, detail="STRIPE_SECRET_KEY not configured")
+    if not os.getenv("DISPUTE_WORKER_URL", settings.DISPUTE_WORKER_URL):
+        raise HTTPException(status_code=503, detail="DISPUTE_WORKER_URL not set")
+    stripe.api_key = sk
+
+    existing = {
+        c.get("stripe_dispute_id")
+        for c in dispute_service.list_cases()
+        if c.get("stripe_dispute_id")
+    }
+
+    created: list[dict] = []
+    skipped = 0
+    snapshots = 0
+
+    try:
+        disputes = stripe.Dispute.list(limit=limit, expand=["data.charge"])
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=502, detail=f"Stripe API error: {str(e)}")
+
+    for dp in disputes.auto_paging_iter():
+        if dp.id in existing:
+            skipped += 1
+            continue
+
+        ch = dp.charge if hasattr(dp, "charge") else None
+        cust = getattr(ch, "customer", None) if ch else None
+        bill_email = ch.billing_details.email if ch and ch.billing_details else None
+        bill_name = ch.billing_details.name if ch and ch.billing_details else None
+
+        user = None
+        if cust:
+            user = session.exec(select(User).where(User.stripe_customer_id == cust)).first()
+        if not user and bill_email:
+            user = session.exec(select(User).where(User.email == bill_email)).first()
+
+        due = None
+        if dp.evidence_details and dp.evidence_details.due_by:
+            due = datetime.fromtimestamp(dp.evidence_details.due_by).isoformat()
+
+        note = f"Auto-imported from Stripe. Reason: {dp.reason}, status: {dp.status}."
+        if not user:
+            note += " [UNMATCHED — no linked user account found]"
+
+        result = dispute_service.create_case({
+            "user_email": (user.email if user else bill_email) or "unknown@unknown",
+            "user_full_name": user.full_name if user else bill_name,
+            "user_id": str(user.id) if user else None,
+            "stripe_dispute_id": dp.id,
+            "stripe_charge_id": ch.id if ch else None,
+            "reason": STRIPE_REASON_MAP.get(dp.reason, "other"),
+            "status": STRIPE_STATUS_MAP.get(dp.status, "open"),
+            "disputed_amount_usd": dp.amount / 100,
+            "currency": dp.currency.upper(),
+            "response_due_date": due,
+            "notes": note,
+            "created_by": current_user.email,
+        })
+        case_id = result.get("id")
+        created.append({
+            "case_id": case_id,
+            "stripe_dispute_id": dp.id,
+            "user_email": (user.email if user else bill_email),
+            "matched": bool(user),
+        })
+
+        if auto_snapshot and user and case_id:
+            try:
+                pack = build_evidence_pack(session, user, 365, current_user.email)
+                dispute_service.store_snapshot(case_id, json.dumps(pack), current_user.email)
+                snapshots += 1
+            except Exception:
+                pass
+
+    return {
+        "imported": len(created),
+        "skipped": skipped,
+        "snapshots_generated": snapshots,
+        "cases": created,
+    }
+
 
 
 # ── Seed from Stripe ──────────────────────────────────────────────────────────
