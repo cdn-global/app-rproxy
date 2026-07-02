@@ -46,6 +46,7 @@ interface EvidenceData {
   stripe_charges: StripeCharge[]
   stripe_invoices: StripeInvoice[]
   stripe_subscriptions: StripeSub[]
+  stripe_usage_records?: UsageRecord[]
   generated_at: string
   generated_by: string
   // Fraud analysis (optional — computed at request time)
@@ -124,6 +125,20 @@ interface StripeInvoice {
   period_start: string
   period_end: string
   invoice_pdf: string | null
+  line_items?: Array<{
+    description: string | null
+    amount_usd: number
+    quantity: number | null
+    item_name: string
+  }>
+}
+
+interface UsageRecord {
+  subscription_item: string
+  item_name: string
+  total_usage: number
+  period_start: string | null
+  period_end: string | null
 }
 
 interface StripeSub {
@@ -469,6 +484,33 @@ export default function UserEvidencePanel({ user, isOpen, onClose }: UserEvidenc
                   </Table>
                 </div>
               </div>
+
+              {/* Metered usage records */}
+              {(data.stripe_usage_records ?? []).length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Metered Usage Records (Stripe billing meter)</p>
+                  <div className="overflow-auto rounded-lg border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Item</TableHead>
+                          <TableHead>Total Usage</TableHead>
+                          <TableHead>Period</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {(data.stripe_usage_records ?? []).map((ur, i) => (
+                          <TableRow key={i}>
+                            <TableCell className="text-xs">{ur.item_name}</TableCell>
+                            <TableCell className="font-mono text-xs">{ur.total_usage.toLocaleString()}</TableCell>
+                            <TableCell className="text-xs whitespace-nowrap">{fmt(ur.period_start)} → {fmt(ur.period_end)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             {/* ── Charges ──────────────────────────────────────────────── */}

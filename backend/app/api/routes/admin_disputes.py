@@ -471,6 +471,7 @@ def get_user_evidence(
     stripe_charges: list[dict] = []
     stripe_invoices: list[dict] = []
     stripe_subscriptions: list[dict] = []
+    stripe_usage_records: list[dict] = []
     if user.stripe_customer_id and os.getenv("STRIPE_SECRET_KEY"):
         stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
         try:
@@ -504,6 +505,20 @@ def get_user_evidence(
                     "period_start": datetime.fromtimestamp(inv.period_start).isoformat(),
                     "period_end": datetime.fromtimestamp(inv.period_end).isoformat(),
                     "invoice_pdf": inv.invoice_pdf,
+                    "line_items": [
+                        {
+                            "description": li.description,
+                            "amount_usd": li.amount / 100,
+                            "quantity": li.quantity,
+                            "item_name": (
+                                (li.price.metadata.get("model_name") if li.price and li.price.metadata else None)
+                                or (li.price.nickname if li.price else None)
+                                or li.description
+                                or "line item"
+                            ),
+                        }
+                        for li in (inv.lines.data if inv.lines else [])
+                    ],
                 })
             for sub in stripe.Subscription.list(customer=user.stripe_customer_id, limit=10).data:
                 stripe_subscriptions.append({
@@ -515,6 +530,22 @@ def get_user_evidence(
                     "trial_start": datetime.fromtimestamp(sub.trial_start).isoformat() if sub.trial_start else None,
                     "trial_end": datetime.fromtimestamp(sub.trial_end).isoformat() if sub.trial_end else None,
                 })
+                for item in (sub["items"]["data"] if sub.get("items") else []):
+                    try:
+                        summaries = stripe.SubscriptionItem.list_usage_record_summaries(item["id"], limit=12)
+                        for summ in summaries.data:
+                            price = item.get("price") or {}
+                            meta = price.get("metadata") or {}
+                            item_name = meta.get("model_name") or price.get("nickname") or item["id"]
+                            stripe_usage_records.append({
+                                "subscription_item": item["id"],
+                                "item_name": item_name,
+                                "total_usage": summ.total_usage,
+                                "period_start": datetime.fromtimestamp(summ.period.start).isoformat() if summ.period and summ.period.start else None,
+                                "period_end": datetime.fromtimestamp(summ.period.end).isoformat() if summ.period and summ.period.end else None,
+                            })
+                    except Exception:
+                        pass
         except Exception:
             pass
 
@@ -552,6 +583,7 @@ def get_user_evidence(
         "stripe_charges": stripe_charges,
         "stripe_invoices": stripe_invoices,
         "stripe_subscriptions": stripe_subscriptions,
+        "stripe_usage_records": stripe_usage_records,
         "generated_at": datetime.utcnow().isoformat(),
         "generated_by": current_user.email,
     }

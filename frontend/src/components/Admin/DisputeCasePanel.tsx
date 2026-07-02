@@ -206,6 +206,7 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
   const [snapshotting, setSnapshotting] = useState(false)
   const [userId, setUserId] = useState("")
   const [evidenceUser, setEvidenceUser] = useState<UserPublic | null>(null)
+  const [statusSaving, setStatusSaving] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -222,6 +223,23 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
   }, [caseId])
 
   useEffect(() => { if (isOpen) load() }, [isOpen, load])
+
+  const changeStatus = async (newStatus: string) => {
+    setStatusSaving(true)
+    try {
+      const res = await fetch(`${API_BASE}/v2/admin/disputes/${caseId}`, {
+        method: "PATCH",
+        headers: authHeaders(),
+        body: JSON.stringify({ status: newStatus, updated_by: currentUser?.email }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+      load()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update status")
+    } finally {
+      setStatusSaving(false)
+    }
+  }
 
   const addNote = async () => {
     if (!note.trim()) return
@@ -338,6 +356,35 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
                   } as UserPublic)}
                 >
                   Evidence Pack ↗
+                </Button>
+              )}
+            </div>
+
+            {/* Status management */}
+            <div className="flex items-center gap-3 rounded-lg border p-3">
+              <Label className="text-xs shrink-0">Case status:</Label>
+              <Select value={detail.status} onValueChange={changeStatus} disabled={statusSaving}>
+                <SelectTrigger className="w-44 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["open", "under_review", "won", "lost", "withdrawn"].map((st) => (
+                    <SelectItem key={st} value={st}>{st.replace("_", " ")}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {statusSaving && <Spinner size={14} />}
+              {detail.status !== "withdrawn" && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-auto text-destructive hover:text-destructive"
+                  disabled={statusSaving}
+                  onClick={() => {
+                    if (window.confirm("Withdraw this dispute case? It will be marked as withdrawn.")) {
+                      changeStatus("withdrawn")
+                    }
+                  }}
+                >
+                  Withdraw Case
                 </Button>
               )}
             </div>
