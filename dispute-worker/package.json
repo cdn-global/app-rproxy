@@ -1,0 +1,20 @@
+{
+  "name": "dispute-worker",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create dispute-cases-db",
+    "db:migrate": "wrangler d1 execute dispute-cases-db --file=./schema.sql",
+    "db:migrate:remote": "wrangler d1 execute dispute-cases-db --remote --file=./schema.sql"
+  },
+  "dependencies": {
+    "hono": "^4.7.11"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250620.0",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.106.0"
+  }
+}

@@ -116,6 +116,13 @@ def ensure_tables_and_seed():
         'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR',
         # llm_usage_log table
         'ALTER TABLE llm_usage_log ADD COLUMN IF NOT EXISTS source VARCHAR(20)',
+        # user evidence / dispute fields
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS created_at TIMESTAMP',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS signup_ip VARCHAR(45)',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS tos_accepted_at TIMESTAMP',
+        'ALTER TABLE "user" ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMP',
+        # api key last_ip
+        'ALTER TABLE user_api_key ADD COLUMN IF NOT EXISTS last_ip VARCHAR(45)',
         # remote_server table
         "ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS hosting_provider VARCHAR(50) DEFAULT 'docker'",
         'ALTER TABLE remote_server ADD COLUMN IF NOT EXISTS aws_instance_id VARCHAR(255)',

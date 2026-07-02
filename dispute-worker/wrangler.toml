@@ -1,0 +1,9 @@
+name = "dispute-worker"
+main = "src/index.ts"
+compatibility_date = "2026-07-02"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DISPUTE_DB"
+database_name = "dispute-cases-db"
+database_id = "228d4c53-06de-4f92-8e53-018849d3de77"

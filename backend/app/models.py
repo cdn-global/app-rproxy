@@ -46,11 +46,20 @@ class User(UserBase, table=True):
     anthropic_api_key: Optional[str] = Field(default=None, max_length=500)
     openai_api_key: Optional[str] = Field(default=None, max_length=500)
     google_api_key: Optional[str] = Field(default=None, max_length=500)
+    # Dispute / chargeback evidence fields
+    created_at: Optional[datetime] = Field(default=None)
+    signup_ip: Optional[str] = Field(default=None, max_length=45)
+    tos_accepted_at: Optional[datetime] = Field(default=None)
+    email_verified_at: Optional[datetime] = Field(default=None)
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
 
 # Properties to return via API
 class UserPublic(UserBase):
     id: uuid.UUID
+    created_at: Optional[datetime] = None
+    signup_ip: Optional[str] = None
+    tos_accepted_at: Optional[datetime] = None
+    email_verified_at: Optional[datetime] = None
 
 class UsersPublic(SQLModel):
     data: list[UserPublic]
@@ -696,6 +705,7 @@ class UserApiKey(SQLModel, table=True):
     hashed_key: str = Field(max_length=255)
     request_count: int = Field(default=0)
     last_used_at: Optional[datetime] = Field(default=None)
+    last_ip: Optional[str] = Field(default=None, max_length=45)
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -712,6 +722,7 @@ class UserApiKeyPublic(SQLModel):
     key_prefix: str
     request_count: int
     last_used_at: Optional[datetime]
+    last_ip: Optional[str]
     is_active: bool
     created_at: datetime
 
@@ -740,4 +751,35 @@ class LLMUsageLog(SQLModel, table=True):
     output_tokens: int = Field(default=0)
     total_cost: float = Field(default=0.0)
     source: Optional[str] = Field(default=None, max_length=20, index=True)  # "playground" | "api"
+    created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
+
+
+# ============================================================================
+# LOGIN & REQUEST LOGS (dispute / chargeback evidence)
+# ============================================================================
+
+class LoginLog(SQLModel, table=True):
+    """Per-attempt login log — user_id is nullable so failed attempts for unknown
+    emails are still captured.  No FK so rows survive user deletion."""
+    __tablename__ = "login_log"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: Optional[uuid.UUID] = Field(default=None, index=True)   # loose ref, no FK
+    email_attempted: str = Field(max_length=255)
+    ip_address: Optional[str] = Field(default=None, max_length=45)
+    user_agent: Optional[str] = Field(default=None, max_length=512)
+    success: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
+
+
+class ApiRequestLog(SQLModel, table=True):
+    """Per-request log written for every rp_ API key call.
+    Provides timestamped volume proof for dispute responses."""
+    __tablename__ = "api_request_log"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: Optional[uuid.UUID] = Field(default=None, index=True)   # loose ref, no FK
+    api_key_prefix: Optional[str] = Field(default=None, max_length=10)
+    ip_address: Optional[str] = Field(default=None, max_length=45)
+    user_agent: Optional[str] = Field(default=None, max_length=255)
+    endpoint: Optional[str] = Field(default=None, max_length=255)
+    status_code: Optional[int] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.utcnow, index=True)

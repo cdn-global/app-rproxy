@@ -25,6 +25,7 @@ export const Route = createFileRoute("/signup")({
 
 interface UserRegisterForm extends UserRegister {
   confirm_password: string
+  tos_accepted: boolean
 }
 
 function SignUp() {
@@ -42,6 +43,7 @@ function SignUp() {
       full_name: "",
       password: "",
       confirm_password: "",
+      tos_accepted: false,
     },
   })
 
@@ -145,6 +147,30 @@ function SignUp() {
                     </p>
                   )}
                 </div>
+                <div className="grid gap-2">
+                  <label className="flex items-start gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-4 w-4 rounded border border-input"
+                      {...register("tos_accepted", {
+                        required: "You must agree to the Terms of Service to create an account.",
+                      })}
+                    />
+                    <span className="text-muted-foreground">
+                      I agree to the{" "}
+                      <RouterLink to="/terms" className="underline underline-offset-4 hover:text-primary">
+                        Terms of Service
+                      </RouterLink>{" "}
+                      and{" "}
+                      <RouterLink to="/privacy" className="underline underline-offset-4 hover:text-primary">
+                        Privacy Policy
+                      </RouterLink>
+                    </span>
+                  </label>
+                  {errors.tos_accepted && (
+                    <p className="text-sm text-destructive">{errors.tos_accepted.message}</p>
+                  )}
+                </div>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Creating account..." : "Create account"}
                 </Button>
@@ -152,23 +178,6 @@ function SignUp() {
             </form>
           </div>
           <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{" "}
-            <RouterLink
-              to="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Terms of Service
-            </RouterLink>{" "}
-            and{" "}
-            <RouterLink
-              to="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
-            </RouterLink>
-            .
-          </p>
-          <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <RouterLink
               to="/login"

@@ -115,6 +115,9 @@ class Settings(BaseSettings):
     MINIO_ROOT_PASSWORD: str | None = None
     MINIO_USE_SSL: bool = False
 
+    # Cloudflare D1 dispute-worker
+    DISPUTE_WORKER_URL: str = ""
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (

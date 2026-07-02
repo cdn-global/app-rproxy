@@ -3,13 +3,14 @@ from typing import Any
 from datetime import datetime, timedelta
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
 from sqlmodel import col, delete, func, select
 
 from app import crud
 from app.api.deps import (
     CurrentUser,
     SessionDep,
+    extract_client_ip,
     get_current_active_superuser,
 )
 from app.core.config import settings
@@ -241,7 +242,8 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
 
 @router.post("/signup", response_model=UserPublic)
 def register_user(
-    session: SessionDep, 
+    request: Request,
+    session: SessionDep,
     user_in: UserRegister,
     background_tasks: BackgroundTasks
 ) -> Any:
@@ -257,6 +259,16 @@ def register_user(
     user_create = UserCreate.model_validate(user_in)
     logger.debug(f"Creating user: {user_create.dict()}")
     user = crud.create_user(session=session, user_create=user_create, is_trial=True)
+
+    # Capture dispute/chargeback evidence fields
+    ip = extract_client_ip(request)
+    user.created_at = datetime.utcnow()
+    user.signup_ip = ip
+    user.tos_accepted_at = datetime.utcnow()   # frontend checkbox enforces acceptance
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
     logger.debug(f"User created: {user.id}")
     background_tasks.add_task(check_subscription_expirations, session)
     logger.debug("Background task scheduled")

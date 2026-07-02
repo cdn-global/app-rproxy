@@ -5,13 +5,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FiEdit, FiTrash } from "react-icons/fi"
+import { FiEdit, FiFileText, FiTrash } from "react-icons/fi"
 
 import type { ItemPublic, UserPublic } from "../../client"
 import EditUser from "../Admin/EditUser"
+import UserEvidencePanel from "../Admin/UserEvidencePanel"
 import EditItem from "../Items/EditItem"
 import Delete from "./DeleteAlert"
 
@@ -32,6 +34,7 @@ type ActionsMenuProps = UserActionsMenuProps | ItemActionsMenuProps
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isEvidenceOpen, setIsEvidenceOpen] = useState(false)
 
   return (
     <>
@@ -47,7 +50,7 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             <BsThreeDotsVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem
             onSelect={(event) => {
               event.preventDefault()
@@ -58,6 +61,22 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             <FiEdit className="h-4 w-4" />
             Edit {type}
           </DropdownMenuItem>
+          {type === "User" && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={(event) => {
+                  event.preventDefault()
+                  setIsEvidenceOpen(true)
+                }}
+                className="gap-2"
+              >
+                <FiFileText className="h-4 w-4" />
+                Evidence Pack
+              </DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={(event) => {
               event.preventDefault()
@@ -72,11 +91,18 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
       </DropdownMenu>
 
       {type === "User" ? (
-        <EditUser
-          user={value as UserPublic}
-          isOpen={isEditOpen}
-          onClose={() => setIsEditOpen(false)}
-        />
+        <>
+          <EditUser
+            user={value as UserPublic}
+            isOpen={isEditOpen}
+            onClose={() => setIsEditOpen(false)}
+          />
+          <UserEvidencePanel
+            user={value as UserPublic}
+            isOpen={isEvidenceOpen}
+            onClose={() => setIsEvidenceOpen(false)}
+          />
+        </>
       ) : (
         <EditItem
           item={value as ItemPublic}

@@ -4,7 +4,7 @@ from app.api.routes import (
     items, login, private, users, utils, proxy, checkout, user_agent, subscription,
     billing, servers, database_instances, inference, terminal, terminal_test, storage,
     llm_models, llm_inference, conversations, billing_reports, admin_llm_keys,
-    api_keys,
+    api_keys, admin_disputes,
 )
 from app.core.config import settings
 
@@ -36,6 +36,7 @@ api_router.include_router(conversations.router)
 api_router.include_router(billing_reports.router)
 api_router.include_router(admin_llm_keys.router)
 api_router.include_router(api_keys.router)
+api_router.include_router(admin_disputes.router)
 
 # Private routes for local environment
 if settings.ENVIRONMENT == "local":
