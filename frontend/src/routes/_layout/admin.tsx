@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table"
 import { type UserPublic, UsersService } from "../../client"
 import AddUser from "../../components/Admin/AddUser"
+import DisputeCasePanel from "../../components/Admin/DisputeCasePanel"
 import ActionsMenu from "../../components/Common/ActionsMenu"
 import {
   PageScaffold,
@@ -176,6 +177,11 @@ function Admin() {
       label: "Account directory",
       description: "Browse every workspace identity and audit their status.",
     },
+    {
+      id: "disputes",
+      label: "Dispute cases",
+      description: "Manage chargeback cases and generate evidence packs.",
+    },
   ]
 
   return (
@@ -223,6 +229,14 @@ function Admin() {
         description="Audit the full roster, confirm access scopes, and hand off follow-up tasks."
       >
         <UsersTable />
+      </PageSection>
+
+      <PageSection
+        id="disputes"
+        title="Dispute cases"
+        description="Open chargeback cases, seed historical evidence, generate PDF evidence packs."
+      >
+        <DisputeCasePanel />
       </PageSection>
     </PageScaffold>
   )

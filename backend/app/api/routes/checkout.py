@@ -316,6 +316,7 @@ async def activate_account(request: ActivateRequest, db: Annotated[Session, Depe
     
     user.hashed_password = get_password_hash(request.new_password)
     user.is_active = True
+    user.email_verified_at = datetime.utcnow()
 
     # Find existing Stripe customer by email or create a new one
     ensure_stripe_customer(user, db, name=user.full_name or user.email.split("@")[0])
