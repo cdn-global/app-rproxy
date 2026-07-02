@@ -3,6 +3,7 @@ Admin dispute case management — wraps the Cloudflare D1 Worker.
 All endpoints require superuser.
 """
 import json
+import os
 import uuid
 from datetime import datetime, timedelta
 from typing import Annotated, Any, Optional
@@ -164,8 +165,8 @@ def generate_snapshot(
     stripe_charges: list[dict] = []
     stripe_invoices: list[dict] = []
     stripe_subscriptions: list[dict] = []
-    if user.stripe_customer_id and settings.STRIPE_SECRET_KEY:
-        stripe.api_key = settings.STRIPE_SECRET_KEY
+    if user.stripe_customer_id and os.getenv("STRIPE_SECRET_KEY"):
+        stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
         try:
             for ch in stripe.Charge.list(customer=user.stripe_customer_id, limit=50).data:
                 checks = {}
@@ -344,8 +345,8 @@ def get_user_evidence(
     stripe_charges: list[dict] = []
     stripe_invoices: list[dict] = []
     stripe_subscriptions: list[dict] = []
-    if user.stripe_customer_id and settings.STRIPE_SECRET_KEY:
-        stripe.api_key = settings.STRIPE_SECRET_KEY
+    if user.stripe_customer_id and os.getenv("STRIPE_SECRET_KEY"):
+        stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
         try:
             for ch in stripe.Charge.list(customer=user.stripe_customer_id, limit=50).data:
                 checks = {}
