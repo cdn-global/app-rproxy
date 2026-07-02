@@ -13,6 +13,7 @@ from app.models import (
     ProvisioningJob, ProvisioningJobPublic, RemoteServerConnectionConfig
 )
 from app.api.deps import get_current_user, get_current_active_superuser, SessionDep
+from app.core.config import settings
 from app.services.server_provisioner import server_provisioner
 from app.services.aws_provisioner import aws_provisioner
 from app.services.provisioning_jobs import run_aws_provisioning
@@ -27,7 +28,14 @@ async def seed_fleet(
     current_user: Annotated[User, Depends(get_current_user)],
     session: SessionDep,
 ) -> dict:
-    """Seed fleet servers for current user. Idempotent."""
+    """Seed fleet servers for current user. Idempotent.
+
+    Only the demo account is pre-populated with showcase servers. Every other
+    user starts with an empty fleet and zeroed metrics.
+    """
+    if (current_user.email or "").lower() != settings.DEMO_ACCOUNT_EMAIL.lower():
+        return {"message": "No seed content for this account", "created": 0}
+
     existing = session.exec(select(RemoteServer).where(
         RemoteServer.user_id == current_user.id
     ).limit(1)).first()

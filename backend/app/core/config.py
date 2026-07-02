@@ -96,6 +96,10 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
 
+    # Only this account is pre-seeded with showcase content (fleet, storage,
+    # database instances). Every other user starts empty with zeroed metrics.
+    DEMO_ACCOUNT_EMAIL: str = "nik@iconluxurygroup.com"
+
     GITHUB_CLIENT_ID: str | None = None
     GITHUB_CLIENT_SECRET: str | None = None
 

@@ -19,6 +19,7 @@ from app.models import (
     UsageRecord
 )
 from app.api.deps import get_current_user, get_current_active_superuser, SessionDep
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,14 @@ async def seed_storage(
     current_user: Annotated[User, Depends(get_current_user)],
     session: SessionDep,
 ) -> dict:
-    """Seed a default storage bucket for current user. Idempotent."""
+    """Seed a default storage bucket for current user. Idempotent.
+
+    Only the demo account is pre-populated with a showcase bucket. Every other
+    user starts with no buckets and zeroed usage.
+    """
+    if (current_user.email or "").lower() != settings.DEMO_ACCOUNT_EMAIL.lower():
+        return {"message": "No seed content for this account", "created": 0}
+
     existing = session.exec(
         select(StorageBucket).where(
             StorageBucket.user_id == current_user.id,

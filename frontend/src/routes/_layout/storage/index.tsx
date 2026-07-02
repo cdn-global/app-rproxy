@@ -15,6 +15,8 @@ import {
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 import { useStorageBuckets, useStorageUsageSummary, useDeleteBucket } from "@/hooks/useStorageAPI"
 import useCustomToast from "@/hooks/useCustomToast"
+import useAuth from "@/hooks/useAuth"
+import { isDemoAccount } from "@/utils"
 
 const numberFormatter = new Intl.NumberFormat("en-US")
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -27,6 +29,8 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 function StorageIndexPage() {
   const showToast = useCustomToast()
   const queryClient = useQueryClient()
+  const { user } = useAuth()
+  const canSeed = isDemoAccount(user?.email)
   const [seeding, setSeeding] = useState(false)
 
   const authHeaders = () => ({
@@ -35,7 +39,7 @@ function StorageIndexPage() {
 
   const { data: bucketsData, isLoading: bucketsLoading } = useStorageBuckets({
     onSuccessCallback: async (result: { data: unknown[]; count: number }) => {
-      if (result.count === 0 && !seeding) {
+      if (canSeed && result.count === 0 && !seeding) {
         setSeeding(true)
         try {
           const seedResp = await fetch("/v2/storage/seed", {

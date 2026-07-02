@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { hostingServers } from "@/data/hosting"
+import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import { isDemoAccount } from "@/utils"
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -17,7 +19,10 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 function DeviceDetailsPage() {
   const { deviceName } = useParams({ from: "/_layout/hosting/$deviceName" })
-  const server = hostingServers.find((item) => item.name === deviceName)
+  const { user } = useAuth()
+  const server = isDemoAccount(user?.email)
+    ? hostingServers.find((item) => item.name === deviceName)
+    : undefined
   const showToast = useCustomToast()
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
 

@@ -156,7 +156,7 @@ def ensure_tables_and_seed():
         _stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
         with Session(engine) as session:
             nik = session.exec(
-                select(User).where(User.email == "nik@iconluxurygroup.com")
+                select(User).where(User.email == settings.DEMO_ACCOUNT_EMAIL)
             ).first()
             if nik and nik.stripe_customer_id:
                 try:
@@ -274,12 +274,10 @@ def ensure_tables_and_seed():
     try:
         with Session(engine) as session:
             owner = session.exec(
-                select(User).where(User.email == "nik@iconluxurygroup.com").limit(1)
+                select(User).where(User.email == settings.DEMO_ACCOUNT_EMAIL).limit(1)
             ).first()
             if not owner:
-                owner = session.exec(select(User).where(User.is_superuser == True).limit(1)).first()
-            if not owner:
-                logger.warning("No user found, skipping fleet seed")
+                logger.info("Demo account not found, skipping fleet seed")
                 return
 
             # Check if already seeded with current names
@@ -325,11 +323,10 @@ def ensure_tables_and_seed():
     try:
         with Session(engine) as session:
             owner = session.exec(
-                select(User).where(User.email == "nik@iconluxurygroup.com").limit(1)
+                select(User).where(User.email == settings.DEMO_ACCOUNT_EMAIL).limit(1)
             ).first()
             if not owner:
-                owner = session.exec(select(User).where(User.is_superuser == True).limit(1)).first()
-            if not owner:
+                logger.info("Demo account not found, skipping database instance seed")
                 return
 
             existing = session.exec(

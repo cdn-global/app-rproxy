@@ -15,6 +15,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import useCustomToast from "@/hooks/useCustomToast"
+import useAuth from "@/hooks/useAuth"
+import { isDemoAccount } from "@/utils"
 import CreateServer from "../../../components/Servers/CreateServer"
 import ConfigureConnection from "../../../components/Servers/ConfigureConnection"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
@@ -51,6 +53,8 @@ interface RemoteServer {
 function HostingIndexPage() {
   const showToast = useCustomToast()
   const queryClient = useQueryClient()
+  const { user } = useAuth()
+  const canSeed = isDemoAccount(user?.email)
   const [createOpen, setCreateOpen] = useState(false)
   const [seeding, setSeeding] = useState(false)
   const [configureServer, setConfigureServer] = useState<RemoteServer | null>(null)
@@ -72,8 +76,8 @@ function HostingIndexPage() {
       if (!response.ok) throw new Error("Failed to fetch servers")
       const result = await response.json()
 
-      // Auto-seed if the user has no servers yet
-      if (result.count === 0 && !seeding) {
+      // Auto-seed showcase fleet for the demo account only
+      if (canSeed && result.count === 0 && !seeding) {
         setSeeding(true)
         try {
           const seedResp = await fetch("/v2/servers/seed", {
