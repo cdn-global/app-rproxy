@@ -14,7 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import { isDemoAccount } from "@/utils"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 // --- Mock Data for Scraping Tools ---
@@ -162,8 +164,8 @@ const months: Month[] = [
   },
 ]
 
-function calculateTotalsForMonth(month: Month) {
-  const activePlans = scrapingUsage.filter((plan) => new Date(plan.activeSince) <= month.end)
+function calculateTotalsForMonth(month: Month, plans: ScrapingPlan[]) {
+  const activePlans = plans.filter((plan) => new Date(plan.activeSince) <= month.end)
 
   const totals = services.reduce(
     (acc, service) => {
@@ -284,6 +286,10 @@ const paymentHistory: PaymentRecord[] = [
 
 const WebScrapingToolsBillingPage = () => {
   const showToast = useCustomToast()
+  const { user } = useAuth()
+  const isDemo = isDemoAccount(user?.email)
+  const plans = useMemo(() => (isDemo ? scrapingUsage : []), [isDemo])
+  const paymentRecords = useMemo(() => (isDemo ? paymentHistory : []), [isDemo])
   const [selectedMonth, setSelectedMonth] = useState<Month>(months.at(-1) ?? {
     name: "Current Month",
     start: new Date(),
@@ -300,8 +306,8 @@ const WebScrapingToolsBillingPage = () => {
     fullPriceTotals,
     fullPricePerPlanTotals,
   } = useMemo(
-    () => calculateTotalsForMonth(selectedMonth),
-    [selectedMonth],
+    () => calculateTotalsForMonth(selectedMonth, plans),
+    [selectedMonth, plans],
   )
 
   const handlePortalRedirect = async () => {
@@ -322,21 +328,21 @@ const WebScrapingToolsBillingPage = () => {
 
   const handleBillingClick = handlePortalRedirect
 
-  const succeededInvoices = paymentHistory.filter((item) => item.status === "Succeeded")
+  const succeededInvoices = paymentRecords.filter((item) => item.status === "Succeeded")
   const invoicedAmount = succeededInvoices
     .filter(({ month }) => month.name === selectedMonth.name)
     .reduce((sum, { total }) => sum + total, 0)
 
   const outstandingBalance = useMemo(() => {
-    const priorPending = paymentHistory
+    const priorPending = paymentRecords
       .filter(({ month, status }) => month.name !== selectedMonth.name && status === "Pending")
       .reduce((sum, { total }) => sum + total, 0)
     return grandTotal + priorPending - invoicedAmount
-  }, [grandTotal, invoicedAmount])
+  }, [grandTotal, invoicedAmount, paymentRecords, selectedMonth.name])
 
-  const allTimeTotal = paymentHistory.reduce((sum, { total }) => sum + total, 0)
-  const averageMonthly = allTimeTotal / months.length
-  const previousMonthTotal = paymentHistory
+  const allTimeTotal = paymentRecords.reduce((sum, { total }) => sum + total, 0)
+  const averageMonthly = months.length ? allTimeTotal / months.length : 0
+  const previousMonthTotal = paymentRecords
     .filter(({ month }) => month.name === "August 2025")
     .reduce((sum, { total }) => sum + total, 0)
   const monthOverMonthChange = previousMonthTotal
@@ -657,7 +663,7 @@ const WebScrapingToolsBillingPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paymentHistory.map((record) => (
+                  {paymentRecords.map((record) => (
                     <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
                       <TableCell className="font-medium text-slate-900 dark:text-slate-50">
                         {record.paymentDate}

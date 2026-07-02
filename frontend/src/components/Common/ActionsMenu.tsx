@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -9,9 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FiEdit, FiFileText, FiTrash } from "react-icons/fi"
+import { FiEdit, FiFileText, FiMail, FiTrash } from "react-icons/fi"
 
-import type { ItemPublic, UserPublic } from "../../client"
+import {
+  type ApiError,
+  type ItemPublic,
+  type UserPublic,
+  UsersService,
+} from "../../client"
+import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 import EditUser from "../Admin/EditUser"
 import UserEvidencePanel from "../Admin/UserEvidencePanel"
 import EditItem from "../Items/EditItem"
@@ -35,6 +43,22 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isEvidenceOpen, setIsEvidenceOpen] = useState(false)
+  const showToast = useCustomToast()
+
+  const isVerified =
+    type === "User" &&
+    Boolean((value as UserPublic & { email_verified_at?: string | null }).email_verified_at)
+
+  const resendVerificationMutation = useMutation({
+    mutationFn: () =>
+      UsersService.resendVerificationEmail({ userId: value.id }),
+    onSuccess: () => {
+      showToast("Success!", "Verification email sent.", "success")
+    },
+    onError: (err: ApiError) => {
+      handleError(err, showToast)
+    },
+  })
 
   return (
     <>
@@ -73,6 +97,19 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
               >
                 <FiFileText className="h-4 w-4" />
                 Evidence Pack
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(event) => {
+                  event.preventDefault()
+                  if (!isVerified) {
+                    resendVerificationMutation.mutate()
+                  }
+                }}
+                disabled={isVerified || resendVerificationMutation.isPending}
+                className="gap-2"
+              >
+                <FiMail className="h-4 w-4" />
+                {isVerified ? "Email verified" : "Resend verification email"}
               </DropdownMenuItem>
             </>
           )}

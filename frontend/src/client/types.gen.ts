@@ -212,6 +212,12 @@ export type UsersDeleteUserData = {
 
 export type UsersDeleteUserResponse = Message
 
+export type UsersResendVerificationEmailData = {
+  userId: string
+}
+
+export type UsersResendVerificationEmailResponse = Message
+
 export type UtilsTestEmailData = {
   emailTo: string
 }

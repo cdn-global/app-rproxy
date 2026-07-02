@@ -6,6 +6,13 @@ export const emailPattern = {
   message: "Invalid email address",
 }
 
+// Seeded demo/showcase account. Hardcoded demo metrics (fleet, usage, billing)
+// are only shown for this account; every other user starts at zero.
+export const DEMO_ACCOUNT_EMAIL = "nik@iconluxurygroup.com"
+
+export const isDemoAccount = (email?: string | null): boolean =>
+  !!email && email.toLowerCase() === DEMO_ACCOUNT_EMAIL
+
 export const namePattern = {
   value: /^[A-Za-z\s\u00C0-\u017F]{1,30}$/,
   message: "Invalid name",

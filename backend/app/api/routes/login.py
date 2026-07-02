@@ -1,9 +1,10 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 
 from app import crud
 from app.api.deps import CurrentUser, SessionDep, extract_client_ip, get_current_active_superuser
@@ -12,9 +13,12 @@ from app.core.config import settings
 from app.core.security import get_password_hash
 from app.models import LoginLog, Message, NewPassword, Token, UserPublic
 from app.utils import (
+    generate_email_verification_token,
     generate_password_reset_token,
     generate_reset_password_email,
+    generate_verification_email,
     send_email,
+    verify_email_verification_token,
     verify_password_reset_token,
 )
 
@@ -159,3 +163,56 @@ def recover_password_html_content(email: str, session: SessionDep) -> Any:
     return HTMLResponse(
         content=email_data.html_content, headers={"subject:": email_data.subject}
     )
+
+
+class VerifyEmailRequest(BaseModel):
+    token: str
+
+
+@router.post("/verify-email")
+def verify_email(session: SessionDep, body: VerifyEmailRequest) -> Message:
+    """
+    Confirm a user's email address using a verification token.
+    """
+    email = verify_email_verification_token(token=body.token)
+    if not email:
+        raise HTTPException(
+            status_code=400, detail="Invalid or expired verification token"
+        )
+    user = crud.get_user_by_email(session=session, email=email)
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this email does not exist in the system.",
+        )
+    if user.email_verified_at is None:
+        user.email_verified_at = datetime.utcnow()
+        session.add(user)
+        session.commit()
+    return Message(message="Email verified successfully")
+
+
+@router.post("/verify-email/resend")
+def resend_verification_email(
+    session: SessionDep,
+    current_user: CurrentUser,
+    background_tasks: BackgroundTasks,
+) -> Message:
+    """
+    Resend the email verification link to the currently authenticated user.
+    """
+    if current_user.email_verified_at is not None:
+        return Message(message="Email is already verified")
+    token = generate_email_verification_token(email=current_user.email)
+    email_data = generate_verification_email(
+        email_to=current_user.email,
+        token=token,
+        username=current_user.full_name or current_user.email.split("@")[0],
+    )
+    background_tasks.add_task(
+        send_email,
+        email_to=current_user.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+    return Message(message="Verification email sent")

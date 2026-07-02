@@ -35,6 +35,8 @@ import type {
   UsersReadUsersResponse,
   UsersRegisterUserData,
   UsersRegisterUserResponse,
+  UsersResendVerificationEmailData,
+  UsersResendVerificationEmailResponse,
   UsersUpdatePasswordMeData,
   UsersUpdatePasswordMeResponse,
   UsersUpdateUserData,
@@ -475,6 +477,29 @@ export class UsersService {
     return __request(OpenAPI, {
       method: "DELETE",
       url: "/v2/users/{user_id}",
+      path: {
+        user_id: data.userId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Resend Verification Email
+   * Resend the account activation / email verification email to a user.
+   * @param data The data for the request.
+   * @param data.userId
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static resendVerificationEmail(
+    data: UsersResendVerificationEmailData,
+  ): CancelablePromise<UsersResendVerificationEmailResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/v2/users/{user_id}/resend-verification",
       path: {
         user_id: data.userId,
       },

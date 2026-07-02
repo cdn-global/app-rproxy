@@ -46,6 +46,8 @@ import UsageInsights from "@/components/Dashboard/UsageInsights"
 import ChartsSection from "@/components/Dashboard/ChartsSection"
 import { calculateDashboardStats } from "@/lib/dashboardUtils"
 import useCustomToast from "@/hooks/useCustomToast"
+import useAuth from "@/hooks/useAuth"
+import { isDemoAccount } from "@/utils"
 
 type FeatureMeta = {
   name: string
@@ -532,6 +534,8 @@ const Dashboard = () => {
     })
     .join(" ")
   const showToast = useCustomToast()
+  const { user } = useAuth()
+  const demoAccount = isDemoAccount(user?.email)
 
   const {
     data: subscriptions,
@@ -578,15 +582,19 @@ const Dashboard = () => {
     [totalRequests],
   )
 
+  const activeServers = useMemo(
+    () => (demoAccount ? servers : []),
+    [demoAccount],
+  )
   const totalMonthlySpend = useMemo(
-    () => servers.reduce((sum, s) => sum + s.monthlyComputePrice, 0),
-    [],
+    () => activeServers.reduce((sum, s) => sum + s.monthlyComputePrice, 0),
+    [activeServers],
   )
   const connectedServers = useMemo(
-    () => servers.filter((server) => server.status === "Connected").length,
-    [],
+    () => activeServers.filter((server) => server.status === "Connected").length,
+    [activeServers],
   )
-  const offlineServers = servers.length - connectedServers
+  const offlineServers = activeServers.length - connectedServers
   const apiKeyCount = Array.isArray(apiKeys) ? apiKeys.length : 0
   const averageRequestsPerKey = apiKeyCount
     ? Math.round(totalRequests / apiKeyCount)
@@ -598,9 +606,9 @@ const Dashboard = () => {
         totalRequests,
         totalDataGB,
         totalMonthlySpend,
-        servers,
+        activeServers,
       ),
-    [totalRequests, totalDataGB, totalMonthlySpend],
+    [totalRequests, totalDataGB, totalMonthlySpend, activeServers],
   )
 
   const nextRenewal = useMemo(() => {

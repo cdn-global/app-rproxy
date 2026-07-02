@@ -4,7 +4,6 @@ import { useEffect } from "react"
 import { z } from "zod"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -37,7 +36,7 @@ export const Route = createFileRoute("/_layout/admin")({
   validateSearch: (search): UsersSearch => usersSearchSchema.parse(search),
 })
 
-const PER_PAGE = 5
+const PER_PAGE = 25
 
 function getUsersQueryOptions({ page }: { page: number }) {
   return {
@@ -167,75 +166,38 @@ function UsersTable() {
 
 function Admin() {
   const navigation: SectionNavItem[] = [
-    {
-      id: "team-actions",
-      label: "Team toolkit",
-      description: "Invite, elevate, or retire operator access in one place.",
-    },
-    {
-      id: "directory",
-      label: "Account directory",
-      description: "Browse every workspace identity and audit their status.",
-    },
-    {
-      id: "disputes",
-      label: "Dispute cases",
-      description: "Manage chargeback cases and generate evidence packs.",
-    },
+    { id: "team-actions", label: "Team toolkit" },
+    { id: "directory", label: "Account directory" },
+    { id: "disputes", label: "Dispute cases" },
   ]
 
   return (
     <PageScaffold
       sidebar={
         <>
-          <div className="rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
+          <div className="rounded-[28px] border border-slate-200/70 bg-white/70 p-6 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-[0_30px_80px_-45px_rgba(15,23,42,0.7)]">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-500 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-400">
               <span>Operations</span>
               <span className="h-1 w-1 rounded-full bg-slate-400" aria-hidden="true" />
               <span>Admin</span>
             </div>
-            <div className="mt-5 space-y-3">
-              <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-                Team Administration
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Direct operator permissions and remove blockers before they impact production traffic.
-              </p>
-            </div>
-            <div className="mt-6 space-y-3 text-xs text-slate-500 dark:text-slate-500">
-              <p>
-                Promote superusers for elevated tooling, archive dormant accounts, and confirm billing contacts without leaving this workspace.
-              </p>
-              <p>
-                Activity logs and SCIM provisioning integrate next, mirroring updates across dashboards and audit trails.
-              </p>
-            </div>
+            <h1 className="mt-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
+              Administration
+            </h1>
           </div>
           <SectionNavigation items={navigation} />
         </>
       }
     >
-      <PageSection
-        id="team-actions"
-        title="Administration toolkit"
-        description="Spin up invites, issue privileges, and coordinate billing ownership."
-      >
+      <PageSection id="team-actions" title="Team toolkit">
         <Navbar type="User" addModalAs={AddUser} />
       </PageSection>
 
-      <PageSection
-        id="directory"
-        title="Account directory"
-        description="Audit the full roster, confirm access scopes, and hand off follow-up tasks."
-      >
+      <PageSection id="directory" title="Account directory">
         <UsersTable />
       </PageSection>
 
-      <PageSection
-        id="disputes"
-        title="Dispute cases"
-        description="Open chargeback cases, seed historical evidence, generate PDF evidence packs."
-      >
+      <PageSection id="disputes" title="Dispute cases">
         <DisputeCasePanel />
       </PageSection>
     </PageScaffold>

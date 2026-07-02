@@ -18,7 +18,9 @@ import {
   hostingServers,
   type HostingServer,
 } from "@/data/hosting"
+import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import { isDemoAccount } from "@/utils"
 import PageScaffold, { PageSection } from "../../../components/Common/PageLayout"
 
 const servers: HostingServer[] = hostingServers
@@ -123,8 +125,8 @@ const months: Month[] = [
   },
 ]
 
-function calculateTotalsForMonth(month: Month) {
-  const activeServers = servers.filter((server) => new Date(server.activeSince) <= month.end)
+function calculateTotalsForMonth(month: Month, serverList: HostingServer[]) {
+  const activeServers = serverList.filter((server) => new Date(server.activeSince) <= month.end)
 
   const totals = services.reduce(
     (acc, service) => {
@@ -494,6 +496,10 @@ const paymentHistory: PaymentRecord[] = [
 ]
 
 const BillingPage = () => {
+  const { user } = useAuth()
+  const isDemo = isDemoAccount(user?.email)
+  const gatedServers = useMemo(() => (isDemo ? servers : []), [isDemo])
+  const paymentRecords = useMemo(() => (isDemo ? paymentHistory : []), [isDemo])
   const [selectedMonth, setSelectedMonth] = useState<Month>(months.at(-1) ?? {
     name: "Current Month",
     start: new Date(),
@@ -508,7 +514,7 @@ const BillingPage = () => {
     fullPriceTotals,
     fullGrandTotal,
     fullPricePerServerTotals,
-  } = useMemo(() => calculateTotalsForMonth(selectedMonth), [selectedMonth])
+  } = useMemo(() => calculateTotalsForMonth(selectedMonth, gatedServers), [selectedMonth, gatedServers])
 
   const [token] = useState<string | null>(() =>
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null,
@@ -543,22 +549,22 @@ const BillingPage = () => {
     }
   }, [token, showToast])
 
-  const succeededInvoices = paymentHistory.filter((item) => item.status === "Succeeded")
+  const succeededInvoices = paymentRecords.filter((item) => item.status === "Succeeded")
   const invoicedAmount = succeededInvoices
     .filter(({ month }) => month.name === selectedMonth.name)
     .reduce((sum, { total }) => sum + total, 0)
-  const pendingInvoices = paymentHistory.filter((item) => item.status === "Pending")
+  const pendingInvoices = paymentRecords.filter((item) => item.status === "Pending")
 
   const outstandingBalance = useMemo(() => {
-    const priorPending = paymentHistory
+    const priorPending = paymentRecords
       .filter(({ month, status }) => month.name !== selectedMonth.name && status === "Pending")
       .reduce((sum, { total }) => sum + total, 0)
     return grandTotal + priorPending - invoicedAmount
-  }, [grandTotal, invoicedAmount])
+  }, [grandTotal, invoicedAmount, paymentRecords, selectedMonth.name])
 
-  const allTimeTotal = paymentHistory.reduce((sum, { total }) => sum + total, 0)
-  const averageMonthly = allTimeTotal / months.length
-  const previousMonthTotal = paymentHistory
+  const allTimeTotal = paymentRecords.reduce((sum, { total }) => sum + total, 0)
+  const averageMonthly = months.length ? allTimeTotal / months.length : 0
+  const previousMonthTotal = paymentRecords
     .filter(({ month }) => month.name === "August 2025")
     .reduce((sum, { total }) => sum + total, 0)
   const monthOverMonthChange = previousMonthTotal
@@ -588,17 +594,29 @@ const BillingPage = () => {
     },
   ]
 
-  const billingAddress = {
-    name: "Nik Popov",
-    email: "nik@iconluxurygroup.com",
-    subscriptionId: "sub_1RCL5ELqozOkbqR8Th4HaVMb",
-    line1: "599 Broadway, floor 3",
-    city: "New York",
-    state: "NY",
-    postalCode: "10012",
-    country: "United States",
-    phone: "(212) 595-3915",
-  }
+  const billingAddress = isDemo
+    ? {
+        name: "Nik Popov",
+        email: "nik@iconluxurygroup.com",
+        subscriptionId: "sub_1RCL5ELqozOkbqR8Th4HaVMb",
+        line1: "599 Broadway, floor 3",
+        city: "New York",
+        state: "NY",
+        postalCode: "10012",
+        country: "United States",
+        phone: "(212) 595-3915",
+      }
+    : {
+        name: user?.full_name ?? "",
+        email: user?.email ?? "",
+        subscriptionId: "",
+        line1: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+        phone: "",
+      }
 
   return (
     <PageScaffold sidebar={null}>
@@ -891,7 +909,7 @@ const BillingPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paymentHistory.map((record) => (
+                  {paymentRecords.map((record) => (
                     <TableRow key={record.invoiceId} className="border-slate-200/70 dark:border-slate-700/60">
                       <TableCell className="font-medium text-slate-900 dark:text-slate-50">
                         {record.paymentDate}

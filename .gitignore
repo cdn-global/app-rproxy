@@ -7,6 +7,10 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 
+# build output
+frontend/dist/
+dist/
+
 # wrangler files
 .wrangler
 .dev.vars*

@@ -14,7 +14,7 @@ from app.api.deps import (
     get_current_active_superuser,
 )
 from app.core.config import settings
-from app.core.security import get_password_hash, verify_password
+from app.core.security import get_password_hash, verify_password, create_access_token
 from app.models import (
     Item,
     Message,
@@ -29,7 +29,12 @@ from app.models import (
 )
 from pydantic import BaseModel
 from typing import Optional
-from app.utils import generate_new_account_email, send_email
+from app.utils import (
+    generate_email_verification_token,
+    generate_new_account_email,
+    generate_verification_email,
+    send_email,
+)
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -270,6 +275,24 @@ def register_user(
     session.refresh(user)
 
     logger.debug(f"User created: {user.id}")
+
+    # Send email verification link (soft verification; login is not blocked)
+    try:
+        verification_token = generate_email_verification_token(email=user.email)
+        email_data = generate_verification_email(
+            email_to=user.email,
+            token=verification_token,
+            username=user.full_name or user.email.split("@")[0],
+        )
+        background_tasks.add_task(
+            send_email,
+            email_to=user.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+    except Exception as e:
+        logger.error(f"Failed to schedule verification email for {user.email}: {e}")
+
     background_tasks.add_task(check_subscription_expirations, session)
     logger.debug("Background task scheduled")
     return user
@@ -336,6 +359,60 @@ def update_user(
     
     background_tasks.add_task(check_subscription_expirations, session)
     return db_user
+
+@router.post(
+    "/{user_id}/resend-verification",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=Message,
+)
+def resend_verification_email(
+    *,
+    session: SessionDep,
+    user_id: uuid.UUID,
+    background_tasks: BackgroundTasks,
+) -> Any:
+    """Resend the account activation / email verification email to a user (Admin only)."""
+    # Imported locally to avoid a circular import between the users and checkout routers.
+    from app.api.routes.checkout import generate_activation_email, send_email_with_retry
+
+    logger.debug(f"Resending verification email for user_id: {user_id}")
+    db_user = session.get(User, user_id)
+    if not db_user:
+        logger.info(f"User {user_id} not found")
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this id does not exist in the system",
+        )
+    if db_user.email_verified_at:
+        logger.info(f"User {user_id} email already verified")
+        raise HTTPException(
+            status_code=400,
+            detail="This user's email address is already verified.",
+        )
+    if not settings.emails_enabled:
+        logger.warning("Email sending is disabled in settings")
+        raise HTTPException(
+            status_code=400,
+            detail="Email sending is disabled in the server settings.",
+        )
+
+    token = create_access_token(
+        subject=str(db_user.id),
+        expires_delta=timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS),
+    )
+    email_data = generate_activation_email(
+        email_to=db_user.email,
+        token=token,
+        username=db_user.full_name or db_user.email,
+    )
+    background_tasks.add_task(
+        send_email_with_retry,
+        email_to=db_user.email,
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+    logger.info(f"Scheduled verification email for user {db_user.id} ({db_user.email})")
+    return Message(message="Verification email sent")
 
 @router.delete("/{user_id}", dependencies=[Depends(get_current_active_superuser)])
 def delete_user(

@@ -85,6 +85,7 @@ class Settings(BaseSettings):
         return self
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    EMAIL_VERIFICATION_TOKEN_EXPIRE_HOURS: int = 48
 
     @computed_field
     @property

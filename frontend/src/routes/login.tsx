@@ -168,6 +168,15 @@ function Login() {
             </form>
           </div>
           <p className="px-8 text-center text-sm text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <RouterLink
+              to="/signup"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Sign up
+            </RouterLink>
+          </p>
+          <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <RouterLink
               to="/terms"
