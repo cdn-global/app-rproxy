@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import col, delete, func, select
 
 from app import crud
@@ -434,6 +435,14 @@ def delete_user(
     statement = delete(Item).where(col(Item.owner_id) == user_id)
     session.exec(statement)
     session.delete(user)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        logger.exception(f"Failed to delete user {user_id} due to related records")
+        raise HTTPException(
+            status_code=409,
+            detail="User could not be deleted because related records still reference it.",
+        )
     logger.debug("User deleted")
     return Message(message="User deleted successfully")

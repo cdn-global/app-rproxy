@@ -149,7 +149,7 @@ class UsageRecord(SQLModel, table=True):
     """Tracks usage for Stripe metered billing"""
     __tablename__ = "usage_record"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     resource_type: str = Field(max_length=50)  # "server", "database", "inference"
     resource_id: uuid.UUID  # ID of the specific resource
     quantity: float  # hours, GB, tokens
@@ -176,7 +176,7 @@ class RemoteServer(SQLModel, table=True):
     """Leased servers for users"""
     __tablename__ = "remote_server"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     name: str = Field(max_length=255)
     server_type: str = Field(max_length=50)  # "ssh", "gpu", "inference"
     hosting_provider: str = Field(default="docker", max_length=50)  # "docker" or "aws"
@@ -260,7 +260,7 @@ class ProvisioningJob(SQLModel, table=True):
     """Tracks async provisioning jobs so users can poll for status"""
     __tablename__ = "provisioning_job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     resource_type: str = Field(max_length=50)  # "server", "database"
     resource_id: uuid.UUID  # The server or database instance ID
     status: str = Field(default="pending", max_length=50)  # pending, running, completed, failed
@@ -291,7 +291,7 @@ class DatabaseInstance(SQLModel, table=True):
     """Managed PostgreSQL instances"""
     __tablename__ = "database_instance"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     instance_name: str = Field(max_length=255)
     postgres_version: str = Field(default="16", max_length=10)
     storage_gb: int = Field(default=10)
@@ -391,7 +391,7 @@ class ModelUsage(SQLModel, table=True):
     model_config = ConfigDict(protected_namespaces=())
     __tablename__ = "model_usage"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     model_id: uuid.UUID = Field(foreign_key="inference_model.id", nullable=False)
     prompt_tokens: int = Field(default=0)
     completion_tokens: int = Field(default=0)
@@ -449,7 +449,7 @@ class StorageBucket(SQLModel, table=True):
     """S3-compatible object storage buckets"""
     __tablename__ = "storage_bucket"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     bucket_name: str = Field(max_length=255, unique=True, index=True)
     region: str = Field(default="us-east-1", max_length=50)
     storage_class: str = Field(default="standard", max_length=50)  # standard, glacier, intelligent
@@ -508,7 +508,7 @@ class StorageObject(SQLModel, table=True):
     __tablename__ = "storage_object"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     bucket_id: uuid.UUID = Field(foreign_key="storage_bucket.id", nullable=False)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     object_key: str = Field(max_length=1024)  # S3 key path
     size_bytes: int = Field(default=0)
     content_type: Optional[str] = Field(default=None, max_length=255)
@@ -699,7 +699,7 @@ class UserApiKey(SQLModel, table=True):
     """API keys that users create to access the product REST API"""
     __tablename__ = "user_api_key"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True, ondelete="CASCADE")
     name: str = Field(max_length=100)
     key_prefix: str = Field(max_length=10)  # e.g. "rp_a1b2c3"
     hashed_key: str = Field(max_length=255)
@@ -743,7 +743,7 @@ class LLMUsageLog(SQLModel, table=True):
 
     __tablename__ = "llm_usage_log"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True, ondelete="CASCADE")
     model_id: uuid.UUID = Field(foreign_key="llm_model.id", nullable=False)
     conversation_id: Optional[uuid.UUID] = Field(foreign_key="conversation.id", nullable=True)
     message_id: Optional[uuid.UUID] = Field(foreign_key="llm_message.id", nullable=True)
