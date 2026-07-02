@@ -68,6 +68,7 @@ export type UserPublic = {
   is_superuser?: boolean
   full_name?: string | null
   id: string
+  email_verified_at?: string | null
 }
 
 export type UserRegister = {

@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
+import EmailVerificationBanner from "../components/Common/EmailVerificationBanner"
 import Footer from "../components/Common/Footer"
 import SideNav from "../components/Common/SideNav"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
@@ -31,7 +32,10 @@ function Layout() {
               <Spinner size={48} />
             </div>
           ) : (
-            <Outlet />
+            <>
+              <EmailVerificationBanner />
+              <Outlet />
+            </>
           )}
         </main>
       </div>
