@@ -72,6 +72,24 @@ interface EvidenceData {
   }>
   generated_at: string
   generated_by: string
+  // Fraud analysis (optional)
+  ip_geolocations?: Record<string, {
+    country: string | null
+    region: string | null
+    city: string | null
+    isp: string | null
+    org: string | null
+  }>
+  ua_summary?: Array<{
+    user_agent: string
+    count: number
+    first_seen: string | null
+    last_seen: string | null
+  }>
+  first_api_request_at?: string | null
+  last_api_request_at?: string | null
+  total_api_requests_in_period?: number
+  fraud_narrative?: string
 }
 
 const C = {
@@ -141,7 +159,8 @@ export function EvidencePackPDF({ data }: { data: EvidenceData }) {
   const successLogins = data.login_logs.filter((l) => l.success).length
   const dayRange = data.llm_period_days
 
-  const narrative =
+  // Prefer the backend-computed narrative (includes geolocation); fall back to client-side
+  const narrative = data.fraud_narrative ??
     `Account "${data.email}" was created on ${fmt(data.created_at)} from IP ${data.signup_ip ?? "unknown"}. ` +
     `Terms of Service accepted: ${fmt(data.tos_accepted_at)}. ` +
     `Email verified: ${fmt(data.email_verified_at)}. ` +
@@ -153,6 +172,9 @@ export function EvidencePackPDF({ data }: { data: EvidenceData }) {
         `CVV: ${data.stripe_charges[0].cvv_check ?? "N/A"}, AVS ZIP: ${data.stripe_charges[0].address_postal_check ?? "N/A"}, ` +
         `Stripe Radar score: ${data.stripe_charges[0].risk_score ?? "N/A"} (${data.stripe_charges[0].risk_level ?? "N/A"}).`
       : "No Stripe charges found in this period.")
+
+  const geoEntries = Object.entries(data.ip_geolocations ?? {})
+  const uaEntries = data.ua_summary ?? []
 
   return (
     <Document title={`Evidence Pack — ${data.email}`} author="ROAMINGPROXY.com">
@@ -295,6 +317,54 @@ export function EvidencePackPDF({ data }: { data: EvidenceData }) {
                   <Text style={s.td}><Badge v={inv.status} yes="paid" /></Text>
                   <Text style={[s.td, { flex: 2 }]}>{fmt(inv.period_start)}</Text>
                   <Text style={[s.td, { flex: 2 }]}>{fmt(inv.period_end)}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* IP Geolocation */}
+        {geoEntries.length > 0 && (
+          <View style={s.section} wrap={false}>
+            <Text style={s.sectionTitle}>IP Geolocation (Location Consistency)</Text>
+            <View style={s.table}>
+              <View style={s.thead}>
+                <Text style={[s.th, { flex: 2 }]}>IP Address</Text>
+                <Text style={[s.th, { flex: 2 }]}>City</Text>
+                <Text style={[s.th, { flex: 2 }]}>Region</Text>
+                <Text style={[s.th, { flex: 2 }]}>Country</Text>
+                <Text style={[s.th, { flex: 3 }]}>ISP</Text>
+              </View>
+              {geoEntries.map(([ip, geo], i) => (
+                <View key={ip} style={i < geoEntries.length - 1 ? s.tr : s.trLast}>
+                  <Text style={[s.td, { flex: 2 }]}>{ip}{ip === data.signup_ip ? " (signup)" : ""}</Text>
+                  <Text style={[s.td, { flex: 2 }]}>{geo.city ?? "—"}</Text>
+                  <Text style={[s.td, { flex: 2 }]}>{geo.region ?? "—"}</Text>
+                  <Text style={[s.td, { flex: 2 }]}>{geo.country ?? "—"}</Text>
+                  <Text style={[s.td, { flex: 3 }]}>{geo.isp ?? "—"}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Device / Browser fingerprint */}
+        {uaEntries.length > 0 && (
+          <View style={s.section} wrap={false}>
+            <Text style={s.sectionTitle}>Device / Browser Fingerprint Consistency</Text>
+            <View style={s.table}>
+              <View style={s.thead}>
+                <Text style={[s.th, { flex: 4 }]}>User Agent</Text>
+                <Text style={s.th}>Uses</Text>
+                <Text style={[s.th, { flex: 2 }]}>First Seen</Text>
+                <Text style={[s.th, { flex: 2 }]}>Last Seen</Text>
+              </View>
+              {uaEntries.slice(0, 15).map((ua, i) => (
+                <View key={i} style={i < Math.min(uaEntries.length, 15) - 1 ? s.tr : s.trLast}>
+                  <Text style={[s.td, { flex: 4 }]}>{ua.user_agent.slice(0, 70)}</Text>
+                  <Text style={s.td}>{ua.count}</Text>
+                  <Text style={[s.td, { flex: 2 }]}>{fmt(ua.first_seen)}</Text>
+                  <Text style={[s.td, { flex: 2 }]}>{fmt(ua.last_seen)}</Text>
                 </View>
               ))}
             </View>

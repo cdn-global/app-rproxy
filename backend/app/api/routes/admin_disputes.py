@@ -8,6 +8,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Annotated, Any, Optional
 
+import httpx
 import stripe
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -27,6 +28,108 @@ from app.models import (
 from app.services import dispute_service
 
 router = APIRouter(prefix="/admin/disputes", tags=["admin-disputes"])
+
+
+# ── Fraud-analysis helpers ────────────────────────────────────────────────────
+
+def geolocate_ips(ips: list[str]) -> dict[str, dict]:
+    """Resolve up to 100 IPs to geolocation via ip-api.com free batch endpoint.
+    No API key required. Returns {ip: {country, region, city, isp, org, lat, lon}}."""
+    unique = [ip for ip in dict.fromkeys(ips) if ip and ip not in ("127.0.0.1", "::1")]
+    if not unique:
+        return {}
+    result: dict[str, dict] = {}
+    # ip-api batch accepts max 100 per call
+    for i in range(0, len(unique), 100):
+        chunk = unique[i:i + 100]
+        try:
+            resp = httpx.post(
+                "http://ip-api.com/batch?fields=status,country,regionName,city,isp,org,lat,lon,query",
+                json=chunk,
+                timeout=10,
+            )
+            if resp.status_code == 200:
+                for entry in resp.json():
+                    if entry.get("status") == "success":
+                        result[entry["query"]] = {
+                            "country": entry.get("country"),
+                            "region": entry.get("regionName"),
+                            "city": entry.get("city"),
+                            "isp": entry.get("isp"),
+                            "org": entry.get("org"),
+                            "lat": entry.get("lat"),
+                            "lon": entry.get("lon"),
+                        }
+        except Exception:
+            pass
+    return result
+
+
+def build_ua_summary(entries: list[tuple[Optional[str], datetime]]) -> list[dict]:
+    """Group (user_agent, timestamp) pairs into fingerprint consistency records."""
+    grouped: dict[str, dict] = {}
+    for ua, ts in entries:
+        key = ua or "unknown"
+        if key not in grouped:
+            grouped[key] = {"user_agent": key, "count": 0, "first_seen": ts, "last_seen": ts}
+        grouped[key]["count"] += 1
+        if ts < grouped[key]["first_seen"]:
+            grouped[key]["first_seen"] = ts
+        if ts > grouped[key]["last_seen"]:
+            grouped[key]["last_seen"] = ts
+    out = []
+    for g in grouped.values():
+        out.append({
+            "user_agent": g["user_agent"],
+            "count": g["count"],
+            "first_seen": g["first_seen"].isoformat() if g["first_seen"] else None,
+            "last_seen": g["last_seen"].isoformat() if g["last_seen"] else None,
+        })
+    return sorted(out, key=lambda x: x["count"], reverse=True)
+
+
+def build_fraud_narrative(
+    *, email: str, full_name: Optional[str], created_at: Optional[datetime],
+    signup_ip: Optional[str], signup_geo: Optional[dict], email_verified_at: Optional[datetime],
+    login_count: int, day_span: int, total_api_requests: int, total_cost: float,
+    top_charge: Optional[dict],
+) -> str:
+    """Machine-generated paragraph for pasting into the dispute response portal."""
+    geo_str = ""
+    if signup_geo:
+        geo_str = f" ({signup_geo.get('city') or '?'}, {signup_geo.get('country') or '?'})"
+
+    parts = [
+        f"Account \"{email}\" was created on "
+        f"{created_at.strftime('%B %d, %Y at %H:%M UTC') if created_at else 'an unknown date'} "
+        f"from IP {signup_ip or 'unknown'}{geo_str}.",
+    ]
+    if email_verified_at:
+        parts.append(f"The account holder verified their email address on {email_verified_at.strftime('%B %d, %Y')}.")
+    parts.append(
+        f"The account was accessed {login_count} time(s) over {day_span} day(s), "
+        f"generating {total_api_requests} API request(s) with a total computed compute value of ${total_cost:.2f}."
+    )
+    if top_charge:
+        cvv = top_charge.get("cvv_check")
+        avs = top_charge.get("address_postal_check")
+        rs = top_charge.get("risk_score")
+        rl = top_charge.get("risk_level")
+        bn = top_charge.get("billing_name")
+        seg = "At the time of payment,"
+        if rs is not None:
+            seg += f" Stripe Radar assigned a risk score of {rs}/100 ({rl})."
+        if cvv:
+            seg += f" CVV check: {cvv}."
+        if avs:
+            seg += f" AVS postal check: {avs}."
+        parts.append(seg)
+        if bn and full_name and bn.strip().lower() == full_name.strip().lower():
+            parts.append(f"The billing name ({bn}) matches the registered account name ({full_name}).")
+        elif bn:
+            parts.append(f"Billing name on card: {bn}.")
+    return " ".join(parts)
+
 
 SuperUser = Annotated[User, Depends(get_current_active_superuser)]
 
@@ -415,7 +518,7 @@ def get_user_evidence(
         except Exception:
             pass
 
-    return {
+    result = {
         "user_id": str(user.id),
         "email": user.email,
         "full_name": user.full_name,
@@ -452,6 +555,56 @@ def get_user_evidence(
         "generated_at": datetime.utcnow().isoformat(),
         "generated_by": current_user.email,
     }
+
+    # ── Fraud-analysis enrichment ─────────────────────────────────────────────
+    # Collect all unique IPs (signup + logins + api requests)
+    all_ips: list[str] = []
+    if user.signup_ip:
+        all_ips.append(user.signup_ip)
+    all_ips.extend(r.ip_address for r in login_rows if r.ip_address)
+    all_ips.extend(r.ip_address for r in req_logs if r.ip_address)
+    geolocations = geolocate_ips(all_ips)
+
+    # UA fingerprint consistency across logins + api requests
+    ua_entries: list[tuple[Optional[str], datetime]] = []
+    ua_entries.extend((r.user_agent, r.created_at) for r in login_rows)
+    ua_entries.extend((r.user_agent, r.created_at) for r in req_logs)
+    ua_summary = build_ua_summary(ua_entries)
+
+    # First / last API request timestamps
+    all_req_times = [r.created_at for r in req_logs]
+    first_api = min(all_req_times).isoformat() if all_req_times else None
+    last_api = max(all_req_times).isoformat() if all_req_times else None
+
+    # Day span of account activity
+    activity_times = [r.created_at for r in login_rows] + all_req_times
+    if activity_times:
+        day_span = max((max(activity_times) - min(activity_times)).days, 1)
+    else:
+        day_span = 0
+
+    top_charge = stripe_charges[0] if stripe_charges else None
+    fraud_narrative = build_fraud_narrative(
+        email=user.email,
+        full_name=user.full_name,
+        created_at=user.created_at,
+        signup_ip=user.signup_ip,
+        signup_geo=geolocations.get(user.signup_ip) if user.signup_ip else None,
+        email_verified_at=user.email_verified_at,
+        login_count=len([r for r in login_rows if r.success]),
+        day_span=day_span,
+        total_api_requests=len(req_logs),
+        total_cost=sum(r.total_cost for r in usage_rows),
+        top_charge=top_charge,
+    )
+
+    result["ip_geolocations"] = geolocations
+    result["ua_summary"] = ua_summary
+    result["first_api_request_at"] = first_api
+    result["last_api_request_at"] = last_api
+    result["total_api_requests_in_period"] = len(req_logs)
+    result["fraud_narrative"] = fraud_narrative
+
     return result
 
 

@@ -48,6 +48,30 @@ interface EvidenceData {
   stripe_subscriptions: StripeSub[]
   generated_at: string
   generated_by: string
+  // Fraud analysis (optional — computed at request time)
+  ip_geolocations?: Record<string, GeoEntry>
+  ua_summary?: UaEntry[]
+  first_api_request_at?: string | null
+  last_api_request_at?: string | null
+  total_api_requests_in_period?: number
+  fraud_narrative?: string
+}
+
+interface GeoEntry {
+  country: string | null
+  region: string | null
+  city: string | null
+  isp: string | null
+  org: string | null
+  lat: number | null
+  lon: number | null
+}
+
+interface UaEntry {
+  user_agent: string
+  count: number
+  first_seen: string | null
+  last_seen: string | null
 }
 
 interface LoginEntry {
@@ -225,6 +249,7 @@ export default function UserEvidencePanel({ user, isOpen, onClose }: UserEvidenc
               <TabsTrigger value="charges">
                 Charges <Badge variant="outline" className="ml-1">{data.stripe_charges.length}</Badge>
               </TabsTrigger>
+              <TabsTrigger value="fraud">Fraud Analysis</TabsTrigger>
             </TabsList>
 
             {/* ── Overview ──────────────────────────────────────────────── */}
@@ -487,6 +512,108 @@ export default function UserEvidencePanel({ user, isOpen, onClose }: UserEvidenc
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            </TabsContent>
+
+            {/* ── Fraud Analysis ───────────────────────────────────────── */}
+            <TabsContent value="fraud" className="mt-4 space-y-4">
+              {data.fraud_narrative && (
+                <div className="rounded-lg border-l-4 border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400 mb-2">
+                    Fraud Defense Narrative (copy into dispute response)
+                  </p>
+                  <p className="text-sm leading-relaxed text-foreground">{data.fraud_narrative}</p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="mt-3"
+                    onClick={() => {
+                      navigator.clipboard.writeText(data.fraud_narrative ?? "")
+                    }}
+                  >
+                    Copy narrative
+                  </Button>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  ["First API Request", fmt(data.first_api_request_at)],
+                  ["Last API Request", fmt(data.last_api_request_at)],
+                  ["Requests in Period", (data.total_api_requests_in_period ?? 0).toLocaleString()],
+                ].map(([k, v]) => (
+                  <div key={k} className="rounded-lg border p-3 text-center">
+                    <div className="text-sm font-semibold">{v}</div>
+                    <div className="text-xs text-muted-foreground mt-1">{k}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* IP Geolocation */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  IP Geolocation ({Object.keys(data.ip_geolocations ?? {}).length} unique IPs)
+                </p>
+                <div className="overflow-auto rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>IP Address</TableHead>
+                        <TableHead>City</TableHead>
+                        <TableHead>Region</TableHead>
+                        <TableHead>Country</TableHead>
+                        <TableHead>ISP</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Object.keys(data.ip_geolocations ?? {}).length === 0 ? (
+                        <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No geolocation data</TableCell></TableRow>
+                      ) : Object.entries(data.ip_geolocations ?? {}).map(([ip, geo]) => (
+                        <TableRow key={ip}>
+                          <TableCell className="font-mono text-xs">
+                            {ip}
+                            {ip === data.signup_ip && <Badge variant="outline" className="ml-2 text-[10px]">signup</Badge>}
+                          </TableCell>
+                          <TableCell className="text-xs">{geo.city ?? "—"}</TableCell>
+                          <TableCell className="text-xs">{geo.region ?? "—"}</TableCell>
+                          <TableCell className="text-xs">{geo.country ?? "—"}</TableCell>
+                          <TableCell className="text-xs">{geo.isp ?? "—"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* UA fingerprint */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  Device / Browser Fingerprints
+                </p>
+                <div className="overflow-auto rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User Agent</TableHead>
+                        <TableHead>Uses</TableHead>
+                        <TableHead>First Seen</TableHead>
+                        <TableHead>Last Seen</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(data.ua_summary ?? []).length === 0 ? (
+                        <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">No fingerprint data</TableCell></TableRow>
+                      ) : (data.ua_summary ?? []).map((ua, i) => (
+                        <TableRow key={i}>
+                          <TableCell className="text-xs max-w-md truncate" title={ua.user_agent}>{ua.user_agent}</TableCell>
+                          <TableCell className="font-mono text-xs">{ua.count}</TableCell>
+                          <TableCell className="text-xs whitespace-nowrap">{fmt(ua.first_seen)}</TableCell>
+                          <TableCell className="text-xs whitespace-nowrap">{fmt(ua.last_seen)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
