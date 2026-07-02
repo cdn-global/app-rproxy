@@ -247,8 +247,8 @@ importers:
         specifier: ^6.3.5
         version: 6.4.1(@types/node@20.19.27)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-node-polyfills:
-        specifier: ^0.23.0
-        version: 0.23.1(rollup@4.54.0)(vite@6.4.1(@types/node@20.19.27)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2))
+        specifier: 0.23.0
+        version: 0.23.0(rollup@4.54.0)(vite@6.4.1(@types/node@20.19.27)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2))
 
 packages:
 
@@ -4608,11 +4608,10 @@ packages:
   vite-plugin-dynamic-import@1.6.0:
     resolution: {integrity: sha512-TM0sz70wfzTIo9YCxVFwS8OA9lNREsh+0vMHGSkWDTZ7bgd1Yjs5RV8EgB634l/91IsXJReg0xtmuQqP0mf+rg==}
 
-  vite-plugin-node-polyfills@0.23.1:
-    resolution: {integrity: sha512-hR2YlaMqVo2f/0w6V9YgaeKsIy8z5gEsMFHX8MQlh8ATEAbfI4EWjE6qnCvkZ9lyaXKoJD2rAwL/up8/Rzsjkg==}
-    deprecated: this version is broken
+  vite-plugin-node-polyfills@0.23.0:
+    resolution: {integrity: sha512-4n+Ys+2bKHQohPBKigFlndwWQ5fFKwaGY6muNDMTb0fSQLyBzS+jjUNRZG9sKF0S/Go4ApG6LFnUGopjkILg3w==}
     peerDependencies:
-      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
 
   vite@6.4.1:
     resolution: {integrity: sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==}
@@ -8628,7 +8627,7 @@ snapshots:
 
   md5.js@1.3.5:
     dependencies:
-      hash-base: 3.0.5
+      hash-base: 3.1.2
       inherits: 2.0.4
       safe-buffer: 5.2.1
 
@@ -9711,7 +9710,7 @@ snapshots:
       fast-glob: 3.3.3
       magic-string: 0.30.21
 
-  vite-plugin-node-polyfills@0.23.1(rollup@4.54.0)(vite@6.4.1(@types/node@20.19.27)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)):
+  vite-plugin-node-polyfills@0.23.0(rollup@4.54.0)(vite@6.4.1(@types/node@20.19.27)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.54.0)
       node-stdlib-browser: 1.3.1
