@@ -7,6 +7,7 @@ import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -135,7 +136,30 @@ function Login() {
                   )}
                 </div>
                 {error && (
-                  <p className="text-sm text-gray-500">{String(error)}</p>
+                  <Alert
+                    variant="destructive"
+                    className="border-destructive/30 bg-destructive/10"
+                  >
+                    <AlertDescription className="text-sm font-medium text-destructive">
+                      {String(error).toLowerCase().includes("inactive") ? (
+                        <>
+                          <span className="block font-semibold">Your account is inactive.</span>
+                          <span>
+                            Please contact{' '}
+                            <a
+                              href="mailto:support@ROAMINGPROXY.com"
+                              className="font-semibold underline underline-offset-4"
+                            >
+                              support
+                            </a>{' '}
+                            to reactivate access.
+                          </span>
+                        </>
+                      ) : (
+                        String(error)
+                      )}
+                    </AlertDescription>
+                  </Alert>
                 )}
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Logging in..." : "Login"}

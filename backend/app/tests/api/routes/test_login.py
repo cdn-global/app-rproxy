@@ -3,9 +3,10 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
+from app import crud
 from app.core.config import settings
 from app.core.security import verify_password
-from app.models import User
+from app.models import User, UserCreate
 from app.utils import generate_password_reset_token
 
 
@@ -28,6 +29,31 @@ def test_get_access_token_incorrect_password(client: TestClient) -> None:
     }
     r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
     assert r.status_code == 400
+
+
+def test_get_access_token_inactive_user_shows_support_message(
+    client: TestClient, db: Session
+) -> None:
+    inactive_email = "inactive.user@example.com"
+    crud.create_user(
+        session=db,
+        user_create=UserCreate(
+            email=inactive_email,
+            password="StrongPassword1",
+            is_active=False,
+        ),
+    )
+
+    r = client.post(
+        f"{settings.API_V1_STR}/login/access-token",
+        data={"username": inactive_email, "password": "StrongPassword1"},
+    )
+
+    assert r.status_code == 400
+    response = r.json()
+    assert "detail" in response
+    assert "inactive" in response["detail"].lower()
+    assert "support" in response["detail"].lower()
 
 
 def test_use_access_token(
