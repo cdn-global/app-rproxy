@@ -199,6 +199,8 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
   const [seedType, setSeedType] = useState<"login-events" | "api-requests" | "llm-usage">("login-events")
   const [seedJson, setSeedJson] = useState("")
   const [seeding, setSeeding] = useState(false)
+  const [stripeCustomerId, setStripeCustomerId] = useState("")
+  const [seedingStripe, setSeedingStripe] = useState(false)
   const [snapshotting, setSnapshotting] = useState(false)
   const [userId, setUserId] = useState("")
 
@@ -224,6 +226,29 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
     })
     setNote("")
     load()
+  }
+
+  const seedFromStripe = async () => {
+    if (!stripeCustomerId.trim()) return
+    setSeedingStripe(true)
+    try {
+      const res = await fetch(`${API_BASE}/v2/admin/disputes/${caseId}/seed/from-stripe`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          stripe_customer_id: stripeCustomerId.trim(),
+          user_id: userId || undefined,
+        }),
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.detail || "Stripe seed failed")
+      alert(`Seeded from Stripe: ${result.summary?.join(", ") || "no data"}`)
+      load()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Stripe seed failed")
+    } finally {
+      setSeedingStripe(false)
+    }
   }
 
   const seedData = async () => {
@@ -327,6 +352,39 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
               )}
             </div>
 
+            {/* Seed from Stripe */}
+            <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20 p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase text-blue-700 dark:text-blue-400 tracking-wide">
+                Seed from Stripe (recommended)
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Pulls charges, invoice line items, and events directly from Stripe and seeds them as structured evidence — aligns with actual billed amounts.
+              </p>
+              <div className="flex gap-2 items-end flex-wrap">
+                <div className="space-y-1 flex-1">
+                  <Label className="text-xs">Stripe Customer ID</Label>
+                  <Input
+                    className="font-mono text-xs"
+                    placeholder="cus_..."
+                    value={stripeCustomerId}
+                    onChange={(e) => setStripeCustomerId(e.target.value)}
+                  />
+                </div>
+                <Button
+                  size="sm"
+                  onClick={seedFromStripe}
+                  disabled={seedingStripe || !stripeCustomerId.trim()}
+                  className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {seedingStripe ? <Spinner size={14} /> : null}
+                  Pull from Stripe
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Maps: Stripe Charges → API request log · Invoice line items → itemized usage (with $USD cost) · Radar events → login events
+              </p>
+            </div>
+
             {/* Seed historical data */}
             <div className="rounded-lg border p-4 space-y-3">
               <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">Seed Historical Data</p>
@@ -425,7 +483,16 @@ export default function DisputeCasePanel() {
       {loading && <div className="flex h-32 items-center justify-center"><Spinner size={28} /></div>}
 
       {error && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive space-y-1">
+          <p className="font-semibold">Failed to load dispute cases</p>
+          <p>{error}</p>
+          {error.includes("DISPUTE_WORKER_URL") && (
+            <p className="mt-2 text-xs font-mono bg-destructive/10 rounded p-2">
+              On your server: <strong>echo 'DISPUTE_WORKER_URL=https://dispute-worker.apis-popov.workers.dev' &gt;&gt; .env</strong><br />
+              Then: <strong>docker compose --env-file .env up -d backend</strong>
+            </p>
+          )}
+        </div>
       )}
 
       {!loading && !error && (

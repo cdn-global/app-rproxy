@@ -4,10 +4,14 @@ FastAPI calls the Worker over HTTPS; all requests are authenticated with
 X-Worker-Secret matching settings.SECRET_KEY.
 """
 from typing import Any, Optional
+import os
 import httpx
 from app.core.config import settings
 
-_WORKER_URL = getattr(settings, "DISPUTE_WORKER_URL", "")
+
+def _worker_url() -> str:
+    """Read at call-time — works with Docker env injection and hot .env changes."""
+    return (os.getenv("DISPUTE_WORKER_URL") or getattr(settings, "DISPUTE_WORKER_URL", "")).rstrip("/")
 
 
 def _headers() -> dict[str, str]:
@@ -15,7 +19,10 @@ def _headers() -> dict[str, str]:
 
 
 def _client() -> httpx.Client:
-    return httpx.Client(base_url=_WORKER_URL, headers=_headers(), timeout=15)
+    url = _worker_url()
+    if not url:
+        raise ValueError("DISPUTE_WORKER_URL is not configured in environment")
+    return httpx.Client(base_url=url, headers=_headers(), timeout=15)
 
 
 # ── Cases ─────────────────────────────────────────────────────────────────────

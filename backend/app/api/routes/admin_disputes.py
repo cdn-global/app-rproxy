@@ -62,15 +62,21 @@ class SeedRow(BaseModel):
 
 @router.get("/")
 def list_cases(current_user: SuperUser) -> Any:
-    if not settings.DISPUTE_WORKER_URL:
-        raise HTTPException(status_code=503, detail="DISPUTE_WORKER_URL not configured")
+    if not os.getenv("DISPUTE_WORKER_URL", settings.DISPUTE_WORKER_URL):
+        raise HTTPException(
+            status_code=503,
+            detail="DISPUTE_WORKER_URL not set. Add it to .env and restart the container.",
+        )
     return dispute_service.list_cases()
 
 
 @router.post("/", status_code=201)
 def create_case(body: CreateCaseRequest, current_user: SuperUser) -> Any:
-    if not settings.DISPUTE_WORKER_URL:
-        raise HTTPException(status_code=503, detail="DISPUTE_WORKER_URL not configured")
+    if not os.getenv("DISPUTE_WORKER_URL", settings.DISPUTE_WORKER_URL):
+        raise HTTPException(
+            status_code=503,
+            detail="DISPUTE_WORKER_URL not set. Add it to .env and restart the container.",
+        )
     return dispute_service.create_case({
         **body.model_dump(exclude_none=True),
         "created_by": current_user.email,
@@ -428,6 +434,155 @@ def get_user_evidence(
         "stripe_subscriptions": stripe_subscriptions,
         "generated_at": datetime.utcnow().isoformat(),
         "generated_by": current_user.email,
+    }
+    return result
+
+
+@router.get("/{case_id}/seed/summary")
+def seed_summary_route(case_id: str, current_user: SuperUser) -> Any:
+    return dispute_service.seed_summary(case_id)
+
+
+# ── Seed from Stripe ──────────────────────────────────────────────────────────
+
+class SeedFromStripeRequest(BaseModel):
+    stripe_customer_id: str
+    user_id: Optional[str] = None   # link seeded rows to a user_id
+
+
+@router.post("/{case_id}/seed/from-stripe", status_code=201)
+def seed_from_stripe(
+    case_id: str,
+    body: SeedFromStripeRequest,
+    current_user: SuperUser,
+    session: SessionDep,
+) -> Any:
+    """
+    Pull Stripe charges, invoices, subscriptions and customer events for a
+    customer and seed them as structured evidence rows in D1.
+
+    Maps:
+     - Stripe Charge      → seeded_api_request (proves billing happened)
+     - Stripe Invoice line items → seeded_llm_usage (itemized usage proof)
+     - Stripe CustomerEvent (logins/updates from Stripe Radar) → seeded_login_event
+    """
+    sk = os.getenv("STRIPE_SECRET_KEY")
+    if not sk:
+        raise HTTPException(status_code=503, detail="STRIPE_SECRET_KEY not configured")
+
+    stripe.api_key = sk
+    uid = body.user_id
+
+    api_request_rows: list[dict] = []
+    llm_usage_rows: list[dict] = []
+    login_event_rows: list[dict] = []
+    stripe_summary: list[str] = []
+
+    try:
+        # ── Charges → seeded_api_request (one row per charge = one billing event)
+        charges = stripe.Charge.list(customer=body.stripe_customer_id, limit=100)
+        for ch in charges.auto_paging_iter():
+            api_request_rows.append({
+                "user_id": uid,
+                "api_key_prefix": None,
+                "ip_address": None,
+                "user_agent": f"Stripe charge {ch.id}",
+                "endpoint": f"/stripe/charge/{ch.status}",
+                "status_code": 200 if ch.status == "succeeded" else 402,
+                "created_at": datetime.fromtimestamp(ch.created).isoformat(),
+            })
+
+        # ── Invoice line items → seeded_llm_usage (itemized spend proof)
+        invoices = stripe.Invoice.list(customer=body.stripe_customer_id, limit=50)
+        for inv in invoices.auto_paging_iter():
+            line_items = stripe.Invoice.list_line_items(inv.id, limit=100)
+            for line in line_items.auto_paging_iter():
+                # Map Stripe price metadata to model_name if available
+                price = line.price
+                model_name = "subscription"
+                source = "stripe_invoice"
+                if price and price.metadata:
+                    model_name = price.metadata.get("model_name", price.nickname or price.id or "subscription")
+                elif price and price.nickname:
+                    model_name = price.nickname
+
+                # Use quantity as token proxy for metered items
+                tokens = int(line.quantity or 0)
+                cost = (line.amount / 100)  # cents → USD
+
+                llm_usage_rows.append({
+                    "user_id": uid,
+                    "model_name": model_name,
+                    "source": source,
+                    "input_tokens": tokens,
+                    "output_tokens": 0,
+                    "total_cost": cost,
+                    "created_at": datetime.fromtimestamp(
+                        inv.period_start if inv.period_start else inv.created
+                    ).isoformat(),
+                })
+
+        # ── Stripe Radar / Customer events → seeded_login_event
+        events = stripe.Event.list(
+            type="radar.early_fraud_warning.created",
+            limit=100,
+        )
+        for ev in events.auto_paging_iter():
+            obj = ev.data.object
+            customer_id = getattr(obj, "charge", None) or getattr(obj, "customer", None)
+            if customer_id and customer_id != body.stripe_customer_id:
+                continue
+            login_event_rows.append({
+                "user_id": uid,
+                "email_attempted": body.stripe_customer_id,
+                "ip_address": None,
+                "user_agent": f"Stripe Radar: {ev.type}",
+                "success": 0,
+                "created_at": datetime.fromtimestamp(ev.created).isoformat(),
+            })
+
+        # Also pull customer balance transactions as activity proof
+        txns = stripe.Customer.list_balance_transactions(
+            body.stripe_customer_id, limit=100
+        )
+        for txn in txns.auto_paging_iter():
+            login_event_rows.append({
+                "user_id": uid,
+                "email_attempted": body.stripe_customer_id,
+                "ip_address": None,
+                "user_agent": f"Stripe balance txn: {txn.type} {txn.amount/100:.2f} {txn.currency.upper()}",
+                "success": 1,
+                "created_at": datetime.fromtimestamp(txn.created).isoformat(),
+            })
+
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=502, detail=f"Stripe API error: {str(e)}")
+
+    # Seed all rows into D1
+    results: dict[str, Any] = {}
+
+    if api_request_rows:
+        results["charges"] = dispute_service.seed_api_requests(case_id, api_request_rows, current_user.email)
+        stripe_summary.append(f"{len(api_request_rows)} charges")
+
+    if llm_usage_rows:
+        results["invoice_line_items"] = dispute_service.seed_llm_usage(case_id, llm_usage_rows, current_user.email)
+        stripe_summary.append(f"{len(llm_usage_rows)} invoice line items")
+
+    if login_event_rows:
+        results["events"] = dispute_service.seed_login_events(case_id, login_event_rows, current_user.email)
+        stripe_summary.append(f"{len(login_event_rows)} Stripe events")
+
+    dispute_service.add_event(
+        case_id, "seed_import",
+        f"Seeded from Stripe customer {body.stripe_customer_id}: {', '.join(stripe_summary) or 'no data found'}",
+        current_user.email,
+    )
+
+    return {
+        "stripe_customer_id": body.stripe_customer_id,
+        "seeded": results,
+        "summary": stripe_summary,
     }
 
 
