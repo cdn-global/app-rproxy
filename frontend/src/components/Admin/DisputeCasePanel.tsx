@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table"
 import { Spinner } from "@/components/ui/spinner"
 import type { UserPublic } from "../../client"
+import UserEvidencePanel from "./UserEvidencePanel"
 
 const API_BASE = import.meta.env.DEV ? "" : "https://api.roamingproxy.com"
 
@@ -37,6 +38,7 @@ function authHeaders() {
 
 interface DisputeCase {
   id: string
+  user_id: string | null
   user_email: string
   user_full_name: string | null
   stripe_charge_id: string | null
@@ -203,13 +205,17 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
   const [seedingStripe, setSeedingStripe] = useState(false)
   const [snapshotting, setSnapshotting] = useState(false)
   const [userId, setUserId] = useState("")
+  const [evidenceUser, setEvidenceUser] = useState<UserPublic | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch(`${API_BASE}/v2/admin/disputes/${caseId}`, { headers: authHeaders() })
       if (!res.ok) throw new Error(await res.text())
-      setDetail(await res.json())
+      const data: CaseDetail = await res.json()
+      setDetail(data)
+      // Pre-fill Stripe customer ID and user_id from case
+      if (data.user_id) setUserId(data.user_id)
     } finally {
       setLoading(false)
     }
@@ -301,21 +307,39 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
 
         {detail && (
           <div className="space-y-6 mt-2">
-            {/* Summary */}
-            <div className="grid grid-cols-3 gap-3 text-sm">
-              {[
-                ["Reason", detail.reason.replace("_", " ")],
-                ["Status", detail.status],
-                ["Amount", `$${detail.disputed_amount_usd.toFixed(2)} ${detail.currency}`],
-                ["Charge ID", detail.stripe_charge_id ?? "—"],
-                ["Dispute ID", detail.stripe_dispute_id ?? "—"],
-                ["Due", fmt(detail.response_due_date)],
-              ].map(([k, v]) => (
-                <div key={k} className="rounded-lg border p-3">
-                  <div className="text-xs text-muted-foreground">{k}</div>
-                  <div className="mt-1 text-xs font-semibold">{v}</div>
-                </div>
-              ))}
+            {/* Summary + actions */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="grid grid-cols-3 gap-3 text-sm flex-1">
+                {[
+                  ["Customer", detail.user_email],
+                  ["Reason", detail.reason.replace("_", " ")],
+                  ["Status", detail.status.replace("_", " ")],
+                  ["Amount", `$${detail.disputed_amount_usd.toFixed(2)} ${detail.currency}`],
+                  ["Charge ID", detail.stripe_charge_id ?? "—"],
+                  ["Due", fmt(detail.response_due_date)],
+                ].map(([k, v]) => (
+                  <div key={k} className="rounded-lg border p-3">
+                    <div className="text-xs text-muted-foreground">{k}</div>
+                    <div className="mt-1 text-xs font-semibold truncate" title={String(v)}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              {detail.user_id && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="shrink-0 gap-2"
+                  onClick={() => setEvidenceUser({
+                    id: detail.user_id as any,
+                    email: detail.user_email,
+                    full_name: detail.user_full_name,
+                    is_active: true,
+                    is_superuser: false,
+                  } as UserPublic)}
+                >
+                  Evidence Pack ↗
+                </Button>
+              )}
             </div>
 
             {/* Seed summary */}
@@ -440,6 +464,15 @@ function CaseDetailModal({ caseId, isOpen, onClose }: { caseId: string; isOpen: 
           </div>
         )}
       </DialogContent>
+
+      {/* Evidence Pack panel — opens on top of case detail */}
+      {evidenceUser && (
+        <UserEvidencePanel
+          user={evidenceUser}
+          isOpen={!!evidenceUser}
+          onClose={() => setEvidenceUser(null)}
+        />
+      )}
     </Dialog>
   )
 }

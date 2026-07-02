@@ -71,14 +71,25 @@ def list_cases(current_user: SuperUser) -> Any:
 
 
 @router.post("/", status_code=201)
-def create_case(body: CreateCaseRequest, current_user: SuperUser) -> Any:
+def create_case(body: CreateCaseRequest, current_user: SuperUser, session: SessionDep) -> Any:
     if not os.getenv("DISPUTE_WORKER_URL", settings.DISPUTE_WORKER_URL):
         raise HTTPException(
             status_code=503,
             detail="DISPUTE_WORKER_URL not set. Add it to .env and restart the container.",
         )
+
+    # Auto-resolve user_id from email if not supplied
+    payload = body.model_dump(exclude_none=True)
+    if not payload.get("user_id") and payload.get("user_email"):
+        found = session.exec(
+            select(User).where(User.email == payload["user_email"])
+        ).first()
+        if found:
+            payload["user_id"] = str(found.id)
+            payload["user_full_name"] = payload.get("user_full_name") or found.full_name
+
     return dispute_service.create_case({
-        **body.model_dump(exclude_none=True),
+        **payload,
         "created_by": current_user.email,
     })
 
@@ -276,6 +287,13 @@ def generate_snapshot(
         "generated_by": current_user.email,
     }
 
+    # Merge seeded D1 data into the snapshot so the PDF is complete
+    try:
+        d1_summary = dispute_service.seed_summary(case_id)
+        snapshot["d1_seed_summary"] = d1_summary
+    except Exception:
+        pass
+
     result = dispute_service.store_snapshot(case_id, json.dumps(snapshot), current_user.email)
     return {"snapshot_id": result["id"], "case_id": case_id}
 
@@ -283,7 +301,6 @@ def generate_snapshot(
 @router.get("/{case_id}/snapshots/{snap_id}")
 def get_snapshot(case_id: str, snap_id: str, current_user: SuperUser) -> Any:
     return dispute_service.get_snapshot(case_id, snap_id)
-
 
 # ── Seed endpoints ────────────────────────────────────────────────────────────
 
